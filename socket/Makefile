@@ -47,7 +47,7 @@ LD_RUN_PATH := /usr/um/gcc-5.1.0/lib64
 
 # TODO
 # Change EXECUTABLE to match the command name given in the project spec.
-EXECUTABLE 	= MineEscape
+EXECUTABLE 	= iPerfer
 
 # designate which compiler to use
 CXX			= g++
