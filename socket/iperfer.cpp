@@ -1,5 +1,6 @@
 #include "iperfer.h"
 
+#include <arpa/inet.h>
 #include <getopt.h>
 #include <netdb.h>
 #include <sys/socket.h>
@@ -8,18 +9,17 @@
 
 #include <algorithm>
 #include <cstring>
+#include <ctime>
 #include <fstream>
 #include <iomanip>
 #include <iostream>
 #include <string>
 #include <vector>
-#include <ctime>
 using namespace std;
 
 char getMode(int argc, char *argv[], SocketSetup &setup) {
-    bool modeSpecified = false, hostSpecified = false, portSpecified = false;
-    char mode = 'c';
-    char *host = nullptr, *port = nullptr, *filename = nullptr;
+    char mode = 'a';
+    char *node = nullptr, *port = nullptr, *filename = nullptr;
     int time = 5;
 
     // These are used with getopt_long()
@@ -30,31 +30,27 @@ char getMode(int argc, char *argv[], SocketSetup &setup) {
                              // and the "help" ('h') options.
                              {"server", no_argument, nullptr, 's'},
                              {"client", no_argument, nullptr, 'c'},
-                             {"host", required_argument, nullptr, 'h'},
+                             {"node", required_argument, nullptr, 'n'},
                              {"port", required_argument, nullptr, 'p'},
                              {"time", required_argument, nullptr, 't'},
                              {"file", required_argument, nullptr, 'f'},
                              {nullptr, 0, nullptr, '\0'}};
 
     // TODO: Fill in the double quotes, to match the mode and help options.
-    while ((choice = getopt_long(argc, argv, "sch:p:t:f:", long_options,
+    while ((choice = getopt_long(argc, argv, "scn:p:t:f:", long_options,
                                  &option_index)) != -1) {
         switch (choice) {
             case 's':
                 mode = 's';
-                modeSpecified = true;
                 break;
             case 'c':
                 mode = 'c';
-                modeSpecified = true;
                 break;
-            case 'h':
-                host = optarg;
-                hostSpecified = true;
+            case 'n':
+                node = optarg;
                 break;
             case 'p':
                 port = optarg;
-                portSpecified = true;
                 break;
             case 't':
                 time = stoi(optarg);
@@ -68,23 +64,45 @@ char getMode(int argc, char *argv[], SocketSetup &setup) {
         }  // switch
     }      // while
 
-    if (!modeSpecified) {
-        cerr << "Error: no mode specified" << endl;
-        exit(1);
-    }  // if
-    if (!portSpecified) cerr << "Error: no port specified" << endl;
-    if (mode == 'c' && !hostSpecified)
-        cerr << "Error: no host specified" << endl;
-
     setup.mode = mode;
-    setup.node = host;
+    setup.node = node;
     setup.service = port;
     setup.time = time;
     setup.filename = filename;
+    if (!CheckSetup(setup)) exit(1);
     return mode;
 }  // getMode()
 
-int clientsetup(SocketSetup &ssetup) {
+bool CheckSetup(SocketSetup &setup) {
+    bool pass = true;
+    if (setup.time <= 0) {
+        cerr << "Error: time argument must be greater than 0" << endl;
+        pass = false;
+    }
+    if (!setup.service) {
+        cerr << "Error: no port specified" << endl;
+        pass = false;
+    }
+    switch (setup.mode) {
+        case ('c'):
+            if (!setup.node) {
+                cerr << "Error: no server-host under client mode. " << endl;
+                pass = false;
+            }
+            break;
+        case ('s'):
+            break;
+        default:
+            cerr << "Error: no mode specified. use -s for server or -c for "
+                    "client. "
+                 << endl;
+            pass = false;
+            break;
+    }
+    return pass;
+}
+
+int clientConnect(SocketSetup &ssetup) {
     int status;
     struct addrinfo hints;
     struct addrinfo *servinfo;  // will point to the results
@@ -106,7 +124,7 @@ int clientsetup(SocketSetup &ssetup) {
                   servinfo->ai_protocol);
     auto start_connect = time(0);
     while (connect(sock, servinfo->ai_addr, servinfo->ai_addrlen) == -1) {
-        if (time(0)-start_connect > ssetup.time){
+        if (time(0) - start_connect > ssetup.time) {
             fprintf(stderr,
                     "connect timeout on service %s, node %s: no response in %d "
                     "seconds\n",
@@ -150,7 +168,7 @@ void clientSend(int sock, string filename) {
     f.close();
 }
 
-int serversetup(SocketSetup &ssetup) {
+int serverstart(SocketSetup &ssetup) {
     int status;
     struct addrinfo hints;
     struct addrinfo *servinfo;  // will point to the results
@@ -187,21 +205,40 @@ int serversetup(SocketSetup &ssetup) {
     return socklisten;
 }
 
-void serverAcc(int socklisten, string filename){
+// get sockaddr, IPv4 or IPv6:
+void *get_in_addr(struct sockaddr *sa) {
+    if (sa->sa_family == AF_INET) {
+        return &(((struct sockaddr_in *)sa)->sin_addr);
+    }
+
+    return &(((struct sockaddr_in6 *)sa)->sin6_addr);
+}
+
+void serverAcc(int socklisten, string target_client, string filename) {
     int i = 0;
     while (1) {
+        cout << "\rwaiting for connection ... " << endl;
         socklen_t addr_size;
         struct sockaddr_storage their_addr;
         int sock_acc;
         addr_size = sizeof(their_addr);
         sock_acc =
             accept(socklisten, (struct sockaddr *)&their_addr, &addr_size);
-        cerr << "Accepted on " << sock_acc << endl;
         if (sock_acc == -1) {
             cerr << "Error: fail to accept" << endl;
             continue;
         }
-        serverRec2File(sock_acc, filename+to_string(i));
+        char s[INET6_ADDRSTRLEN];
+        inet_ntop(their_addr.ss_family,
+                  get_in_addr((struct sockaddr *)&their_addr), s, sizeof s);
+
+        if (target_client != s) {
+            cout << "Closed connection from " << s << endl;
+            close(sock_acc);
+            continue;
+        }
+        cout << "Accepted connection from " << s << endl;
+        serverRec2File(sock_acc, filename + to_string(i));
         ++i;
     }
 }
@@ -212,9 +249,9 @@ void serverRec2File(int sock_acc, string filename) {
     if (!f.is_open()) {
         cerr << "Error: fail to open file " << filename << endl;
     }
-    int len, total_len=0;
+    int len, total_len = 0;
     char *buffer = new char[BUFFER_SIZE];
-    cout << "Recieve file " << filename; 
+    cout << "File recieved: " << filename;
     while ((len = (int)recv(sock_acc, buffer, BUFFER_SIZE, 0)) != 0) {
         f.write(buffer, len);
         total_len += len;
@@ -229,12 +266,13 @@ int main(int argc, char *argv[]) {
     int sock;
     switch (getMode(argc, argv, setupinfo)) {
         case ('c'):
-            sock = clientsetup(setupinfo);
+            sock = clientConnect(setupinfo);
             clientSend(sock, setupinfo.filename);
+            clientSend(sock, "Makefile");
             break;
         case ('s'):
-            sock = serversetup(setupinfo);
-            serverAcc(sock, setupinfo.filename);
+            sock = serverstart(setupinfo);
+            serverAcc(sock, setupinfo.node, setupinfo.filename);
             break;
     }
 }
