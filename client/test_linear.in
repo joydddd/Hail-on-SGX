@@ -1,0 +1,5 @@
+../samples/1kg-linear-regression/Caffeine_2.tsv
+../samples/1kg-linear-regression/isfemale_2.tsv
+../samples/1kg-linear-regression/alleles_2.tsv
+XTX_withoutcovariant_2.tsv
+XTY_withoutcovariant_2.tsv
