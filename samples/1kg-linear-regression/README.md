@@ -5,7 +5,7 @@ gwas = hl.linear_regression_rows(y=common_mt.CaffeineConsumption, x=common_mt.GT
 ```
 (with covariant)
 ```
-gwas = hl.linear_regression_rows(y=common_mt.CaffeineConsumption, x=common_mt.GT.n_alt_alleles(), covariates=[common_mt.is_Female])
+gwas = hl.linear_regression_rows(y=common_mt.CaffeineConsumption, x=common_mt.GT.n_alt_alleles(), covariates=[1.0, common_mt.is_Female])
 ```
 
 y: Caffeine.tsv
@@ -14,6 +14,8 @@ covariant: isFemale.tsv
 
 intermedia results: 
 1. client to enclave: XTX, XTY
+2. enclave to client: beta
+3. client to enclave: SSE
 
 
-gwas: with_convariant.tsv, without_convariant.tsv
+gwas original result (from hail): with_convariant.tsv, without_convariant.tsv
