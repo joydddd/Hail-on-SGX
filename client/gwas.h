@@ -1,86 +1,17 @@
+#ifndef GWAS_CLIENT_H
+#define GWAS_CLIENT_H
+
+
 #include <vector>
 #include <string>
 #include <map>
 #include <iostream>
+#include "../gwas.h"
 
 using namespace std;
 
 #define NA -1
-#define X 23
-class ERROR_t
-{
-public:
-    ERROR_t(string _msg) : msg(_msg) {}
-    string msg;
-};
 
-class ReadtsvERROR : public ERROR_t
-{
-    using ERROR_t::ERROR_t;
-};
-class mathERROR : public ERROR_t
-{
-    using ERROR_t::ERROR_t;
-};
-class exportERROR : public ERROR_t
-{
-    using ERROR_t::ERROR_t;
-};
-class alleleERROR : public ERROR_t
-{
-    using ERROR_t::ERROR_t;
-};
-enum ALLELE : char
-{
-    A='A',
-    T='T',
-    C='C',
-    G='G',
-    NAN='N'
-};
-
-
-class Loci
-{
-public:
-    int chrom;
-    int loc;
-    Loci(){};
-    Loci(string &str);
-    friend ostream& operator<<(ostream& os, const Loci &loci){
-        if (loci.chrom == X) os << "X";
-        else os << loci.chrom;
-        os << ":" << (loci.loc);
-        return os;
-    }
-    friend bool operator<(const Loci& a, const Loci& b){
-        if (a.chrom < b.chrom ) return true;
-        if (a.chrom > b.chrom ) return false;
-        return a.loc < b.loc;
-    }
-    friend bool operator==(const Loci& a, const Loci& b){
-        return a.loc == b.loc && a.chrom == b.chrom;
-    }
-    friend bool operator>(const Loci&a, const Loci&b){
-        return !( a<b || a==b);
-    }
-    string str();
-};
-
-
-class Alleles
-{
-public:
-    ALLELE a1, a2;
-    Alleles() : a1(NAN), a2(NAN) {}
-    bool read(string str); // return true if the allele is inversed.
-    friend ostream& operator<<(ostream &os, const Alleles &alleles){
-        os << "[\"" << (char)alleles.a1 << "\",\""<< (char)alleles.a2 << "\"]";
-        return os;
-    }
-    friend bool operator==(const Alleles &a, const Alleles &b){
-        return a.a1 == b.a1 && a.a2 == b.a2;}
-};
 
 class GWAS_var
 {
@@ -105,17 +36,18 @@ public:
     
 };
 
+
 class GWAS_row
 {
     double X2() const;
+    void inverse();                            
+    // for SNPs. in case of major minor allele swap.
 public:
     Loci loci;
     Alleles alleles;
     vector<int> data;
     GWAS_row(string &line); 
     // construct row from parts. for SNPs
-    void inverse();                            
-    // for SNPs. in case of major minor allele swap.
     size_t size() const { return data.size(); }
 
     void print_XTX(ostream &fs, vector<GWAS_var> &covariants) const;
@@ -169,3 +101,6 @@ public:
 
 void export_XTX_XTY(GWAS &gwas, string XTX_filename, string XTY_filename);
 void export_SSE(GWAS &gwas, string beta_filename, string SSE_filename);
+
+
+#endif

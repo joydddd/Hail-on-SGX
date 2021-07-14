@@ -21,17 +21,16 @@
 # TODO (begin) #
 #######################
 
-# Change 'executable' to match the command name given in the project spec.
-EXECUTABLE  = gwas
+BOOST_ROOT = /usr/local/lib/boost_1_76_0/
 
-# The following line looks for a project's main() in files named project*.cpp,
-# executable.cpp (substituted from EXECUTABLE above), or main.cpp
-PROJECTFILE = $(or $(wildcard project*.cpp $(EXECUTABLE).cpp), main.cpp)
-# If main() is in another file delete line above, edit and uncomment below
-#PROJECTFILE = mymainfile.cpp
+
 #######################
 # TODO (end) #
 #######################
+
+EXECUTABLE  = gwas
+
+PROJECTFILE = $(or $(wildcard project*.cpp $(EXECUTABLE).cpp), main.cpp)
 
 # designate which compiler to use
 CXX         = g++
@@ -50,12 +49,15 @@ SOURCES     := $(filter-out $(TESTSOURCES), $(SOURCES))
 OBJECTS     = $(SOURCES:%.cpp=%.o)
 
 #Default Flags (we prefer -std=c++17 but Mac/Xcode/Clang doesn't support)
-CXXFLAGS = -std=c++1z -Wconversion -Wall -Werror -Wextra -pedantic 
+# CXXFLAGS = -std=c++1z -Wconversion -Wall -Werror -Wextra -pedantic 
+CXXFLAGS = -std=c++1z -pedantic 
+CXXFLAGS += -I $(BOOST_ROOT)
 
 # make release - will compile "all" with $(CXXFLAGS) and the -O3 flag
 #                also defines NDEBUG so that asserts will not check
 release: CXXFLAGS += -O3 -DNDEBUG
 release: $(EXECUTABLE)
+
 
 # make debug - will compile sources with $(CXXFLAGS) and the -g3 flag
 #              also defines DEBUG, so "#ifdef DEBUG /*...*/ #endif" works
@@ -63,13 +65,9 @@ debug: CXXFLAGS += -g3 -DDEBUG
 debug:
 	$(CXX) $(CXXFLAGS) $(SOURCES) -o $(EXECUTABLE)_debug
 
-# make profile - will compile "all" with $(CXXFLAGS) and the -g3 and -O3 flags
-profile: CXXFLAGS += -g3 -O3
-profile:
-	$(CXX) $(CXXFLAGS) $(SOURCES) -o $(EXECUTABLE)_profile
 
 # Build all executables
-all: release debug profile
+all: release
 
 $(EXECUTABLE): $(OBJECTS)
 ifeq ($(EXECUTABLE), executable)
@@ -99,13 +97,6 @@ $(TESTS):$(TESTOBJS) $(OBJECTS)
 
 alltests:$(TESTS)
 
-.PHONY:runtests linear_test
-
-runtests:alltests linear_test
-
-linear_test:
-	./test_linear > test_linear.out
-
 # rule for creating objects
 %.o: %.cpp
 	$(CXX) $(CXXFLAGS) -c $*.cpp
@@ -116,62 +107,17 @@ clean:
       $(TESTS)  *.o
 	rm -Rf *.dSYM *.tsv *.out
 
-define MAKEFILE_HELP
-* This Makefile uses advanced techniques, for more information:
-    $$ man make
-
-* General usage
-    1. Follow directions at each "TODO" in this file.
-       a. Set EXECUTABLE equal to the name from the project specification.
-       b. Set PROJECTFILE equal to the name of the source file with main()
-       c. Add any dependency rules specific to your files.
-    2. Build, test, submit... repeat as necessary.
-
-* Unit testing support
-    A) Source files for unit testing should be named test*.cpp.  Examples
-       include test_input.cpp or test3.cpp.
-    B) Automatic build rules are generated to support the following:
-           $$ make test_input
-           $$ make test3
-           $$ make alltests        (this builds all test drivers)
-    C) If test drivers need special dependencies, they must be added
-       manually.
-    D) IMPORTANT: NO SOURCE FILES WITH NAMES THAT BEGIN WITH test WILL BE
-       ADDED TO ANY SUBMISSION TARBALLS.
-endef
-export MAKEFILE_HELP
-
-help:
-	@echo "$$MAKEFILE_HELP"
-
-#######################
-# TODO (begin) #
-#######################
-# individual dependencies for objects
-# Examples:
-# "Add a header file dependency"
-# project2.o: project2.cpp project2.h
-#
-# "Add multiple headers and a separate class"
-# HEADERS = some.h special.h header.h files.h
-# myclass.o: myclass.cpp myclass.h $(HEADERS)
-# project5.o: project5.cpp myclass.o $(HEADERS)
-#
-# SOME EXAMPLES
-#
-#test_thing: test_thing.cpp class.o functions.o
-#class.o: class.cpp class.h
-#functions.o: functions.cpp functions.h
-#project0.o: project0.cpp class.h functions.h
-#
-# THE COMPILER CAN GENERATE DEPENDENCIES FROM SOURCE CODE
 #
 # % g++ -MM *.cpp
 #
 # ADD YOUR OWN DEPENDENCIES HERE
 
-gwas.o: gwas.cpp gwas.h
-test_linear.o: test_linear.cpp gwas.h
+linear_regression.o: linear_regression.cpp gwas.h ../gwas.h \
+ ../gwas_error.h ../linear_algebra/Matrix.h
+logistic_regression.o: logistic_regression.cpp gwas.h ../gwas.h \
+ ../gwas_error.h ../linear_algebra/Matrix.h
+test_linear_reg.o: test_linear_reg.cpp gwas.h ../gwas.h ../gwas_error.h \
+ ../linear_algebra/Matrix.h
 ######################
 # TODO (end) #
 ######################

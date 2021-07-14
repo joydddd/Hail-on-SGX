@@ -7,58 +7,7 @@
 #include "gwas.h"
 
 using namespace std;
-Loci::Loci(string &str){
-    stringstream ss(str);
-    string chrom_str, loc_str;
-    getline(ss, chrom_str, ':');
-    getline(ss, loc_str, ':');
-    try{
-        if (chrom_str == "X") chrom = X;
-        else chrom = stoi(chrom_str);
-    loc = stoi(loc_str);
-    } catch(invalid_argument &error){
-        throw ReadtsvERROR("Unknow Loci: "+str);
-    }
-}
 
-string Loci::str(){
-    std::stringstream ss;
-    ss << *this;
-    return ss.str();
-}
-
-bool Alleles::read(string str){
-    if (str.length() != 9) throw ReadtsvERROR("Unknow alleles type "+ str);
-    char ma, mi;
-    ma = str[2];
-    switch(ma){
-        case 'A': 
-            a1 = ALLELE::A;
-            break;
-        case 'T': 
-            a1 = ALLELE::T;
-            break;
-        case 'C': 
-            a1 = ALLELE::C;
-            break;
-        case 'G': 
-            a1 = ALLELE::G;
-            break;
-        default: throw ReadtsvERROR("Unknow allele type " + str);
-    }
-    mi = str[6];
-    switch(mi){
-        case 'A': a2 = ALLELE::A; break;
-        case 'T': a2 = ALLELE::T; break;
-        case 'C': a2 = ALLELE::C; break;
-        case 'G': a2 = ALLELE::G; break;
-        default: throw ReadtsvERROR("Unknow allele type " + str);
-    }
-    if (a1 < a2){
-        return true;
-    }
-    return false;
-}
 
 
 int read_entry_int(string s){
@@ -95,7 +44,7 @@ double read_entry_double(string s){
     return xx;
 }
 
-double split_tab(string &line, vector<string> &parts){
+int split_tab(string &line, vector<string> &parts){
     parts.clear();
     string part;
     stringstream ss(line);
@@ -385,11 +334,13 @@ void GWAS::print(){
 void export_XTX_XTY(GWAS &gwas, string XTX_filename, string XTY_filename){
     ofstream XTX_f(XTX_filename);
     if (!XTX_f.is_open()) throw exportERROR("fail to open "+XTX_filename);
+    XTX_f << scientific;
     gwas.print_XTX_title(XTX_f);
     gwas.print_XTX(XTX_f);
     XTX_f.close();
     ofstream XTY_f(XTY_filename);
-    if (!XTY_f.is_open()) throw exportERROR("fail to open "+XTY_filename);
+    XTY_f << scientific;
+    if (!XTY_f.is_open()) throw exportERROR("fail to open " + XTY_filename);
     gwas.print_XTY_title(XTY_f);
     gwas.print_XTY(XTY_f);
     XTY_f.close();
@@ -399,7 +350,9 @@ void export_SSE(GWAS &gwas, string beta_filename, string SSE_filename){
     ifstream beta_f(beta_filename);
     if (!beta_f.is_open()) throw ReadtsvERROR("fail to open file "+beta_filename);
     ofstream SSE_f(SSE_filename);
-    if (!SSE_f.is_open()) throw exportERROR("fail to open file "+SSE_filename);
+    SSE_f << scientific;
+    if (!SSE_f.is_open())
+        throw exportERROR("fail to open file " + SSE_filename);
     string line;
     getline(beta_f, line);
     vector<Beta_row> beta;
