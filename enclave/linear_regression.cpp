@@ -4,20 +4,7 @@
 #include <cmath>
 using namespace std;
 using namespace boost::math;
-double CDF_students_t(double t, int df) { 
-    students_t t_dist((double)df);
-    return cdf(t_dist, t);
-}
 
-size_t split_tab(string &line, vector<string> &parts) {
-    parts.clear();
-    string part;
-    stringstream ss(line);
-    while (getline(ss, part, '\t')) {
-        parts.push_back(part);
-    }
-    return parts.size();
-}
 
 XTX_row::XTX_row(string &line) {
     vector<string> parts;
@@ -119,12 +106,18 @@ void SSE_row::combine(SSE_row &other) {
     n += other.n;
 }
 
-double SSE_row::p(SqrMatrix &XTX_1, vector<double> &beta) {
+double SSE_row::t_stat(SqrMatrix &XTX_1, vector<double> &beta) {
     size_t m = beta.size();
     SqrMatrix var = XTX_1 * (SSE / (double)(n - m - 1));
     double SE = sqrt(var[0][0]);
-    double T = beta[0] / SE;
-    return CDF_students_t(T, (int)(n - m - 1))*2;
+    return beta[0] / SE;
+}
+
+double SSE_row::p(SqrMatrix &XTX_1, vector<double> &beta) {
+    double t = t_stat(XTX_1, beta);
+    double df = n - beta.size() - 1;
+    students_t t_dist(df);
+    return cdf(t_dist, t) * 2;
 }
 
 

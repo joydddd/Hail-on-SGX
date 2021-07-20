@@ -80,15 +80,9 @@ endif
 
 # Automatically generate any build rules for test*.cpp files
 define make_tests
-    ifeq ($$(PROJECTFILE),)
-	    @echo Edit PROJECTFILE variable to .cpp file with main\(\)
-	    @exit 1
-    endif
-    SRCS = $$(filter-out $$(PROJECTFILE), $$(SOURCES))
-    OBJS = $$(SRCS:%.cpp=%.o)
     HDRS = $$(wildcard *.h *.hpp)
     $(1): CXXFLAGS += -g3 -DDEBUG
-    $(1): $$(OBJS) $$(HDRS) $(1).cpp
+    $(1): $$(OBJECTS) $(1).cpp
 	$$(CXX) $$(CXXFLAGS) $$(OBJECTS) $(1).o -o $(1)
 endef
 $(foreach test, $(TESTS), $(eval $(call make_tests, $(test))))
@@ -118,6 +112,8 @@ logistic_regression.o: logistic_regression.cpp gwas.h ../gwas.h \
  ../gwas_error.h ../linear_algebra/Matrix.h
 test_linear_reg.o: test_linear_reg.cpp gwas.h ../gwas.h ../gwas_error.h \
  ../linear_algebra/Matrix.h
+test_logistic_regression.o: test_logistic_regression.cpp gwas.h ../gwas.h \
+ ../gwas_error.h ../linear_algebra/Matrix.h
 ######################
 # TODO (end) #
 ######################

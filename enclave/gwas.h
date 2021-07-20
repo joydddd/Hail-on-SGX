@@ -14,6 +14,8 @@ class CombineERROR {
     string msg;
 };
 
+/* For linear regression (distributed approach)*/
+
 class XTY_row {
    public:
     Alleles alleles;
@@ -54,52 +56,102 @@ class SSE_row {
    public:
     SSE_row(string &line);
     void combine(SSE_row &other);
+    double t_stat(SqrMatrix &XTX_1, vector<double> &beta);
     double p(SqrMatrix &XTX_1, vector<double> &beta);
+    /* reqires boost library. To avoid using boost:
+    find t_stat and degree of freedom = n-beta.size()-1 and apply CDF of t
+    distribution outside of enclave
+    */
 };
 
+/* for logistic regression */
+
 class GWAS_var {
-    vector<int> data;
+    vector<double> data;
     size_t n;
-    string name;
+    string name_str;
+    friend class GWAS_row;
     friend class GWAS_logic;
 
    public:
-    GWAS_var();
+    GWAS_var() : n(0), name_str("NA") {}
+    GWAS_var(istream &is);
+    GWAS_var(size_t size, int x=1) : data(size, x), n(size), name_str("1"){}
     size_t size() { return n; }
     void combine(GWAS_var &other);
+    string name() { return name_str; }
+    GWAS_var& operator=(GWAS_var& rhs){
+        if (this == &rhs) return *this;
+        data = rhs.data;
+        n = rhs.n;
+        name_str = rhs.name_str;
+        return *this;
+    }
 };
+
+class GWAS_logic {
+    vector<GWAS_var> covariants;
+    string name;
+    GWAS_var y;
+    size_t m;      // dimention
+    size_t n;      // same size
+    double alpha;  // the coefficient that controls learning rate
+
+    void add_y(GWAS_var &_y) {
+        if (_y.size() != n) throw CombineERROR("y");
+        y = _y;
+        name = _y.name() + "_logic_gwas";
+    }
+
+   public:
+    GWAS_logic(GWAS_var _y, double _alpha = 0.1) : alpha(_alpha), n(_y.size()), m(1) {
+        add_y(_y);
+    }
+
+    void add_covariant(GWAS_var &cov) {
+        if (cov.size() != n) throw CombineERROR("covariant");
+        covariants.push_back(cov);
+        m++;
+    }
+    size_t dim() const { return m; }
+    size_t size() const { return n; }
+    friend class GWAS_row;
+    void print() const;
+
+};  // Gwas class for logic regression
 
 class GWAS_row {
     Loci loci;
     Alleles alleles;
     size_t n;
-    vector<int> data;
-    friend class GWAS_logic;
+    vector<double> data;
+    vector<double> b;
+    const GWAS_logic& gwas;
+    double estimate_y(size_t i); // estimate y for the ith element
 
    public:
-    GWAS_row();
-    GWAS_row(string line);
+    GWAS_row(const GWAS_logic &_gwas):gwas(_gwas), n(0){}
+    GWAS_row(const GWAS_logic& _gwas, string line);
+    void init() {
+        b = vector<double>(gwas.dim(), 0);
+    }  // m for dimension of beta
     size_t size() { return n; }
     void combine(GWAS_row &other);
+    void update_beta();
+    vector<double> &beta() { return b; }
+    SqrMatrix H();
+    double SE();
+    double t_stat() { return b[0] / SE(); }
 };
 
-class GWAS_logic {
-    vector<GWAS_var> covariants;
-    GWAS_var y;
-    vector<double> beta;
-    vector<double> est_without_row;
-    size_t m;  // dimention
-    size_t n;  // same size
-    void
-    update_est();  // update estimate intermediate result while updating beta
-    void estimate(vector<double> &y_est, GWAS_row &row);
-
-   public:
-    size_t dim() { return m; }
-    size_t size() { return n; }
-    SqrMatrix H_1(GWAS_row &row);  // return reverse of Hessian matrix
-    vector<double> Delta(GWAS_row &row);
-
-};  // Gwas class for logic regression
+inline size_t split_tab(string &line, vector<string> &parts) {
+    parts.clear();
+    string part;
+    stringstream ss(line);
+    while (getline(ss, part, '\t')) {
+        parts.push_back(part);
+    }
+    return parts.size();
+}
 
 #endif

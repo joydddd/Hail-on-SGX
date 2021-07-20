@@ -114,7 +114,7 @@ linear_test:
 clean:
 	rm -f $(OBJECTS) $(EXECUTABLE) $(EXECUTABLE)_debug $(EXECUTABLE)_profile \
       $(TESTS)  *.o
-	rm -Rf *.dSYM *.tsv *.out
+	rm -Rf *.dSYM *.tsv *.out data/ *.log .*.crc 
 
 define MAKEFILE_HELP
 * This Makefile uses advanced techniques, for more information:
