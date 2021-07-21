@@ -33,7 +33,7 @@ int main(){
 
         GWAS_var intercept(y.size());
 
-        GWAS_logic gwas(y, 0.1);// 0.1 is step coefficient for each iteration
+        GWAS_logic gwas(y);// 0.1 is step coefficient for each iteration
         gwas.add_covariant(intercept);
         gwas.add_covariant(isfemale);
 
@@ -41,12 +41,11 @@ int main(){
         GWAS_row row2(gwas, line2);
         row.combine(row2);
         row.init();
-        for (int i = 0; i < 3; i++){
-            row.update_beta();
-            cerr << "i:"<< i << " beta: " << row.beta()[0] << " t_stat: " << row.beta()[0]/row.SE() << endl;
-        }
-        for (auto xx : row.beta()) cout << "\t" <<xx;
+        if (row.fit()) cout << "converged : true" << endl;
+        cout << "beta:";
+        for (auto xx : row.beta()) cout << "\t" << xx;
         cout << endl;
+        cout << "t_stat: " << row.t_stat() << endl;
 
     } catch (ReadtsvERROR& error) {
         cerr << "ERROR: read tsv " << error.msg << endl;

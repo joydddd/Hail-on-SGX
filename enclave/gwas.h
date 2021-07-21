@@ -95,7 +95,6 @@ class GWAS_logic {
     GWAS_var y;
     size_t m;      // dimention
     size_t n;      // same size
-    double alpha;  // the coefficient that controls learning rate
 
     void add_y(GWAS_var &_y) {
         if (_y.size() != n) throw CombineERROR("y");
@@ -104,7 +103,7 @@ class GWAS_logic {
     }
 
    public:
-    GWAS_logic(GWAS_var _y, double _alpha = 0.1) : alpha(_alpha), n(_y.size()), m(1) {
+    GWAS_logic(GWAS_var _y) : n(_y.size()), m(1) {
         add_y(_y);
     }
 
@@ -126,22 +125,30 @@ class GWAS_row {
     size_t n;
     vector<double> data;
     vector<double> b;
-    const GWAS_logic& gwas;
+    vector<double> y_est;
+    const GWAS_logic &gwas;
     double estimate_y(size_t i); // estimate y for the ith element
+    void update_estimate();
+    SqrMatrix H();
+    double L();
+    vector<double> Grad();
 
    public:
     GWAS_row(const GWAS_logic &_gwas):gwas(_gwas), n(0){}
     GWAS_row(const GWAS_logic& _gwas, string line);
     void init() {
         b = vector<double>(gwas.dim(), 0);
+        update_estimate();
     }  // m for dimension of beta
     size_t size() { return n; }
     void combine(GWAS_row &other);
     void update_beta();
+    bool fit(size_t max_iteration = 25, double sig = 0.000001);
+    /* return true if converge, return false if explode*/
     vector<double> &beta() { return b; }
-    SqrMatrix H();
     double SE();
     double t_stat() { return b[0] / SE(); }
+
 };
 
 inline size_t split_tab(string &line, vector<string> &parts) {
