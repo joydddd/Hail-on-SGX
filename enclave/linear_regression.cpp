@@ -6,7 +6,7 @@ using namespace std;
 using namespace boost::math;
 
 
-XTX_row::XTX_row(string &line) {
+void XTX_row::read(string &line) {
     vector<string> parts;
     size_t xx = split_tab(line, parts);
     if (xx < 2) throw ReadtsvERROR("Line too short: " + line);
@@ -40,7 +40,9 @@ XTX_row::XTX_row(string &line) {
     XTX = SqrMatrix(XTX_vec);
 }
 
-void XTX_row::combine(const XTX_row &other) {
+void XTX_row::combine(const Row *_other) {
+    const XTX_row *t = (const XTX_row *)_other;
+    const XTX_row &other(*t);
     if (other.loci != this->loci) throw CombineERROR("locus mismatch");
     if (other.alleles != this->alleles) throw CombineERROR("alleles mismatch");
     if (other.size() != this->size()) throw CombineERROR("size mismatch");
@@ -59,7 +61,7 @@ SqrMatrix& XTX_row::INV(){
     return XTX_1;
 }
 
-XTY_row::XTY_row(string str) {
+void XTY_row::read(string &str) {
     vector<string> parts;
     split_tab(str, parts);
     if (parts.size() < 2) throw ReadtsvERROR("Line too short: " + str);
@@ -76,7 +78,9 @@ XTY_row::XTY_row(string str) {
     }
 }
 
-void XTY_row::combine(const XTY_row &other) {
+void XTY_row::combine(const Row *_other) {
+    const XTY_row *t = (const XTY_row *)_other;
+    const XTY_row &other(*t);
     if (other.loci != loci) throw CombineERROR("locus mismatch");
     if (other.alleles != alleles) throw CombineERROR("alleles mismatch");
     if (other.m != m) throw CombineERROR("XTY size mismatch");
@@ -85,7 +89,7 @@ void XTY_row::combine(const XTY_row &other) {
     }
 }
 
-SSE_row::SSE_row(string &line) {
+void SSE_row::read(string &line) {
     vector<string> parts;
     split_tab(line, parts);
     if (parts.size() != 4) throw ReadtsvERROR("Line "+line);
@@ -99,7 +103,9 @@ SSE_row::SSE_row(string &line) {
     }
 }
 
-void SSE_row::combine(SSE_row &other) {
+void SSE_row::combine(const Row *_other) {
+    const SSE_row *t = (const SSE_row *)_other;
+    const SSE_row &other(*t);
     if (other.loci != loci) throw CombineERROR("locus mismatch");
     if (other.alleles != alleles) throw CombineERROR("alleles mismatch");
     SSE += other.SSE;

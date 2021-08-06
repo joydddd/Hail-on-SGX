@@ -37,9 +37,11 @@ int main(){
         gwas.add_covariant(intercept);
         gwas.add_covariant(isfemale);
 
-        GWAS_row row(gwas, line1);
-        GWAS_row row2(gwas, line2);
-        row.combine(row2);
+        GWAS_row row(gwas);
+        row.read(line1);
+        GWAS_row row2(gwas);
+        row2.read(line2);
+        row.combine(&row2);
         row.init();
         if (row.fit()) cout << "converged : true" << endl;
         cout << "beta:";

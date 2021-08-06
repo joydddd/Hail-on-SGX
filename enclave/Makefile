@@ -84,8 +84,9 @@ define make_tests
     $(1): CXXFLAGS += -g3 -DDEBUG
     $(1): $$(OBJECTS) $(1).cpp
 	$$(CXX) $$(CXXFLAGS) $$(OBJECTS) $(1).o -o $(1)
+	./$(1)
 endef
-$(foreach test, $(TESTS), $(eval $(call make_tests, $(test))))
+$(foreach test, $(TESTS), $(eval $(call make_tests,$(test))))
 
 $(TESTS):$(TESTOBJS) $(OBJECTS)
 
@@ -106,14 +107,20 @@ clean:
 #
 # ADD YOUR OWN DEPENDENCIES HERE
 
-linear_regression.o: linear_regression.cpp gwas.h ../gwas.h \
- ../gwas_error.h ../linear_algebra/Matrix.h
-logistic_regression.o: logistic_regression.cpp gwas.h ../gwas.h \
- ../gwas_error.h ../linear_algebra/Matrix.h
-test_linear_reg.o: test_linear_reg.cpp gwas.h ../gwas.h ../gwas_error.h \
+buffer.o: buffer.cpp gwas.h type.h ../gwas.h ../gwas_error.h \
+ ../linear_algebra/Matrix.h enclave.h
+enclave.o: enclave.cpp enclave.h type.h ../gwas.h ../gwas_error.h gwas.h \
  ../linear_algebra/Matrix.h
-test_logistic_regression.o: test_logistic_regression.cpp gwas.h ../gwas.h \
+linear_regression.o: linear_regression.cpp gwas.h type.h ../gwas.h \
  ../gwas_error.h ../linear_algebra/Matrix.h
+logistic_regression.o: logistic_regression.cpp gwas.h type.h ../gwas.h \
+ ../gwas_error.h ../linear_algebra/Matrix.h
+test_enclave.o: test_enclave.cpp gwas.h type.h ../gwas.h ../gwas_error.h \
+ ../linear_algebra/Matrix.h enclave.h
+test_linear_reg.o: test_linear_reg.cpp gwas.h type.h ../gwas.h \
+ ../gwas_error.h ../linear_algebra/Matrix.h
+test_logistic_regression.o: test_logistic_regression.cpp gwas.h type.h \
+ ../gwas.h ../gwas_error.h ../linear_algebra/Matrix.h
 ######################
 # TODO (end) #
 ######################

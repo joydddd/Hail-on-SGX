@@ -54,7 +54,7 @@ void GWAS_logic::print() const {
     cout << endl;
 }
 
-GWAS_var::GWAS_var(istream &is) {
+void GWAS_var::read(istream &is) {
     string line;
     vector<string> parts;
     getline(is, line);
@@ -70,15 +70,17 @@ GWAS_var::GWAS_var(istream &is) {
 }
 
 void GWAS_var::combine(GWAS_var &other) {
-    if (name() != other.name()) throw CombineERROR("covariant/y name mismatch");
+    if (name() != other.name() && name() != "NA" && other.name() != "NA")
+        throw CombineERROR("covariant/y name mismatch");
     n += other.n;
     data.reserve(n);
     for (auto x : other.data) {
         data.push_back(x);
     }
+    if (name_str == "NA") name_str = other.name_str;
 }
 
-GWAS_row::GWAS_row(const GWAS_logic &_gwas, string line) : gwas(_gwas) {
+void GWAS_row::read(string &line){
     vector<string> parts;
     split_tab(line, parts);
     if (parts.size() < 2) throw ReadtsvERROR(line);
@@ -156,11 +158,20 @@ vector<double> GWAS_row::Grad() {
     }
     return D;
 }
+void GWAS_row::append_invalid_elts(size_t _n){
+    n += _n;
+    data.reserve(n);
+    for (size_t i = 0; i < _n; i++){
+        data.push_back(NA);
+    }
+}
 
-void GWAS_row::combine(GWAS_row &other) {
+void GWAS_row::combine(const Row *_other) {
+    const GWAS_row *t = (const GWAS_row *)_other;
+    const GWAS_row &other(*t);
     if (other.gwas.name != gwas.name) throw CombineERROR("gwas mismatch");
-    if (other.loci != loci) throw CombineERROR("locus mismatch");
-    if (other.alleles != alleles) throw CombineERROR("alleles mismatch");
+    if (other.loci != loci && loci != Loci() && other.loci != Loci()) throw CombineERROR("locus mismatch");
+    if (other.alleles != alleles && alleles != Alleles() && other.alleles != Alleles() ) throw CombineERROR("alleles mismatch");
     n += other.n;
     data.reserve(n);
     for (auto x : other.data) {

@@ -4,10 +4,21 @@
 #include <iostream>
 #include <sstream>
 #include <string>
+#define ENCLAVE_OUTPUT_BUFFER 10 // in KB
+#define ENCLAVE_READ_BUFFER 10 // in KB
+#define MAX_HOST_LENGTH 30
+
+#define ENCLAVE_OUTPUT_BUFFER_SIZE ENCLAVE_OUTPUT_BUFFER * 1024 // in B
+
+#define ENCLAVE_READ_BUFFER_SIZE ENCLAVE_READ_BUFFER*1024 // in B
+
+#define EndSperator "<EOF>" // mark end of dataset
 
 #include "gwas_error.h"
 
 using namespace std;
+
+enum Regression_T { Logistic, Linear };
 enum ALLELE : char { A = 'A', T = 'T', C = 'C', G = 'G', NaN = 'N' };
 
 class Loci {
@@ -15,8 +26,8 @@ class Loci {
     static const int X = 23;
     int chrom;
     int loc;
-    Loci(){};
-    Loci(string &str);
+    Loci():chrom(0), loc(0){}
+    Loci(const string &str);
     friend ostream &operator<<(ostream &os, const Loci &loci) {
         if (loci.chrom == X)
             os << "X";
@@ -40,6 +51,8 @@ class Loci {
     string str();
 };
 
+const Loci Loci_MAX("24:0");
+
 class Alleles {
    public:
     ALLELE a1, a2;
@@ -59,7 +72,7 @@ class Alleles {
     }
 };
 
-inline Loci::Loci(string &str) {
+inline Loci::Loci(const string &str) {
     stringstream ss(str);
     string chrom_str, loc_str;
     getline(ss, chrom_str, ':');
@@ -71,7 +84,7 @@ inline Loci::Loci(string &str) {
             chrom = stoi(chrom_str);
         loc = stoi(loc_str);
     } catch (invalid_argument &error) {
-        throw ReadtsvERROR("Unknow Loci: " + str);
+        throw ReadtsvERROR("Unknown Loci: " + str);
     }
 }
 
