@@ -5,16 +5,11 @@
 #ifdef ENC_TEST
 #include "enclave.h"
 #else
-#include "server_t.h"
+#include "gwas_t.h"
 #endif
 
 #include "enc_gwas.h"
 
-
-// TODO: impliment decryption in enclave
-void enclave_decrypt(char crypt[ENCLAVE_READ_BUFFER_SIZE], string& plaintxt) {
-    plaintxt = crypt;
-}
 
 void log_regression() {
     cout << "Logistic Regression started" << endl;
@@ -214,8 +209,8 @@ void linear_regression_beta() {
     cout << "Linear regression beta calculation finished!" << endl;
 }
 
-// void linear_regression_t_stat() {
-//     cout << "Linear regression t_stat started" << endl;
+void linear_regression_t_stat() {
+    cout << "Linear regression t_stat started" << endl;
 //     /* get host and covariant list*/
 //     char hostl[ENCLAVE_READ_BUFFER_SIZE];
 //     gethostlist(hostl);
@@ -284,4 +279,4 @@ void linear_regression_beta() {
 //     }
 //     writebatch(BETA_t, beta_buffer.copy_to_host());
 //     cout << "Linear regression beta calculation finished!" << endl;
-// }
+}

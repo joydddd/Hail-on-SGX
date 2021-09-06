@@ -1,13 +1,18 @@
 #ifdef ENC_TEST
 #include "enclave.h"
 #else
-#include "server_t.h"
+#include "gwas_t.h"
 #endif
 #include "enc_gwas.h"
 #include <chrono>
 #include <thread>
 
 using namespace std;
+
+// TODO: impliment decryption in enclave
+void enclave_decrypt(char crypt[ENCLAVE_READ_BUFFER_SIZE], string& plaintxt) {
+    plaintxt = crypt;
+}
 
 void Batch::decrypt() {
     if (!strcmp(crypt, EndSperator)) {

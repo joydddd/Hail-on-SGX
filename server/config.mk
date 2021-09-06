@@ -36,5 +36,5 @@ endif
 COMPILER = $(C_COMPILER)
 
 # Define edl
-EDL_FILE=server.edl
-PROJECTNAME = server
+EDL_FILE=gwas.edl
+PROJECTNAME = gwas

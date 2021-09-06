@@ -1,0 +1,35 @@
+enclave {
+    from "openenclave/edl/syscall.edl" import *;
+    from "platform.edl" import *;
+    include "server_type.h"
+
+    trusted {
+        public void log_regression();
+        public void linear_regression_beta();
+        public void linear_regression_t_stat();
+    };
+
+    untrusted {
+        void writebatch(
+            enum Row_T type, 
+            [in] char buffer[ENCLAVE_OUTPUT_BUFFER_SIZE]);
+
+        void getbatch(  
+            [out] const char hostname[MAX_HOST_LENGTH], 
+            enum Row_T type, 
+            [in] char batch[ENCLAVE_READ_BUFFER_SIZE]);
+
+        void gethostlist([in] char hostlist[ENCLAVE_READ_BUFFER_SIZE]);
+
+        void gety(
+            [out] const char host[MAX_HOST_LENGTH], 
+            [in] char y[ENCLAVE_READ_BUFFER_SIZE]);
+
+        void getcovlist([in] const char covlist[ENCLAVE_READ_BUFFER_SIZE]);
+
+        void getcov(
+            [out] const char host[MAX_HOST_LENGTH], 
+            [out] const char cov_name[MAX_HOST_LENGTH], 
+            [in] char cov[ENCLAVE_READ_BUFFER_SIZE]);
+    };
+};

@@ -5,14 +5,11 @@
 #include "../server_type.h"
 
 using namespace std;
-void log_regression();
-void linear_regression_beta();
-void linear_regression_t_stat();
+// void log_regression();
+// void linear_regression_beta();
+// void linear_regression_t_stat();
 
 /* TODO */
-// purly enclave function
-void enclave_decrypt(char crypt[ENCLAVE_READ_BUFFER_SIZE],
-                            string &plaintxt);
 
 
 /* enclave inoutput functions */

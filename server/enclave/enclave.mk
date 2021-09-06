@@ -24,6 +24,7 @@ CRYPTO_LDFLAGS=$(shell pkg-config oeenclave-$(COMPILER) --variable=${OE_CRYPTO_L
 
 BOOST_ROOT = /usr/local/lib/boost_1_76_0/
 # CXXFLAGS+= -I $(BOOST_ROOT)
+CFLAGS+= -I ../../include -I ..
 CXXFLAGS+= -I ../../include -I ..
 LDFLAGS+= -I ../../include -I ..
 
@@ -33,7 +34,7 @@ all:
 	$(MAKE) keys
 	$(MAKE) sign
 
-build: build_pre
+build: 
 	@ echo "Compilers used: $(CC), $(CXX)"
 	oeedger8r ../$(EDL_FILE) --trusted \
 		--search-path $(INCDIR) \
@@ -43,7 +44,7 @@ build: build_pre
 	$(CXX) -o $(EXECUTABLE) $(PROJECTNAME)_t.o $(OBJECTS) $(LDFLAGS) $(CRYPTO_LDFLAGS)
 
 sign:
-	oesign sign -e helloworldenc -c helloworld.conf -k private.pem
+	oesign sign -e $(PROJECTNAME)enc -c $(PROJECTNAME)_enc.conf -k private.pem
 
 clean:
 	rm -f $(EXECUTABLE) $(EXECUTABLE).signed private.pem public.pem \
