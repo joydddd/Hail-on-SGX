@@ -4,13 +4,6 @@
 #include <iostream>
 #include <sstream>
 #include <string>
-#define ENCLAVE_OUTPUT_BUFFER 10 // in KB
-#define ENCLAVE_READ_BUFFER 10 // in KB
-#define MAX_HOST_LENGTH 30
-
-#define ENCLAVE_OUTPUT_BUFFER_SIZE ENCLAVE_OUTPUT_BUFFER * 1024 // in B
-
-#define ENCLAVE_READ_BUFFER_SIZE ENCLAVE_READ_BUFFER*1024 // in B
 
 #define EndSperator "<EOF>" // mark end of dataset
 

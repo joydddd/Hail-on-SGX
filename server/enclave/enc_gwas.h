@@ -1,19 +1,26 @@
 #ifndef GWAS_ENCLAVE_H
 #define GWAS_ENCLAVE_H
 
-#include "type.h"
+#include "../server_type.h"
 #define NA -1
 #include <cstring>
 #include <deque>
 #include <vector>
 #include <map>
 
-#include "../gwas.h"
-#include "../linear_algebra/Matrix.h"
+#include "gwas.h"
+#include "linear_algebra/Matrix.h"
+
+#define SEAL_BATCH_SIZE 200
 
 using namespace std;
 class CombineERROR : public ERROR_t {
     using ERROR_t::ERROR_t;
+};
+
+enum Seal_T {
+    XTX_Seal,
+    BETA_Seal
 };
 
 /****
@@ -36,6 +43,8 @@ class XTY_row : public Row {
     vector<double> XTY;
     size_t m;
 
+    const Alleles& getalleles() { return alleles; }
+    const Loci& getloci() { return loci; }
     void read(string &str);
     void combine(const Row *other);
     size_t size() const { return m; }
@@ -49,13 +58,15 @@ class XTX_row : public Row {
     size_t m;
 
    public:
+    const Alleles& getalleles() { return alleles; }
+    const Loci& getloci() { return loci; }
     void read(string &line);
     void combine(const Row *other);
     void beta(vector<double> &beta, XTY_row &xty);
     size_t size() const { return m; }
     void print() {
         cout << alleles << loci << endl;
-        cout << XTX;
+        // cout << XTX;
     }
     SqrMatrix &INV();
 };
@@ -67,10 +78,13 @@ class SSE_row : public Row {
     double SSE;
 
    public:
+    const Alleles &getalleles() { return alleles; }
+    const Loci &getloci() { return loci; }
     void read(string &line);
     void combine(const Row *other);
     double t_stat(SqrMatrix &XTX_1, vector<double> &beta);
-    double p(SqrMatrix &XTX_1, vector<double> &beta);
+    // double p(SqrMatrix &XTX_1, vector<double> &beta);
+    int size() { return n; }
     /* reqires boost library. To avoid using boost:
     find t_stat and degree of freedom = n-beta.size()-1 and apply CDF of t
     distribution outside of enclave
@@ -211,7 +225,7 @@ class Buffer {
 
    public:
     Buffer(Row_T _type) : type(_type) {}
-    void add_host(string _host, size_t _size) {
+    void add_host(string _host, size_t _size=0) {
         hosts.push_back(_host);
         host_col_num.push_back(_size);
     }
@@ -231,6 +245,14 @@ class OutputBuffer {
     bool extend(const string &);  // return false if buffer is full
     char *copy_to_host();
     void print() const { printf("%s", buffer); }
+};
+
+class SealedBatch{
+    Seal_T type;
+    size_t size = 0;
+    public:
+     void addToSeal(Row *row); 
+     void seal();
 };
 
 #endif

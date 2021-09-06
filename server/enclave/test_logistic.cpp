@@ -5,16 +5,18 @@
 #define OUTPUT_FILE "test_logistic.out"
 
 #include "enclave.h"
-#include "gwas.h"
+#include <vector>
+#include <cstring>
+
 const vector<vector<string>> covFiles = {
-    {"../samples/1kg-logistic-regression/isFemale1.tsv",
-     "../samples/1kg-logistic-regression/isFemale2.tsv"}};
+    {"../../samples/1kg-logistic-regression/isFemale1.tsv",
+     "../../samples/1kg-logistic-regression/isFemale2.tsv"}};
 const vector<string> yFiles = {
-    "../samples/1kg-logistic-regression/PurpleHair1.tsv",
-    "../samples/1kg-logistic-regression/PurpleHair2.tsv"};
+    "../../samples/1kg-logistic-regression/PurpleHair1.tsv",
+    "../../samples/1kg-logistic-regression/PurpleHair2.tsv"};
 const vector<string> allelesFiles = {
-    "../samples/1kg-logistic-regression/alleles1.tsv",
-    "../samples/1kg-logistic-regression/alleles2.tsv"};
+    "../../samples/1kg-logistic-regression/alleles1.tsv",
+    "../../samples/1kg-logistic-regression/alleles2.tsv"};
 const vector<string> hostNames = {"Host1", "Host2"};
 const vector<int> host_size = {100, 150};
 

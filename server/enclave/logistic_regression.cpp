@@ -1,7 +1,7 @@
 #include <math.h>
 #include <limits>
 
-#include "gwas.h"
+#include "enc_gwas.h"
 using namespace std;
 
 int read_entry_int(string &entry) {

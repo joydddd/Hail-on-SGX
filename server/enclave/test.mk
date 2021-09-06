@@ -30,13 +30,12 @@ BOOST_ROOT = /usr/local/lib/boost_1_76_0/
 
 EXECUTABLE  = gwas
 
-PROJECTFILE = $(or $(wildcard project*.cpp $(EXECUTABLE).cpp), main.cpp)
-
 # designate which compiler to use
-CXX         = g++
+CXX         = clang++-10
 
 # list of test drivers (with main()) for development
-TESTSOURCES = $(wildcard test*.cpp)
+TESTFILES = $(wildcard test*.cpp)
+TESTSOURCES = test_logistic.cpp
 TESTOBJS = $(TESTSOURCES:%.cpp=%.o)
 # names of test executables
 TESTS       = $(TESTSOURCES:%.cpp=%)
@@ -44,19 +43,15 @@ TESTOUT     = $(TESTSOURCES:%.cpp=%.out)
 
 # list of sources used in project
 SOURCES     = $(wildcard *.cpp)
-SOURCES     := $(filter-out $(TESTSOURCES), $(SOURCES))
+SOURCES     := $(filter-out $(TESTFILES), $(SOURCES))
 # list of objects used in project
 OBJECTS     = $(SOURCES:%.cpp=%.o)
 
 #Default Flags (we prefer -std=c++17 but Mac/Xcode/Clang doesn't support)
 # CXXFLAGS = -std=c++1z -Wconversion -Wall -Werror -Wextra -pedantic 
-CXXFLAGS = -std=c++1z -pedantic 
-CXXFLAGS += -I $(BOOST_ROOT)
-
-# make release - will compile "all" with $(CXXFLAGS) and the -O3 flag
-#                also defines NDEBUG so that asserts will not check
-release: CXXFLAGS += -O3 -DNDEBUG
-release: $(EXECUTABLE)
+CXXFLAGS = -std=c++1z -pedantic
+CXXFLAGS += -DENC_TEST -I ../../include
+# CXXFLAGS += -I $(BOOST_ROOT)
 
 
 # make debug - will compile sources with $(CXXFLAGS) and the -g3 flag
@@ -92,7 +87,7 @@ $(TESTS):$(TESTOBJS) $(OBJECTS)
 
 alltests:$(TESTS)
 
-# rule for creating objects
+# rule for creating object
 %.o: %.cpp
 	$(CXX) $(CXXFLAGS) -c $*.cpp
 
@@ -106,22 +101,6 @@ clean:
 # % g++ -MM *.cpp
 #
 # ADD YOUR OWN DEPENDENCIES HERE
-
-buffer.o: buffer.cpp gwas.h type.h ../gwas.h ../gwas_error.h \
- ../linear_algebra/Matrix.h enclave.h
-enclave.o: enclave.cpp enclave.h type.h ../gwas.h ../gwas_error.h gwas.h \
- ../linear_algebra/Matrix.h
-linear_regression.o: linear_regression.cpp gwas.h type.h ../gwas.h \
- ../gwas_error.h ../linear_algebra/Matrix.h
-logistic_regression.o: logistic_regression.cpp gwas.h type.h ../gwas.h \
- ../gwas_error.h ../linear_algebra/Matrix.h
-test_enclave.o: test_enclave.cpp gwas.h type.h ../gwas.h ../gwas_error.h \
- ../linear_algebra/Matrix.h enclave.h
-test_linear_reg.o: test_linear_reg.cpp gwas.h type.h ../gwas.h \
- ../gwas_error.h ../linear_algebra/Matrix.h
-test_logistic_regression.o: test_logistic_regression.cpp gwas.h type.h \
- ../gwas.h ../gwas_error.h ../linear_algebra/Matrix.h
-######################
 # TODO (end) #
 ######################
 

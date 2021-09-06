@@ -1,0 +1,1 @@
+Do `make tests` to run on all test hosts

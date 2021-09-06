@@ -1,9 +1,9 @@
-#include "gwas.h"
+#include "enc_gwas.h"
 
-#include <boost/math/distributions/students_t.hpp>
+// #include <boost/math/distributions/students_t.hpp>
 #include <cmath>
 using namespace std;
-using namespace boost::math;
+// using namespace boost::math;
 
 
 void XTX_row::read(string &line) {
@@ -119,11 +119,11 @@ double SSE_row::t_stat(SqrMatrix &XTX_1, vector<double> &beta) {
     return beta[0] / SE;
 }
 
-double SSE_row::p(SqrMatrix &XTX_1, vector<double> &beta) {
-    double t = t_stat(XTX_1, beta);
-    double df = n - beta.size() - 1;
-    students_t t_dist(df);
-    return cdf(t_dist, t) * 2;
-}
+// double SSE_row::p(SqrMatrix &XTX_1, vector<double> &beta) {
+//     double t = t_stat(XTX_1, beta);
+//     double df = n - beta.size() - 1;
+//     students_t t_dist(df);
+//     return cdf(t_dist, t) * 2;
+// }
 
 

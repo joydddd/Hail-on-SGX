@@ -1,5 +1,11 @@
+#ifdef ENC_TEST
 #include "enclave.h"
-#include "gwas.h"
+#else
+#include "server_t.h"
+#endif
+#include "enc_gwas.h"
+#include <chrono>
+#include <thread>
 
 using namespace std;
 
@@ -62,7 +68,7 @@ void Buffer::load_batch() {
 Row* Buffer::get_nextrow(const GWAS_logic& gwas) {
     /* update until all the working batches are ready */
     bool ready = false;
-    while (!ready) {
+    while (true) {
         load_batch();
         ready = true;
         for (auto& batch : working) {
@@ -71,6 +77,11 @@ Row* Buffer::get_nextrow(const GWAS_logic& gwas) {
             else if (!batch->ready())
                 ready = false;
         }
+        if (ready)
+            break;
+        else
+            this_thread::sleep_for(
+                chrono::milliseconds(BUFFER_UPDATE_INTERVAL));
     }
     bool end = true;
     for (auto batch : working) {
