@@ -36,13 +36,15 @@ define make_tests
 	$(CXX) -o $(1)host $(PROJECTNAME)_u.o $(1).o $(LDFLAGS)
 endef
 
+
 test%host: test%.cpp
 	$(call make_tests,test$*)
 
 	
 tests: pre $(TESTS)
 
-runtests:
+runtests: tests
+	$(foreach test,$(TESTS),./$(test) ../enclave/$(PROJECTNAME)enc;)
 
 clean:
 	rm -f $(PROJECTNAME)host $(PROJECTNAME)host.o $(PROJECTNAME)_u.o $(PROJECTNAME)_u.c $(PROJECTNAME)_u.h $(PROJECTNAME)_args.h

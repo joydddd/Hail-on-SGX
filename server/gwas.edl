@@ -25,7 +25,7 @@ enclave {
             [out] const char host[MAX_HOST_LENGTH], 
             [in] char y[ENCLAVE_READ_BUFFER_SIZE]);
 
-        void getcovlist([in] const char covlist[ENCLAVE_READ_BUFFER_SIZE]);
+        void getcovlist([in] char covlist[ENCLAVE_READ_BUFFER_SIZE]);
 
         void getcov(
             [out] const char host[MAX_HOST_LENGTH], 

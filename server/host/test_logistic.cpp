@@ -177,7 +177,7 @@ int main(int argc, const char* argv[]) {
     result = oe_create_gwas_enclave(argv[1], OE_ENCLAVE_TYPE_AUTO, flags,
                                       NULL, 0, &enclave);
     if (result != OE_OK) {
-        fprintf(stderr, "oe_create_helloworld_enclave(): result=%u (%s)\n",
+        fprintf(stderr, "oe_create_gwas_enclave(): result=%u (%s)\n",
                 result, oe_result_str(result));
         goto exit;
     }
@@ -187,7 +187,7 @@ int main(int argc, const char* argv[]) {
         result = log_regression(enclave);
         if (result != OE_OK) {
             fprintf(stderr,
-                    "calling into enclave_helloworld failed: result=%u (%s)\n",
+                    "calling into enclave_gwas failed: result=%u (%s)\n",
                     result, oe_result_str(result));
             goto exit;
         }

@@ -14,7 +14,6 @@ build:
 
 tests:
 	$(MAKE) -C enclave
-	$(MAKE) -C host tests
 	$(MAKE) -C host runtests
 
 clean:
