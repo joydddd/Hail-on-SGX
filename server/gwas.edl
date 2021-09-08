@@ -8,56 +8,32 @@ enclave {
         public void log_regression();
         public void linear_regression_beta();
         public void linear_regression_t_stat();
-
-        /* setup gwas on enclave */
-        // setup clientlist in enclave
-        public bool input_clientlist([in] const char clientlist[ENCLAVE_READ_BUFFER_SIZE]);
-
-        /* for log regression */
-        // setup covariant list on enclave
-        public bool input_covlist([in] const char covlist[ENCLAVE_READ_BUFFER_SIZE]);
-
-        // input y data to enclave
-        public bool input_y(
-            [in] const char clientname[MAX_CLIENTNAME_LENGTH],
-            [in] const char y[ENCLAVE_READ_BUFFER_SIZE]);
-
-
-
-        // public void writebatch_enc([out] char buffer[ENCLAVE_OUTPUT_BUFFER_SIZE]);
     };
 
     untrusted {
-        /* enclave setup requests */
-        void req_clientlist();
-        void req_covlist();
-        void req_y([out] const char client[MAX_CLIENTNAME_LENGTH]);
+        /* get enclave setup data */
+        void getclientlist([out] char hostlist[ENCLAVE_READ_BUFFER_SIZE]);
 
-        /* input data requests*/
-/**        void req_batch([out] const char hostname[MAX_CLIENTNAME_LENGTH], 
-            enum Row_T type);
-
-
-     char* writebatch_req(enum Row_T type);
-
-
-        void getbatch(  
-            [out] const char hostname[MAX_HOST_LENGTH], 
-            enum Row_T type, 
-            [in] char batch[ENCLAVE_READ_BUFFER_SIZE]);
-
-
+        void getcovlist([out] char covlist[ENCLAVE_READ_BUFFER_SIZE]);
 
         void gety(
-            [out] const char host[MAX_HOST_LENGTH], 
-            [in] char y[ENCLAVE_READ_BUFFER_SIZE]);
-
-        void getcovlist([in] char covlist[ENCLAVE_READ_BUFFER_SIZE]);
+            [in] const char host[MAX_CLIENTNAME_LENGTH], 
+            [out] char y[ENCLAVE_READ_BUFFER_SIZE]);
 
         void getcov(
-            [out] const char host[MAX_HOST_LENGTH], 
-            [out] const char cov_name[MAX_HOST_LENGTH], 
-            [in] char cov[ENCLAVE_READ_BUFFER_SIZE]);
-**/
+            [in] const char host[MAX_CLIENTNAME_LENGTH], 
+            [in] const char cov_name[MAX_CLIENTNAME_LENGTH], 
+            [out] char cov[ENCLAVE_READ_BUFFER_SIZE]);
+
+        /* input data requests*/
+        void getbatch(  
+            [in] const char hostname[MAX_CLIENTNAME_LENGTH], 
+            enum Row_T type, 
+            [out] char batch[ENCLAVE_READ_BUFFER_SIZE]);
+
+        /* output data requests */
+        void writebatch(
+            enum Row_T type, 
+            [in] char buffer[ENCLAVE_OUTPUT_BUFFER_SIZE]);
     };
 };

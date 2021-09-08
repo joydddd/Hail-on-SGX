@@ -34,6 +34,7 @@ class Row {
     virtual void read(string &line) = 0;
     virtual void combine(const Row *other) = 0;
     virtual void append_invalid_elts(size_t size){}
+    virtual ~Row(){}
 };
 
 class XTY_row : public Row {

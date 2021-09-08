@@ -136,7 +136,8 @@ Row* Buffer::get_nextrow(const GWAS_logic& gwas) {
             } else {
                 r = new_row;
             }
-        } else {
+        } 
+        else {
             if (!r) r = new_row;
             r->append_invalid_elts(client_col_num[client_map[batch->client()]]);
         }

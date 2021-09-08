@@ -1,4 +1,5 @@
 #include <math.h>
+
 #include <limits>
 
 #include "enc_gwas.h"
@@ -22,9 +23,9 @@ int read_entry_int(string &entry) {
     return ans;
 }
 
-double max(vector<double> &vec){
+double max(vector<double> &vec) {
     double max = -numeric_limits<double>::infinity();
-    for (auto x:vec){
+    for (auto x : vec) {
         if (x > max) max = x;
     }
     return max;
@@ -80,7 +81,7 @@ void GWAS_var::combine(GWAS_var &other) {
     if (name_str == "NA") name_str = other.name_str;
 }
 
-void GWAS_row::read(string &line){
+void GWAS_row::read(string &line) {
     vector<string> parts;
     split_tab(line, parts);
     if (parts.size() < 2) throw ReadtsvERROR(line);
@@ -158,10 +159,10 @@ vector<double> GWAS_row::Grad() {
     }
     return D;
 }
-void GWAS_row::append_invalid_elts(size_t _n){
+void GWAS_row::append_invalid_elts(size_t _n) {
     n += _n;
     data.reserve(n);
-    for (size_t i = 0; i < _n; i++){
+    for (size_t i = 0; i < _n; i++) {
         data.push_back(NA);
     }
 }
@@ -170,8 +171,17 @@ void GWAS_row::combine(const Row *_other) {
     const GWAS_row *t = (const GWAS_row *)_other;
     const GWAS_row &other(*t);
     if (other.gwas.name != gwas.name) throw CombineERROR("gwas mismatch");
-    if (other.loci != loci && loci != Loci() && other.loci != Loci()) throw CombineERROR("locus mismatch");
-    if (other.alleles != alleles && alleles != Alleles() && other.alleles != Alleles() ) throw CombineERROR("alleles mismatch");
+
+    if (loci == Loci())
+        loci = other.loci;
+    else if (other.loci != loci && other.loci != Loci())
+        throw CombineERROR("locus mismatch");
+    
+    if (alleles == Alleles())
+        alleles = other.alleles;
+    else if (other.alleles != alleles && other.alleles != Alleles())
+        throw CombineERROR("alleles mismatch");
+    
     n += other.n;
     data.reserve(n);
     for (auto x : other.data) {
@@ -197,10 +207,10 @@ void GWAS_row::update_beta() {
     update_estimate();
 }
 
-bool GWAS_row::fit(size_t max_it, double sig) { 
+bool GWAS_row::fit(size_t max_it, double sig) {
     vector<double> change(gwas.dim(), 1);
     size_t it_count = 0;
-    while(it_count < max_it && max(change) > sig){
+    while (it_count < max_it && max(change) > sig) {
         vector<double> old_beta = b;
         update_beta();
         for (size_t j = 0; j < gwas.dim(); j++) {
@@ -208,7 +218,8 @@ bool GWAS_row::fit(size_t max_it, double sig) {
         }
         it_count++;
     }
-    if (it_count == max_it) return false;
+    if (it_count == max_it)
+        return false;
     else
         return true;
 }

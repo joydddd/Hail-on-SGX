@@ -35,6 +35,7 @@ CXX         = clang++-10
 
 # list of test drivers (with main()) for development
 TESTFILES = $(wildcard test*.cpp)
+EXCLUSTSOURCES = enclave_new.cpp enclave_old.cpp
 TESTSOURCES = test_logistic.cpp
 TESTOBJS = $(TESTSOURCES:%.cpp=%.o)
 # names of test executables
@@ -43,7 +44,7 @@ TESTOUT     = $(TESTSOURCES:%.cpp=%.out)
 
 # list of sources used in project
 SOURCES     = $(wildcard *.cpp)
-SOURCES     := $(filter-out $(TESTFILES), $(SOURCES))
+SOURCES     := $(filter-out $(TESTFILES) $(EXCLUSTSOURCES), $(SOURCES))
 # list of objects used in project
 OBJECTS     = $(SOURCES:%.cpp=%.o)
 
@@ -79,7 +80,8 @@ define make_tests
     $(1): CXXFLAGS += -g3 -DDEBUG
     $(1): $$(OBJECTS) $(1).cpp
 	$$(CXX) $$(CXXFLAGS) $$(OBJECTS) $(1).o -o $(1)
-	./$(1)
+	valgrind --leak-check=yes ./$(1)
+	# ./$(1)
 endef
 $(foreach test, $(TESTS), $(eval $(call make_tests,$(test))))
 
