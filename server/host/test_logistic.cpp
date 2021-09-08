@@ -8,6 +8,11 @@
 #include <vector>
 #include <string>
 #include <gwas.h>
+#include <chrono>
+#include <thread>
+
+#define MAX_ATTEMPT_TIMES 10
+#define ATTEMPT_TIMEOUT 500 // in milliseconds
 
 #include "gwas_u.h"
 using namespace std;
@@ -20,18 +25,20 @@ const vector<string> yFiles = {
 const vector<string> allelesFiles = {
     "../../samples/1kg-logistic-regression/alleles1.tsv",
     "../../samples/1kg-logistic-regression/alleles2.tsv"};
-const vector<string> hostNames = {"Host1", "Host2"};
-const vector<int> host_size = {100, 150};
+const vector<string> clientNames = {"Client1", "Client2"};
+const vector<int> client_size = {100, 150};
 
 const vector<string> covNames = {"1", "isFemale"};
 
 
-map<string, int> host_map;
+map<string, int> client_map;
 map<string, int> cov_map; 
 // index -1 is reserved for intercept
+
+static oe_enclave_t* enclave;
 void init() {
-    for (int i = 0; i < hostNames.size(); i++) {
-        host_map.insert(make_pair(hostNames[i], i));
+    for (int i = 0; i < clientNames.size(); i++) {
+        client_map.insert(make_pair(clientNames[i], i));
     }
     int j = 0;
     for (int i = 0; i < covNames.size(); i++) {
@@ -44,56 +51,51 @@ void init() {
     }
 }
 
-void getbatch(const char hostname[MAX_HOST_LENGTH], Row_T type,
-              char batch[ENCLAVE_READ_BUFFER_SIZE]) {
-    static vector<fstream> alleles_stream;
-    if (alleles_stream.empty()) {
-        for (auto& fname : allelesFiles) {
-            alleles_stream.push_back(fstream(fname));
-            if (!alleles_stream.back().is_open()) {
-                throw ReadtsvERROR("fail to open file " + fname);
-            }
-            string first_line;
-            getline(alleles_stream.back(), first_line);
-            // throw away the header line
+void req_clientlist() {
+    cerr << "Request to send clientlist" << endl;
+    stringstream list_ss;
+    for (size_t i = 0; i < clientNames.size(); i++) {
+        list_ss << clientNames[i] << "\t" << client_size[i] << "\n";
+    }
+    int i = 0;
+    oe_result_t result;
+    while (true) {
+        bool ret;
+        result = input_clientlist(enclave, &ret, list_ss.str().c_str());
+        cerr << "sent clientlist" << endl;
+        if (result != OE_OK) throw EncERROR("input_clientlist failed");
+        if (ret) return;
+        this_thread::sleep_for(chrono::milliseconds(ATTEMPT_TIMEOUT));
+        i++;
+        if (i >= 10) {
+            cerr << "Host: fail to input clientlist after " << MAX_ATTEMPT_TIMES
+                 << " attempts" << endl;
         }
     }
-    string host(hostname);
-    int index = host_map[host];
-    if (alleles_stream[index].eof()) {
-        strcpy(batch, EndSperator);
-        return;
-    }
-    stringstream buffer_ss;
-    for (size_t i = 0; i < BUFFER_LINES; i++) {
-        string line;
-        if (!getline(alleles_stream[index], line)) break;
-        buffer_ss << line << "\n";
-    }
-    if (buffer_ss.str() == "\n") {
-        strcpy(batch, EndSperator);
-        return;
-    }
-    strcpy(batch, buffer_ss.str().c_str());
 }
 
-void writebatch(Row_T type, char buffer[ENCLAVE_OUTPUT_BUFFER_SIZE]) {
-    static ofstream result_f;
-    if (!result_f.is_open()){
-        result_f.open(OUTPUT_FILE);
+void req_covlist(){
+    stringstream ss;
+    for (auto& cov : covNames) {
+        ss << cov << "\t";
     }
-    result_f << buffer;
+    oe_result_t result;
+    int i = 0;
+    while (true) {
+        bool ret;
+        result = input_covlist(enclave, &ret, ss.str().c_str());
+        if (result != OE_OK) throw EncERROR("input_covlist failed");
+        if (ret) return;
+        this_thread::sleep_for(chrono::milliseconds(ATTEMPT_TIMEOUT));
+        i++;
+        if (i >= 10) {
+            cerr << "Host: fail to input covariants list after " << MAX_ATTEMPT_TIMES
+                 << " attempts" << endl;
+        }
+    }
 }
 
-void gethostlist(char hostlist[ENCLAVE_READ_BUFFER_SIZE]) {
-    stringstream list_ss;
-    for (size_t i = 0; i < hostNames.size(); i++) {
-        list_ss << hostNames[i] << "\t" << host_size[i] << "\n";
-    }
-    strcpy(hostlist, list_ss.str().c_str());
-}
-
-void gety(const char host[MAX_HOST_LENGTH], char y[ENCLAVE_READ_BUFFER_SIZE]) {
+void req_y(const char client[MAX_CLIENTNAME_LENGTH]) {
     static vector<ifstream> y_fstreams;
     if (y_fstreams.empty()) {
         for (auto& y_file : yFiles) {
@@ -102,47 +104,26 @@ void gety(const char host[MAX_HOST_LENGTH], char y[ENCLAVE_READ_BUFFER_SIZE]) {
                 throw ReadtsvERROR("fail to open file " + y_file);
         }
     }
-    string host_name(host);
-    int index = host_map[host_name];
+    string client_name(client);
+    int index = client_map[client_name];
     stringstream ss;
     ss << y_fstreams[index].rdbuf();
-    strcpy(y, ss.str().c_str());
-}
 
-void getcovlist(char covlist[ENCLAVE_READ_BUFFER_SIZE]) {
-    stringstream ss;
-    for(auto& cov:covNames){
-        ss << cov << "\t";
-    }
-    strcpy(covlist, ss.str().c_str());
-}
 
-void getcov(const char host[MAX_HOST_LENGTH], const char cov_name[MAX_HOST_LENGTH],
-            char cov[ENCLAVE_READ_BUFFER_SIZE]) {
-    if (cov_name == "1") {
-        strcpy(cov, "1");
-        return;
-    }
-    static vector<vector<ifstream>> cov_streams;
-    if (cov_streams.empty()) {
-        for(auto& cov:covNames){
-            if (cov == "1") continue;
-            cov_streams.push_back(vector<ifstream>());
-            for (auto& cov_file : covFiles[cov_map[cov]]) {
-                cov_streams[cov_map[cov]].push_back(ifstream(cov_file));
-                if (!cov_streams[cov_map[cov]].back().is_open())
-                    throw ReadtsvERROR("fail to open file " + cov_file);
-            }
+    oe_result_t result;
+    int i = 0;
+    while (true) {
+        bool ret;
+        result = input_y(enclave, &ret, client_name.c_str(), ss.str().c_str());
+        if (result != OE_OK) throw EncERROR("input_y failed");
+        if (ret) return;
+        this_thread::sleep_for(chrono::milliseconds(ATTEMPT_TIMEOUT));
+        i++;
+        if (i >= 10) {
+            cerr << "Host: fail to input y after "
+                 << MAX_ATTEMPT_TIMES << " attempts" << endl;
         }
-
     }
-    string cov_str(cov_name);
-    string host_str(host);
-    int cov_index = cov_map[cov_str];
-    int host_index = host_map[host_str];
-    stringstream ss;
-    ss << cov_streams[cov_index][host_index].rdbuf();
-    strcpy(cov, ss.str().c_str());
 }
 
 bool check_simulate_opt(int* argc, const char* argv[]) {
@@ -160,7 +141,7 @@ bool check_simulate_opt(int* argc, const char* argv[]) {
 int main(int argc, const char* argv[]) {
     oe_result_t result;
     int ret = 1;
-    oe_enclave_t* enclave = NULL;
+    enclave = NULL;
 
     uint32_t flags = OE_ENCLAVE_FLAG_DEBUG;
     if (check_simulate_opt(&argc, argv)) {
@@ -192,7 +173,10 @@ int main(int argc, const char* argv[]) {
             goto exit;
         }
     } catch (ERROR_t& err) {
-        cerr << err.msg << endl;
+        cerr << "ERROR: " << err.msg << endl;
+    } catch (SysERROR& err) {
+        cerr << "ERROR: " << err.msg << endl;
+        goto exit;
     }
 
     ret = 0;

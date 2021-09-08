@@ -1,5 +1,5 @@
 #ifdef ENC_TEST
-#include "enclave.h"
+#include "enclave_old.h"
 #else
 #include "gwas_t.h"
 #endif
@@ -42,15 +42,15 @@ void Batch::pop() {
 }
 
 void Buffer::init() {
-    working = vector<Batch*>(hosts.size(), nullptr);
-    to_decrypt = vector<Batch*>(hosts.size(), nullptr);
-    for (int i = 0; i < hosts.size(); i++) {
-        host_map.insert(make_pair(hosts[i], i));
+    working = vector<Batch*>(clients.size(), nullptr);
+    to_decrypt = vector<Batch*>(clients.size(), nullptr);
+    for (int i = 0; i < clients.size(); i++) {
+        client_map.insert(make_pair(clients[i], i));
     }
 }
 
 void Buffer::load_batch() {
-    for (size_t i = 0; i < hosts.size(); i++) {
+    for (size_t i = 0; i < clients.size(); i++) {
         /* decrypt new batch if the working batch is empty */
         if (working[i]) {
             if (working[i]->ready()) continue;
@@ -61,8 +61,8 @@ void Buffer::load_batch() {
         if (working[i]) working[i]->decrypt();
 
         /* get newbatch */
-        to_decrypt[i] = new Batch(LOG_t, hosts[i]);
-        getbatch(hosts[i].c_str(), type, to_decrypt[i]->crypt);
+        to_decrypt[i] = new Batch(LOG_t, clients[i]);
+        getbatch(clients[i].c_str(), type, to_decrypt[i]->crypt);
         if (!to_decrypt[i]->crypt) {
             delete to_decrypt[i];
             to_decrypt[i] = nullptr;
@@ -127,7 +127,7 @@ Row* Buffer::get_nextrow(const GWAS_logic& gwas) {
             } catch (ReadtsvERROR& err){
                 cerr << "ERROR: invalid line: " << batch->toprow() << endl;
                 cerr << err.msg << endl;
-                r->append_invalid_elts(host_col_num[host_map[batch->host()]]);
+                r->append_invalid_elts(client_col_num[client_map[batch->client()]]);
             }
             batch->pop();
             if (r) {
@@ -138,7 +138,7 @@ Row* Buffer::get_nextrow(const GWAS_logic& gwas) {
             }
         } else {
             if (!r) r = new_row;
-            r->append_invalid_elts(host_col_num[host_map[batch->host()]]);
+            r->append_invalid_elts(client_col_num[client_map[batch->client()]]);
         }
     }
     return r;

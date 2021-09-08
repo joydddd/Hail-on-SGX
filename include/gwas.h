@@ -4,6 +4,7 @@
 #include <iostream>
 #include <sstream>
 #include <string>
+#include "buffer_size.h"
 
 #define EndSperator "<EOF>" // mark end of dataset
 

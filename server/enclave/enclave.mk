@@ -8,10 +8,11 @@ EXECUTABLE = $(PROJECTNAME)enc
 
 # list of test drivers (with main()) for development
 TESTSOURCES = $(wildcard test*.cpp)
+EXCLUSTSOURCES = enclave_old.cpp buffer.cpp
 
 # list of sources used in project
 SOURCES     = $(wildcard *.cpp)
-SOURCES     := $(filter-out $(TESTSOURCES), $(SOURCES))
+SOURCES     := $(filter-out $(TESTSOURCES) $(EXCLUSTSOURCES), $(SOURCES))
 # list of objects used in project
 OBJECTS     = $(SOURCES:%.cpp=%.o)
 

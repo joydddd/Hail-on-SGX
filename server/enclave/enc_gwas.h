@@ -124,15 +124,17 @@ class GWAS_logic {
     size_t m;  // dimention
     size_t n;  // same size
 
-    void add_y(GWAS_var &_y) {
-        if (_y.size() != n) throw CombineERROR("y");
-        y = _y;
-        name = _y.name() + "_logic_gwas";
-    }
 
    public:
     GWAS_logic() : n(0), m(0) {}
     GWAS_logic(GWAS_var _y) : n(_y.size()), m(1) { add_y(_y); }
+
+    void add_y(GWAS_var &_y) {
+        n = _y.size();
+        m = 1;
+        y = _y;
+        name = _y.name() + "_logic_gwas";
+    }
 
     void add_covariant(GWAS_var &cov) {
         if (cov.size() != n) throw CombineERROR("covariant");
@@ -193,7 +195,7 @@ inline size_t split_tab(string &line, vector<string> &parts) {
 /* Buffer Management */
 
 class Batch {
-    string h;
+    string c;
     char crypt[ENCLAVE_READ_BUFFER_SIZE];
     Row_T type;
     deque<string> rows;
@@ -202,9 +204,9 @@ class Batch {
     bool e;  // true if this batch  is the end of file.
 
    public:
-    Batch(Row_T _type, string _host)
-        : type(_type), h(_host), r(false), e(false) {}
-    string host() { return h; }
+    Batch(Row_T _type, string _client)
+        : type(_type), c(_client), r(false), e(false) {}
+    string client() { return c; }
     void decrypt();
     bool end() { return e; }
     bool ready() { return r; }
@@ -218,18 +220,18 @@ class Batch {
 class Buffer {
     vector<Batch *> to_decrypt;
     vector<Batch *> working;
-    map<string, int> host_map;
-    vector<string> hosts;
-    vector<size_t> host_col_num;
+    map<string, int> client_map;
+    vector<string> clients;
+    vector<size_t> client_col_num;
     Row_T type;
 
    public:
     Buffer(Row_T _type) : type(_type) {}
-    void add_host(string _host, size_t _size=0) {
-        hosts.push_back(_host);
-        host_col_num.push_back(_size);
+    void add_client(string _client, size_t _size=0) {
+        clients.push_back(_client);
+        client_col_num.push_back(_size);
     }
-    void init();  // init after adding all the hosts
+    void init();  // init after adding all the clients
     void load_batch();
     Row *get_nextrow(const GWAS_logic &gwas = GWAS_logic());
     // return nullptr if reaches end of all datasets

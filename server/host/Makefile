@@ -43,8 +43,8 @@ test%host: test%.cpp
 	
 tests: pre $(TESTS)
 
-runtests: tests
-	$(foreach test,$(TESTS),./$(test) ../enclave/$(PROJECTNAME)enc;)
+runtests: $(TESTS)
+	$(foreach test,$(TESTS),./$(test) ../enclave/$(PROJECTNAME)enc.signed;)
 
 clean:
 	rm -f $(PROJECTNAME)host $(PROJECTNAME)host.o $(PROJECTNAME)_u.o $(PROJECTNAME)_u.c $(PROJECTNAME)_u.h $(PROJECTNAME)_args.h
