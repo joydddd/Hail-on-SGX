@@ -3,9 +3,10 @@
 #else
 #include "gwas_t.h"
 #endif
-#include "enc_gwas.h"
 #include <chrono>
 #include <thread>
+
+#include "enc_gwas.h"
 
 using namespace std;
 
@@ -18,10 +19,13 @@ void Batch::decrypt() {
     if (!strcmp(crypt, EndSperator)) {
         e = true;
         r = true;
+        f = true;
         return;
     }
     string plaintxt;
     enclave_decrypt(crypt, plaintxt);
+    delete[] crypt;
+    crypt = nullptr;
     stringstream pss(plaintxt);
     string line;
     while (getline(pss, line)) {
@@ -38,12 +42,13 @@ void Batch::decrypt() {
 void Batch::pop() {
     rows.pop_front();
     locus.pop_front();
-    if (locus.empty()) r = false;
+    if (locus.empty()) f = true;
 }
 
 void Buffer::init() {
     working = vector<Batch*>(clients.size(), nullptr);
-    to_decrypt = vector<Batch*>(clients.size(), nullptr);
+    loading = vector<Batch*>(clients.size(), nullptr);
+    end = vector<bool>(clients.size(), false);
     for (int i = 0; i < clients.size(); i++) {
         client_map.insert(make_pair(clients[i], i));
     }
@@ -51,48 +56,62 @@ void Buffer::init() {
 
 void Buffer::load_batch() {
     for (size_t i = 0; i < clients.size(); i++) {
-        /* decrypt new batch if the working batch is empty */
-        if (working[i]) {
-            if (working[i]->ready()) continue;
-            if (working[i]->end()) continue;
-            delete working[i];
-        }
-        working[i] = to_decrypt[i];
-        if (working[i]) working[i]->decrypt();
-
-        /* get newbatch */
-        to_decrypt[i] = new Batch(LOG_t, clients[i]);
-        getbatch(clients[i].c_str(), type, to_decrypt[i]->crypt);
-        if (!to_decrypt[i]->crypt) {
-            delete to_decrypt[i];
-            to_decrypt[i] = nullptr;
+        if (!loading[i] && !end[i]) {
+            loading[i] = new Batch(LOG_t, clients[i]);
+            if (getbatch(clients[i].c_str(), type, loading[i]->load_addr())) {
+                loading[i]->decrypt();
+                /* signal shifting */
+            } else {
+                delete loading[i];
+                loading[i] = nullptr;
+            }
         }
     }
 }
 
-Row* Buffer::get_nextrow(const GWAS_logic& gwas) {
-    /* update until all the working batches are ready */
-    bool ready = false;
-    while (true) {
-        load_batch();
-        ready = true;
-        for (auto& batch : working) {
-            if (!batch)
-                ready = false;  // if batch is nullptr
-            else if (!batch->ready())
-                ready = false;
+// call from computing
+bool Buffer::shift_batch() {
+    load_batch();  // for single threading purpose
+    bool ready = true;
+    for (size_t i = 0; i < clients.size(); i++) {
+        // delete finished batches finshed computing
+        if (end[i]) continue;
+        if (working[i]) {
+            if (!working[i]->finished()) continue;
+            delete working[i];
+            working[i] = nullptr;
         }
-        if (ready)
-            break;
-        else
-            this_thread::sleep_for(
-                chrono::milliseconds(BUFFER_UPDATE_INTERVAL));
+
+        // shift loading batch if ready
+        if (!loading[i]) {
+            ready = false;
+            continue;
+        }
+        if (!loading[i]->ready()) {
+            ready = false;
+            continue;
+        }
+        working[i] = loading[i];
+        loading[i] = nullptr;
+        if (working[i]->end()) end[i] = true;
+
+        /* signal loading here */
     }
-    bool end = true;
-    for (auto batch : working) {
-        if (!batch->end()) end = false;
+    return ready;
+}
+
+Row* Buffer::get_nextrow(const GWAS_logic& gwas) {
+    /* shift until all the working batches are ready */
+    while (!shift_batch()) {
+        this_thread::sleep_for(chrono::milliseconds(BUFFER_UPDATE_INTERVAL));
     }
-    if (end) return nullptr;
+
+    /* check if all sequences has reached an end */
+    bool finished = true;
+    for (auto batch_end : end) {
+        finished = batch_end && finished;
+    }
+    if (finished) return nullptr;
 
     /* find the smallest loci */
     Loci loci = Loci_MAX;
@@ -102,6 +121,7 @@ Row* Buffer::get_nextrow(const GWAS_logic& gwas) {
     }
     if (loci == Loci_MAX)
         throw CombineERROR("cannot find valid loci in buffer");
+    // cerr << loci << endl;
 
     /* create row accordingly */
     Row* r = nullptr;
@@ -124,25 +144,39 @@ Row* Buffer::get_nextrow(const GWAS_logic& gwas) {
         if (!batch->end() && batch->toploci() == loci) {
             try {
                 new_row->read(batch->toprow());
-            } catch (ReadtsvERROR& err){
+                batch->pop();
+                if (r) {
+                    r->combine(new_row);
+                    delete new_row;
+                } else {
+                    r = new_row;
+                }
+            } catch (ReadtsvERROR& err) {
+                batch->pop();
                 cerr << "ERROR: invalid line: " << batch->toprow() << endl;
                 cerr << err.msg << endl;
-                r->append_invalid_elts(client_col_num[client_map[batch->client()]]);
-            }
-            batch->pop();
-            if (r) {
-                r->combine(new_row);
+                r->append_invalid_elts(
+                    client_col_num[client_map[batch->client()]]);
                 delete new_row;
-            } else {
-                r = new_row;
             }
-        } 
-        else {
-            if (!r) r = new_row;
+        } else {
+            if (!r)
+                r = new_row;
+            else
+                delete new_row;
             r->append_invalid_elts(client_col_num[client_map[batch->client()]]);
         }
     }
     return r;
+}
+
+Buffer::~Buffer() {
+    for (auto batch : loading) {
+        if (batch) delete batch;
+    }
+    for (auto batch : working) {
+        if (batch) delete batch;
+    }
 }
 
 bool OutputBuffer::extend(const string& line) {

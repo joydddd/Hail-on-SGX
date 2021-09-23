@@ -1,2 +1,2 @@
-include enclave.mk
-# include test.mk
+# include enclave.mk
+include test.mk

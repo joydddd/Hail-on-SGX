@@ -14,28 +14,28 @@ void log_regression();
 
 /* enclave inoutput functions */
 /* host function that can be called from enclave */
-void writebatch(Row_T type, char buffer[ENCLAVE_OUTPUT_BUFFER_SIZE]);
+bool writebatch(Row_T type, char buffer[ENCLAVE_OUTPUT_BUFFER_SIZE]);
 // copy encrypted batch to host machine
 // return nullptr while there is not batch avaible.
 
 
-void getbatch(const char hostname[MAX_CLIENTNAME_LENGTH], Row_T type,
+bool getbatch(const char hostname[MAX_CLIENTNAME_LENGTH], Row_T type,
                      char batch[ENCLAVE_READ_BUFFER_SIZE]);
 // get batch from outside of enclave
 // return nullptr if the next batch hasn't arrived
 // return const char* EndSperator if reaches end of dataset
 
-void getclientlist(char hostlist[ENCLAVE_READ_BUFFER_SIZE]);
+bool getclientlist(char hostlist[ENCLAVE_READ_BUFFER_SIZE]);
 // copy hostlist from host machine to enclave
 
-void gety(const char host[MAX_CLIENTNAME_LENGTH],
+bool gety(const char host[MAX_CLIENTNAME_LENGTH],
           char y[ENCLAVE_READ_BUFFER_SIZE]);
 // copy y from host machine to enclave;
 
-void getcovlist(char covlist[ENCLAVE_READ_BUFFER_SIZE]);
+bool getcovlist(char covlist[ENCLAVE_READ_BUFFER_SIZE]);
 // get covariantnumber from host
 
-void getcov(const char host[MAX_CLIENTNAME_LENGTH],
+bool getcov(const char host[MAX_CLIENTNAME_LENGTH],
             const char cov_name[MAX_CLIENTNAME_LENGTH],
             char cov[ENCLAVE_READ_BUFFER_SIZE]);
 // copy no. covariant from host to enclave

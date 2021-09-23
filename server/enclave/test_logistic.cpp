@@ -41,23 +41,25 @@ void init() {
     }
 }
 
-void getclientlist(char clientlist[ENCLAVE_READ_BUFFER_SIZE]) {
+bool getclientlist(char clientlist[ENCLAVE_READ_BUFFER_SIZE]) {
     stringstream list_ss;
     for (size_t i = 0; i < clientNames.size(); i++) {
         list_ss << clientNames[i] << "\t" << client_size[i] << "\n";
     }
     strcpy(clientlist, list_ss.str().c_str());
+    return true;
 }
 
-void getcovlist(char covlist[ENCLAVE_READ_BUFFER_SIZE]) {
+bool getcovlist(char covlist[ENCLAVE_READ_BUFFER_SIZE]) {
     stringstream ss;
     for (auto& cov : covNames) {
         ss << cov << "\t";
     }
     strcpy(covlist, ss.str().c_str());
+    return true;
 }
 
-void gety(const char client[MAX_CLIENTNAME_LENGTH],
+bool gety(const char client[MAX_CLIENTNAME_LENGTH],
           char y[ENCLAVE_READ_BUFFER_SIZE]) {
     static vector<ifstream> y_fstreams;
     if (y_fstreams.empty()) {
@@ -72,14 +74,15 @@ void gety(const char client[MAX_CLIENTNAME_LENGTH],
     stringstream ss;
     ss << y_fstreams[index].rdbuf();
     strcpy(y, ss.str().c_str());
+    return true;
 }
 
-void getcov(const char client[MAX_CLIENTNAME_LENGTH],
+bool getcov(const char client[MAX_CLIENTNAME_LENGTH],
             const char cov_name[MAX_CLIENTNAME_LENGTH],
             char cov[ENCLAVE_READ_BUFFER_SIZE]) {
     if (cov_name == "1") {
         strcpy(cov, "1");
-        return;
+        return true;
     }
     static vector<vector<ifstream>> cov_streams;
     if (cov_streams.empty()) {
@@ -100,9 +103,10 @@ void getcov(const char client[MAX_CLIENTNAME_LENGTH],
     stringstream ss;
     ss << cov_streams[cov_index][client_index].rdbuf();
     strcpy(cov, ss.str().c_str());
+    return true;
 }
 
-void getbatch(const char client[MAX_CLIENTNAME_LENGTH], Row_T type,
+bool getbatch(const char client[MAX_CLIENTNAME_LENGTH], Row_T type,
               char batch[ENCLAVE_READ_BUFFER_SIZE]) {
     static vector<fstream> alleles_stream;
     if (alleles_stream.empty()) {
@@ -120,7 +124,7 @@ void getbatch(const char client[MAX_CLIENTNAME_LENGTH], Row_T type,
     int index = client_map[client_str];
     if (alleles_stream[index].eof()) {
         strcpy(batch, EndSperator);
-        return;
+        return true;
     }
     stringstream buffer_ss;
     for (size_t i = 0; i < BUFFER_LINES; i++) {
@@ -130,17 +134,19 @@ void getbatch(const char client[MAX_CLIENTNAME_LENGTH], Row_T type,
     }
     if (buffer_ss.str() == "\n") {
         strcpy(batch, EndSperator);
-        return;
+        return true;
     }
     strcpy(batch, buffer_ss.str().c_str());
+    return true;
 }
 
-void writebatch(Row_T type, char buffer[ENCLAVE_OUTPUT_BUFFER_SIZE]) {
+bool writebatch(Row_T type, char buffer[ENCLAVE_OUTPUT_BUFFER_SIZE]) {
     static ofstream result_f;
     if (!result_f.is_open()) {
         result_f.open(OUTPUT_FILE);
     }
     result_f << buffer;
+    return true;
 }
 
 int main() {

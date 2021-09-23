@@ -76,6 +76,7 @@ void log_regression() {
         }
         gwas.add_covariant(cov_var);
     }
+    delete[] cov_buffer;
     cout << "GWAS setup finished" << endl;
 
     /* setup read buffer */

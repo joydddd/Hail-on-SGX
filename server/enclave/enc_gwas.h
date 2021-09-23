@@ -5,8 +5,8 @@
 #define NA -1
 #include <cstring>
 #include <deque>
-#include <vector>
 #include <map>
+#include <vector>
 
 #include "gwas.h"
 #include "linear_algebra/Matrix.h"
@@ -18,10 +18,7 @@ class CombineERROR : public ERROR_t {
     using ERROR_t::ERROR_t;
 };
 
-enum Seal_T {
-    XTX_Seal,
-    BETA_Seal
-};
+enum Seal_T { XTX_Seal, BETA_Seal };
 
 /****
  * statics calculation
@@ -33,8 +30,8 @@ class Row {
    public:
     virtual void read(string &line) = 0;
     virtual void combine(const Row *other) = 0;
-    virtual void append_invalid_elts(size_t size){}
-    virtual ~Row(){}
+    virtual void append_invalid_elts(size_t size) {}
+    virtual ~Row() {}
 };
 
 class XTY_row : public Row {
@@ -44,8 +41,8 @@ class XTY_row : public Row {
     vector<double> XTY;
     size_t m;
 
-    const Alleles& getalleles() { return alleles; }
-    const Loci& getloci() { return loci; }
+    const Alleles &getalleles() { return alleles; }
+    const Loci &getloci() { return loci; }
     void read(string &str);
     void combine(const Row *other);
     size_t size() const { return m; }
@@ -59,8 +56,8 @@ class XTX_row : public Row {
     size_t m;
 
    public:
-    const Alleles& getalleles() { return alleles; }
-    const Loci& getloci() { return loci; }
+    const Alleles &getalleles() { return alleles; }
+    const Loci &getloci() { return loci; }
     void read(string &line);
     void combine(const Row *other);
     void beta(vector<double> &beta, XTY_row &xty);
@@ -124,7 +121,6 @@ class GWAS_logic {
     GWAS_var y;
     size_t m;  // dimention
     size_t n;  // same size
-
 
    public:
     GWAS_logic() : n(0), m(0) {}
@@ -196,46 +192,83 @@ inline size_t split_tab(string &line, vector<string> &parts) {
 /* Buffer Management */
 
 class Batch {
+    /* meta data */
     string c;
-    char crypt[ENCLAVE_READ_BUFFER_SIZE];
     Row_T type;
+    /* status */
+    bool r = false;  // ready if has been decrypted and isn't empty
+    bool e = false;  // true if this batch is the end of file.
+    bool f = false;  // true if the batch has finished computing
+
+    /* loading data */
+    char *crypt;
+    /* computing data */
     deque<string> rows;
     deque<Loci> locus;
-    bool r;  // ready if has been decrypted and isn't empty
-    bool e;  // true if this batch  is the end of file.
 
    public:
-    Batch(Row_T _type, string _client)
-        : type(_type), c(_client), r(false), e(false) {}
+    /* initialize */
+    Batch(Row_T _type, string _client) : type(_type), c(_client) {
+        crypt = new char[ENCLAVE_READ_BUFFER_SIZE];
+    }
+    ~Batch() {
+        if (crypt) delete[] crypt;
+    }
+
+    /* return metadata/status */
     string client() { return c; }
+    bool end() { return e; }    // is the last batch from this client
+    bool ready() { return r; }  // ready for computing
+    bool finished() { return f; }
+
+    /* loading methods */
+    char *load_addr() { return crypt; }
     void decrypt();
-    bool end() { return e; }
-    bool ready() { return r; }
+
+    /* computing methods */
+    // need to check if the batch is empty before calling these methods
     Loci toploci() { return locus.front(); }
-    // catch if emtpy before calling this!
     void pop();
     string &toprow() { return rows.front(); }
-    friend class Buffer;
 };
 
 class Buffer {
-    vector<Batch *> to_decrypt;
-    vector<Batch *> working;
+    /* define on init */
     map<string, int> client_map;
     vector<string> clients;
     vector<size_t> client_col_num;
     Row_T type;
 
+    /* data */
+    vector<Batch *> loading;
+    vector<Batch *> working;
+
+    /* status */
+    vector<bool> end;  // track clients that have reaches their end
+
+    /* mutex */
+    // TODO
+
    public:
+    /* initializing */
     Buffer(Row_T _type) : type(_type) {}
-    void add_client(string _client, size_t _size=0) {
+    void add_client(string _client, size_t _size = 0) {
         clients.push_back(_client);
         client_col_num.push_back(_size);
     }
     void init();  // init after adding all the clients
-    void load_batch();
+
+    /* loading methods */
+    void load_batch();  // load batch if needed
+
+    /* computing methods */
+    bool shift_batch();  // shift batch from loading to computing. return true
+                         // if all batches are available
     Row *get_nextrow(const GWAS_logic &gwas = GWAS_logic());
     // return nullptr if reaches end of all datasets
+
+    // destructor
+    ~Buffer();
 };
 
 class OutputBuffer {
@@ -250,12 +283,13 @@ class OutputBuffer {
     void print() const { printf("%s", buffer); }
 };
 
-class SealedBatch{
+class SealedBatch {
     Seal_T type;
     size_t size = 0;
-    public:
-     void addToSeal(Row *row); 
-     void seal();
+
+   public:
+    void addToSeal(Row *row);
+    void seal();
 };
 
 #endif
