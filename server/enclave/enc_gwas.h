@@ -11,12 +11,9 @@
 #include "gwas.h"
 #include "linear_algebra/Matrix.h"
 
-#define SEAL_BATCH_SIZE 200
 
-using namespace std;
-class CombineERROR : public ERROR_t {
-    using ERROR_t::ERROR_t;
-};
+    using namespace std;
+
 
 enum Seal_T { XTX_Seal, BETA_Seal };
 
@@ -62,10 +59,9 @@ class XTX_row : public Row {
     void combine(const Row *other);
     void beta(vector<double> &beta, XTY_row &xty);
     size_t size() const { return m; }
-    void print() {
-        cout << alleles << loci << endl;
-        // cout << XTX;
-    }
+#ifdef DEBUG
+    void print() { cout << alleles << loci << endl; }
+#endif
     SqrMatrix &INV();
 };
 
@@ -91,22 +87,22 @@ class SSE_row : public Row {
 
 /* for logistic regression */
 
-class GWAS_var {
+class Log_var {
     vector<double> data;
     size_t n;
     string name_str;
-    friend class GWAS_row;
-    friend class GWAS_logic;
+    friend class Log_row;
+    friend class Log_gwas;
 
    public:
-    GWAS_var() : n(0), name_str("NA") {}
-    GWAS_var(istream &is) { read(is); }
+    Log_var() : n(0), name_str("NA") {}
+    Log_var(istream &is) { read(is); }
     void read(istream &is);
-    GWAS_var(size_t size, int x = 1) : data(size, x), n(size), name_str("1") {}
+    Log_var(size_t size, int x = 1) : data(size, x), n(size), name_str("1") {}
     size_t size() { return n; }
-    void combine(GWAS_var &other);
+    void combine(Log_var &other);
     string name() { return name_str; }
-    GWAS_var &operator=(GWAS_var &rhs) {
+    Log_var &operator=(Log_var &rhs) {
         if (this == &rhs) return *this;
         data = rhs.data;
         n = rhs.n;
@@ -115,68 +111,84 @@ class GWAS_var {
     }
 };
 
-class GWAS_logic {
-    vector<GWAS_var> covariants;
+class Log_gwas {
+    vector<Log_var> covariants;
     string name;
-    GWAS_var y;
+    Log_var y;
     size_t m;  // dimention
     size_t n;  // same size
 
    public:
-    GWAS_logic() : n(0), m(0) {}
-    GWAS_logic(GWAS_var _y) : n(_y.size()), m(1) { add_y(_y); }
+    Log_gwas() : n(0), m(0) {}
+    Log_gwas(Log_var _y) : n(_y.size()), m(1) { add_y(_y); }
 
-    void add_y(GWAS_var &_y) {
+    void add_y(Log_var &_y) {
         n = _y.size();
         m = 1;
         y = _y;
         name = _y.name() + "_logic_gwas";
     }
 
-    void add_covariant(GWAS_var &cov) {
+    void add_covariant(Log_var &cov) {
         if (cov.size() != n) throw CombineERROR("covariant");
         covariants.push_back(cov);
         m++;
     }
     size_t dim() const { return m; }
     size_t size() const { return n; }
-    friend class GWAS_row;
+    friend class Log_row;
+#ifdef DEBUG
     void print() const;
+#endif
 
 };  // Gwas class for logic regression
 
-class GWAS_row : public Row {
+class Log_row : public Row {
+    /* meta data */
     Loci loci;
     Alleles alleles;
     size_t n;
+    const Log_gwas &gwas;
+
+    /* data */
     vector<double> data;
+
+    /* model data */
     vector<double> b;
     vector<double> y_est;
-    const GWAS_logic &gwas;
+    double standard_error;
+    bool fitted = false;
+
     double estimate_y(size_t i);  // estimate y for the ith element
     void update_estimate();
+    void update_beta();
     SqrMatrix H();
     double L();
     vector<double> Grad();
-
-   public:
-    GWAS_row(const GWAS_logic &_gwas) : gwas(_gwas), n(0) {}
-    void read(string &line);
     void init() {
         b = vector<double>(gwas.dim(), 0);
         update_estimate();
     }  // m for dimension of beta
-    size_t size() { return n; }
-    void append_invalid_elts(size_t _n);
+
+   public:
+    /* setup */
+    Log_row(const Log_gwas &_gwas) : gwas(_gwas), n(0) {}
+    void read(string &line);
     void combine(const Row *other);
-    void update_beta();
-    bool fit(size_t max_iteration = 25, double sig = 0.000001);
-    /* return true if converge, return false if explode*/
-    vector<double> &beta() { return b; }
-    double SE();
-    double t_stat() { return b[0] / SE(); }
+    void append_invalid_elts(size_t _n);
+
+    /* resturn metadata */
     Loci getloci() { return loci; }
     Alleles getallels() { return alleles; }
+    size_t size() { return n; }
+
+    /* fitting */
+    // return true if converge, return false if explode
+    bool fit(size_t max_iteration = 25, double sig = 0.000001);
+
+    /* output results */
+    vector<double> beta();
+    double t_stat();
 };
 
 inline size_t split_tab(string &line, vector<string> &parts) {
@@ -188,108 +200,5 @@ inline size_t split_tab(string &line, vector<string> &parts) {
     }
     return parts.size();
 }
-
-/* Buffer Management */
-
-class Batch {
-    /* meta data */
-    string c;
-    Row_T type;
-    /* status */
-    bool r = false;  // ready if has been decrypted and isn't empty
-    bool e = false;  // true if this batch is the end of file.
-    bool f = false;  // true if the batch has finished computing
-
-    /* loading data */
-    char *crypt;
-    /* computing data */
-    deque<string> rows;
-    deque<Loci> locus;
-
-   public:
-    /* initialize */
-    Batch(Row_T _type, string _client) : type(_type), c(_client) {
-        crypt = new char[ENCLAVE_READ_BUFFER_SIZE];
-    }
-    ~Batch() {
-        if (crypt) delete[] crypt;
-    }
-
-    /* return metadata/status */
-    string client() { return c; }
-    bool end() { return e; }    // is the last batch from this client
-    bool ready() { return r; }  // ready for computing
-    bool finished() { return f; }
-
-    /* loading methods */
-    char *load_addr() { return crypt; }
-    void decrypt();
-
-    /* computing methods */
-    // need to check if the batch is empty before calling these methods
-    Loci toploci() { return locus.front(); }
-    void pop();
-    string &toprow() { return rows.front(); }
-};
-
-class Buffer {
-    /* define on init */
-    map<string, int> client_map;
-    vector<string> clients;
-    vector<size_t> client_col_num;
-    Row_T type;
-
-    /* data */
-    vector<Batch *> loading;
-    vector<Batch *> working;
-
-    /* status */
-    vector<bool> end;  // track clients that have reaches their end
-
-    /* mutex */
-    // TODO
-
-   public:
-    /* initializing */
-    Buffer(Row_T _type) : type(_type) {}
-    void add_client(string _client, size_t _size = 0) {
-        clients.push_back(_client);
-        client_col_num.push_back(_size);
-    }
-    void init();  // init after adding all the clients
-
-    /* loading methods */
-    void load_batch();  // load batch if needed
-
-    /* computing methods */
-    bool shift_batch();  // shift batch from loading to computing. return true
-                         // if all batches are available
-    Row *get_nextrow(const GWAS_logic &gwas = GWAS_logic());
-    // return nullptr if reaches end of all datasets
-
-    // destructor
-    ~Buffer();
-};
-
-class OutputBuffer {
-    char buffer[ENCLAVE_OUTPUT_BUFFER_SIZE];
-    Row_T type;
-    size_t size = 0;
-
-   public:
-    OutputBuffer(Row_T _type) : type(_type), size(0) {}
-    bool extend(const string &);  // return false if buffer is full
-    char *copy_to_host();
-    void print() const { printf("%s", buffer); }
-};
-
-class SealedBatch {
-    Seal_T type;
-    size_t size = 0;
-
-   public:
-    void addToSeal(Row *row);
-    void seal();
-};
 
 #endif

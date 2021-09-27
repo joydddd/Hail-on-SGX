@@ -80,8 +80,8 @@ define make_tests
     $(1): CXXFLAGS += -g3 -DDEBUG
     $(1): $$(OBJECTS) $(1).cpp
 	$$(CXX) $$(CXXFLAGS) $$(OBJECTS) $(1).o -o $(1)
-	valgrind -s --leak-check=yes ./$(1)
-	# ./$(1)
+	# valgrind -s --leak-check=yes ./$(1)
+	./$(1)
 endef
 $(foreach test, $(TESTS), $(eval $(call make_tests,$(test))))
 

@@ -3,8 +3,8 @@
 #include <thread>
 
 #ifdef ENC_TEST
+#include "buffer.h"
 #include "enclave_old.h"
-#include "enc_gwas.h"
 #else
 #include "gwas_t.h"
 #include "enclave.h"
@@ -36,11 +36,11 @@ void log_regression() {
     }
 
     char* y_buffer = new char[ENCLAVE_READ_BUFFER_SIZE];
-    GWAS_var gwas_y;
+    Log_var gwas_y;
     for (auto& client : clients) {
         gety(client.c_str(), y_buffer);
         stringstream y_ss(y_buffer);
-        GWAS_var new_y;
+        Log_var new_y;
         new_y.read(y_ss);
         if (new_y.size() != client_size_map[client])
             throw ReadtsvERROR("ERROR: y size mismatch from client: " + client);
@@ -48,7 +48,7 @@ void log_regression() {
     }
     delete[] y_buffer;
 
-    GWAS_logic gwas(gwas_y);
+    Log_gwas gwas(gwas_y);
 
     char covl[ENCLAVE_READ_BUFFER_SIZE];
     getcovlist(covl);
@@ -59,15 +59,15 @@ void log_regression() {
     char* cov_buffer = new char[ENCLAVE_READ_BUFFER_SIZE];
     for (auto& cov : covariants) {
         if (cov == "1") {
-            GWAS_var intercept(gwas_y.size());
+            Log_var intercept(gwas_y.size());
             gwas.add_covariant(intercept);
             continue;
         }
-        GWAS_var cov_var;
+        Log_var cov_var;
         for (auto& client : clients) {
             getcov(client.c_str(), cov.c_str(), cov_buffer);
             stringstream cov_ss(cov_buffer);
-            GWAS_var new_cov_var;
+            Log_var new_cov_var;
             new_cov_var.read(cov_ss);
             if (new_cov_var.size() != client_size_map[client])
                 throw ReadtsvERROR("covariant size mismatch from client: " +
@@ -93,15 +93,14 @@ void log_regression() {
     cout << "Buffer initialized" << endl;
 
     /* process rows */
-    GWAS_row* row;
+    Log_row* row;
     while (true) {
         try {
-            if (!(row = (GWAS_row*)raw_data.get_nextrow(gwas))) break;
+            if (!(row = (Log_row*)raw_data.get_nextrow(gwas))) break;
         } catch (ERROR_t& err) {
             cerr << "ERROR: " << err.msg << endl;
             continue;
         }
-        row->init();
         ostringstream ss;
         ss << row->getloci() << "\t" << row->getallels();
         bool converge;

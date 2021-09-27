@@ -201,9 +201,6 @@ int main(int argc, const char* argv[]) {
         }
     } catch (ERROR_t& err) {
         cerr << "ERROR: " << err.msg << endl;
-    } catch (SysERROR& err) {
-        cerr << "ERROR: " << err.msg << endl;
-        goto exit;
     }
 
     ret = 0;

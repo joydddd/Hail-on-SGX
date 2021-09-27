@@ -6,7 +6,7 @@
 #include <chrono>
 #include <thread>
 
-#include "enc_gwas.h"
+#include "buffer.h"
 
 using namespace std;
 
@@ -100,7 +100,7 @@ bool Buffer::shift_batch() {
     return ready;
 }
 
-Row* Buffer::get_nextrow(const GWAS_logic& gwas) {
+Row* Buffer::get_nextrow(const Log_gwas& gwas) {
     /* shift until all the working batches are ready */
     while (!shift_batch()) {
         this_thread::sleep_for(chrono::milliseconds(BUFFER_UPDATE_INTERVAL));
@@ -138,7 +138,7 @@ Row* Buffer::get_nextrow(const GWAS_logic& gwas) {
                 new_row = new SSE_row();
                 break;
             case (LOG_t):
-                new_row = new GWAS_row(gwas);
+                new_row = new Log_row(gwas);
                 break;
         }
         if (!batch->end() && batch->toploci() == loci) {

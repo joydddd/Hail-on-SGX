@@ -65,7 +65,7 @@ void split_allele( string &line, vector<string> &parts, string &loci, string &al
 }
 
 void GWAS_var::mult(const vector<double> &x, vector<double> &ans){
-    if (x.size() != data.size()) throw mathERROR("vector length unmatch");
+    if (x.size() != data.size()) throw ERROR_t("vector length unmatch");
     ans.clear();
     ans.resize(x.size());
     for(size_t i=0; i<x.size(); i++){
@@ -315,9 +315,9 @@ void GWAS::print_SSE(std::ostream &fs, std::vector<Beta_row> &betas){
         if (beta_it->loci == sse_it->loci){
             try{
                 if (!(beta_it->alleles == sse_it->alleles) )
-                    throw alleleERROR("allele unmatch at loci "+ beta_it->loci.str());
+                    throw ERROR_t("allele unmatch at loci "+ beta_it->loci.str());
                 sse_it->print_SSE(fs, beta_it->beta, covariant, y);
-            } catch(alleleERROR &error) {cerr << "Allele ERROR: " << error.msg << endl; }
+            } catch(ERROR_t &error) {cerr << "Allele ERROR: " << error.msg << endl; }
             sse_it++;
             beta_it++;
         }
