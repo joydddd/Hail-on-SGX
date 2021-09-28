@@ -12,15 +12,15 @@ enclave {
 
     untrusted {
         /* get enclave setup data */
-        bool getclientlist([out] char hostlist[ENCLAVE_READ_BUFFER_SIZE]);
+        void getclientlist([out] char hostlist[ENCLAVE_READ_BUFFER_SIZE]);
 
-        bool getcovlist([out] char covlist[ENCLAVE_READ_BUFFER_SIZE]);
+        void getcovlist([out] char covlist[ENCLAVE_READ_BUFFER_SIZE]);
 
-        bool gety(
+        void gety(
             [in] const char host[MAX_CLIENTNAME_LENGTH], 
             [out] char y[ENCLAVE_READ_BUFFER_SIZE]);
 
-        bool getcov(
+        void getcov(
             [in] const char host[MAX_CLIENTNAME_LENGTH], 
             [in] const char cov_name[MAX_CLIENTNAME_LENGTH], 
             [out] char cov[ENCLAVE_READ_BUFFER_SIZE]);

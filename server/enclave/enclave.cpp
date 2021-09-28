@@ -88,7 +88,7 @@ void log_regression() {
 
     /* setupt output buffer */
     OutputBuffer result_buffer(Result_t);
-    result_buffer.extend("locus\talleles\tbeta\tt_stat\tcoverged\n");
+    result_buffer.write("locus\talleles\tbeta\tt_stat\tcoverged\n");
 
     cout << "Buffer initialized" << endl;
 
@@ -114,8 +114,6 @@ void log_regression() {
             cerr << "MathError while fiting " << ss.str() << ": " << err.msg
                  << endl;
             ss << "\tNA\tNA\tNA" << endl;
-            delete row;
-            continue;
         } catch (ERROR_t& err) {
             cerr << "ERROR " << ss.str() << ": " << err.msg << endl;
             ss << "\tNA\tNA\tNA" << endl;
@@ -124,91 +122,88 @@ void log_regression() {
             continue;
         }
         // cerr << ss.str();
-        while (!result_buffer.extend(ss.str())) {
-            // result_buffer.print();
-            writebatch(Result_t, result_buffer.copy_to_host());
-        }
+        result_buffer.write(ss.str());
         delete row;
     }
     // result_buffer.print();
-    writebatch(Result_t, result_buffer.copy_to_host());
+    result_buffer.writeback();
     cout << "Logistic regression Finished! " << endl;
 }
 
 void linear_regression_beta() {
     cout << "Linear regression beta started" << endl;
-    /* get client and covariant list*/
-    char clientl[ENCLAVE_READ_BUFFER_SIZE];
-    getclientlist(clientl);
-    vector<string> clients;
-    stringstream clientname_ss(clientl);
-    string line;
-    while (getline(clientname_ss, line)) {
-        clients.push_back(line);
-    }
+    // /* get client and covariant list*/
+    // char clientl[ENCLAVE_READ_BUFFER_SIZE];
+    // getclientlist(clientl);
+    // vector<string> clients;
+    // stringstream clientname_ss(clientl);
+    // string line;
+    // while (getline(clientname_ss, line)) {
+    //     clients.push_back(line);
+    // }
 
-    char covl[ENCLAVE_READ_BUFFER_SIZE];
-    getcovlist(covl);
-    string covlist(covl);
-    vector<string> covariants;
-    split_tab(covlist, covariants);
-    size_t dim = covariants.size() + 1;
+    // char covl[ENCLAVE_READ_BUFFER_SIZE];
+    // getcovlist(covl);
+    // string covlist(covl);
+    // vector<string> covariants;
+    // split_tab(covlist, covariants);
+    // size_t dim = covariants.size() + 1;
 
-    /*setup read buffer */
-    Buffer xtx_buffer(XTX_t), xty_buffer(XTY_t);
-    for(auto& client:clients){
-        xtx_buffer.add_client(client);
-        xty_buffer.add_client(client);
-    }
-    xtx_buffer.init();
-    xty_buffer.init();
+    // /*setup read buffer */
+    // Buffer xtx_buffer(XTX_t), xty_buffer(XTY_t);
+    // for(auto& client:clients){
+    //     xtx_buffer.add_client(client);
+    //     xty_buffer.add_client(client);
+    // }
+    // xtx_buffer.init();
+    // xty_buffer.init();
 
-    /* setup Output buffer */
-    OutputBuffer beta_buffer(BETA_t);
-    stringstream titles_ss;
-    titles_ss << "locus\talleles";
-    for (size_t i = 0; i < dim; i++) {
-        titles_ss << "\tbeta" << i;
-    }
-    titles_ss << "\n";
-    beta_buffer.extend(titles_ss.str());
+    // /* setup Output buffer */
+    // OutputBuffer beta_buffer(BETA_t);
+    // stringstream titles_ss;
+    // titles_ss << "locus\talleles";
+    // for (size_t i = 0; i < dim; i++) {
+    //     titles_ss << "\tbeta" << i;
+    // }
+    // titles_ss << "\n";
+    // beta_buffer.extend(titles_ss.str());
 
-    cout << "Beta Bufer initialized" << endl;
+    // cout << "Beta Bufer initialized" << endl;
 
-    /* process rows */
-    XTX_row* xtx_row;
-    XTY_row* xty_row;
-    while(true){
-        try{
-            if (!(xtx_row = (XTX_row*)xtx_buffer.get_nextrow())) break;
-            if (!(xty_row = (XTY_row*)xty_buffer.get_nextrow())) break;
-        } catch(ERROR_t &err){
-            cerr << "ERROR: " << err.msg << endl;
-            continue;
-        }
-        ostringstream ss;
-        ss << xtx_row->getloci() << "\t" << xtx_row->getalleles();
-        try {
-            vector<double> beta;
-            xtx_row->beta(beta, *xty_row);
-            for(auto b:beta){
-                ss << "\t" << b;
-            }
-        } catch (ERROR_t& err) {
-            cerr << "ERROR while processing " << ss.str() << ": " << err.msg
-                 << endl;
-            for (size_t i = 0; i<dim; i++){
-                ss << "\tNA";
-            }
-        }
-        while(!beta_buffer.extend(ss.str())){
-            writebatch(BETA_t, beta_buffer.copy_to_host());
-        }
-        delete xtx_row;
-        delete xty_row;
-    }
-    writebatch(BETA_t, beta_buffer.copy_to_host());
-    cout << "Linear regression beta calculation finished!" << endl;
+    // /* process rows */
+    // XTX_row* xtx_row;
+    // XTY_row* xty_row;
+    // while(true){
+    //     try{
+    //         if (!(xtx_row = (XTX_row*)xtx_buffer.get_nextrow())) break;
+    //         if (!(xty_row = (XTY_row*)xty_buffer.get_nextrow())) break;
+    //     } catch(ERROR_t &err){
+    //         cerr << "ERROR: " << err.msg << endl;
+    //         continue;
+    //     }
+    //     ostringstream ss;
+    //     ss << xtx_row->getloci() << "\t" << xtx_row->getalleles();
+    //     try {
+    //         vector<double> beta;
+    //         xtx_row->beta(beta, *xty_row);
+    //         for(auto b:beta){
+    //             ss << "\t" << b;
+    //         }
+    //     } catch (ERROR_t& err) {
+    //         cerr << "ERROR while processing " << ss.str() << ": " << err.msg
+    //              << endl;
+    //         for (size_t i = 0; i<dim; i++){
+    //             ss << "\tNA";
+    //         }
+    //     }
+    //     while(!beta_buffer.extend(ss.str())){
+    //         writebatch(BETA_t, beta_buffer.copy_to_host());
+    //     }
+    //     delete xtx_row;
+    //     delete xty_row;
+    // }
+    // writebatch(BETA_t, beta_buffer.copy_to_host());
+    // cout << "Linear regression beta calculation finished!" << endl;
 }
 
 void linear_regression_t_stat() {

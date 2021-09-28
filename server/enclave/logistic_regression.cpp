@@ -26,7 +26,7 @@ double read_entry_int(string &entry) {
 double max(vector<double> &vec) {
     double max = -numeric_limits<double>::infinity();
     for (auto x : vec) {
-        if (x > max) max = x;
+        if (x >= max) max = x;
     }
     return max;
 }
@@ -148,6 +148,8 @@ bool Log_row::fit(size_t max_it, double sig) {
     else {
         fitted = true;
         standard_error = sqrt(H().INV()[0][0]);
+        // DEBUG
+        cout << loci << "\t" << alleles << "\t" << it_count << endl;
         return true;
     }
 }

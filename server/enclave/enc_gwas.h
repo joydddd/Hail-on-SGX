@@ -184,7 +184,7 @@ class Log_row : public Row {
 
     /* fitting */
     // return true if converge, return false if explode
-    bool fit(size_t max_iteration = 25, double sig = 0.000001);
+    bool fit(size_t max_iteration = 25, double sig = 1e-6);
 
     /* output results */
     vector<double> beta();

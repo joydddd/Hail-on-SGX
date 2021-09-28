@@ -179,14 +179,18 @@ Buffer::~Buffer() {
     }
 }
 
-bool OutputBuffer::extend(const string& line) {
-    if (size + line.size() >= ENCLAVE_OUTPUT_BUFFER_SIZE) return false;
+void OutputBuffer::write(const string& line) {
+    if (size + line.size() >= ENCLAVE_OUTPUT_BUFFER_SIZE){
+        writeback();
+    }
+    if (size + line.size() >= ENCLAVE_OUTPUT_BUFFER_SIZE){
+        throw exportERROR("Enclave writeback buffer overflow");
+    }
     strcpy(buffer + size, line.c_str());
     size += line.size();
-    return true;
 }
 
-char* OutputBuffer::copy_to_host() {
+void OutputBuffer::writeback() { 
+    writebatch(type, buffer);
     size = 0;
-    return buffer;
 }

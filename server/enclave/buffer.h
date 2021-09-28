@@ -91,18 +91,9 @@ class OutputBuffer {
 
    public:
     OutputBuffer(Row_T _type) : type(_type), size(0) {}
-    bool extend(const string &);  // return false if buffer is full
-    char *copy_to_host();
+    void write(const string &);  // return false if buffer is full
+    void writeback();
     void print() const { printf("%s", buffer); }
-};
-
-class SealedBatch {
-    Seal_T type;
-    size_t size = 0;
-
-   public:
-    void addToSeal(Row *row);
-    void seal();
 };
 
 #endif
