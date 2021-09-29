@@ -12,27 +12,40 @@ enclave {
 
     untrusted {
         /* get enclave setup data */
+        // copy hostlist from host machine to enclave
         void getclientlist([out] char hostlist[ENCLAVE_READ_BUFFER_SIZE]);
 
+        // get covariantnumber from host
+        // sepcially, when the covariant is indent 1, covariant name must be "1"
+        /* e.g. For model y =  1/(1 + e^(b0x + b1 + b2c1)), 
+        there are two covariants and their names are "Cov1" & "1" */
         void getcovlist([out] char covlist[ENCLAVE_READ_BUFFER_SIZE]);
-
+        
+        // copy y from host machine to enclave;
         void gety(
             [in] const char host[MAX_CLIENTNAME_LENGTH], 
             [out] char y[ENCLAVE_READ_BUFFER_SIZE]);
 
+
+        // copy no. covariant from host to enclave
+        // cov == "1" if the covariant is indent 1
         void getcov(
             [in] const char host[MAX_CLIENTNAME_LENGTH], 
             [in] const char cov_name[MAX_CLIENTNAME_LENGTH], 
             [out] char cov[ENCLAVE_READ_BUFFER_SIZE]);
 
         /* input data requests*/
+        // get batch from outside of enclave
+        // return const char* EndSperator if reaches end of dataset
+        // *rt = false if the batch isn't avaialbe on host
         bool getbatch(  
             [in] const char hostname[MAX_CLIENTNAME_LENGTH], 
             enum Row_T type, 
             [out] char batch[ENCLAVE_READ_BUFFER_SIZE]);
 
         /* output data requests */
-        bool writebatch(
+        // copy encrypted batch to host machine
+        void writebatch(
             enum Row_T type, 
             [in] char buffer[ENCLAVE_OUTPUT_BUFFER_SIZE]);
     };

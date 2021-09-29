@@ -2,12 +2,12 @@
 #include <iostream>
 #include <thread>
 
-#ifdef ENC_TEST
 #include "buffer.h"
+
+#ifdef ENC_TEST
 #include "enclave_old.h"
 #else
 #include "gwas_t.h"
-#include "enclave.h"
 #endif
 
 

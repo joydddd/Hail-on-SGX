@@ -148,8 +148,8 @@ bool Log_row::fit(size_t max_it, double sig) {
     else {
         fitted = true;
         standard_error = sqrt(H().INV()[0][0]);
-        // DEBUG
-        cout << loci << "\t" << alleles << "\t" << it_count << endl;
+        // DEBUG:
+        // cout << loci << "\t" << alleles << "\t" << it_count << endl;
         return true;
     }
 }

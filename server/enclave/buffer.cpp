@@ -58,13 +58,16 @@ void Buffer::load_batch() {
     for (size_t i = 0; i < clients.size(); i++) {
         if (!loading[i] && !end[i]) {
             loading[i] = new Batch(LOG_t, clients[i]);
-            if (getbatch(clients[i].c_str(), type, loading[i]->load_addr())) {
+            bool* rt = new bool;
+            getbatch(rt, clients[i].c_str(), type, loading[i]->load_addr());
+            if (*rt) {
                 loading[i]->decrypt();
                 /* signal shifting */
             } else {
                 delete loading[i];
                 loading[i] = nullptr;
             }
+            delete rt;
         }
     }
 }

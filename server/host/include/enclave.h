@@ -1,0 +1,1 @@
+int setupenclave(int argc, const char* argv[]);

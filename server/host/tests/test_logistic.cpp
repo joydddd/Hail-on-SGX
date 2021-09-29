@@ -4,10 +4,19 @@
 #define BUFFER_LINES 10
 #define OUTPUT_FILE "test_logistic.out"
 
-#include "enclave_old.h"
-#include <vector>
-#include <cstring>
+#include <gwas.h>
 
+#include <chrono>
+#include <cstring>
+#include <string>
+#include <thread>
+#include <vector>
+
+#define MAX_ATTEMPT_TIMES 10
+#define ATTEMPT_TIMEOUT 500  // in milliseconds
+
+#include "gwas_u.h"
+using namespace std;
 const vector<vector<string>> covFiles = {
     {"../../samples/1kg-logistic-regression/isFemale1.tsv",
      "../../samples/1kg-logistic-regression/isFemale2.tsv"}};
@@ -26,6 +35,7 @@ map<string, int> client_map;
 map<string, int> cov_map;
 // index -1 is reserved for intercept
 
+static oe_enclave_t* enclave;
 void init() {
     for (int i = 0; i < clientNames.size(); i++) {
         client_map.insert(make_pair(clientNames[i], i));
@@ -72,7 +82,6 @@ void gety(const char client[MAX_CLIENTNAME_LENGTH],
     stringstream ss;
     ss << y_fstreams[index].rdbuf();
     strcpy(y, ss.str().c_str());
-    return;
 }
 
 void getcov(const char client[MAX_CLIENTNAME_LENGTH],
@@ -103,7 +112,7 @@ void getcov(const char client[MAX_CLIENTNAME_LENGTH],
     strcpy(cov, ss.str().c_str());
 }
 
-void getbatch(bool* rt, const char client[MAX_CLIENTNAME_LENGTH], Row_T type,
+bool getbatch(const char client[MAX_CLIENTNAME_LENGTH], Row_T type,
               char batch[ENCLAVE_READ_BUFFER_SIZE]) {
     static vector<fstream> alleles_stream;
     if (alleles_stream.empty()) {
@@ -121,8 +130,7 @@ void getbatch(bool* rt, const char client[MAX_CLIENTNAME_LENGTH], Row_T type,
     int index = client_map[client_str];
     if (alleles_stream[index].eof()) {
         strcpy(batch, EndSperator);
-        *rt = true;
-        return;
+        return true;
     }
     stringstream buffer_ss;
     for (size_t i = 0; i < BUFFER_LINES; i++) {
@@ -132,12 +140,10 @@ void getbatch(bool* rt, const char client[MAX_CLIENTNAME_LENGTH], Row_T type,
     }
     if (buffer_ss.str() == "\n") {
         strcpy(batch, EndSperator);
-        *rt = true;
-        return;
+        return true;
     }
     strcpy(batch, buffer_ss.str().c_str());
-    *rt = true;
-    return;
+    return true;
 }
 
 void writebatch(Row_T type, char buffer[ENCLAVE_OUTPUT_BUFFER_SIZE]) {
@@ -146,14 +152,63 @@ void writebatch(Row_T type, char buffer[ENCLAVE_OUTPUT_BUFFER_SIZE]) {
         result_f.open(OUTPUT_FILE);
     }
     result_f << buffer;
-    return;
 }
 
-int main() {
+bool check_simulate_opt(int* argc, const char* argv[]) {
+    for (int i = 0; i < *argc; i++) {
+        if (strcmp(argv[i], "--simulate") == 0) {
+            fprintf(stdout, "Running in simulation mode\n");
+            memmove(&argv[i], &argv[i + 1], (*argc - i) * sizeof(char*));
+            (*argc)--;
+            return true;
+        }
+    }
+    return false;
+}
+
+int main(int argc, const char* argv[]) {
+    oe_result_t result;
+    int ret = 1;
+    enclave = NULL;
+
+    uint32_t flags = OE_ENCLAVE_FLAG_DEBUG;
+    if (check_simulate_opt(&argc, argv)) {
+        flags |= OE_ENCLAVE_FLAG_SIMULATE;
+    }
+
+    if (argc != 2) {
+        fprintf(stderr, "Usage: %s enclave_image_path [ --simulate  ]\n",
+                argv[0]);
+        goto exit;
+    }
+
+    // Create the enclave
+    result = oe_create_gwas_enclave(argv[1], OE_ENCLAVE_TYPE_AUTO, flags, NULL,
+                                    0, &enclave);
+    if (result != OE_OK) {
+        fprintf(stderr, "oe_create_gwas_enclave(): result=%u (%s)\n", result,
+                oe_result_str(result));
+        goto exit;
+    }
+
     try {
         init();
-        log_regression();
+        result = log_regression(enclave);
+        if (result != OE_OK) {
+            fprintf(stderr,
+                    "calling into enclave_gwas failed: result=%u (%s)\n",
+                    result, oe_result_str(result));
+            goto exit;
+        }
     } catch (ERROR_t& err) {
-        cerr << err.msg << endl;
+        cerr << "ERROR: " << err.msg << endl;
     }
+
+    ret = 0;
+
+exit:
+    // Clean up the enclave if we created one
+    if (enclave) oe_terminate_enclave(enclave);
+
+    return ret;
 }

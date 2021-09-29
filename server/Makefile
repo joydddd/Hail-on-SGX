@@ -10,7 +10,7 @@ all: build
 
 build:
 	$(MAKE) -C enclave
-	# $(MAKE) -C host
+	$(MAKE) -C host
 
 tests:
 	$(MAKE) -C enclave

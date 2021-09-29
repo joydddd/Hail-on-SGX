@@ -11,18 +11,14 @@
 #include "gwas.h"
 #include "linear_algebra/Matrix.h"
 
-
-    using namespace std;
-
-
-enum Seal_T { XTX_Seal, BETA_Seal };
+using namespace std;
 
 /****
- * statics calculation
+ * statics calculations on enclave
  */
 
-/* For linear regression (distributed approach)*/
 
+// Virual class for row construction 
 class Row {
    public:
     virtual void read(string &line) = 0;
@@ -30,6 +26,8 @@ class Row {
     virtual void append_invalid_elts(size_t size) {}
     virtual ~Row() {}
 };
+
+/* For linear regression (distributed approach)*/
 
 class XTY_row : public Row {
    public:
