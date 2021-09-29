@@ -95,12 +95,15 @@ void log_regression() {
     /* process rows */
     Log_row* row;
     while (true) {
+        // get the next row from input buffer
         try {
             if (!(row = (Log_row*)raw_data.get_nextrow(gwas))) break;
         } catch (ERROR_t& err) {
             cerr << "ERROR: " << err.msg << endl;
             continue;
         }
+
+        // compute results
         ostringstream ss;
         ss << row->getloci() << "\t" << row->getallels();
         bool converge;
@@ -119,14 +122,12 @@ void log_regression() {
             ss << "\tNA\tNA\tNA" << endl;
             delete row;
             exit(1);
-            continue;
         }
-        // cerr << ss.str();
         result_buffer.write(ss.str());
         delete row;
     }
-    // result_buffer.print();
     result_buffer.writeback();
+
     cout << "Logistic regression Finished! " << endl;
 }
 

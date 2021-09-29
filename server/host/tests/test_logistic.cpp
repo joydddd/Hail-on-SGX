@@ -36,6 +36,8 @@ map<string, int> cov_map;
 // index -1 is reserved for intercept
 
 static oe_enclave_t* enclave;
+
+// helper function. remove if not needed! 
 void init() {
     for (int i = 0; i < clientNames.size(); i++) {
         client_map.insert(make_pair(clientNames[i], i));
@@ -128,10 +130,15 @@ bool getbatch(const char client[MAX_CLIENTNAME_LENGTH], Row_T type,
     }
     string client_str(client);
     int index = client_map[client_str];
+    
+    // if data stream from this client has reached eof, 
+    // copy only EndSeperator to enclave
     if (alleles_stream[index].eof()) {
         strcpy(batch, EndSperator);
         return true;
     }
+
+    // copy BUFFER_LINE rows to enclave. add EndSperator at the end
     stringstream buffer_ss;
     for (size_t i = 0; i < BUFFER_LINES; i++) {
         string line;
@@ -192,8 +199,14 @@ int main(int argc, const char* argv[]) {
     }
 
     try {
-        init();
+        init(); // helper function. remove if not needed
+        // DEBUG:
+        auto start = std::chrono::high_resolution_clock::now();
         result = log_regression(enclave);
+        // DEBUG: total execution time
+        auto stop = std::chrono::high_resolution_clock::now();
+        auto duration = duration_cast<std::chrono::microseconds>(stop - start);
+        cout << "Enclave time total: " << duration.count() << endl;
         if (result != OE_OK) {
             fprintf(stderr,
                     "calling into enclave_gwas failed: result=%u (%s)\n",

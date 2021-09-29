@@ -36,6 +36,8 @@ map<string, int> cov_map;
 // index -1 is reserved for intercept
 
 static oe_enclave_t* enclave;
+
+// helper function. remove if not needed!
 void init() {
     for (int i = 0; i < clientNames.size(); i++) {
         client_map.insert(make_pair(clientNames[i], i));
@@ -128,10 +130,15 @@ bool getbatch(const char client[MAX_CLIENTNAME_LENGTH], Row_T type,
     }
     string client_str(client);
     int index = client_map[client_str];
+
+    // if data stream from this client has reached eof,
+    // copy only EndSeperator to enclave
     if (alleles_stream[index].eof()) {
         strcpy(batch, EndSperator);
         return true;
     }
+
+    // copy BUFFER_LINE rows to enclave. add EndSperator at the end
     stringstream buffer_ss;
     for (size_t i = 0; i < BUFFER_LINES; i++) {
         string line;
@@ -166,7 +173,7 @@ bool check_simulate_opt(int* argc, const char* argv[]) {
     return false;
 }
 
-int setupenclave(int argc, const char* argv[]) {
+int main(int argc, const char* argv[]) {
     oe_result_t result;
     int ret = 1;
     enclave = NULL;
@@ -192,7 +199,7 @@ int setupenclave(int argc, const char* argv[]) {
     }
 
     try {
-        init();
+        init();  // helper function. remove if not needed
         result = log_regression(enclave);
         if (result != OE_OK) {
             fprintf(stderr,

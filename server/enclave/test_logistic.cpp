@@ -7,6 +7,7 @@
 #include "enclave_old.h"
 #include <vector>
 #include <cstring>
+#include <chrono>
 
 const vector<vector<string>> covFiles = {
     {"../../samples/1kg-logistic-regression/isFemale1.tsv",
@@ -152,7 +153,13 @@ void writebatch(Row_T type, char buffer[ENCLAVE_OUTPUT_BUFFER_SIZE]) {
 int main() {
     try {
         init();
+        // DEBUG:
+        auto start = std::chrono::high_resolution_clock::now();
         log_regression();
+        // DEBUG: total execution time
+        auto stop = std::chrono::high_resolution_clock::now();
+        auto duration = duration_cast<std::chrono::microseconds>(stop - start);
+        cout << "Enclave time total: " << duration.count() << endl;
     } catch (ERROR_t& err) {
         cerr << err.msg << endl;
     }
