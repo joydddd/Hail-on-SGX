@@ -73,6 +73,6 @@ runtests: $(TESTS)
 	$(foreach test,$(TESTS),./$(test) ../enclave/$(PROJECTNAME)enc.signed;)
 
 clean:
-	$[$[ -d ${BUILDDIR} $]$] && rm -r ${BUILDDIR}
+	rm -r ${BUILDDIR}
 	rm -f $(PROJECTNAME)host $(PROJECTNAME)host.o $(PROJECTNAME)_u.o $(PROJECTNAME)_u.c $(PROJECTNAME)_u.h $(PROJECTNAME)_args.h
 	rm -f *.o $(TESTS) *.out

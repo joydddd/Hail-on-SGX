@@ -9,7 +9,7 @@
 #ifndef _HELPERS_H_
 #define _HELPERS_H_
 
-static const int MAX_MESSAGE_SIZE = 512;
+static const int MAX_MESSAGE_SIZE = 1024;
 
 /**
  * Make a server sockaddr given a port.
@@ -59,6 +59,6 @@ int make_client_sockaddr(struct sockaddr_in *addr, const char *hostname, int por
  * Returns:
  *		0 on success, -1 on failure.
  */
-int send_message(const char *hostname, int port, const char *message);
+int send_message(const char *hostname, int port, const char *message, int sock = -1);
 
 #endif

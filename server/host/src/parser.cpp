@@ -67,27 +67,30 @@ int indexOfDifference(std::string cs1, std::string cs2) {
 
 MessageType Parser::str_to_enum(std::string str_type) {
     MessageType mtype;
-    if (str_type == "REGISTER"){
+    if (str_type == "REGISTER") {
         mtype = REGISTER;
     }
-    else if (str_type == "ASSOCIATION") {
-        mtype = ASSOCIATION;
+    else if (str_type == "Y_VAL") {
+        mtype = Y_VAL;
     }
-    else if (str_type == "LINEAR") {
-        mtype = LINEAR;
+    else if (str_type == "COVARIANT") {
+        mtype = COVARIANT;
     }
     else if (str_type == "LOGISTIC") {
         mtype = LOGISTIC;
     }
+    else if (str_type == "EOF_LOGISTIC") {
+        mtype = EOF_LOGISTIC;
+    }
     else {
         // TODO: insert error handling logic
-        throw std::runtime_error("Parse first word failed, unknown reason.");
+        throw std::runtime_error("Failed to parse message type: " + str_type);
     }
     return mtype;
 }
 
 DataBlock* Parser::parse_body(std::string message_body, MessageType mtype) {
-    if (mtype == REGISTER) return nullptr;
+    if (mtype != LOGISTIC) return nullptr;
     std::vector<std::string> split_msg = Parser::split(message_body, ' ', 1);
     int counter = Parser::convert_to_num(split_msg.front());
     std::string encrypted_block = split_msg.back();

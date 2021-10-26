@@ -21,25 +21,26 @@
 class Server {
   private:
     int port;
+
     std::unordered_set<std::string> expected_institutions;
+    std::string covariant_list;
+    std::string y_val_name;
+
+    std::string y_val_data;
     std::unordered_map<std::string, Institution*> institutions;
+    std::unordered_map<std::string, std::string> covariant_data;
+    std::unordered_map<std::string, std::string> covariant_dtype;
 
-    boost::mutex expected_lock;
-
-  public:
-    Server(int port_in);
-    ~Server();
+    std::mutex expected_lock;
 
     // set up Server data structures
     void init();
-    // create listening socket to handle requests on indefinitely
-    void run();
-
+    
     // parses and calls the appropriate handler for an incoming client request
     void handle_message(int connFD, const std::string& name, unsigned int size, std::string msg_type, std::string& msg);
 
     // construct response header, encrypt response body, and send
-    void send_msg(const std::string& name, const std::string& msg_type, const std::string& msg);
+    int send_msg(const std::string& name, const std::string& msg_type, const std::string& msg, int connFD=-1);
 
     // start a thread that will handle a message and exit properly if it finds an error
     void start_thread(int connFD);
@@ -47,6 +48,20 @@ class Server {
     void check_in(std::string name);
 
     void data_requester();
+
+    void data_listener(int connFD);
+
+  public:
+    Server(int port_in);
+
+    ~Server();
+
+    // create listening socket to handle requests on indefinitely
+    void run();
+
+    static Server& getInstance(int port=0);
+
+    std::string get_x_data(const std::string& institution_name, int num_blocks);
 };
 
 #endif /* _SERVER_H_ */

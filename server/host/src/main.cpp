@@ -19,12 +19,8 @@ int main(int argc, char const *argv[]) {
         // set the port as the user specified
         port = atoi(argv[1]);
     }
-    // initialize our server with the given port
-    Server server(port);
-    // run the server forever
-    server.run();
+    // initialize our server with the given port, and run it forever
+    Server::getInstance(port).run();
     
     return 0;
 }
-
-

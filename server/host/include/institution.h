@@ -9,7 +9,6 @@
 #include <string>
 #include <queue>
 #include <vector>
-#include <boost/thread.hpp>
 #include "parser.h"
 
 struct BlockPointerGT {
@@ -20,19 +19,28 @@ struct BlockPointerGT {
 
 class Institution {
   private:
-    std::priority_queue<DataBlock*, std::vector<DataBlock*>, BlockPointerGT > blocks;
-    boost::mutex blocks_lock;
+    std::mutex blocks_lock;
+    std::priority_queue<DataBlock*, std::vector<DataBlock* >, BlockPointerGT > blocks;
+    
+    
 
   public:
-    std::string hostname;
-    int port;
-    bool requested_for_data;
-
     Institution(std::string hostname, int port);
     ~Institution();
 
     void add_block(DataBlock* block);
     int get_size();
+
+    std::string get_blocks(int num_blocks);
+
+    int port;
+    int request_conn;
+
+    int current_block;
+    bool requested_for_data;
+    bool listener_running;
+
+    std::string hostname;
 };
 
 #endif /* _institution_h_ */

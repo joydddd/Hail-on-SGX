@@ -13,6 +13,7 @@
 
 enum MessageType { 
   SUCCESS,
+  Y_AND_COV,
   DATA_REQUEST
 };
 
@@ -42,7 +43,7 @@ class Parser {
     static DataBlock* parse_body(std::string message_body, MessageType mtype);
 
     // split a given string based on the specified delimiter
-    static std::vector<std::string> split(const std::string& s, char delim, int num_splits=-1);
+    static std::vector<std::string> split(const std::string& s, char delim=' ', int num_splits=-1);
 
     static void validate_path(const std::string& pathname, std::vector<std::string>& split_path);
 

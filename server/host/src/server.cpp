@@ -22,7 +22,7 @@ using std::endl;
 
 boost::mutex cout_lock;
 
-const int MIN_BLOCK_COUNT = 3;
+const int MIN_BLOCK_COUNT = 10;
 
 Server::Server(int port_in) : port(port_in) {
     init();
@@ -33,11 +33,27 @@ Server::~Server() {
 }
 
 void Server::init() {
-    std::ifstream input_stream("institutions.txt");
+    // read in list institutions/clients involved in GWAS
+    std::ifstream instituion_file("institutions.txt");
     std::string institution;
-    while(getline(input_stream, institution)) {
+    while(getline(instituion_file, institution)) {
         expected_institutions.insert(institution);
     }
+
+    // read in list of covariants
+    std::ifstream covariant_file("covariants.txt");
+    std::string covariant_line;
+    while(getline(covariant_file, covariant_line)) {
+        std::vector<std::string> covariant_and_dtype = Parser::split(covariant_line);
+        std::string covariant = covariant_and_dtype.front();
+        std::string dtype = covariant_and_dtype.back();
+        covariant_dtype[covariant] = dtype;
+        covariant_list.append(covariant + " ");
+    }
+
+    // read in name of Y value
+    std::ifstream y_file("y_val.txt");
+    getline(y_file, y_val_name);
 }
 
 void Server::run() {
@@ -109,13 +125,13 @@ void Server::start_thread(int connFD) {
     cout_lock.unlock();
     // if we catch any errors we will throw an error to catch and close the connection
     try {
-        char header_buffer[1024];
+        char header_buffer[128];
         // receive header, byte by byte until we hit deliminating char
         memset(header_buffer, 0, sizeof(header_buffer));
 
         int header_size = 0;
         bool found_delim = false;
-        while (header_size < 1024) {
+        while (header_size < 128) {
             // Receive exactly one byte
             int rval = recv(connFD, header_buffer + header_size, 1, MSG_WAITALL);
             if (rval == -1) {
@@ -172,11 +188,21 @@ void Server::handle_message(int connFD, const std::string& name, unsigned int si
             if (institutions.count(name)) {
                 throw std::runtime_error("User already registered");
             }
-            std::vector<std::string> hostname_and_port = Parser::split(msg, ' ');
+            std::vector<std::string> hostname_and_port = Parser::split(msg);
             institutions[name] = new Institution(hostname_and_port[0], Parser::convert_to_num(hostname_and_port[1]));
             check_in(name);
-            response = "";
             msg_type = "SUCCESS";
+            break;
+        }
+        case Y_VAL:
+        {
+            y_val_data = msg;
+            break;
+        }
+        case COVARIANT:
+        {
+            std::vector<std::string> name_data_split = Parser::split(msg, ' ', 1);
+            covariant_data[name_data_split.front()] = name_data_split.back();
             break;
         }
         case LOGISTIC:
@@ -195,30 +221,31 @@ void Server::handle_message(int connFD, const std::string& name, unsigned int si
     if (response.length()) {
         send_msg(name, msg_type, response);
     }
-    // cool, well handled!
-    cout_lock.lock();
-    cout << endl << "Closing connection" << endl;
-    cout_lock.unlock();
-    close(connFD);
-    cout_lock.lock();
-    cout << endl << "--------------" << endl;
-    cout_lock.unlock();
+    if (mtype != LOGISTIC) {
+        // cool, well handled!
+        cout_lock.lock();
+        cout << endl << "Closing connection" << endl;
+        cout_lock.unlock();
+        close(connFD);
+        cout_lock.lock();
+        cout << endl << "--------------" << endl;
+        cout_lock.unlock();
+    }     
 }
 
-void Server::send_msg(const std::string& name, const std::string& msg_type, const std::string& msg) {
+int Server::send_msg(const std::string& name, const std::string& msg_type, const std::string& msg, int connFD) {
     std::string message = std::to_string(msg.length()) + " " + msg_type + '\n' + msg;
-    send_message(institutions[name]->hostname.c_str(), institutions[name]->port, message.c_str());
+    return send_message(institutions[name]->hostname.c_str(), institutions[name]->port, message.c_str(), connFD);
 }
 
 void Server::check_in(std::string name) {
-    expected_lock.lock();
+    std::lock_guard<std::mutex> raii(expected_lock);
     expected_institutions.erase(name);
     if (!expected_institutions.size()) {
         // start thread to request more data
         boost::thread requester_thread(&Server::data_requester, this);
         requester_thread.detach();
     }
-    expected_lock.unlock();
 }
 
 void Server::data_requester() {
@@ -226,9 +253,34 @@ void Server::data_requester() {
         for (auto it : institutions) {
             if (!it.second->requested_for_data && it.second->get_size() < MIN_BLOCK_COUNT) {
                 it.second->requested_for_data = true;
-                send_msg(it.first, "DATA_REQUEST", std::to_string(MIN_BLOCK_COUNT));
+                it.second->request_conn = send_msg(it.first, "DATA_REQUEST", std::to_string(MIN_BLOCK_COUNT), it.second->request_conn);
+                // Once we start asking for data, spin up a listener to reuse this connection
+                if (!it.second->listener_running) {
+                    // Also ask for Y and covariant data
+                    send_msg(it.first, "Y_AND_COV", covariant_list + y_val_name);
+
+                    it.second->listener_running = true;
+                    boost::thread data_listener_thread(&Server::data_listener, this, it.second->request_conn);
+                    data_listener_thread.detach();  
+                }
             }
         }
         boost::this_thread::sleep(boost::posix_time::seconds(1));
     }
+}
+
+void Server::data_listener(int connFD) {
+    // We need a serial listener for this agreed upon connection!
+    while(true) {
+        start_thread(connFD);
+    }
+}
+
+Server& Server::getInstance(int port) {
+    static Server instance(port);
+    return instance;
+}  
+
+std::string Server::get_x_data(const std::string& institution_name, int num_blocks) {
+    return institutions[institution_name]->get_blocks(num_blocks);
 }

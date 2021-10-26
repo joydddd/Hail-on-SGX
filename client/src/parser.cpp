@@ -70,6 +70,9 @@ MessageType Parser::str_to_enum(std::string str_type) {
     if (str_type == "SUCCESS") {
         mtype = SUCCESS;
     }
+    else if (str_type == "Y_AND_COV") { 
+        mtype = Y_AND_COV;
+    }
     else if (str_type == "DATA_REQUEST") {
         mtype = DATA_REQUEST;
     }

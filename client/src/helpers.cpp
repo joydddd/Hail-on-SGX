@@ -1,5 +1,7 @@
 #include "helpers.h"
 
+#include <iostream>
+
 int make_server_sockaddr(struct sockaddr_in *addr, int port) {
 	// Step (1): specify socket family.
 	// This is an internet socket.
@@ -51,12 +53,12 @@ int make_client_sockaddr(struct sockaddr_in *addr, const char *hostname, int por
 	return ntohs(addr.sin_port);
  }
 
-int send_message(const char *hostname, int port, const char *message) {
+int send_message(const char *hostname, int port, const char *message, int sock) {
 	if (strlen(message) > MAX_MESSAGE_SIZE) {
 		perror("Error: Message exceeds maximum length\n");
 		return -1;
 	}
-    int sockfd = socket(AF_INET, SOCK_STREAM, 0);
+    int sockfd = sock == -1 ? socket(AF_INET, SOCK_STREAM, 0) : sock;
 
 	// (2) Create a sockaddr_in to specify remote host and port
 	struct sockaddr_in addr;
@@ -65,18 +67,18 @@ int send_message(const char *hostname, int port, const char *message) {
 	}
 
 	// (3) Connect to remote server
-	if (connect(sockfd, (sockaddr *) &addr, sizeof(addr)) == -1) {
-		perror("Error connecting stream socket");
-		return -1;
+	if (sock == -1) {
+		if (connect(sockfd, (sockaddr *) &addr, sizeof(addr)) == -1) {
+			perror("Error connecting stream socket");
+			return -1;
+		}
 	}
-	
+
 	// (4) Send message to remote server
 	if (send(sockfd, message, strlen(message), 0) == -1) {
 		perror("Error sending on stream socket");
 		return -1;
 	}
 
-    close(sockfd);
-
-	return 0;
+	return sockfd;
 }
