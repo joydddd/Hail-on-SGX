@@ -3,3 +3,9 @@ bin/
 *.o
 */.DS_Store
 .DS_Store
+*_t.*
+*_u.*
+*.signed
+*.pem
+gwas_args.h
+gwasenc

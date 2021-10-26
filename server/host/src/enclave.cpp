@@ -173,49 +173,49 @@ bool check_simulate_opt(int* argc, const char* argv[]) {
     return false;
 }
 
-int main(int argc, const char* argv[]) {
-    oe_result_t result;
-    int ret = 1;
-    enclave = NULL;
+// int main(int argc, const char* argv[]) {
+//     oe_result_t result;
+//     int ret = 1;
+//     enclave = NULL;
 
-    uint32_t flags = OE_ENCLAVE_FLAG_DEBUG;
-    if (check_simulate_opt(&argc, argv)) {
-        flags |= OE_ENCLAVE_FLAG_SIMULATE;
-    }
+//     uint32_t flags = OE_ENCLAVE_FLAG_DEBUG;
+//     if (check_simulate_opt(&argc, argv)) {
+//         flags |= OE_ENCLAVE_FLAG_SIMULATE;
+//     }
 
-    if (argc != 2) {
-        fprintf(stderr, "Usage: %s enclave_image_path [ --simulate  ]\n",
-                argv[0]);
-        goto exit;
-    }
+//     if (argc != 2) {
+//         fprintf(stderr, "Usage: %s enclave_image_path [ --simulate  ]\n",
+//                 argv[0]);
+//         goto exit;
+//     }
 
-    // Create the enclave
-    result = oe_create_gwas_enclave(argv[1], OE_ENCLAVE_TYPE_AUTO, flags, NULL,
-                                    0, &enclave);
-    if (result != OE_OK) {
-        fprintf(stderr, "oe_create_gwas_enclave(): result=%u (%s)\n", result,
-                oe_result_str(result));
-        goto exit;
-    }
+//     // Create the enclave
+//     result = oe_create_gwas_enclave(argv[1], OE_ENCLAVE_TYPE_AUTO, flags, NULL,
+//                                     0, &enclave);
+//     if (result != OE_OK) {
+//         fprintf(stderr, "oe_create_gwas_enclave(): result=%u (%s)\n", result,
+//                 oe_result_str(result));
+//         goto exit;
+//     }
 
-    try {
-        init();  // helper function. remove if not needed
-        result = log_regression(enclave);
-        if (result != OE_OK) {
-            fprintf(stderr,
-                    "calling into enclave_gwas failed: result=%u (%s)\n",
-                    result, oe_result_str(result));
-            goto exit;
-        }
-    } catch (ERROR_t& err) {
-        cerr << "ERROR: " << err.msg << endl;
-    }
+//     try {
+//         init();  // helper function. remove if not needed
+//         result = log_regression(enclave);
+//         if (result != OE_OK) {
+//             fprintf(stderr,
+//                     "calling into enclave_gwas failed: result=%u (%s)\n",
+//                     result, oe_result_str(result));
+//             goto exit;
+//         }
+//     } catch (ERROR_t& err) {
+//         cerr << "ERROR: " << err.msg << endl;
+//     }
 
-    ret = 0;
+//     ret = 0;
 
-exit:
-    // Clean up the enclave if we created one
-    if (enclave) oe_terminate_enclave(enclave);
+// exit:
+//     // Clean up the enclave if we created one
+//     if (enclave) oe_terminate_enclave(enclave);
 
-    return ret;
-}
+//     return ret;
+// }

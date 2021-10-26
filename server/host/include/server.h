@@ -13,6 +13,7 @@
 #include <string>
 #include <queue>
 #include <vector>
+#include <mutex>
 #include <unordered_set>
 #include <functional>
 #include <boost/thread.hpp>
@@ -43,7 +44,7 @@ class Server {
     int send_msg(const std::string& name, const std::string& msg_type, const std::string& msg, int connFD=-1);
 
     // start a thread that will handle a message and exit properly if it finds an error
-    void start_thread(int connFD);
+    bool start_thread(int connFD);
 
     void check_in(std::string name);
 

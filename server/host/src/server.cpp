@@ -119,7 +119,7 @@ void Server::run() {
     }
 }
 
-void Server::start_thread(int connFD) {
+bool Server::start_thread(int connFD) {
     cout_lock.lock();
     cout << endl << "Accepted new connection" << endl;
     cout_lock.unlock();
@@ -162,9 +162,9 @@ void Server::start_thread(int connFD) {
             throw std::runtime_error("Error reading request body");
         }
         std::string encrypted_body(body_buffer, std::get<1>(parsed_header));
-        cout_lock.lock();
-        cout << "Encrypted body:" << endl << encrypted_body << endl;
-        cout_lock.unlock();
+        // cout_lock.lock();
+        // cout << "Encrypted body:" << endl << encrypted_body << endl;
+        // cout_lock.unlock();
         handle_message(connFD, std::get<0>(parsed_header), std::get<1>(parsed_header), std::get<2>(parsed_header), encrypted_body);
     }
     catch (const std::runtime_error e)  {
@@ -172,7 +172,9 @@ void Server::start_thread(int connFD) {
         cout << "Exception: " << e.what() << endl;
         cout_lock.unlock();
         close(connFD);
+        return false;
     }
+    return true;
 }
 
 void Server::handle_message(int connFD, const std::string& name, unsigned int size, std::string msg_type,
@@ -271,9 +273,7 @@ void Server::data_requester() {
 
 void Server::data_listener(int connFD) {
     // We need a serial listener for this agreed upon connection!
-    while(true) {
-        start_thread(connFD);
-    }
+    while(start_thread(connFD)) {}
 }
 
 Server& Server::getInstance(int port) {

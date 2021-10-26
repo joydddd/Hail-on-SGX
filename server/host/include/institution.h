@@ -9,6 +9,7 @@
 #include <string>
 #include <queue>
 #include <vector>
+#include <mutex>
 #include "parser.h"
 
 struct BlockPointerGT {
