@@ -24,7 +24,7 @@ Parser::~Parser() {
 
 std::vector<std::string> Parser::split(const std::string& s, char delim, int num_splits) {
     std::vector<std::string> split_strings;
-    std::string split_string = "";
+    std::string split_string;
     int i = 0;
     for (char c : s) {
         if (c != delim || i == num_splits) {

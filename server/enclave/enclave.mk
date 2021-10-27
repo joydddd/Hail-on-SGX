@@ -49,7 +49,7 @@ sign:
 
 clean:
 	rm -f $(EXECUTABLE) $(EXECUTABLE).signed private.pem public.pem \
-	$(PROJECTNAME)_t.o $(PROJECTNAME)_t.h $(PROJECTNAME)_t.c $(PROJECTNAME)_args.h
+	$(PROJECTNAME)_t.o $(PROJECTNAME)_t.h $(PROJECTNAME)_t.c $(PROJECTNAME)_args.h $(PROJECT_NAME).signed
 	rm -f $(OBJECTS) $(ENCLAVE_O) *.o
 
 keys:

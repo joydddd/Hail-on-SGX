@@ -27,9 +27,8 @@ class Server {
     std::string covariant_list;
     std::string y_val_name;
 
-    std::string y_val_data;
     std::unordered_map<std::string, Institution*> institutions;
-    std::unordered_map<std::string, std::string> covariant_data;
+    
     std::unordered_map<std::string, std::string> covariant_dtype;
 
     std::mutex expected_lock;
@@ -60,9 +59,17 @@ class Server {
     // create listening socket to handle requests on indefinitely
     void run();
 
-    static Server& getInstance(int port=0);
+    static Server& get_instance(int port=0);
 
-    std::string get_x_data(const std::string& institution_name, int num_blocks);
+    static std::string get_institutions();
+
+    static std::string get_covariants();
+
+    static std::string get_y_data(const std::string& institution_name);
+
+    static std::string get_covariant_data(const std::string& institution_name, const std::string& covariant_name);
+
+    static std::string get_x_data(const std::string& institution_name, int num_blocks);
 };
 
 #endif /* _SERVER_H_ */

@@ -182,7 +182,7 @@ void Server::handle_message(int connFD, const std::string& name, unsigned int si
     MessageType mtype = Parser::str_to_enum(msg_type);
     DataBlock* block = Parser::parse_body(msg, mtype);
 
-    std::string response = "";
+    std::string response;
 
     switch (mtype) {
         case REGISTER:
@@ -198,13 +198,13 @@ void Server::handle_message(int connFD, const std::string& name, unsigned int si
         }
         case Y_VAL:
         {
-            y_val_data = msg;
+            institutions[name]->set_y_data(msg);
             break;
         }
         case COVARIANT:
         {
             std::vector<std::string> name_data_split = Parser::split(msg, ' ', 1);
-            covariant_data[name_data_split.front()] = name_data_split.back();
+            institutions[name]->set_covariant_data(name_data_split.front(), name_data_split.back());
             break;
         }
         case LOGISTIC:
@@ -276,11 +276,46 @@ void Server::data_listener(int connFD) {
     while(start_thread(connFD)) {}
 }
 
-Server& Server::getInstance(int port) {
+Server& get_instance(int port) {
     static Server instance(port);
     return instance;
-}  
+}
+
+std::string Server::get_institutions() {
+    std::string clientlist;
+    for (std::string institution : get_instance()->expected_institutions) {
+        clientlist.append(institution + "\t");
+    }
+    return clientlist;
+}
+
+std::string Server::get_covariants() {
+    std::string cov_list;
+    std::vector<std::string> covariants = Parser::split(get_instance()->covariant_list);
+    for (std::string covariant : covariants) {
+        cov_list.append(covariant + "\t");
+    }
+    return cov_list;
+}
+
+std::string Server::get_y_data(const std::string& institution_name) {
+    std::string y_list;
+    std::vector<std::string> y_vals = Parser::split(get_instance()->institutions[institution_name]->get_y_data());
+    for (std::string y_val : y_vals) {
+        y_list.append(y_val + "\t");
+    }
+    return y_list;
+}
+
+std::string Server::get_covariant_data(const std::string& institution_name, const std::string& covariant_name) {
+    std::string cov_list;
+    std::vector<std::string> cov_vals = Parser::split(get_instance()->institutions[institution_name]->get_covariant_data(covariant_name));
+    for (std::string cov_val : cov_vals) {
+        cov_list.append(cov_val + "\t");
+    }
+    return cov_list;
+}
 
 std::string Server::get_x_data(const std::string& institution_name, int num_blocks) {
-    return institutions[institution_name]->get_blocks(num_blocks);
+    return get_instance()->institutions[institution_name]->get_blocks(num_blocks);
 }

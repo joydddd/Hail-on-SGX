@@ -23,11 +23,30 @@ int Institution::get_size() {
     return blocks.size();
 }
 
+void Institution::set_y_data(const std::string& y_data) {
+    y_val_data = y_data;
+}
+
+void Institution::set_covariant_data(const std::string& covariant_name, const std::string& covariant_data) {
+    covariant_data[covariant_name] = covariant_data;
+}
+
+void Institution::get_y_data() {
+    return y_val_data;
+}
+
+void Institution::get_covariant_data(const std::string& covariant_name) {
+    if (!covariant_data.count(covariant_name).count()) {
+        return "";
+    }
+    return covariant_data[covariant_name];
+}
+
 std::string Institution::get_blocks(int num_blocks) {
     std::lock_guard<std::mutex> raii(blocks_lock);
     int count = 0;
 
-    std::string res = "";
+    std::string res;
     while(count++ < num_blocks && !blocks.empty()) {
         DataBlock* block = blocks.top();
         if(block->pos != current_block) {
