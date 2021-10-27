@@ -33,7 +33,7 @@ class Institution {
 
     void set_y_data(const std::string& y_data);
 
-    void set_covariant_data(const std::string& covariant_name, const std::string& covariant_data);
+    void set_covariant_data(const std::string& covariant_name, const std::string& data);
   
     std::string get_y_data();
 

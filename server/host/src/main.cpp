@@ -22,12 +22,12 @@ int main(int argc, char const *argv[]) {
         port = atoi(argv[1]);
     }
     // initialize our server with the given port, and run it forever
-    get_instance(port);
+    Server::get_instance(port);
 
     boost::thread enclave_thread(start_enclave, argc, argv);
     enclave_thread.detach();
 
-    get_instance().run();
+    Server::get_instance().run();
     
 
 

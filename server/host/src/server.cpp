@@ -276,14 +276,14 @@ void Server::data_listener(int connFD) {
     while(start_thread(connFD)) {}
 }
 
-Server& get_instance(int port) {
+Server& Server::get_instance(int port) {
     static Server instance(port);
     return instance;
 }
 
 std::string Server::get_institutions() {
     std::string clientlist;
-    for (std::string institution : get_instance()->expected_institutions) {
+    for (std::string institution : get_instance().expected_institutions) {
         clientlist.append(institution + "\t");
     }
     return clientlist;
@@ -291,7 +291,7 @@ std::string Server::get_institutions() {
 
 std::string Server::get_covariants() {
     std::string cov_list;
-    std::vector<std::string> covariants = Parser::split(get_instance()->covariant_list);
+    std::vector<std::string> covariants = Parser::split(get_instance().covariant_list);
     for (std::string covariant : covariants) {
         cov_list.append(covariant + "\t");
     }
@@ -300,7 +300,7 @@ std::string Server::get_covariants() {
 
 std::string Server::get_y_data(const std::string& institution_name) {
     std::string y_list;
-    std::vector<std::string> y_vals = Parser::split(get_instance()->institutions[institution_name]->get_y_data());
+    std::vector<std::string> y_vals = Parser::split(get_instance().institutions[institution_name]->get_y_data());
     for (std::string y_val : y_vals) {
         y_list.append(y_val + "\t");
     }
@@ -309,7 +309,7 @@ std::string Server::get_y_data(const std::string& institution_name) {
 
 std::string Server::get_covariant_data(const std::string& institution_name, const std::string& covariant_name) {
     std::string cov_list;
-    std::vector<std::string> cov_vals = Parser::split(get_instance()->institutions[institution_name]->get_covariant_data(covariant_name));
+    std::vector<std::string> cov_vals = Parser::split(get_instance().institutions[institution_name]->get_covariant_data(covariant_name));
     for (std::string cov_val : cov_vals) {
         cov_list.append(cov_val + "\t");
     }
@@ -317,5 +317,5 @@ std::string Server::get_covariant_data(const std::string& institution_name, cons
 }
 
 std::string Server::get_x_data(const std::string& institution_name, int num_blocks) {
-    return get_instance()->institutions[institution_name]->get_blocks(num_blocks);
+    return get_instance().institutions[institution_name]->get_blocks(num_blocks);
 }

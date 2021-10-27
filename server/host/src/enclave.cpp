@@ -64,7 +64,7 @@ void getcovlist(char covlist[ENCLAVE_READ_BUFFER_SIZE]) {
 
 bool gety(const char client[MAX_CLIENTNAME_LENGTH],
           char y[ENCLAVE_READ_BUFFER_SIZE]) {
-    std::string y_data = Server::get_y_data();
+    std::string y_data = Server::get_y_data(client);
     if (y_data == "") {
         return false;
     }
