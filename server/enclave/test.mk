@@ -35,7 +35,6 @@ CXX         = clang++-10
 
 # list of test drivers (with main()) for development
 TESTFILES = $(wildcard test*.cpp)
-EXCLUSTSOURCES = enclave_new.cpp enclave_old.cpp
 TESTSOURCES = test_logistic.cpp
 TESTOBJS = $(TESTSOURCES:%.cpp=%.o)
 # names of test executables
@@ -54,16 +53,7 @@ CXXFLAGS = -std=c++1z -pedantic
 CXXFLAGS += -DENC_TEST -I ../../include
 # CXXFLAGS += -I $(BOOST_ROOT)
 
-
-# make debug - will compile sources with $(CXXFLAGS) and the -g3 flag
-#              also defines DEBUG, so "#ifdef DEBUG /*...*/ #endif" works
-debug: CXXFLAGS += -g3 -DDEBUG
-debug:
-	$(CXX) $(CXXFLAGS) $(SOURCES) -o $(EXECUTABLE)_debug
-
-
-# Build all executables
-all: release
+all: alltests
 
 $(EXECUTABLE): $(OBJECTS)
 ifeq ($(EXECUTABLE), executable)
@@ -88,6 +78,9 @@ $(foreach test, $(TESTS), $(eval $(call make_tests,$(test))))
 $(TESTS):$(TESTOBJS) $(OBJECTS)
 
 alltests:$(TESTS)
+
+runtests: $(TESTS)
+	./$^
 
 # rule for creating object
 %.o: %.cpp

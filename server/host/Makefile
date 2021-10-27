@@ -58,8 +58,8 @@ run:
 
 # Automatically generate any build rules for test*.cpp files
 define make_tests
-	$(CXX) -c $(CXXFLAGS) $(TESTDIR)/$(1).cpp
-	$(CXX) -o $(1) $(BUILDDIR)/$(PROJECTNAME)_u.o $(1).o $(LDFLAGS)
+	$(CXX) -c $(CXXFLAGS) -g $(TESTDIR)/$(1).cpp
+	$(CXX) -g -o $(1) $(BUILDDIR)/$(PROJECTNAME)_u.o $(1).o $(LDFLAGS)
 endef
 
 
@@ -71,6 +71,10 @@ tests: pre $(TESTS)
 
 runtests: $(TESTS)
 	$(foreach test,$(TESTS),./$(test) ../enclave/$(PROJECTNAME)enc.signed;)
+
+debugtests: $(TESTS)
+	$(MAKE) -C .. debug
+	$(foreach test,$(TESTS),gdb ./$(test) ../enclave/$(PROJECTNAME)enc.signed;)
 
 clean:
 	rm -r ${BUILDDIR}

@@ -3,9 +3,12 @@ bin/
 *.o
 */.DS_Store
 .DS_Store
-*_t.*
-*_u.*
+gwas_t.*
+gwas_u.*
 *.signed
 *.pem
 gwas_args.h
 gwasenc
+gwashost
+*.out
+test_logistic

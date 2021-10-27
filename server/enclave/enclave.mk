@@ -37,12 +37,27 @@ all:
 
 build: 
 	@ echo "Compilers used: $(CC), $(CXX)"
+	@ echo "Debug Mode Off"
+	sed -i 's/Debug=.*/Debug=0/g' gwas_enc.conf
+	oeedger8r ../$(EDL_FILE) --trusted \
+		--search-path $(INCDIR) \
+		--search-path $(INCDIR)/openenclave/edl/sgx
+	$(CXX) -c $(CXXFLAGS) $(INCLUDES) -I. -std=c++11 $(SOURCES)
+	$(CC) -c $(CFLAGS) -I. $(PROJECTNAME)_t.c -o $(PROJECTNAME)_t.o
+	$(CXX) -o $(EXECUTABLE) $(PROJECTNAME)_t.o $(OBJECTS) $(LDFLAGS) $(CRYPTO_LDFLAGS)
+
+debug:
+	@ echo "Compilers used: $(CC), $(CXX)"
+	@ echo "Debug Mode On"
+	sed -i 's/Debug=.*/Debug=1/g' gwas_enc.conf
 	oeedger8r ../$(EDL_FILE) --trusted \
 		--search-path $(INCDIR) \
 		--search-path $(INCDIR)/openenclave/edl/sgx
 	$(CXX) -g -c $(CXXFLAGS) $(INCLUDES) -I. -std=c++11 $(SOURCES)
-	$(CC) -c $(CFLAGS) -I. $(PROJECTNAME)_t.c -o $(PROJECTNAME)_t.o
-	$(CXX) -o $(EXECUTABLE) $(PROJECTNAME)_t.o $(OBJECTS) $(LDFLAGS) $(CRYPTO_LDFLAGS)
+	$(CC) -g -c $(CFLAGS) -I. $(PROJECTNAME)_t.c -o $(PROJECTNAME)_t.o
+	$(CXX) -g -o $(EXECUTABLE) $(PROJECTNAME)_t.o $(OBJECTS) $(LDFLAGS) $(CRYPTO_LDFLAGS)
+	$(MAKE) keys
+	$(MAKE) sign
 
 sign:
 	oesign sign -e $(PROJECTNAME)enc -c $(PROJECTNAME)_enc.conf -k private.pem

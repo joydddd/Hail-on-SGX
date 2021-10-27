@@ -1,6 +1,7 @@
 # Copyright (c) Open Enclave SDK contributors.
 # Licensed under the MIT License.
 
+include config.mk
 .PHONY: all build clean run simulate
 
 OE_CRYPTO_LIB := mbedtls
@@ -10,6 +11,10 @@ all: build
 
 build:
 	$(MAKE) -C enclave
+	$(MAKE) -C host
+
+debug:
+	$(MAKE) -C enclave debug
 	$(MAKE) -C host
 
 tests:
@@ -24,7 +29,5 @@ clean:
 	$(MAKE) -C host clean
 
 run:
-	host/helloworldhost ./enclave/helloworldenc.signed
+	$(MAKE) -C host run
 
-simulate:
-	host/helloworldhost ./enclave/helloworldenc.signed --simulate
