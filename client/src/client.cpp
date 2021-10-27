@@ -148,7 +148,7 @@ void Client::start_thread(int connFD) {
 void Client::handle_message(int connFD, unsigned int size, std::string msg_type, std::string& msg) {
     MessageType mtype = Parser::str_to_enum(msg_type);
 
-    std::string response = "";
+    std::string response;
 
     switch (mtype) {
         case SUCCESS:

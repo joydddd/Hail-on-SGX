@@ -78,5 +78,5 @@ debugtests: $(TESTS)
 
 clean:
 	rm -r ${BUILDDIR}
-	rm -f $(PROJECTNAME)host $(PROJECTNAME)host.o $(PROJECTNAME)_u.o $(PROJECTNAME)_u.c $(PROJECTNAME)_u.h $(PROJECTNAME)_args.h
+	rm -f $(PROJECTNAME)host $(PROJECTNAME)host.o $(PROJECTNAME)_u.o $(PROJECTNAME)_u.c $(PROJECTNAME)_u.h $(PROJECTNAME)_args.h $(PROJECT_NAME).signed
 	rm -f *.o $(TESTS) *.out

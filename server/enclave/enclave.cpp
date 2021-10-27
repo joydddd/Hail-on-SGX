@@ -38,7 +38,9 @@ void log_regression() {
     char* y_buffer = new char[ENCLAVE_READ_BUFFER_SIZE];
     Log_var gwas_y;
     for (auto& client : clients) {
-        gety(client.c_str(), y_buffer);
+        bool rt = false;
+        while (!rt)
+            gety(&rt, client.c_str(), y_buffer);
         stringstream y_ss(y_buffer);
         Log_var new_y;
         new_y.read(y_ss);
@@ -65,7 +67,9 @@ void log_regression() {
         }
         Log_var cov_var;
         for (auto& client : clients) {
-            getcov(client.c_str(), cov.c_str(), cov_buffer);
+            bool rt = false;
+            while (!rt)
+                getcov(&rt, client.c_str(), cov.c_str(), cov_buffer);
             stringstream cov_ss(cov_buffer);
             Log_var new_cov_var;
             new_cov_var.read(cov_ss);

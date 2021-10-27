@@ -22,14 +22,14 @@ enclave {
         void getcovlist([out] char covlist[ENCLAVE_READ_BUFFER_SIZE]);
         
         // copy y from host machine to enclave;
-        void gety(
+        bool gety(
             [in] const char host[MAX_CLIENTNAME_LENGTH], 
             [out] char y[ENCLAVE_READ_BUFFER_SIZE]);
 
 
         // copy no. covariant from host to enclave
         // cov == "1" if the covariant is indent 1
-        void getcov(
+        bool getcov(
             [in] const char host[MAX_CLIENTNAME_LENGTH], 
             [in] const char cov_name[MAX_CLIENTNAME_LENGTH], 
             [out] char cov[ENCLAVE_READ_BUFFER_SIZE]);
