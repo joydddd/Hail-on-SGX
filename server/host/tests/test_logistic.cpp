@@ -56,7 +56,7 @@ void init() {
 void getclientlist(char clientlist[ENCLAVE_READ_BUFFER_SIZE]) {
     stringstream list_ss;
     for (size_t i = 0; i < clientNames.size(); i++) {
-        list_ss << clientNames[i] << "\t" << client_size[i] << "\n";
+        list_ss << clientNames[i] << "\t";
     }
     strcpy(clientlist, list_ss.str().c_str());
 }
@@ -69,7 +69,7 @@ void getcovlist(char covlist[ENCLAVE_READ_BUFFER_SIZE]) {
     strcpy(covlist, ss.str().c_str());
 }
 
-void gety(const char client[MAX_CLIENTNAME_LENGTH],
+bool gety(const char client[MAX_CLIENTNAME_LENGTH],
           char y[ENCLAVE_READ_BUFFER_SIZE]) {
     static vector<ifstream> y_fstreams;
     if (y_fstreams.empty()) {
@@ -84,14 +84,15 @@ void gety(const char client[MAX_CLIENTNAME_LENGTH],
     stringstream ss;
     ss << y_fstreams[index].rdbuf();
     strcpy(y, ss.str().c_str());
+    return true;
 }
 
-void getcov(const char client[MAX_CLIENTNAME_LENGTH],
+bool getcov(const char client[MAX_CLIENTNAME_LENGTH],
             const char cov_name[MAX_CLIENTNAME_LENGTH],
             char cov[ENCLAVE_READ_BUFFER_SIZE]) {
     if (cov_name == "1") {
         strcpy(cov, "1");
-        return;
+        return true;
     }
     static vector<vector<ifstream>> cov_streams;
     if (cov_streams.empty()) {
@@ -112,6 +113,7 @@ void getcov(const char client[MAX_CLIENTNAME_LENGTH],
     stringstream ss;
     ss << cov_streams[cov_index][client_index].rdbuf();
     strcpy(cov, ss.str().c_str());
+    return true;
 }
 
 bool getbatch(const char client[MAX_CLIENTNAME_LENGTH], Row_T type,
@@ -178,7 +180,7 @@ int main(int argc, const char* argv[]) {
     int ret = 1;
     enclave = NULL;
 
-    uint32_t flags = OE_ENCLAVE_FLAG_DEBUG;
+    uint32_t flags = 0;
     if (check_simulate_opt(&argc, argv)) {
         flags |= OE_ENCLAVE_FLAG_SIMULATE;
     }

@@ -54,7 +54,7 @@ build: pre $(OBJECTS)
 	$(CXX) -o $(PROJECTNAME)host $(BUILDDIR)/$(PROJECTNAME)_u.o $(OBJECTS) $(LDFLAGS)
 
 run: 
-	./$(PROJECTNAME)host ../enclave/$(PROJECTNAME)enc.signed
+	./$(PROJECTNAME)host $(HOST_PORT) ../enclave/$(PROJECTNAME)enc.signed
 
 # Automatically generate any build rules for test*.cpp files
 define make_tests

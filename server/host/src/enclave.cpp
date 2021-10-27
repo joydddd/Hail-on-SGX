@@ -64,7 +64,9 @@ void getcovlist(char covlist[ENCLAVE_READ_BUFFER_SIZE]) {
 
 bool gety(const char client[MAX_CLIENTNAME_LENGTH],
           char y[ENCLAVE_READ_BUFFER_SIZE]) {
+    cerr << "in gety, client " << client << endl;
     std::string y_data = Server::get_y_data(client);
+    cerr << "check seg fault";
     if (y_data == "") {
         return false;
     }
@@ -123,7 +125,7 @@ int start_enclave(int argc, const char* argv[]) {
     int ret = 1;
     enclave = NULL;
 
-    uint32_t flags = OE_ENCLAVE_FLAG_DEBUG;
+    uint32_t flags = 0;
     if (check_simulate_opt(&argc, argv)) {
         flags |= OE_ENCLAVE_FLAG_SIMULATE;
     }

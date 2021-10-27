@@ -38,3 +38,5 @@ COMPILER = $(C_COMPILER)
 # Define edl
 EDL_FILE=gwas.edl
 PROJECTNAME = gwas
+
+HOST_PORT = 6500

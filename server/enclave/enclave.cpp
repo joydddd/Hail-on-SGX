@@ -16,36 +16,24 @@ void log_regression() {
     /* setup gwas */
     char clientl[ENCLAVE_READ_BUFFER_SIZE];
     getclientlist(clientl);
-    cout << "Client list " << clientl << endl;
     vector<string> clients;
-    map<string, int> client_size_map;
-    stringstream clientname_ss(clientl);
-    string line;
-    while (getline(clientname_ss, line)) {
-        vector<string> parts;
-        split_tab(line, parts);
-        if (parts.size() != 2) throw ReadtsvERROR("invalid client list: " + line);
-        int size;
-        try {
-            size = stoi(parts[1]);
-        } catch (invalid_argument& err) {
-            throw ReadtsvERROR("invalid client size: " + line);
-        }
-        clients.push_back(parts[0]);
-        client_size_map.insert(make_pair(parts[0], size));
-    }
+    string clientl_str(clientl);
+    split_tab(clientl_str, clients);
+    cout << "enclave running on " << clients.size() << " clients: " << endl;
+    cout << clientl << endl;
 
+    map<string, int> client_size_map;
     char* y_buffer = new char[ENCLAVE_READ_BUFFER_SIZE];
     Log_var gwas_y;
     for (auto& client : clients) {
         bool rt = false;
-        while (!rt)
+        while (!rt){
             gety(&rt, client.c_str(), y_buffer);
+        }
         stringstream y_ss(y_buffer);
         Log_var new_y;
         new_y.read(y_ss);
-        if (new_y.size() != client_size_map[client])
-            throw ReadtsvERROR("ERROR: y size mismatch from client: " + client);
+        client_size_map[client] = new_y.size();
         gwas_y.combine(new_y);
     }
     delete[] y_buffer;
