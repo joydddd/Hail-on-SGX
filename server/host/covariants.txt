@@ -1,2 +1,2 @@
+1 bool
 isFemale bool
-PurpleHair bool
