@@ -5,6 +5,7 @@ BUILDDIR := build
 TESTDIR := tests
 include ../config.mk
 ####################################
+EXECUTABLE = $(PROJECTNAME)host
 
 TESTSOURCES = $(wildcard $(TESTDIR)/test*.cpp)
 # names of test executables
@@ -51,10 +52,10 @@ ${BUILDDIR}/%.o: ${SRCDIR}/%.cpp
 	${CXX} ${CXXFLAGS} -c -o $@ $<
 
 build: pre $(OBJECTS)
-	$(CXX) -o $(PROJECTNAME)host $(BUILDDIR)/$(PROJECTNAME)_u.o $(OBJECTS) $(LDFLAGS)
+	$(CXX) -o $(EXECUTABLE) $(BUILDDIR)/$(PROJECTNAME)_u.o $(OBJECTS) $(LDFLAGS)
 
 run: 
-	./$(PROJECTNAME)host $(HOST_PORT) ../enclave/$(PROJECTNAME)enc.signed
+	./$(EXECUTABLE) $(HOST_PORT) ../enclave/$(PROJECTNAME)enc.signed
 
 # Automatically generate any build rules for test*.cpp files
 define make_tests
@@ -74,7 +75,7 @@ runtests: $(TESTS)
 
 debugtests: $(TESTS)
 	$(MAKE) -C .. debug
-	$(foreach test,$(TESTS),gdb ./$(test) ../enclave/$(PROJECTNAME)enc.signed;)
+	$(foreach test,$(TESTS),./$(test) ../enclave/$(PROJECTNAME)enc.signed;)
 
 clean:
 	rm -r ${BUILDDIR}

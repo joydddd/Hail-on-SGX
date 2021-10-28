@@ -30,14 +30,14 @@ bool getbatch(bool* rt, const char hostname[MAX_CLIENTNAME_LENGTH], Row_T type,
 void getclientlist(char hostlist[ENCLAVE_READ_BUFFER_SIZE]);
 // copy hostlist from host machine to enclave
 
-void gety(const char host[MAX_CLIENTNAME_LENGTH],
+void gety(bool* rt, const char host[MAX_CLIENTNAME_LENGTH],
           char y[ENCLAVE_READ_BUFFER_SIZE]);
 // copy y from host machine to enclave;
 
 void getcovlist(char covlist[ENCLAVE_READ_BUFFER_SIZE]);
 // get covariantnumber from host
 
-void getcov(const char host[MAX_CLIENTNAME_LENGTH],
+void getcov(bool* rt, const char host[MAX_CLIENTNAME_LENGTH],
             const char cov_name[MAX_CLIENTNAME_LENGTH],
             char cov[ENCLAVE_READ_BUFFER_SIZE]);
 // copy no. covariant from host to enclave

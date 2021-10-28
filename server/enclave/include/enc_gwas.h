@@ -161,7 +161,7 @@ class Log_row : public Row {
     void update_estimate();
     void update_beta();
     SqrMatrix H();
-    double L();
+    // double L();
     vector<double> Grad();
     void init() {
         b = vector<double>(gwas.dim(), 0);

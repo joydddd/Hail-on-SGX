@@ -35,6 +35,9 @@ endif
 # Define COMPILER for samples that use only C.
 COMPILER = $(C_COMPILER)
 
+OE_CRYPTO_LIB := mbedtls
+export OE_CRYPTO_LIB
+
 # Define edl
 EDL_FILE=gwas.edl
 PROJECTNAME = gwas
