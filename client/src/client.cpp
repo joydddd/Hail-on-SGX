@@ -88,7 +88,7 @@ void Client::run() {
     }
 }
 
-void Client::start_thread(int connFD) {
+bool Client::start_thread(int connFD) {
     cout_lock.lock();
     cout << endl << "Accepted new connection" << endl;
     cout_lock.unlock();
@@ -142,7 +142,9 @@ void Client::start_thread(int connFD) {
         cout << "Exception: " << e.what() << endl;
         cout_lock.unlock();
         close(connFD);
+        return false;
     }
+    return true;
 }
 
 void Client::handle_message(int connFD, unsigned int size, std::string msg_type, std::string& msg) {
@@ -226,9 +228,7 @@ bool Client::get_block(std::string& block) {
 
 void Client::data_sender(int connFD) {
     // We need a serial sender for this agreed upon connection!
-    while(true) {
-        start_thread(connFD);
-    }
+    while(start_thread(connFD)) {}
 }
 
 void Client::send_tsv_file(std::string filename, std::string mtype) {
