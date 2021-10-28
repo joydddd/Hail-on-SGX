@@ -258,7 +258,7 @@ void Server::check_in(std::string name) {
 void Server::data_requester() {
     while(true) {
         for (auto it : institutions) {
-            Institution inst = it.second;
+            Institution* inst = it.second;
             if (!inst->requested_for_data && inst->get_size() < MIN_BLOCK_COUNT && !inst->all_data_recieved) {
                 inst->requested_for_data = true;
                 inst->request_conn = send_msg(it.first, "DATA_REQUEST", std::to_string(MIN_BLOCK_COUNT), inst->request_conn);

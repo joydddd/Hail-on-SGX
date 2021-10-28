@@ -8,6 +8,11 @@
 #include "gwas_u.h"
 #include "enclave.h"
 
+template <class T>
+__attribute__((always_inline)) inline void DoNotOptimize(const T &value) {
+  asm volatile("" : "+m"(const_cast<T &>(value)));
+}
+
 int main(int argc, char const *argv[]) {
 
     if (argc != 3) {
@@ -19,10 +24,12 @@ int main(int argc, char const *argv[]) {
     int port = atoi(argv[1]);
 
     // initialize our server with the given port, and run it forever
-    volatile Server::get_instance(port);
+    Server::get_instance(port);
+    DoNotOptimize(1);
 
     boost::thread enclave_thread(start_enclave, argc, argv);
     enclave_thread.detach();
+    DoNotOptimize(2);
 
     Server::get_instance().run();
     
