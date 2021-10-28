@@ -25,6 +25,7 @@ void log_regression() {
     map<string, int> client_size_map;
     char* y_buffer = new char[ENCLAVE_READ_BUFFER_SIZE];
     Log_var gwas_y;
+    try {
     for (auto& client : clients) {
         bool rt = false;
         while (!rt){
@@ -37,6 +38,10 @@ void log_regression() {
         gwas_y.combine(new_y);
     }
     delete[] y_buffer;
+    cout << "Y value loaded" << endl;
+    } catch (ERROR_t& err) {
+        cerr << "ERROR: fail to get correct y values" << err.msg << endl;
+    }
 
     Log_gwas gwas(gwas_y);
 
@@ -46,6 +51,7 @@ void log_regression() {
     vector<string> covariants;
     split_tab(covlist, covariants);
 
+    try{
     char* cov_buffer = new char[ENCLAVE_READ_BUFFER_SIZE];
     for (auto& cov : covariants) {
         if (cov == "1") {
@@ -70,6 +76,10 @@ void log_regression() {
     }
     delete[] cov_buffer;
     cout << "GWAS setup finished" << endl;
+    }
+    catch (ERROR_t& err) {
+        cerr << "ERROR: fail to get correct covariant values: " << err.msg << endl;
+    }
 
     /* setup read buffer */
     Buffer raw_data(LOG_t);

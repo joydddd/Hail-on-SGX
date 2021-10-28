@@ -43,3 +43,4 @@ EDL_FILE=gwas.edl
 PROJECTNAME = gwas
 
 HOST_PORT = 6500
+DEBUGER := oegdb --arg

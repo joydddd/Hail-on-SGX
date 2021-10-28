@@ -15,6 +15,7 @@ TESTS       = $(patsubst $(TESTDIR)/%,%,$(TESTSOURCES:.cpp=))
 SOURCES := $(shell find $(SRCDIR) -type f -name *.cpp)
 # Generate the names of the thread library's object files
 OBJECTS := $(patsubst $(SRCDIR)/%,$(BUILDDIR)/%,$(SOURCES:.cpp=.o))
+DEBUGOBJECTS := $(patsubst $(SRCDIR)/%,$(BUILDDIR)/%,$(SOURCES:.cpp=_debug.o))
 
 ######################################
 
@@ -73,11 +74,24 @@ tests: pre $(TESTS)
 runtests: $(TESTS)
 	$(foreach test,$(TESTS),./$(test) ../enclave/$(PROJECTNAME)enc.signed;)
 
+
+# Generic rules for compiling a source file to an debug object file
+${BUILDDIR}/%_debug.o: ${SRCDIR}/%.cpp
+	@mkdir -p ${BUILDDIR}
+	${CXX} ${CXXFLAGS} -g -c -o $@ $<
+
 debugtests: $(TESTS)
 	$(MAKE) -C .. debug
 	$(foreach test,$(TESTS),./$(test) ../enclave/$(PROJECTNAME)enc.signed;)
 
+debug: pre $(DEBUGOBJECTS) 
+	$(CC) -c -g $(CFLAGS) $(PROJECTNAME)_u.c -o $(BUILDDIR)/$(PROJECTNAME)_u_debug.o
+	$(CXX) -g -o $(EXECUTABLE)_debug $(BUILDDIR)/$(PROJECTNAME)_u_debug.o $(DEBUGOBJECTS) $(LDFLAGS)
+
+debugrun:
+	$(DEBUGER) ./$(EXECUTABLE)_debug $(HOST_PORT) ../enclave/$(PROJECTNAME)enc_debug.signed
+
 clean:
-	rm -r ${BUILDDIR}
+	rm -rf ${BUILDDIR}
 	rm -f $(PROJECTNAME)host $(PROJECTNAME)host.o $(PROJECTNAME)_u.o $(PROJECTNAME)_u.c $(PROJECTNAME)_u.h $(PROJECTNAME)_args.h $(PROJECT_NAME).signed
-	rm -f *.o $(TESTS) *.out
+	rm -f *.o $(TESTS) *.out *_debug test_*

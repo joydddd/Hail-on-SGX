@@ -2,6 +2,7 @@
 `make runtests`: run all tests on open enclave
 `make build`/`make`: build enclave & host
 `make run`: run enclave & host
+`make debugrun`: build with `-g` flag and run with DEBUGER
 
 ### enclave/gwas_enc.conf
 before deployment, change debug to 0

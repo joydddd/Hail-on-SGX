@@ -12,3 +12,5 @@ gwasenc
 gwashost
 *.out
 test_logistic
+*_debug
+.vscode/

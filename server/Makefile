@@ -15,14 +15,17 @@ build:
 
 debug:
 	$(MAKE) -C enclave debug
-	$(MAKE) -C host
+	$(MAKE) -C host debug
+
+debugrun: debug
+	$(MAKE) -C host debugrun
 
 tests:
 	$(MAKE) -C enclave
 	$(MAKE) -C host tests
 
 runtests:
-	$(MAKE) -C host runtests
+	$(MAKE) -C host runtest
 
 clean:
 	$(MAKE) -C enclave clean
