@@ -7,7 +7,7 @@
 
 Institution::Institution(std::string hostname, int port) : hostname(hostname), port(port), 
                                                            requested_for_data(false), listener_running(false), 
-                                                           request_conn(-1), current_block(0) {
+                                                           request_conn(-1), current_block(0), all_data_recieved(false) {
 }
 
 Institution::~Institution() {

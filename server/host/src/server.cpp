@@ -22,7 +22,7 @@ using std::endl;
 
 boost::mutex cout_lock;
 
-const int MIN_BLOCK_COUNT = 10;
+const int MIN_BLOCK_COUNT = 50;
 
 Server::Server(int port_in) : port(port_in) {
     init();
@@ -207,6 +207,11 @@ void Server::handle_message(int connFD, const std::string& name, unsigned int si
             institutions[name]->set_covariant_data(name_data_split.front(), name_data_split.back());
             break;
         }
+        case EOF_LOGISTIC:
+        {
+            // intentionally missing break, we want to run the logistic case after we do some clean up
+            institutions[name]->all_data_recieved = true;
+        }
         case LOGISTIC:
         {
             if (!institutions.count(name)) {
@@ -253,16 +258,17 @@ void Server::check_in(std::string name) {
 void Server::data_requester() {
     while(true) {
         for (auto it : institutions) {
-            if (!it.second->requested_for_data && it.second->get_size() < MIN_BLOCK_COUNT) {
-                it.second->requested_for_data = true;
-                it.second->request_conn = send_msg(it.first, "DATA_REQUEST", std::to_string(MIN_BLOCK_COUNT), it.second->request_conn);
+            Institution inst = it.second;
+            if (!inst->requested_for_data && inst->get_size() < MIN_BLOCK_COUNT && !inst->all_data_recieved) {
+                inst->requested_for_data = true;
+                inst->request_conn = send_msg(it.first, "DATA_REQUEST", std::to_string(MIN_BLOCK_COUNT), inst->request_conn);
                 // Once we start asking for data, spin up a listener to reuse this connection
-                if (!it.second->listener_running) {
+                if (!inst->listener_running) {
                     // Also ask for Y and covariant data
                     send_msg(it.first, "Y_AND_COV", covariant_list + y_val_name);
 
-                    it.second->listener_running = true;
-                    boost::thread data_listener_thread(&Server::data_listener, this, it.second->request_conn);
+                    inst->listener_running = true;
+                    boost::thread data_listener_thread(&Server::data_listener, this, inst->request_conn);
                     data_listener_thread.detach();  
                 }
             }

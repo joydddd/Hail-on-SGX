@@ -49,6 +49,7 @@ class Institution {
     int current_block;
     bool requested_for_data;
     bool listener_running;
+    bool all_data_recieved;
 
     std::string hostname;
     
