@@ -18,14 +18,14 @@
 #include "gwas_u.h"
 using namespace std;
 const vector<vector<string>> covFiles = {
-    {"../../samples/1kg-logistic-regression/isFemale1.tsv",
-     "../../samples/1kg-logistic-regression/isFemale2.tsv"}};
+    {"../../archive/samples/1kg-logistic-regression/isFemale1.tsv",
+     "../../archive/samples/1kg-logistic-regression/isFemale2.tsv"}};
 const vector<string> yFiles = {
-    "../../samples/1kg-logistic-regression/PurpleHair1.tsv",
-    "../../samples/1kg-logistic-regression/PurpleHair2.tsv"};
+    "../../archive/samples/1kg-logistic-regression/PurpleHair1.tsv",
+    "../../archive/samples/1kg-logistic-regression/PurpleHair2.tsv"};
 const vector<string> allelesFiles = {
-    "../../samples/1kg-logistic-regression/alleles1.tsv",
-    "../../samples/1kg-logistic-regression/alleles2.tsv"};
+    "../../archive/samples/1kg-logistic-regression/alleles1.tsv",
+    "../../archive/samples/1kg-logistic-regression/alleles2.tsv"};
 const vector<string> clientNames = {"Client1", "Client2"};
 const vector<int> client_size = {100, 150};
 

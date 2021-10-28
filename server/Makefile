@@ -25,7 +25,7 @@ tests:
 	$(MAKE) -C host tests
 
 runtests:
-	$(MAKE) -C host runtest
+	$(MAKE) -C host runtests
 
 clean:
 	$(MAKE) -C enclave clean

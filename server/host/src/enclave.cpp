@@ -2,7 +2,7 @@
 #include <iostream>
 #include <map>
 #define BUFFER_LINES 1
-#define OUTPUT_FILE "test_logistic.out"
+#define OUTPUT_FILE "writeback.out"
 
 #include <gwas.h>
 
@@ -130,7 +130,13 @@ int start_enclave(int argc, const char* argv[]) {
 
     try {
         std::cout << "\n\n**RUNNING LOG REGRESSION**\n\n";
+        // DEBUG:
+        auto start = std::chrono::high_resolution_clock::now();
         result = log_regression(enclave);
+        // DEBUG: total execution time
+        auto stop = std::chrono::high_resolution_clock::now();
+        auto duration = duration_cast<std::chrono::microseconds>(stop - start);
+        cout << "Enclave time total: " << duration.count() << endl;
         if (result != OE_OK) {
             fprintf(stderr,
                     "calling into enclave_gwas failed: result=%u (%s)\n",
