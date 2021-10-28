@@ -19,7 +19,7 @@ int main(int argc, char const *argv[]) {
     int port = atoi(argv[1]);
 
     // initialize our server with the given port, and run it forever
-    Server::get_instance(port);
+    volatile Server::get_instance(port);
 
     boost::thread enclave_thread(start_enclave, argc, argv);
     enclave_thread.detach();
