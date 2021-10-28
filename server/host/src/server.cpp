@@ -156,7 +156,7 @@ bool Server::start_thread(int connFD) {
         cout_lock.unlock();
         
         // read in encrypted body
-        char body_buffer[1024];
+        char body_buffer[8192];
         int rval = recv(connFD, body_buffer, std::get<1>(parsed_header), MSG_WAITALL);
         if (rval == -1) {
             throw std::runtime_error("Error reading request body");

@@ -245,10 +245,10 @@ void Client::send_tsv_file(std::string filename, std::string mtype) {
     while(getline(tsv_file, line)) {
         //std::vector<std::string> patient_and_data = Parser::split(line, '\t');
         //data.append(patient_and_data.back() + " ");
-        data.append(line);
+        data.append(line + '\n');
     }
     // remove extra space at end of list
-    //data.pop_back();
+    data.pop_back();
 
     send_msg(mtype, data);
 }
