@@ -45,7 +45,7 @@ void init() {
 void getclientlist(char clientlist[ENCLAVE_READ_BUFFER_SIZE]) {
     stringstream list_ss;
     for (size_t i = 0; i < clientNames.size(); i++) {
-        list_ss << clientNames[i] << "\t" << client_size[i] << "\n";
+        list_ss << clientNames[i] << "\t";
     }
     strcpy(clientlist, list_ss.str().c_str());
 }
@@ -58,8 +58,9 @@ void getcovlist(char covlist[ENCLAVE_READ_BUFFER_SIZE]) {
     strcpy(covlist, ss.str().c_str());
 }
 
-void gety(const char client[MAX_CLIENTNAME_LENGTH],
+void gety(bool* rt, const char client[MAX_CLIENTNAME_LENGTH],
           char y[ENCLAVE_READ_BUFFER_SIZE]) {
+    *rt = true;
     static vector<ifstream> y_fstreams;
     if (y_fstreams.empty()) {
         for (auto& y_file : yFiles) {
@@ -76,9 +77,10 @@ void gety(const char client[MAX_CLIENTNAME_LENGTH],
     return;
 }
 
-void getcov(const char client[MAX_CLIENTNAME_LENGTH],
+void getcov(bool* rt, const char client[MAX_CLIENTNAME_LENGTH],
             const char cov_name[MAX_CLIENTNAME_LENGTH],
             char cov[ENCLAVE_READ_BUFFER_SIZE]) {
+    *rt = true;
     if (cov_name == "1") {
         strcpy(cov, "1");
         return;

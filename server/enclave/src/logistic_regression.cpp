@@ -226,15 +226,15 @@ SqrMatrix Log_row::H() {
     return SqrMatrix(H_vec);
 }
 
-double Log_row::L() {
-    double L = 0;
-    for (size_t i = 0; i < n; i++) {
-        if (isnan(data[i])) continue;
-        L += log(y_est[i]) * gwas.y.data[i] +
-             (1 - gwas.y.data[i]) * log(1 - y_est[i]);
-    }
-    return L;
-}
+// double Log_row::L() {
+//     double L = 0;
+//     for (size_t i = 0; i < n; i++) {
+//         if (isnan(data[i])) continue;
+//         L += log(y_est[i]) * gwas.y.data[i] +
+//              (1 - gwas.y.data[i]) * log(1 - y_est[i]);
+//     }
+//     return L;
+// }
 
 vector<double> Log_row::Grad() {
     vector<double> D(gwas.dim(), 0);
