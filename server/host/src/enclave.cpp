@@ -1,7 +1,7 @@
 #include <fstream>
 #include <iostream>
 #include <map>
-#define BUFFER_LINES 10
+#define BUFFER_LINES 1
 #define OUTPUT_FILE "test_logistic.out"
 
 #include <gwas.h>
