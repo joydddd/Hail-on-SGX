@@ -10,7 +10,7 @@ boost::mutex cout_lock;
 
 Client::Client(std::string clientname, std::string client_hostname, std::string server_hostname, int listen_port, int server_port) 
     : clientname(clientname), client_hostname(client_hostname), server_hostname(server_hostname), 
-    listen_port(listen_port), server_port(server_port), sender_running(false), xval("alleles.tsv") {
+    listen_port(listen_port), server_port(server_port), sender_running(false), xval("alleles.tsv"), sent_all_data(false) {
     init();
 }
 
@@ -148,6 +148,9 @@ bool Client::start_thread(int connFD) {
 }
 
 void Client::handle_message(int connFD, unsigned int size, std::string msg_type, std::string& msg) {
+    if (sent_all_data) {
+        return;
+    }
     MessageType mtype = Parser::str_to_enum(msg_type);
 
     std::string response;
@@ -184,6 +187,7 @@ void Client::handle_message(int connFD, unsigned int size, std::string msg_type,
             for (int i = 0; i < std::stoi(msg); ++i) {
                 if (!get_block(block)) {
                     msg_type = "EOF_LOGISTIC";
+                    sent_all_data = true;
                     send_msg(msg_type, block, connFD);
                     break;
                 }

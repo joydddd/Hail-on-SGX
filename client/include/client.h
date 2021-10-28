@@ -34,6 +34,7 @@ class Client {
     int blocks_sent;
 
     bool sender_running;
+    bool sent_all_data;
 
     std::ifstream xval;
 
