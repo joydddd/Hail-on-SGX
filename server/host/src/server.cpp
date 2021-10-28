@@ -300,6 +300,9 @@ std::string Server::get_covariants() {
 
 std::string Server::get_y_data(const std::string& institution_name) {
     std::string y_list;
+    if (!get_instance().institutions.count(institution_name)) {
+        return "";
+    }
     std::vector<std::string> y_vals = Parser::split(get_instance().institutions[institution_name]->get_y_data());
     for (std::string y_val : y_vals) {
         y_list.append(y_val + "\t");

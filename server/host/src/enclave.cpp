@@ -38,21 +38,6 @@ map<string, int> cov_map;
 
 static oe_enclave_t* enclave;
 
-// helper function. remove if not needed!
-void init() {
-    for (int i = 0; i < clientNames.size(); i++) {
-        client_map.insert(make_pair(clientNames[i], i));
-    }
-    int j = 0;
-    for (int i = 0; i < covNames.size(); i++) {
-        if (covNames[i] == "1") {
-            cov_map.insert(make_pair("1", -1));
-        } else {
-            cov_map.insert(make_pair(covNames[i], j));
-            j++;
-        }
-    }
-}
 
 void getclientlist(char clientlist[ENCLAVE_READ_BUFFER_SIZE]) {
     strcpy(clientlist, Server::get_institutions().c_str());
@@ -64,9 +49,7 @@ void getcovlist(char covlist[ENCLAVE_READ_BUFFER_SIZE]) {
 
 bool gety(const char client[MAX_CLIENTNAME_LENGTH],
           char y[ENCLAVE_READ_BUFFER_SIZE]) {
-    cerr << "in gety, client " << client << endl;
     std::string y_data = Server::get_y_data(client);
-    cerr << "check seg fault";
     if (y_data == "") {
         return false;
     }
@@ -146,7 +129,7 @@ int start_enclave(int argc, const char* argv[]) {
     }
 
     try {
-        init();  // helper function. remove if not needed
+        std::cout << "\n\n**RUNNING LOG REGRESSION**\n\n";
         result = log_regression(enclave);
         if (result != OE_OK) {
             fprintf(stderr,
