@@ -53,7 +53,7 @@ class Client {
     void send_msg(const std::string& msg_type, const std::string& msg, int connFD=-1);
 
     // start a thread that will handle a message and exit properly if it finds an error
-    void start_thread(int connFD);
+    bool start_thread(int connFD);
 
     bool get_block(std::string& block); 
 
