@@ -237,17 +237,18 @@ void Client::send_tsv_file(std::string filename, std::string mtype) {
     if (mtype == "COVARIANT") {
         data.append(filename + " ");
     }
-    
+    // TODO: fix this code once Joy's enclave can handle a different format
     std::string line;
-    // read in first line garbage
-    getline(tsv_file, line);
+    // // read in first line garbage
+    // getline(tsv_file, line);
 
     while(getline(tsv_file, line)) {
-        std::vector<std::string> patient_and_data = Parser::split(line, '\t');
-        data.append(patient_and_data.back() + " ");
+        //std::vector<std::string> patient_and_data = Parser::split(line, '\t');
+        //data.append(patient_and_data.back() + " ");
+        data.append(line);
     }
     // remove extra space at end of list
-    data.pop_back();
+    //data.pop_back();
 
     send_msg(mtype, data);
 }
