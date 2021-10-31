@@ -20,7 +20,7 @@ using std::cout;
 using std::cin;
 using std::endl;
 
-boost::mutex cout_lock;
+std::mutex cout_lock;
 
 const int MIN_BLOCK_COUNT = 50;
 
@@ -85,23 +85,17 @@ void Server::run() {
 
     // bind to our given port, or randomly get one if port = 0
 	if (bind(sockfd, (struct sockaddr*) &addr, addrSize) < 0) {
-        cout_lock.lock();
-        cout << "bind failure: " << errno << endl;
-        cout_lock.unlock();
+        guarded_cout("bind failure: " + std::to_string(errno), cout_lock);
     } 
 
     // update our member variable to the port we just assigned
     if (getsockname(sockfd, (struct sockaddr*) &addr, &addrSize) < 0) {
-        cout_lock.lock();
-        cout << "getsockname failure: " << errno << endl;
-        cout_lock.unlock();
+        guarded_cout("getsockname failure: " + std::to_string(errno), cout_lock);
     }
 
     // (4) Begin listening for incoming connections.
 	if (listen(sockfd, 30) < 0) {
-        cout_lock.lock();
-        cout << "listen: " << errno << endl;
-        cout_lock.unlock();
+        guarded_cout("listen: " + std::to_string(errno), cout_lock);
     }
 
     port = ntohs(addr.sin_port);
@@ -150,10 +144,11 @@ bool Server::start_thread(int connFD) {
         std::string header(header_buffer, header_size);
         // get the username and size of who sent this plaintext header
         auto parsed_header = Parser::parse_server_header(header);
-        cout_lock.lock();
-        cout << "\nInstitution: " << std::get<0>(parsed_header) << " Size: " << std::get<1>(parsed_header) 
-             << " Msg Type: " << std::get<2>(parsed_header) << endl;
-        cout_lock.unlock();
+        guarded_cout("\nInstitution: " + std::get<0>(parsed_header) +
+        " Size: " + std::to_string(std::get<1>(parsed_header)) +
+        " Msg Type: " + std::to_string(std::get<2>(parsed_header)),
+        cout_lock);
+
         
         // read in encrypted body
         char body_buffer[8192];

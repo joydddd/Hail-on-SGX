@@ -15,7 +15,7 @@
 #include <netdb.h>
 
 #include "parser.h"
-#include "helpers.h"
+#include "socket_send.h"
 
 
 #ifndef _CLIENT_H_

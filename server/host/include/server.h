@@ -18,6 +18,7 @@
 #include <functional>
 #include <boost/thread.hpp>
 #include "institution.h"
+#include "output.h"
 
 class Server {
   private:
