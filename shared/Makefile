@@ -2,20 +2,17 @@
 CC := g++
 SRCDIR := src
 BUILDDIR := build
-SHAREDBUILDDIR := ../shared/build
 TARGETDIR := bin
-TESTDIR := tests
-UNITTESTDIR := unit_tests
+
 
 SRCEXT := cpp
 # List of source files for your thread library
 SOURCES = $(shell find $(SRCDIR) -type f -name *.cpp)
 # Generate the names of the thread library's object files
 OBJECTS := $(patsubst $(SRCDIR)/%,$(BUILDDIR)/%,$(SOURCES:.$(SRCEXT)=.o))
-OBJECTS += $(shell find $(SHAREDBUILDDIR) -type f -name *.o)
 CFLAGS := -g -Wall -std=c++14 -pthread 
 FSFLAGS := -ldl
-INC := -I ../shared/include -I include
+INC := -I ../shared -I include
 
 # list of test drivers (with main()) for development
 TESTSOURCES := $(wildcard $(TESTDIR)/*test*.$(SRCEXT))
@@ -37,31 +34,18 @@ else
 	LIBCHRONO = -lboost_chrono
 endif
 
-all: shared client
+all: clean shared
 
 # Generic rules for compiling a source file to an object file
 ${BUILDDIR}/%.o: ${SRCDIR}/%.${SRCEXT}
 	@mkdir -p ${BUILDDIR}
 	${CC} ${CFLAGS} ${INC} -c -o $@ $<
 
-# Automatically generate any build rules for test*.cpp files
-define make_tests
-    $(1): $$(TESTDIR)/$(1).$$(SRCEXT)
-	$$(CC) $$(CFLAGS) $$(INC) -o $$(TARGETDIR)/$(1).o $$^ $$(LIBTHREAD)
-endef
-$(foreach test,$(TESTOBJECTS),$(eval $(call make_tests,$(test))))
-
-# Compile all test programs
-tests: ${TESTOBJECTS}
-
-shared:
-	cd ../shared && $(MAKE) && cd ../client
-
 # Compile the pager and tag this compilation
-client: ${OBJECTS}
-	@mkdir -p ${TARGETDIR}
-	${CC} ${CFLAGS} ${INC} -o ${TARGETDIR}/$@ $^ ${LIBTHREAD} ${FSFLAGS}
+shared: ${OBJECTS}
+	@mkdir -p ${BUILDDIR}
+	$(CC) -c $(CFLAGS) $(OBJECTS)
 
 clean:
 	@echo "Cleaning..."
-	rm -r ${BUILDDIR} ${TARGETDIR}
+	@if [ -d ${BUILDDIR} ]; then rm -r ${BUILDDIR}; fi

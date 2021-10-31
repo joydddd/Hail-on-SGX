@@ -1,6 +1,7 @@
 # Copyright (c) Open Enclave SDK contributors.
 # Licensed under the MIT License.
 SRCDIR := src
+SHAREDBUILDDIR := ../../shared/build
 BUILDDIR := build
 TESTDIR := tests
 include ../config.mk
@@ -10,12 +11,14 @@ EXECUTABLE = $(PROJECTNAME)host
 TESTSOURCES = $(wildcard $(TESTDIR)/test*.cpp)
 # names of test executables
 TESTS       = $(patsubst $(TESTDIR)/%,%,$(TESTSOURCES:.cpp=))
-
 # List of source files for your thread library
-SOURCES := $(shell find $(SRCDIR) -type f -name *.cpp)
+SOURCES = $(shell find $(SRCDIR) -type f -name *.cpp)
+
 # Generate the names of the thread library's object files
 OBJECTS := $(patsubst $(SRCDIR)/%,$(BUILDDIR)/%,$(SOURCES:.cpp=.o))
+OBJECTS += $(shell find $(SHAREDBUILDDIR) -type f -name *.o)
 DEBUGOBJECTS := $(patsubst $(SRCDIR)/%,$(BUILDDIR)/%,$(SOURCES:.cpp=_debug.o))
+INC := -I ../../shared/include -I .. -pthread -I include -I .
 
 ######################################
 
@@ -33,9 +36,9 @@ CXXFLAGS=$(shell pkg-config oehost-$(CXX_COMPILER) --cflags)
 LDFLAGS=$(shell pkg-config oehost-$(C_COMPILER) --libs)
 INCDIR=$(shell pkg-config oehost-$(C_COMPILER) --variable=includedir)
 
-CFLAGS+= -I ../../include -I .. -pthread -I include -I . 
-CXXFLAGS+= -I ../../include -I .. -pthread -I include -I .
-LDFLAGS+= -I ../../include -I .. -pthread -I include -I . $(LIBTHREAD)
+CFLAGS+= $(INC) 
+CXXFLAGS+= $(INC) 
+LDFLAGS+= $(INC) $(LIBTHREAD)
 
 all: build
 
@@ -53,6 +56,7 @@ ${BUILDDIR}/%.o: ${SRCDIR}/%.cpp
 	${CXX} ${CXXFLAGS} -c -o $@ $<
 
 build: pre $(OBJECTS)
+	cd ../../shared && $(MAKE) && cd ../server/host
 	$(CXX) -o $(EXECUTABLE) $(BUILDDIR)/$(PROJECTNAME)_u.o $(OBJECTS) $(LDFLAGS)
 
 run: 
