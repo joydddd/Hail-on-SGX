@@ -9,7 +9,7 @@
 #include <vector>
 
 #include "gwas.h"
-#include "linear_algebra/Matrix.h"
+#include "Matrix.h"
 
 using namespace std;
 

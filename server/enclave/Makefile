@@ -31,9 +31,9 @@ CRYPTO_LDFLAGS=$(shell pkg-config oeenclave-$(COMPILER) --variable=${OE_CRYPTO_L
 
 BOOST_ROOT = /usr/local/lib/boost_1_76_0/
 # CXXFLAGS+= -I $(BOOST_ROOT)
-CFLAGS+= -I ../../include -I .. -I include -I .
-CXXFLAGS+= -I ../../include -I .. -I include -I .
-LDFLAGS+= -I ../../include -I .. -I include
+CFLAGS+= -I ../../shared/include -I .. -I include -I .
+CXXFLAGS+= -I ../../shared/include -I .. -I include -I .
+LDFLAGS+= -I ../../shared/include -I .. -I include -I .
 
 
 all:
@@ -84,7 +84,7 @@ keys:
 	openssl rsa -in $(KEYDIR)/private.pem -pubout -out $(KEYDIR)/public.pem
 
 CXX_NONENC_FLAGS = -std=c++1z -pedantic
-CXX_NONENC_FLAGS+= -I ../../include -I .. -I include -I .
+CXX_NONENC_FLAGS+= -I ../../include/shared -I .. -I include -I .
 # non-enclave tests
 define make_tests
     $(1): CXX_NONENC_FLAGS += -g3 -DDEBUG -DENC_TEST
