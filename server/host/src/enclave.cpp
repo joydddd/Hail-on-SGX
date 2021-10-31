@@ -103,12 +103,27 @@ bool check_simulate_opt(int* argc, const char* argv[]) {
     return false;
 }
 
+bool check_debug_opt(int* argc, const char* argv[]) {
+    for (int i = 0; i < *argc; i++) {
+        if (strcmp(argv[i], "--debug") == 0) {
+            fprintf(stdout, "Running in debug mode\n");
+            memmove(&argv[i], &argv[i + 1], (*argc - i) * sizeof(char*));
+            (*argc)--;
+            return true;
+        }
+    }
+    return false;
+}
+
 int start_enclave(int argc, const char* argv[]) {
     oe_result_t result;
     int ret = 1;
     enclave = NULL;
 
     uint32_t flags = 0;
+    if (check_debug_opt(&argc, argv)) {
+        flags |= OE_ENCLAVE_FLAG_DEBUG;
+    }
     if (check_simulate_opt(&argc, argv)) {
         flags |= OE_ENCLAVE_FLAG_SIMULATE;
     }

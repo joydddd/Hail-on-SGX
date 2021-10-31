@@ -86,14 +86,14 @@ ${BUILDDIR}/%_debug.o: ${SRCDIR}/%.cpp
 
 debugtests: $(TESTS)
 	$(MAKE) -C .. debug
-	$(foreach test,$(TESTS),./$(test) ../enclave/$(PROJECTNAME)enc.signed;)
+	$(foreach test,$(TESTS), $(DEBUGER) ./$(test) ../enclave/$(PROJECTNAME)enc_debug.signed --debug)
 
 debug: pre $(DEBUGOBJECTS) 
 	$(CC) -c -g $(CFLAGS) $(PROJECTNAME)_u.c -o $(BUILDDIR)/$(PROJECTNAME)_u_debug.o
 	$(CXX) -g -o $(EXECUTABLE)_debug $(BUILDDIR)/$(PROJECTNAME)_u_debug.o $(DEBUGOBJECTS) $(LDFLAGS)
 
 debugrun:
-	$(DEBUGER) ./$(EXECUTABLE)_debug $(HOST_PORT) ../enclave/$(PROJECTNAME)enc_debug.signed
+	$(DEBUGER) ./$(EXECUTABLE)_debug $(HOST_PORT) ../enclave/$(PROJECTNAME)enc_debug.signed --debug
 
 clean:
 	rm -rf ${BUILDDIR}
