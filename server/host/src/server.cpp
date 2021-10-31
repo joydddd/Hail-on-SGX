@@ -148,7 +148,6 @@ bool Server::start_thread(int connFD) {
         " Size: " + std::to_string(std::get<1>(parsed_header)) +
         " Msg Type: " + std::to_string(std::get<2>(parsed_header)),
         cout_lock);
-
         
         // read in encrypted body
         char body_buffer[8192];
@@ -157,15 +156,11 @@ bool Server::start_thread(int connFD) {
             throw std::runtime_error("Error reading request body");
         }
         std::string encrypted_body(body_buffer, std::get<1>(parsed_header));
-        cout_lock.lock();
-        cout << "Encrypted body:" << endl << encrypted_body << endl;
-        cout_lock.unlock();
+        guarded_cout("\nEncrypted body:\n" + encrypted_body, cout_lock);
         handle_message(connFD, std::get<0>(parsed_header), std::get<1>(parsed_header), std::get<2>(parsed_header), encrypted_body);
     }
     catch (const std::runtime_error e)  {
-        cout_lock.lock();
-        cout << "Exception: " << e.what() << endl;
-        cout_lock.unlock();
+        guarded_cout("Exception: " + e.what(), cout_lock);
         close(connFD);
         return false;
     }
@@ -227,13 +222,9 @@ void Server::handle_message(int connFD, const std::string& name, unsigned int si
     }
     if (mtype != LOGISTIC) {
         // cool, well handled!
-        cout_lock.lock();
-        cout << endl << "Closing connection" << endl;
-        cout_lock.unlock();
+        guarded_cout("\nClosing connection", cout_lock);
         close(connFD);
-        cout_lock.lock();
-        cout << endl << "--------------" << endl;
-        cout_lock.unlock();
+        guarded_cout("\n--------------", cout_lock);
     }     
 }
 
