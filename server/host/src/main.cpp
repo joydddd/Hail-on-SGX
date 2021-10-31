@@ -15,7 +15,7 @@ __attribute__((always_inline)) inline void DoNotOptimize(const T &value) {
 
 int main(int argc, char const *argv[]) {
 
-    if (argc != 3) {
+    if (argc < 3) {
         // server ran incorrectly
         std::cout << "Usage: <EXE> [port_number] [enclave_path]" << std::endl;
         return 1;
