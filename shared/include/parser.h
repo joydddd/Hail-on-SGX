@@ -6,10 +6,14 @@
 #define _PARSER_H_
 
 #include <vector>
-#include <string>
 #include <tuple>
-#include <utility>
 #include <unordered_map>
+#include <assert.h>
+#include <cctype>
+#include <climits>
+#include <string>
+#include <stdexcept>
+#include <utility>
 
 enum ClientMessageType { 
   SUCCESS,
@@ -24,7 +28,6 @@ enum ServerMessageType {
     LOGISTIC,
     EOF_LOGISTIC
 };
-
 
 struct DataBlock {
   std::string data;

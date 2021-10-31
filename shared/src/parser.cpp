@@ -3,16 +3,6 @@
  */
 
 #include "parser.h"
-#include <assert.h>
-#include <cctype>
-#include <climits>
-#include <iostream>
-#include <string>
-#include <stdexcept>
-#include <utility>
-
-using std::cout;
-using std::endl;
 
 Parser::Parser(/* args */) {
 
