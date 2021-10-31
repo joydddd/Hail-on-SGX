@@ -48,10 +48,10 @@ class Client {
     void run();
 
     // parses and calls the appropriate handler for an incoming client request
-    void handle_message(int connFD, unsigned int size, std::string msg_type, std::string& msg);
+    void handle_message(int connFD, unsigned int size, ClientMessageType mtype, std::string& msg);
 
     // construct response header, encrypt response body, and send
-    void send_msg(const std::string& msg_type, const std::string& msg, int connFD=-1);
+    void send_msg(ServerMessageType mtype, const std::string& msg, int connFD=-1);
 
     // start a thread that will handle a message and exit properly if it finds an error
     bool start_thread(int connFD);
@@ -60,7 +60,7 @@ class Client {
 
     void data_sender(int connFD);
 
-    void send_tsv_file(std::string filename, std::string mtype);
+    void send_tsv_file(std::string filename, ServerMessageType mtype);
 
 };
 

@@ -10,7 +10,8 @@ boost::mutex cout_lock;
 
 Client::Client(std::string clientname, std::string client_hostname, std::string server_hostname, int listen_port, int server_port) 
     : clientname(clientname), client_hostname(client_hostname), server_hostname(server_hostname), 
-    listen_port(listen_port), server_port(server_port), sender_running(false), xval("alleles.tsv"), sent_all_data(false) {
+      listen_port(listen_port), server_port(server_port), blocks_sent(0), sender_running(false), 
+      sent_all_data(false), xval("alleles.tsv") {
     init();
 }
 
@@ -21,8 +22,7 @@ void Client::init() {
     std::string garbage;
     getline(xval, garbage);
 
-    send_msg("REGISTER", client_hostname + " " + std::to_string(listen_port));
-    blocks_sent = 0;
+    send_msg(REGISTER, client_hostname + " " + std::to_string(listen_port));
 }
 
 void Client::run() {
@@ -118,7 +118,7 @@ bool Client::start_thread(int connFD) {
         }
         std::string header(header_buffer, header_size);
 
-        auto parsed_header = Parser::parse_header(header);
+        auto parsed_header = Parser::parse_client_header(header);
         cout_lock.lock();
         std::cout << "Size: " << std::get<0>(parsed_header) << " Msg Type: " << std::get<1>(parsed_header) << endl;
         cout_lock.unlock();
@@ -147,13 +147,13 @@ bool Client::start_thread(int connFD) {
     return true;
 }
 
-void Client::handle_message(int connFD, unsigned int size, std::string msg_type, std::string& msg) {
+void Client::handle_message(int connFD, unsigned int size, ClientMessageType mtype, std::string& msg) {
     if (sent_all_data) {
         return;
     }
-    MessageType mtype = Parser::str_to_enum(msg_type);
 
     std::string response;
+    ServerMessageType response_mtype;
 
     switch (mtype) {
         case SUCCESS:
@@ -170,37 +170,28 @@ void Client::handle_message(int connFD, unsigned int size, std::string msg_type,
             covariants.pop_back();
 
             // send the data in each TSV file over to the server
-            send_tsv_file(y_val, "Y_VAL");
+            send_tsv_file(y_val, Y_VAL);
             for (std::string covariant : covariants) {
-                send_tsv_file(covariant, "COVARIANT");
+                send_tsv_file(covariant, COVARIANT);
             }
             break;
         }
         case DATA_REQUEST:
         {   
-            msg_type = "LOGISTIC";
+            response_mtype = LOGISTIC;
             std::string block;
-            if (!sender_running) {
-                sender_running = true;
-                boost::thread data_sender_thread(&Client::data_sender, this, connFD);
+            while(get_block(block)) {
+                send_msg(response_mtype, block, connFD);
             }
-            for (int i = 0; i < std::stoi(msg); ++i) {
-                if (!get_block(block)) {
-                    msg_type = "EOF_LOGISTIC";
-                    sent_all_data = true;
-                    send_msg(msg_type, block, connFD);
-                    break;
-                }
-                send_msg(msg_type, block, connFD);
-            }
+            // If get_block failed we have reached the end of the file, send an EOF.
+            response_mtype = EOF_LOGISTIC;
+            sent_all_data = true;
+            send_msg(response_mtype, block, connFD);
             break;
         }
         default:
             throw std::runtime_error("Not a valid response type");
     }
-    // now let's send that response
-    //send_response(connFD, name, response);
-    // cool, well handled!
     if (mtype != DATA_REQUEST) {
         cout_lock.lock();
         cout << endl << "Closing connection" << endl;
@@ -212,8 +203,8 @@ void Client::handle_message(int connFD, unsigned int size, std::string msg_type,
     }
 }
 
-void Client::send_msg(const std::string& msg_type, const std::string& msg, int connFD) {
-    std::string message = clientname + " " + std::to_string(msg.length()) + " " + msg_type +"\n" + msg;
+void Client::send_msg(ServerMessageType mtype, const std::string& msg, int connFD) {
+    std::string message = clientname + " " + std::to_string(msg.length()) + " " + std::to_string(mtype) +"\n" + msg;
     send_message(server_hostname.c_str(), server_port, message.c_str(), connFD);
 }
 
@@ -235,10 +226,10 @@ void Client::data_sender(int connFD) {
     while(start_thread(connFD)) {}
 }
 
-void Client::send_tsv_file(std::string filename, std::string mtype) {
+void Client::send_tsv_file(std::string filename, ServerMessageType mtype) {
     std::ifstream tsv_file(filename + ".tsv");
     std::string data;
-    if (mtype == "COVARIANT") {
+    if (mtype == COVARIANT) {
         data.append(filename + " ");
     }
     // TODO: fix this code once Joy's enclave can handle a different format

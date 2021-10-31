@@ -122,9 +122,6 @@ void Server::run() {
 }
 
 bool Server::start_thread(int connFD) {
-    cout_lock.lock();
-    cout << endl << "Accepted new connection" << endl;
-    cout_lock.unlock();
     // if we catch any errors we will throw an error to catch and close the connection
     try {
         char header_buffer[128];
@@ -137,7 +134,8 @@ bool Server::start_thread(int connFD) {
             // Receive exactly one byte
             int rval = recv(connFD, header_buffer + header_size, 1, MSG_WAITALL);
             if (rval == -1) {
-                throw std::runtime_error("Error reading stream message");
+                cout << "Error reading stream message";
+                return false;
             }
             // Stop if we received a deliminating character
             if (header_buffer[header_size] == '\n') {
@@ -151,7 +149,7 @@ bool Server::start_thread(int connFD) {
         }
         std::string header(header_buffer, header_size);
         // get the username and size of who sent this plaintext header
-        auto parsed_header = Parser::parse_header(header);
+        auto parsed_header = Parser::parse_server_header(header);
         cout_lock.lock();
         cout << "\nInstitution: " << std::get<0>(parsed_header) << " Size: " << std::get<1>(parsed_header) 
              << " Msg Type: " << std::get<2>(parsed_header) << endl;
@@ -164,9 +162,9 @@ bool Server::start_thread(int connFD) {
             throw std::runtime_error("Error reading request body");
         }
         std::string encrypted_body(body_buffer, std::get<1>(parsed_header));
-        // cout_lock.lock();
-        // cout << "Encrypted body:" << endl << encrypted_body << endl;
-        // cout_lock.unlock();
+        cout_lock.lock();
+        cout << "Encrypted body:" << endl << encrypted_body << endl;
+        cout_lock.unlock();
         handle_message(connFD, std::get<0>(parsed_header), std::get<1>(parsed_header), std::get<2>(parsed_header), encrypted_body);
     }
     catch (const std::runtime_error e)  {
@@ -179,12 +177,12 @@ bool Server::start_thread(int connFD) {
     return true;
 }
 
-void Server::handle_message(int connFD, const std::string& name, unsigned int size, std::string msg_type,
+void Server::handle_message(int connFD, const std::string& name, unsigned int size, ServerMessageType mtype,
                             std::string& msg) {
-    MessageType mtype = Parser::str_to_enum(msg_type);
     DataBlock* block = Parser::parse_body(msg, mtype);
 
     std::string response;
+    ClientMessageType response_mtype;
 
     switch (mtype) {
         case REGISTER:
@@ -195,7 +193,7 @@ void Server::handle_message(int connFD, const std::string& name, unsigned int si
             std::vector<std::string> hostname_and_port = Parser::split(msg);
             institutions[name] = new Institution(hostname_and_port[0], Parser::convert_to_num(hostname_and_port[1]));
             check_in(name);
-            msg_type = "SUCCESS";
+            response_mtype = SUCCESS;
             break;
         }
         case Y_VAL:
@@ -216,11 +214,13 @@ void Server::handle_message(int connFD, const std::string& name, unsigned int si
         }
         case LOGISTIC:
         {
-            if (!institutions.count(name)) {
-                throw std::runtime_error("No such user exists");
+            // if (!institutions.count(name)) {
+            //     throw std::runtime_error("No such user exists");
+            // }
+            if (block) {
+                institutions[name]->add_block(block);
+                institutions[name]->requested_for_data = false;
             }
-            institutions[name]->add_block(block);
-            institutions[name]->requested_for_data = false;
             break;
         }
         default:
@@ -228,7 +228,7 @@ void Server::handle_message(int connFD, const std::string& name, unsigned int si
     }
     // now let's send that response
     if (response.length()) {
-        send_msg(name, msg_type, response);
+        send_msg(name, response_mtype, response);
     }
     if (mtype != LOGISTIC) {
         // cool, well handled!
@@ -242,8 +242,8 @@ void Server::handle_message(int connFD, const std::string& name, unsigned int si
     }     
 }
 
-int Server::send_msg(const std::string& name, const std::string& msg_type, const std::string& msg, int connFD) {
-    std::string message = std::to_string(msg.length()) + " " + msg_type + '\n' + msg;
+int Server::send_msg(const std::string& name, ClientMessageType mtype, const std::string& msg, int connFD) {
+    std::string message = std::to_string(msg.length()) + " " + std::to_string(mtype) + '\n' + msg;
     return send_message(institutions[name]->hostname.c_str(), institutions[name]->port, message.c_str(), connFD);
 }
 
@@ -251,33 +251,40 @@ void Server::check_in(std::string name) {
     std::lock_guard<std::mutex> raii(expected_lock);
     expected_institutions.erase(name);
     if (!expected_institutions.size()) {
-        // start thread to request more data
-        boost::thread requester_thread(&Server::data_requester, this);
-        requester_thread.detach();
-    }
-}
-
-void Server::data_requester() {
-    while(true) {
+        // request y, cov, and data
         for (auto it : institutions) {
             Institution* inst = it.second;
-            if (!inst->requested_for_data && inst->get_size() < MIN_BLOCK_COUNT && !inst->all_data_recieved) {
-                inst->requested_for_data = true;
-                inst->request_conn = send_msg(it.first, "DATA_REQUEST", std::to_string(MIN_BLOCK_COUNT), inst->request_conn);
-                // Once we start asking for data, spin up a listener to reuse this connection
-                if (!inst->listener_running) {
-                    // Also ask for Y and covariant data
-                    send_msg(it.first, "Y_AND_COV", covariant_list + y_val_name);
-
-                    inst->listener_running = true;
-                    boost::thread data_listener_thread(&Server::data_listener, this, inst->request_conn);
-                    data_listener_thread.detach();  
-                }
-            }
+            send_msg(it.first, Y_AND_COV, covariant_list + y_val_name);
+            inst->request_conn = send_msg(it.first, DATA_REQUEST, std::to_string(MIN_BLOCK_COUNT), inst->request_conn);
+            // start listener thread for data!
+            boost::thread data_listener_thread(&Server::data_listener, this, inst->request_conn);
+            data_listener_thread.detach();  
         }
-        //boost::this_thread::sleep(boost::posix_time::seconds(1));
+        
     }
 }
+
+// void Server::data_requester() {
+//     while(true) {
+//         for (auto it : institutions) {
+//             Institution* inst = it.second;
+//             if (!inst->requested_for_data && inst->get_size() < MIN_BLOCK_COUNT && !inst->all_data_recieved) {
+//                 inst->requested_for_data = true;
+//                 inst->request_conn = send_msg(it.first, DATA_REQUEST, std::to_string(MIN_BLOCK_COUNT), inst->request_conn);
+//                 // Once we start asking for data, spin up a listener to reuse this connection
+//                 if (!inst->listener_running) {
+//                     // Also ask for Y and covariant data
+//                     send_msg(it.first, Y_AND_COV, covariant_list + y_val_name);
+
+//                     inst->listener_running = true;
+//                     boost::thread data_listener_thread(&Server::data_listener, this, inst->request_conn);
+//                     data_listener_thread.detach();  
+//                 }
+//             }
+//         }
+//         //boost::this_thread::sleep(boost::posix_time::seconds(1));
+//     }
+// }
 
 void Server::data_listener(int connFD) {
     // We need a serial listener for this agreed upon connection!

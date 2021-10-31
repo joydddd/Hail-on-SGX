@@ -36,56 +36,35 @@ std::vector<std::string> Parser::split(const std::string& s, char delim, int num
             split_string = "";
         }
     }
-    if (split_string != "") split_strings.push_back(split_string);
+    if (split_string.length()) split_strings.push_back(split_string);
     return split_strings;
 }
 
-std::tuple<unsigned int, std::string> Parser::parse_header(std::string header) {
+std::tuple<unsigned int, ClientMessageType> Parser::parse_client_header(std::string header) {
+    // get username and size of message body
+    auto words = split(header, ' ');
+    if (words.size() != 2) throw std::runtime_error("Invalid header - not size, message type");
+    unsigned int size = convert_to_num(words.front());
+    ClientMessageType mtype = static_cast<ClientMessageType>(convert_to_num(words.back()));
+    return std::make_tuple(size, mtype);
+}
+
+std::tuple<std::string, unsigned int, ServerMessageType> Parser::parse_server_header(std::string header) {
     // get username and size of message body
     // TODO: error checking
     auto words = split(header, ' ');
-    if (words.size() != 2) throw std::runtime_error("Invalid header - not size, message type");
-    unsigned int size = convert_to_num(words[0]);
-    return std::make_tuple(size, words.back());
+    if (words.size() != 3) throw std::runtime_error("Invalid header - not name, size, message type");
+    unsigned int size = convert_to_num(words[1]);
+    ServerMessageType mtype = static_cast<ServerMessageType>(convert_to_num(words.back()));
+    return std::make_tuple(words.front(), size, mtype);
 }
 
-int indexOfDifference(std::string cs1, std::string cs2) {
-    if (cs1 == cs2) {
-        return -1;
-    }
-    int i;
-    for (i = 0; i < cs1.length() && i < cs2.length(); ++i) {
-        if (cs1[i] != cs2[i]) {
-            break;
-        }
-    }
-    if (i < cs2.length() || i < cs1.length()) {
-        return i;
-    }
-    return -1;
-}
-
-MessageType Parser::str_to_enum(std::string str_type) {
-    MessageType mtype;
-    if (str_type == "SUCCESS") {
-        mtype = SUCCESS;
-    }
-    else if (str_type == "Y_AND_COV") { 
-        mtype = Y_AND_COV;
-    }
-    else if (str_type == "DATA_REQUEST") {
-        mtype = DATA_REQUEST;
-    }
-    else {
-        // TODO: insert error handling logic
-        throw std::runtime_error("Parse first word failed, unknown reason.");
-    }
-    return mtype;
-}
-
-DataBlock* Parser::parse_body(std::string message_body, MessageType mtype) {
-    if (mtype == SUCCESS) return nullptr;
+DataBlock* Parser::parse_body(std::string message_body, ServerMessageType mtype) {
+    if (mtype != LOGISTIC && mtype != EOF_LOGISTIC) return nullptr;
     std::vector<std::string> split_msg = Parser::split(message_body, ' ', 1);
+    if (split_msg.size() != 2) {
+        return nullptr;
+    }
     int counter = Parser::convert_to_num(split_msg.front());
     std::string encrypted_block = split_msg.back();
     struct DataBlock* block = new DataBlock;

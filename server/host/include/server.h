@@ -37,10 +37,10 @@ class Server {
     void init();
     
     // parses and calls the appropriate handler for an incoming client request
-    void handle_message(int connFD, const std::string& name, unsigned int size, std::string msg_type, std::string& msg);
+    void handle_message(int connFD, const std::string& name, unsigned int size, ServerMessageType mtype, std::string& msg);
 
     // construct response header, encrypt response body, and send
-    int send_msg(const std::string& name, const std::string& msg_type, const std::string& msg, int connFD=-1);
+    int send_msg(const std::string& name, ClientMessageType mtype, const std::string& msg, int connFD=-1);
 
     // start a thread that will handle a message and exit properly if it finds an error
     bool start_thread(int connFD);

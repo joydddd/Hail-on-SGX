@@ -50,7 +50,7 @@ void getcovlist(char covlist[ENCLAVE_READ_BUFFER_SIZE]) {
 bool gety(const char client[MAX_CLIENTNAME_LENGTH],
           char y[ENCLAVE_READ_BUFFER_SIZE]) {
     std::string y_data = Server::get_y_data(client);
-    if (y_data == "") {
+    if (!y_data.length()) {
         return false;
     }
     strcpy(y, y_data.c_str());
@@ -65,7 +65,7 @@ bool getcov(const char client[MAX_CLIENTNAME_LENGTH],
         return true;
     }
     std::string cov_data = Server::get_covariant_data(client, cov_name);
-    if (cov_data == "") {
+    if (!cov_data.length()) {
         return false;
     }
     strcpy(cov, cov_data.c_str());
@@ -76,7 +76,7 @@ bool getbatch(const char client[MAX_CLIENTNAME_LENGTH], Row_T type,
               char batch[ENCLAVE_READ_BUFFER_SIZE]) {
     // TODO: maybe change this so we read in a diff number for each 
     std::string batch_data = Server::get_x_data(client, BUFFER_LINES);
-    if (batch_data == "") {
+    if (!batch_data.length()) {
         return false;
     }
     strcpy(batch, batch_data.c_str());
