@@ -156,11 +156,11 @@ bool Server::start_thread(int connFD) {
             throw std::runtime_error("Error reading request body");
         }
         std::string encrypted_body(body_buffer, std::get<1>(parsed_header));
-        guarded_cout("\nEncrypted body:\n" + encrypted_body, cout_lock);
+        //guarded_cout("\nEncrypted body:\n" + encrypted_body, cout_lock);
         handle_message(connFD, std::get<0>(parsed_header), std::get<1>(parsed_header), std::get<2>(parsed_header), encrypted_body);
     }
     catch (const std::runtime_error e)  {
-        guarded_cout("Exception: " + e.what(), cout_lock);
+        guarded_cout("Exception: " + std::string(e.what()), cout_lock);
         close(connFD);
         return false;
     }

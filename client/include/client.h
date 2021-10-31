@@ -16,7 +16,7 @@
 
 #include "parser.h"
 #include "socket_send.h"
-
+#include "output.h"
 
 #ifndef _CLIENT_H_
 #define _CLIENT_H_

@@ -5,7 +5,7 @@ using std::cout;
 using std::cin;
 using std::endl;
 
-boost::mutex cout_lock;
+std::mutex cout_lock;
 
 
 Client::Client(std::string clientname, std::string client_hostname, std::string server_hostname, int listen_port, int server_port) 
@@ -89,9 +89,6 @@ void Client::run() {
 }
 
 bool Client::start_thread(int connFD) {
-    cout_lock.lock();
-    cout << endl << "Accepted new connection" << endl;
-    cout_lock.unlock();
     // if we catch any errors we will throw an error to catch and close the connection
     try {
         char header_buffer[128];
@@ -119,9 +116,8 @@ bool Client::start_thread(int connFD) {
         std::string header(header_buffer, header_size);
 
         auto parsed_header = Parser::parse_client_header(header);
-        cout_lock.lock();
-        std::cout << "Size: " << std::get<0>(parsed_header) << " Msg Type: " << std::get<1>(parsed_header) << endl;
-        cout_lock.unlock();
+        guarded_cout("Size: " + std::to_string(std::get<0>(parsed_header)) + 
+                     " Msg Type: " + std::to_string(std::get<1>(parsed_header)), cout_lock);
         
         char body_buffer[1024];
         if (std::get<0>(parsed_header) != 0) {
@@ -132,9 +128,8 @@ bool Client::start_thread(int connFD) {
             }
         }
         std::string encrypted_body(body_buffer, std::get<0>(parsed_header));
-        cout_lock.lock();
-        cout << "Encrypted body:" << endl << encrypted_body << endl;
-        cout_lock.unlock();
+        guarded_cout("\nEncrypted body:\n" + encrypted_body, cout_lock);
+
         handle_message(connFD, std::get<0>(parsed_header), std::get<1>(parsed_header), encrypted_body);
     }
     catch (const std::runtime_error e)  {
@@ -159,6 +154,7 @@ void Client::handle_message(int connFD, unsigned int size, ClientMessageType mty
         case SUCCESS:
         {
             std::cout << "IMPLEMENT ATTESTATION!\n";
+            guarded_cout("IMPLEMENT ATTESTATION!\n", cout_lock);
             break;
         }
         case Y_AND_COV:
@@ -193,13 +189,9 @@ void Client::handle_message(int connFD, unsigned int size, ClientMessageType mty
             throw std::runtime_error("Not a valid response type");
     }
     if (mtype != DATA_REQUEST) {
-        cout_lock.lock();
-        cout << endl << "Closing connection" << endl;
-        cout_lock.unlock();
+        guarded_cout("\nClosing connection\n", cout_lock);
         close(connFD);
-        cout_lock.lock();
-        cout << endl << "--------------" << endl;
-        cout_lock.unlock();
+        guarded_cout("\n--------------\n", cout_lock);
     }
 }
 
