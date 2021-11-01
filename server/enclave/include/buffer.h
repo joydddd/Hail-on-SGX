@@ -77,7 +77,7 @@ class Buffer {
     /* computing methods */
     bool shift_batch();  // shift batch from loading to computing. return true
                          // if all batches are available
-    Row *get_nextrow(const Log_gwas &gwas = Log_gwas());
+    Row *get_nextrow();
     // return nullptr if reaches end of all datasets
 
     // destructor

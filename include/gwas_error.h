@@ -16,6 +16,11 @@ class ReadtsvERROR : public ERROR_t {
 class CombineERROR : public ERROR_t {
     using ERROR_t::ERROR_t;
 };
+
+class ENC_ERROR : public ERROR_t {
+    using ERROR_t::ERROR_t;
+};
+
 class mathERROR : public ERROR_t {
     using ERROR_t::ERROR_t;
 };

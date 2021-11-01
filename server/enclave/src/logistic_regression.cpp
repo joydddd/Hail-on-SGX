@@ -2,7 +2,7 @@
 
 #include <limits>
 
-#include "enc_gwas.h"
+#include "logistic_regression.h"
 using namespace std;
 
 double read_entry_int(string &entry) {
@@ -87,58 +87,19 @@ void Log_var::combine(Log_var &other) {
 //////////              Log_row             /////////////////
 /////////////////////////////////////////////////////////////
 
-/* Row setup functions: overload Class Row */
-
-void Log_row::read(string &line) {
-    vector<string> parts;
-    split_tab(line, parts);
-    if (parts.size() < 2) throw ReadtsvERROR(line);
-    loci = Loci(parts[0]);
-    alleles.read(parts[1]);
-    n = parts.size() - 2;
-    data.resize(n);
-    for (size_t i = 0; i < n; i++) data[i] = read_entry_int(parts[i + 2]);
-}
-
-void Log_row::combine(const Row *_other) {
-    const Log_row *t = (const Log_row *)_other;
-    const Log_row &other(*t);
-    if (other.gwas.name != gwas.name) throw CombineERROR("gwas mismatch");
-
-    if (loci == Loci())
-        loci = other.loci;
-    else if (other.loci != loci && other.loci != Loci())
-        throw CombineERROR("locus mismatch");
-
-    if (alleles == Alleles())
-        alleles = other.alleles;
-    else if (other.alleles != alleles && other.alleles != Alleles())
-        throw CombineERROR("alleles mismatch");
-
-    n += other.n;
-    data.reserve(n);
-    for (auto x : other.data) {
-        data.push_back(x);
-    }
-}
-
-void Log_row::append_invalid_elts(size_t _n) {
-    n += _n;
-    data.reserve(n);
-    for (size_t i = 0; i < _n; i++) {
-        data.push_back(nan(""));
-    }
-}
-
 /* fitting */
-bool Log_row::fit(size_t max_it, double sig) {
-    vector<double> change(gwas.dim(), 1);
+bool Log_row::fit(const Log_gwas* _gwas, size_t max_it, double sig) {
+    gwas = _gwas;
+
+    /* intialize beta to 0*/
     init();
+
+    vector<double> change(gwas->dim(), 1);
     size_t it_count = 0;
     while (it_count < max_it && max(change) > sig) {
         vector<double> old_beta = b;
         update_beta();
-        for (size_t j = 0; j < gwas.dim(); j++) {
+        for (size_t j = 0; j < gwas->dim(); j++) {
             change[j] = abs(b[j] - old_beta[j]);
         }
         it_count++;
@@ -147,7 +108,7 @@ bool Log_row::fit(size_t max_it, double sig) {
         return false;
     else {
         fitted = true;
-        standard_error = sqrt(H().INV()[0][0]);
+        standard_error = sqrt(H.INV()[0][0]);
         // DEBUG:
         // cout << loci << "\t" << alleles << "\t" << it_count << endl;
         return true;
@@ -168,84 +129,68 @@ double Log_row::t_stat() {
 
 /* fitting helper functions */
 
-double Log_row::estimate_y(size_t i) {
-    if (isnan(data[i])) return nan("");
-    double y_est;
-    y_est = b[0] * data[i];
-    for (size_t j = 1; j < gwas.dim(); j++) {
-        y_est += gwas.covariants[j - 1].data[i] * b[j];
-    }
-    y_est = 1 / ((double)1 + exp(-y_est));
-    return y_est;
-}
-
-void Log_row::update_estimate() {
-    y_est.clear();
-    y_est.resize(n);
-    for (size_t i = 0; i < n; i++) y_est[i] = estimate_y(i);
-}
-
 void Log_row::update_beta() {
-    if (gwas.size() != n) throw CombineERROR("row length mismatch");
-    if (gwas.dim() != b.size()) throw CombineERROR("gwas dimesion mismatch");
-    double change = 10;
-    size_t it_count = 0;
-    vector<double> D(Grad());
-    vector<double> beta_delta = H().INV() * D;
-    for (size_t j = 0; j < gwas.dim(); j++) {
+    vector<double> beta_delta = H.INV() * Grad;
+    for (size_t j = 0; j < gwas->dim(); j++) {
         b[j] += beta_delta[j];
     }
     update_estimate();
 }
 
-SqrMatrix Log_row::H() {
-    vector<double> y_est_1_y;
-    y_est_1_y.resize(n);
+void Log_row::init() {
+    if (gwas->size() != n) throw CombineERROR("row length mismatch");
+    b = vector<double>(gwas->dim(), 0);
+    update_estimate();
+}
+
+void Log_row::update_estimate() {
+    H = SqrMatrix(gwas->dim());
+    Grad = vector<double>(gwas->dim(), 0);
+    double y_est;
+    size_t client_idx = 0, data_idx = 0;
     for (size_t i = 0; i < n; i++) {
-        y_est_1_y[i] = y_est[i] * (1 - y_est[i]);
+        uint8_t x = data[client_idx][data_idx];
+        if (!is_NA(x)) {
+            y_est = b[0] * x;
+            for (size_t j = 1; j < gwas->dim(); j++)
+                y_est += gwas->covariants[j - 1].data[i] * b[j];
+            y_est = 1 / ((double)1 + exp(-y_est));
+
+            update_upperH(y_est, x, i);
+            update_Grad(y_est, x, i);
+        }
+
+        /* update data index */
+        data_idx++;
+        if (data_idx >= length[client_idx]) {
+            data_idx = 0;
+            client_idx++;
+        }
     }
-    vector<vector<double>> H_vec;
-    H_vec.resize(gwas.dim());
-    for (size_t j = 0; j < gwas.dim(); j++) {
-        H_vec[j].resize(gwas.dim());
+
+    /* build lower half of H */
+    for (size_t j = 0; j < gwas->dim(); j++) {
+        for (size_t k = j + 1; k < gwas->dim(); k++) {
+            H[j][k] = H[k][j];
+        }
+    }
+}
+
+void Log_row::update_upperH(double y_est, uint8_t x, size_t i) {
+    double y_est_1_y = y_est * (1 - y_est);
+    for (size_t j = 0; j < gwas->dim(); j++) {
         for (size_t k = 0; k <= j; k++) {
-            H_vec[j][k] = 0;
-            for (size_t i = 0; i < n; i++) {
-                if (isnan(data[i])) continue;
-                double x1 = (j == 0) ? data[i] : gwas.covariants[j - 1].data[i];
-                double x2 = (k == 0) ? data[i] : gwas.covariants[k - 1].data[i];
-                H_vec[j][k] += x1 * x2 * y_est_1_y[i];
-            }
+            double x1 = (j == 0) ? x : gwas->covariants[j - 1].data[i];
+            double x2 = (k == 0) ? x : gwas->covariants[k - 1].data[i];
+            H[j][k] += x1 * x2 * y_est_1_y;
         }
     }
-    for (size_t j = 0; j < gwas.dim(); j++) {
-        for (size_t k = j + 1; k < gwas.dim(); k++) {
-            H_vec[j][k] = H_vec[k][j];
-        }
-    }
-    return SqrMatrix(H_vec);
 }
 
-// double Log_row::L() {
-//     double L = 0;
-//     for (size_t i = 0; i < n; i++) {
-//         if (isnan(data[i])) continue;
-//         L += log(y_est[i]) * gwas.y.data[i] +
-//              (1 - gwas.y.data[i]) * log(1 - y_est[i]);
-//     }
-//     return L;
-// }
-
-vector<double> Log_row::Grad() {
-    vector<double> D(gwas.dim(), 0);
-    for (size_t i = 0; i < n; i++) {
-        if (isnan(data[i])) continue;
-        double y_delta = gwas.y.data[i] - y_est[i];
-        D[0] += y_delta * data[i];
-        for (size_t j = 1; j < gwas.dim(); j++) {
-            D[j] += y_delta * gwas.covariants[j - 1].data[i];
-        }
+void Log_row::update_Grad(double y_est, uint8_t x, size_t i) {
+    double y_delta = gwas->y.data[i] - y_est;
+    Grad[0] += y_delta * x;
+    for (size_t j = 1; j < gwas->dim(); j++) {
+        Grad[j] += y_delta * gwas->covariants[j - 1].data[i];
     }
-    return D;
 }
-

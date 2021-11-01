@@ -103,7 +103,7 @@ bool Buffer::shift_batch() {
     return ready;
 }
 
-Row* Buffer::get_nextrow(const Log_gwas& gwas) {
+Row* Buffer::get_nextrow() {
     /* shift until all the working batches are ready */
     while (!shift_batch()) {
         this_thread::sleep_for(chrono::milliseconds(BUFFER_UPDATE_INTERVAL));
@@ -141,7 +141,7 @@ Row* Buffer::get_nextrow(const Log_gwas& gwas) {
                 new_row = new SSE_row();
                 break;
             case (LOG_t):
-                new_row = new Log_row(gwas);
+                new_row = new Log_row();
                 break;
         }
         if (!batch->end() && batch->toploci() == loci) {
