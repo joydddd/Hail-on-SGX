@@ -139,7 +139,6 @@ bool Client::start_thread(int connFD) {
         close(connFD);
         return false;
     }
-    return true;
 }
 
 void Client::handle_message(int connFD, unsigned int size, ClientMessageType mtype, std::string& msg) {

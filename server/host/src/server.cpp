@@ -128,8 +128,7 @@ bool Server::start_thread(int connFD) {
             // Receive exactly one byte
             int rval = recv(connFD, header_buffer + header_size, 1, MSG_WAITALL);
             if (rval == -1) {
-                cout << "Error reading stream message";
-                return false;
+                throw std::runtime_error("Error reading stream message");
             }
             // Stop if we received a deliminating character
             if (header_buffer[header_size] == '\n') {
@@ -157,7 +156,7 @@ bool Server::start_thread(int connFD) {
         }
         std::string encrypted_body(body_buffer, std::get<1>(parsed_header));
         //guarded_cout("\nEncrypted body:\n" + encrypted_body, cout_lock);
-        handle_message(connFD, std::get<0>(parsed_header), std::get<1>(parsed_header), std::get<2>(parsed_header), encrypted_body);
+        return handle_message(connFD, std::get<0>(parsed_header), std::get<1>(parsed_header), std::get<2>(parsed_header), encrypted_body);
     }
     catch (const std::runtime_error e)  {
         guarded_cout("Exception: " + std::string(e.what()), cout_lock);
@@ -167,7 +166,7 @@ bool Server::start_thread(int connFD) {
     return true;
 }
 
-void Server::handle_message(int connFD, const std::string& name, unsigned int size, ServerMessageType mtype,
+bool Server::handle_message(int connFD, const std::string& name, unsigned int size, ServerMessageType mtype,
                             std::string& msg) {
     DataBlock* block = Parser::parse_body(msg, mtype);
 
@@ -225,7 +224,9 @@ void Server::handle_message(int connFD, const std::string& name, unsigned int si
         guarded_cout("\nClosing connection", cout_lock);
         close(connFD);
         guarded_cout("\n--------------", cout_lock);
-    }     
+        return false;
+    }   
+    return true;  
 }
 
 int Server::send_msg(const std::string& name, ClientMessageType mtype, const std::string& msg, int connFD) {
