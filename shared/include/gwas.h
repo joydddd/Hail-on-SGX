@@ -6,7 +6,7 @@
 #include <string>
 #include "buffer_size.h"
 
-#define EndSperator "<EOF>" // mark end of dataset
+#define EndSeperator "<EOF>" // mark end of dataset
 
 #include "gwas_error.h"
 

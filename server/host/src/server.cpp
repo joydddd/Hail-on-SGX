@@ -197,20 +197,20 @@ void Server::handle_message(int connFD, const std::string& name, unsigned int si
             institutions[name]->set_covariant_data(name_data_split.front(), name_data_split.back());
             break;
         }
-        case EOF_LOGISTIC:
+        case EOF_DATA:
         {
-            // intentionally missing break, we want to run the logistic case after we do some clean up
+            // intentionally missing break, we want to run the general data case after we do some clean up
             institutions[name]->all_data_recieved = true;
-        }
-        case LOGISTIC:
-        {
-            // if (!institutions.count(name)) {
-            //     throw std::runtime_error("No such user exists");
-            // }
-            if (block) {
-                institutions[name]->add_block(block);
-                institutions[name]->requested_for_data = false;
+            if (block->data != "<EOF>") {
+                DataBlock* eof = new DataBlock;
+                eof->data = "<EOF>";
+                eof->pos = block->pos + 1;
+                institutions[name]->add_block(eof);
             }
+        }
+        case DATA:
+        {
+            institutions[name]->add_block(block);
             break;
         }
         default:
@@ -220,7 +220,7 @@ void Server::handle_message(int connFD, const std::string& name, unsigned int si
     if (response.length()) {
         send_msg(name, response_mtype, response);
     }
-    if (mtype != LOGISTIC) {
+    if (mtype != DATA) {
         // cool, well handled!
         guarded_cout("\nClosing connection", cout_lock);
         close(connFD);

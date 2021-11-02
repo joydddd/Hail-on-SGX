@@ -36,7 +36,7 @@ enclave {
 
         /* input data requests*/
         // get batch from outside of enclave
-        // return const char* EndSperator if reaches end of dataset
+        // return const char* EndSeperator if reaches end of dataset
         // *rt = false if the batch isn't avaialbe on host
         bool getbatch(  
             [in] const char hostname[MAX_CLIENTNAME_LENGTH], 

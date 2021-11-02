@@ -174,13 +174,13 @@ void Client::handle_message(int connFD, unsigned int size, ClientMessageType mty
         }
         case DATA_REQUEST:
         {   
-            response_mtype = LOGISTIC;
+            response_mtype = DATA;
             std::string block;
             while(get_block(block)) {
                 send_msg(response_mtype, block, connFD);
             }
             // If get_block failed we have reached the end of the file, send an EOF.
-            response_mtype = EOF_LOGISTIC;
+            response_mtype = EOF_DATA;
             sent_all_data = true;
             send_msg(response_mtype, block, connFD);
             break;

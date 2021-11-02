@@ -25,8 +25,8 @@ enum ServerMessageType {
     REGISTER,
     COVARIANT,
     Y_VAL,
-    LOGISTIC,
-    EOF_LOGISTIC
+    DATA,
+    EOF_DATA
 };
 
 struct DataBlock {
@@ -53,7 +53,7 @@ class Parser {
                                         std::unordered_map<std::string, std::string> &passwords);
 
     // parse message body into the relevant arguments we need
-    static DataBlock* parse_body(std::string message_body, ServerMessageType mtype);
+    static DataBlock* parse_body(const std::string& message_body, ServerMessageType mtype);
 
     // split a given string based on the specified delimiter
     static std::vector<std::string> split(const std::string& s, char delim=' ', int num_splits=-1);

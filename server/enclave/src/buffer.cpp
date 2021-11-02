@@ -16,7 +16,7 @@ void enclave_decrypt(char crypt[ENCLAVE_READ_BUFFER_SIZE], string& plaintxt) {
 }
 
 void Batch::decrypt() {
-    if (!strcmp(crypt, EndSperator)) {
+    if (!strcmp(crypt, EndSeperator)) {
         e = true;
         r = true;
         f = true;

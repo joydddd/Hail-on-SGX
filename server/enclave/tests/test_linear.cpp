@@ -57,7 +57,7 @@ void getbatch(const char hostname[MAX_HOST_LENGTH], Row_T type,
     string host(hostname);
     int index = host_map[host];
     if (alleles_stream[index].eof()) {
-        strcpy(batch, EndSperator);
+        strcpy(batch, EndSeperator);
         return;
     }
     stringstream buffer_ss;
@@ -67,7 +67,7 @@ void getbatch(const char hostname[MAX_HOST_LENGTH], Row_T type,
         buffer_ss << line << "\n";
     }
     if (buffer_ss.str() == "\n") {
-        strcpy(batch, EndSperator);
+        strcpy(batch, EndSeperator);
         return;
     }
     strcpy(batch, buffer_ss.str().c_str());

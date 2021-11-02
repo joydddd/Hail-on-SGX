@@ -49,11 +49,11 @@ std::tuple<std::string, unsigned int, ServerMessageType> Parser::parse_server_he
     return std::make_tuple(words.front(), size, mtype);
 }
 
-DataBlock* Parser::parse_body(std::string message_body, ServerMessageType mtype) {
-    if (mtype != LOGISTIC && mtype != EOF_LOGISTIC) return nullptr;
+DataBlock* Parser::parse_body(const std::string& message_body, ServerMessageType mtype) {
+    if (mtype != DATA && mtype != EOF_DATA) return nullptr;
     std::vector<std::string> split_msg = Parser::split(message_body, ' ', 1);
     if (split_msg.size() != 2) {
-        return nullptr;
+        split_msg.push_back("<EOF>");
     }
     int counter = Parser::convert_to_num(split_msg.front());
     std::string encrypted_block = split_msg.back();
