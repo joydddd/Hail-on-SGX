@@ -33,6 +33,8 @@ class Client {
     int server_port;
     int blocks_sent;
 
+    int num_clients;
+
     bool sender_running;
     bool sent_all_data;
 

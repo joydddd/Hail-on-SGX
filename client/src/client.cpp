@@ -10,8 +10,8 @@ std::mutex cout_lock;
 
 Client::Client(std::string clientname, std::string client_hostname, std::string server_hostname, int listen_port, int server_port) 
     : clientname(clientname), client_hostname(client_hostname), server_hostname(server_hostname), 
-      listen_port(listen_port), server_port(server_port), blocks_sent(0), sender_running(false), 
-      sent_all_data(false), xval("alleles.tsv") {
+      listen_port(listen_port), server_port(server_port), blocks_sent(0), num_clients(0), 
+      sender_running(false), sent_all_data(false), xval("alleles.tsv") {
     init();
 }
 
@@ -152,7 +152,6 @@ void Client::handle_message(int connFD, unsigned int size, ClientMessageType mty
     switch (mtype) {
         case SUCCESS:
         {
-            std::cout << "IMPLEMENT ATTESTATION!\n";
             guarded_cout("IMPLEMENT ATTESTATION!\n", cout_lock);
             break;
         }
@@ -201,13 +200,21 @@ void Client::send_msg(ServerMessageType mtype, const std::string& msg, int connF
 
 bool Client::get_block(std::string& block) {
     std::string line;
+    std::string vals;
+    vals.resize(num_clients);
+
     block = std::to_string(blocks_sent++) + " ";
     // TODO: see if we can read in BLOCK_SIZE lines in at a time
     for(int i = 0; i < BLOCK_SIZE; ++i) {
         if (!getline(xval, line)) {
             return false;
         }
-        block += line + "\n";
+        if (!num_clients) {
+            // Subtract 2 for locus->alleles tab and alleles->first value tab
+            num_clients = Parser::split(line, '\t').size() - 2;
+            vals.resize(num_clients);
+        }
+        block.append(Parser::parse_allele_line(line, vals));
     }
     return true;
 }

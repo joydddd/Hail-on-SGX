@@ -63,6 +63,37 @@ DataBlock* Parser::parse_body(const std::string& message_body, ServerMessageType
     return block;
 }
 
+std::string Parser::parse_allele_line(const std::string& line, std::string& vals) {
+    std::vector<std::string> line_split = Parser::split(line, '\t', 2);
+    std::string line_vals = line_split.back();
+    int val_idx = 0;
+    // TODO: When encryption is added, remove these + '0's.
+    for (int line_idx = 0; line_idx < line_vals.length(); line_idx += 2) {
+        switch(line_vals[line_idx]) {
+            case '0':
+                vals[val_idx++] = static_cast<char>(0) + '0';
+                break;
+
+            case '1':
+                vals[val_idx++] = static_cast<char>(1) + '0';
+                break;
+
+            case '2':
+                vals[val_idx++] = static_cast<char>(2) + '0';
+                break;
+
+            case 'N':
+                vals[val_idx++] = static_cast<char>(3) + '0';
+                line_idx++;
+                break;
+
+            default:
+                throw std::runtime_error("Invalid alleles file!");
+        }
+    }
+    return line_split[0] + '\t' + line_split[1] + '\t' + vals + "\n";
+}
+
 unsigned int Parser::convert_to_num(const std::string& str) {
     assert_non_empty(str);
     // check to make sure the number of digits isn't greater than the allowed number

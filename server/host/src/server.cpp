@@ -251,28 +251,6 @@ void Server::check_in(std::string name) {
     }
 }
 
-// void Server::data_requester() {
-//     while(true) {
-//         for (auto it : institutions) {
-//             Institution* inst = it.second;
-//             if (!inst->requested_for_data && inst->get_size() < MIN_BLOCK_COUNT && !inst->all_data_recieved) {
-//                 inst->requested_for_data = true;
-//                 inst->request_conn = send_msg(it.first, DATA_REQUEST, std::to_string(MIN_BLOCK_COUNT), inst->request_conn);
-//                 // Once we start asking for data, spin up a listener to reuse this connection
-//                 if (!inst->listener_running) {
-//                     // Also ask for Y and covariant data
-//                     send_msg(it.first, Y_AND_COV, covariant_list + y_val_name);
-
-//                     inst->listener_running = true;
-//                     boost::thread data_listener_thread(&Server::data_listener, this, inst->request_conn);
-//                     data_listener_thread.detach();  
-//                 }
-//             }
-//         }
-//         //boost::this_thread::sleep(boost::posix_time::seconds(1));
-//     }
-// }
-
 void Server::data_listener(int connFD) {
     // We need a serial listener for this agreed upon connection!
     while(start_thread(connFD)) {}
