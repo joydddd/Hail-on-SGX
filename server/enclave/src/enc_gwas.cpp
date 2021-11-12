@@ -1,11 +1,12 @@
 #include "enc_gwas.h"
+#include "assert.h"
 
 Row::Row(size_t _size) : n(_size) {
     data.push_back(new uint8_t[_size]);
     length.push_back(_size);
 }
 
-void Row::read(const char line[]) {
+size_t Row::read(const char line[]) {
     stringstream ss(line);
     string loci_str, alleles_str;
     try {
@@ -21,9 +22,17 @@ void Row::read(const char line[]) {
 #endif
         );
     }
-    for (size_t i = 0; i < n; i++)
+    for (size_t i = 0; i < n; i++){
         data[0][i] =
             (uint8_t)line[i + loci_str.size() + alleles_str.size() + 2];
+        if (data[0][i] != 0 && data[0][i] != 1 && data[0][i] != 2 && data[0][i] != NA_uint8){
+            throw ReadtsvERROR("Invalid row entry");
+        }
+
+    }
+    if (line[n + loci_str.size() + alleles_str.size() + 2] != '\n')
+        throw ReadtsvERROR("Invalid row terminator");
+    return n + loci_str.size() + alleles_str.size() + 3;
 }
 void Row::combine(Row *other) {
     /* check if loci & alleles match */

@@ -96,3 +96,6 @@ endef
 $(foreach test, $(TESTS), $(eval $(call make_tests,$(test))))
 
 tests: $(TESTS)
+
+test_logistic_stat: $(SRCDIR)/logistic_regression.cpp $(SRCDIR)/enc_gwas.cpp $(TESTDIR)/test_logistic_stat.cpp
+	$(CXX) $(CXX_NONENC_FLAGS) -DDEBUG -o $@ $^

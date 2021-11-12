@@ -42,9 +42,10 @@ class Row {
 
      /* setup */
      Row(size_t size);
-     void read(const char line[]);
+     size_t read(const char line[]); // return the size of line consumed
      void combine(Row *other);
      void append_invalid_elts(size_t size);
+     void reset();
 
 #ifdef DEBUG
      void print();

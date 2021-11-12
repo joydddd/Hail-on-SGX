@@ -106,8 +106,7 @@ void getcov(bool* rt, const char client[MAX_CLIENTNAME_LENGTH],
     strcpy(cov, ss.str().c_str());
 }
 
-bool getbatch(bool* rt, const char client[MAX_CLIENTNAME_LENGTH], Row_T type,
-              char batch[ENCLAVE_READ_BUFFER_SIZE]) {
+bool getbatch(bool* rt, char batch[ENCLAVE_READ_BUFFER_SIZE]) {
     static vector<fstream> alleles_stream;
     if (alleles_stream.empty()) {
         for (auto& fname : allelesFiles) {
@@ -120,8 +119,7 @@ bool getbatch(bool* rt, const char client[MAX_CLIENTNAME_LENGTH], Row_T type,
             // throw away the header line
         }
     }
-    string client_str(client);
-    int index = client_map[client_str];
+    int index = 0;
     if (alleles_stream[index].eof()) {
         strcpy(batch, EndSperator);
         *rt = true;
