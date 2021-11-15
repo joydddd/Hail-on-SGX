@@ -1,13 +1,10 @@
 #ifndef ENC_BUFFER_H
 #define ENC_BUFFER_H
-#include "enc_gwas.h"
 #include <deque>
 
+#include "enc_gwas.h"
 
-//DEBUG:
-#define ENC_TEST
-
-#ifdef ENC_TEST
+#ifdef NENC_TEST
 #include "enclave_old.h"
 #else
 #include "gwas_t.h"
@@ -23,10 +20,10 @@ class Batch {
     // char crypto[ENCLAVE_READ_BUFFER_SIZE]; // decrypt is handled by Buffer
     char plaintxt[ENCLAVE_READ_BUFFER_SIZE];
     size_t txt_size;
+    Row_T type;
 
     /* status */
     size_t head = 0;
-    enum Status { Empty, Working, Finished };
 
     /* working set */
     Row* row;
@@ -35,32 +32,39 @@ class Batch {
     size_t row_size;
 
    public:
-    Batch(size_t _row_size) : row_size(_row_size) { row = new Row(row_size); }
+    Batch(size_t _row_size, Row_T row_type);
     ~Batch() { delete row; }
+
+    /* status */
+    enum Status { Empty, Working, Finished };
     Status st = Empty;
+
     char* load_plaintxt() { return plaintxt; }
     size_t* plaintxt_size() { return &txt_size; }
     void reset();
-    Row* get_row(); // return nullptr is reached ead of batch
+    Row* get_row();  // return nullptr is reached ead of batch
 };
 
 class Buffer {
     /* meta data */
     size_t row_size;
+    Row_T type;
 
     /* input data */
     char crypttxt[ENCLAVE_READ_BUFFER_SIZE];
 
     /* Batch pool */
     deque<Batch*> free_batches;
-    
+
     /* thread pool */
 
-    public:
-     Buffer(size_t _row_size);
-     ~Buffer();
-     void finish(Batch*);
-     Batch* launch(); // return nullptr if there is no free batches
+   public:
+    Buffer(size_t _row_size, Row_T row_type);
+    ~Buffer();
+    void finish(Batch*);
+    Batch* launch();  // return nullptr if there is no free batches
 };
+
+extern Buffer* buffer;
 
 #endif

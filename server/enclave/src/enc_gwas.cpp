@@ -6,6 +6,11 @@ Row::Row(size_t _size) : n(_size) {
     length.push_back(_size);
 }
 
+void Row::reset() { 
+    loci = Loci();
+    alleles = Alleles();
+}
+
 size_t Row::read(const char line[]) {
     stringstream ss(line);
     string loci_str, alleles_str;
@@ -24,7 +29,7 @@ size_t Row::read(const char line[]) {
     }
     for (size_t i = 0; i < n; i++){
         data[0][i] =
-            (uint8_t)line[i + loci_str.size() + alleles_str.size() + 2];
+            (uint8_t)line[i + loci_str.size() + alleles_str.size() + 2] - uint8_OFFSET;
         if (data[0][i] != 0 && data[0][i] != 1 && data[0][i] != 2 && data[0][i] != NA_uint8){
             throw ReadtsvERROR("Invalid row entry");
         }

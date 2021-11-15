@@ -7,6 +7,8 @@
 
 using namespace std;
 
+Buffer* buffer;
+
 void log_regression(){
     cout << "Logistic Regression started" << endl;
     /* setup gwas */
@@ -77,12 +79,14 @@ void log_regression(){
              << endl;
     }
 
-    Buffer buffer(client_size_map[clients[0]]);
+    buffer = new Buffer(client_size_map[clients[0]], LOG_t);
+    Batch* batch = nullptr;
     while (true) {
+        if (!batch || batch->st != Batch::Working) batch = buffer->launch();
         // get the next row from input buffer
         Log_row* row;
         try {
-            if (!(row = (Log_row*)buffer.launch())) break;
+            if (!(row = (Log_row*)batch->get_row())) continue;
         } catch (ERROR_t& err) {
             cerr << "ERROR: " << err.msg << endl;
             continue;

@@ -90,7 +90,6 @@ void Log_var::combine(Log_var &other) {
 /* fitting */
 bool Log_row::fit(const Log_gwas* _gwas, size_t max_it, double sig) {
     gwas = _gwas;
-
     /* intialize beta to 0*/
     init();
 
