@@ -18,17 +18,12 @@
 #include "gwas_u.h"
 using namespace std;
 const vector<vector<string>> covFiles = {
-    {"../../archive/samples/1kg-logistic-regression/isFemale1.tsv",
-     "../../archive/samples/1kg-logistic-regression/isFemale2.tsv"}};
+    {"../../archive/samples/1kg-logistic-regression/isFemale.tsv"}};
 const vector<string> yFiles = {
-    "../../archive/samples/1kg-logistic-regression/PurpleHair1.tsv",
-    "../../archive/samples/1kg-logistic-regression/PurpleHair2.tsv"};
+    "../../archive/samples/1kg-logistic-regression/PurpleHair.tsv"};
 const vector<string> allelesFiles = {
-    "../../archive/samples/1kg-logistic-regression/alleles1.tsv",
-    "../../archive/samples/1kg-logistic-regression/alleles2.tsv"};
-const vector<string> clientNames = {"Client1", "Client2"};
-const vector<int> client_size = {100, 150};
-
+    "../../archive/samples/1kg-logistic-regression/alleles.tsv"};
+const vector<string> clientNames = {"Client1"};
 const vector<string> covNames = {"1", "isFemale"};
 
 map<string, int> client_map;
@@ -37,7 +32,7 @@ map<string, int> cov_map;
 
 static oe_enclave_t* enclave;
 
-// helper function. remove if not needed! 
+// helper function. remove if not needed!
 void init() {
     for (int i = 0; i < clientNames.size(); i++) {
         client_map.insert(make_pair(clientNames[i], i));
@@ -116,8 +111,7 @@ bool getcov(const char client[MAX_CLIENTNAME_LENGTH],
     return true;
 }
 
-bool getbatch(const char client[MAX_CLIENTNAME_LENGTH], Row_T type,
-              char batch[ENCLAVE_READ_BUFFER_SIZE]) {
+bool getbatch(char batch[ENCLAVE_READ_BUFFER_SIZE]) {
     static vector<fstream> alleles_stream;
     if (alleles_stream.empty()) {
         for (auto& fname : allelesFiles) {
@@ -130,10 +124,9 @@ bool getbatch(const char client[MAX_CLIENTNAME_LENGTH], Row_T type,
             // throw away the header line
         }
     }
-    string client_str(client);
-    int index = client_map[client_str];
-    
-    // if data stream from this client has reached eof, 
+    int index = 0;
+
+    // if data stream from this client has reached eof,
     // copy only EndSeperator to enclave
     if (alleles_stream[index].eof()) {
         strcpy(batch, EndSperator);
@@ -145,7 +138,22 @@ bool getbatch(const char client[MAX_CLIENTNAME_LENGTH], Row_T type,
     for (size_t i = 0; i < BUFFER_LINES; i++) {
         string line;
         if (!getline(alleles_stream[index], line)) break;
-        buffer_ss << line << "\n";
+        string loci, alleles;
+        stringstream line_ss(line);
+        getline(line_ss, loci, '\t');
+        getline(line_ss, alleles, '\t');
+        buffer_ss << loci << "\t" << alleles << "\t";
+        string elt;
+        while (getline(line_ss, elt, '\t')) {
+            int datum;
+            try {
+                datum = stoi(elt);
+            } catch (invalid_argument& err) {
+                datum = 3;
+            }
+            buffer_ss << (char)(datum + '0');
+        }
+        buffer_ss << "\n";
     }
     if (buffer_ss.str() == "\n") {
         strcpy(batch, EndSperator);
@@ -201,7 +209,7 @@ int main(int argc, const char* argv[]) {
     }
 
     try {
-        init(); // helper function. remove if not needed
+        init();  // helper function. remove if not needed
         // DEBUG:
         auto start = std::chrono::high_resolution_clock::now();
         result = log_regression(enclave);

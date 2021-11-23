@@ -21,9 +21,11 @@ class Batch {
     char plaintxt[ENCLAVE_READ_BUFFER_SIZE];
     size_t txt_size;
     Row_T type;
+    char outtxt[ENCLAVE_OUTPUT_BUFFER_SIZE];
 
     /* status */
     size_t head = 0;
+    size_t out_tail = 0;
 
     /* working set */
     Row* row;
@@ -40,31 +42,36 @@ class Batch {
     Status st = Empty;
 
     char* load_plaintxt() { return plaintxt; }
-    size_t* plaintxt_size() { return &txt_size; }
+    const char *output_buffer() { return outtxt; }
+    size_t *plaintxt_size() { return &txt_size; }
     void reset();
     Row* get_row();  // return nullptr is reached ead of batch
+    void write(const string &);
 };
 
 class Buffer {
     /* meta data */
     size_t row_size;
     Row_T type;
+    size_t output_tail;
 
-    /* input data */
+    /* data member */
     char crypttxt[ENCLAVE_READ_BUFFER_SIZE];
+    char output_buffer[ENCLAVE_OUTPUT_BUFFER_SIZE];
 
     /* Batch pool */
     deque<Batch*> free_batches;
 
     /* thread pool */
 
-   public:
+    void output(const char*);
+
+public:
     Buffer(size_t _row_size, Row_T row_type);
     ~Buffer();
     void finish(Batch*);
     Batch* launch();  // return nullptr if there is no free batches
 };
-
 extern Buffer* buffer;
 
 #endif

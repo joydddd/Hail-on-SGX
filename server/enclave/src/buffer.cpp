@@ -27,6 +27,7 @@ void Batch::reset() {
     head = 0;
     st = Empty;
     txt_size = 0;
+    out_tail = 0;
 }
 
 Row* Batch::get_row() {
@@ -44,6 +45,11 @@ Row* Batch::get_row() {
     return row;
 }
 
+void Batch::write(const string &output){
+    strcpy(outtxt + out_tail, output.c_str());
+    out_tail += output.size();
+}
+
 Buffer::Buffer(size_t _row_size, Row_T row_type)
     : row_size(_row_size), type(row_type) {
     for (size_t i = 0; i < WORKING_THREAD_N; i++) {
@@ -57,7 +63,18 @@ Buffer::~Buffer() {
     }
 }
 
+void Buffer::output(const char* out){
+    int len = strlen(out);
+    if (output_tail + len >= ENCLAVE_OUTPUT_BUFFER) {
+        writebatch(type, output_buffer);
+        output_tail = 0;
+    }
+    strcpy(output_buffer + output_tail, out);
+    output_tail += strlen(out);
+}
+
 void Buffer::finish(Batch* finishing_batch) {
+    output(finishing_batch->output_buffer());
     finishing_batch->reset();
     free_batches.push_back(finishing_batch);
 }

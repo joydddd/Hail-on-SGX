@@ -1,5 +1,6 @@
 #include <iostream>
 #include <map>
+#include <fstream>
 
 #include "buffer.h"
 #include "enc_gwas.h"
@@ -81,8 +82,15 @@ void log_regression(){
 
     buffer = new Buffer(client_size_map[clients[0]], LOG_t);
     Batch* batch = nullptr;
+    //DEBUG: tmp output file
+    ofstream out_st("enc.out");
+
     while (true) {
         if (!batch || batch->st != Batch::Working) batch = buffer->launch();
+        if(!batch) {
+            // out_st << "End of Output" << endl;
+            break;
+        }
         // get the next row from input buffer
         Log_row* row;
         try {
@@ -111,7 +119,9 @@ void log_regression(){
             ss << "\tNA\tNA\tNA" << endl;
             exit(1);
         }
-        cout << ss.str();
+        // DEBUG: tmp output to file
+        out_st << ss.str();
+        batch->write(ss.str());
     }
     cout << "Logistic regression Finished! " << endl;
 }

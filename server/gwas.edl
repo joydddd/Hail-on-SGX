@@ -6,8 +6,8 @@ enclave {
 
     trusted {
         public void log_regression();
-        public void linear_regression_beta();
-        public void linear_regression_t_stat();
+        // public void linear_regression_beta();
+        // public void linear_regression_t_stat();
     };
 
     untrusted {
@@ -39,8 +39,6 @@ enclave {
         // return const char* EndSperator if reaches end of dataset
         // *rt = false if the batch isn't avaialbe on host
         bool getbatch(  
-            [in] const char hostname[MAX_CLIENTNAME_LENGTH], 
-            enum Row_T type, 
             [out] char batch[ENCLAVE_READ_BUFFER_SIZE]);
 
         /* output data requests */

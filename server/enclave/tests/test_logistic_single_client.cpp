@@ -10,11 +10,11 @@
 #include <chrono>
 
 const vector<vector<string>> covFiles = {
-    {"../../archive/samples/1kg-logistic-regression/isFemale1.tsv"}};
+    {"../../archive/samples/1kg-logistic-regression/isFemale.tsv"}};
 const vector<string> yFiles = {
-    "../../archive/samples/1kg-logistic-regression/PurpleHair1.tsv"};
+    "../../archive/samples/1kg-logistic-regression/PurpleHair.tsv"};
 const vector<string> allelesFiles = {
-    "../../archive/samples/1kg-logistic-regression/alleles1.tsv"};
+    "../../archive/samples/1kg-logistic-regression/alleles.tsv"};
 const vector<string> clientNames = {"Client1"};
 const vector<string> covNames = {"1", "isFemale"};
 

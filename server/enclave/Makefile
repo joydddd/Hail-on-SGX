@@ -91,8 +91,8 @@ define make_tests
     $(1): $$(TESTDIR)/$(1).cpp $$(SOURCES)
 	$$(CXX) $$(CXX_NONENC_FLAGS) $$(SOURCES) $$(TESTDIR)/$(1).cpp -o $(1)
 	# valgrind -s --leak-check=yes ./$(1)
-	# gdb $(1)
-	./$(1)
+	gdb $(1)
+	# ./$(1)
 endef
 $(foreach test, $(TESTS), $(eval $(call make_tests,$(test))))
 
