@@ -38,7 +38,7 @@ std::string AESCrypto::encode(const byte* data, int data_size) {
     return encoded;
 }
 
-std::string AESCrypto::decode(std::string& encoded_line) {
+std::string AESCrypto::decode(const std::string& encoded_line) {
     std::lock_guard<std::mutex> raii(decoding_lock);
     decoded.clear();
     decoder.Put((const byte*)&encoded_line[0], encoded_line.size());

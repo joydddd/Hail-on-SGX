@@ -48,7 +48,9 @@ class Institution {
 
     std::string get_covariant_data(const std::string& covariant_name);
 
-    int get_size();
+    int get_blocks_size();
+
+    int get_covariant_size();
 
     std::string get_blocks(int num_blocks);
 

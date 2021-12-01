@@ -71,7 +71,7 @@ std::string Parser::parse_allele_line(const std::string& line, std::string& vals
     std::string line_vals = line_split.back();
     int val_idx = 0;
     // TODO: When encryption is added, remove these + '0's.
-    for (int line_idx = 0; line_idx < line_vals.length(); line_idx += 2) {
+    for (std::size_t line_idx = 0; line_idx < line_vals.length(); line_idx += 2) {
         switch(line_vals[line_idx]) {
             case '0':
                 vals[val_idx++] = static_cast<char>(0);

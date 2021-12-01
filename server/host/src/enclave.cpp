@@ -58,11 +58,6 @@ bool getaes(const int client_num,
     }
     std::memcpy(key, &aes_key[0], 16);
     std::memcpy(iv, &aes_iv[0], 16);
-    std::cout << "KEY: ";
-    for (int i = 0; i < 15; ++i) {
-        std::cout << (char)aes_key[i];
-    }
-    std::cout << "\n";
     return true;
 }
 
@@ -76,19 +71,19 @@ int gety(const char client[MAX_CLIENTNAME_LENGTH],
     return y_data.length();
 }
 
-bool getcov(const char client[MAX_CLIENTNAME_LENGTH],
-            const char cov_name[MAX_CLIENTNAME_LENGTH],
-            char cov[ENCLAVE_READ_BUFFER_SIZE]) {
-    if (cov_name == "1") {
+int getcov(const char client[MAX_CLIENTNAME_LENGTH],
+           const char cov_name[MAX_CLIENTNAME_LENGTH],
+           char cov[ENCLAVE_READ_BUFFER_SIZE]) {
+    if (strcmp(cov_name, "1") == 0) {
         strcpy(cov, "1");
-        return true;
+        return 1;
     }
     std::string cov_data = Server::get_covariant_data(client, cov_name);
     if (!cov_data.length()) {
         return false;
     }
-    strcpy(cov, cov_data.c_str());
-    return true;
+    std::memcpy(cov, &cov_data[0], cov_data.length());
+    return cov_data.length();
 }
 
 bool getbatch(const char client[MAX_CLIENTNAME_LENGTH], Row_T type,

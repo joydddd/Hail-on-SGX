@@ -20,18 +20,17 @@ void Institution::add_block(DataBlock* block) {
     blocks.push(block);
 }
 
-int Institution::get_size() {
+int Institution::get_blocks_size() {
     return blocks.size();
+}
+
+int Institution::get_covariant_size() {
+    return covariant_data.size();
 }
 
 void Institution::set_key_and_iv(std::string aes_key, std::string aes_iv) {
     aes_encrypted_key = decoder.decode(aes_key);
     aes_encrypted_iv = decoder.decode(aes_iv);
-    std::cout << "KEY: ";
-    for (int i = 0; i < 15; ++i) {
-        std::cout << (char)aes_encrypted_key[i];
-    }
-    std::cout << "\n";
 }
 
 void Institution::set_y_data(std::string& y_data) {
@@ -40,7 +39,7 @@ void Institution::set_y_data(std::string& y_data) {
 }
 
 void Institution::set_covariant_data(const std::string& covariant_name, const std::string& data) {
-    covariant_data[covariant_name] = data;
+    covariant_data[covariant_name] = decoder.decode(data);
 }
 
 std::string Institution::get_aes_key() {
@@ -72,7 +71,7 @@ std::string Institution::get_blocks(int num_blocks) {
         if(block->pos != current_block) {
             break;
         }
-        res.append(block->data);
+        res.append(block->locus + "\t" + block->data);
         blocks.pop();
         delete block;
         current_block++;

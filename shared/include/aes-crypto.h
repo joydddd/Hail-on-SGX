@@ -20,7 +20,7 @@ class AESCrypto {
 
         std::string encode(const byte* data, int data_size);
 
-        std::string decode(std::string& encoded_data);
+        std::string decode(const std::string& encoded_data);
 
         std::string get_key_and_iv();
 

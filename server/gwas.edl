@@ -35,7 +35,7 @@ enclave {
 
         // copy no. covariant from host to enclave
         // cov == "1" if the covariant is indent 1
-        bool getcov(
+        int getcov(
             [in] const char host[MAX_CLIENTNAME_LENGTH], 
             [in] const char cov_name[MAX_CLIENTNAME_LENGTH], 
             [out] char cov[ENCLAVE_READ_BUFFER_SIZE]);

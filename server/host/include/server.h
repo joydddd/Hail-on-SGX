@@ -26,6 +26,7 @@ class Server {
     int port;
 
     std::unordered_set<std::string> expected_institutions;
+    std::unordered_set<std::string> expected_covariants;
     std::vector<std::string> institution_list;
     std::string covariant_list;
     std::string y_val_name;

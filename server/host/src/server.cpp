@@ -51,6 +51,7 @@ void Server::init() {
         covariant_dtype[covariant] = dtype;
         if (covariant != "1") {
             covariant_list.append(covariant + " ");
+            expected_covariants.insert(covariant);
         }
     }
 
@@ -205,7 +206,20 @@ bool Server::handle_message(int connFD, const std::string& name, unsigned int si
         case COVARIANT:
         {
             std::vector<std::string> name_data_split = Parser::split(msg, ' ', 1);
-            institutions[name]->set_covariant_data(name_data_split.front(), name_data_split.back());
+            std::string covariant_name = name_data_split.front();
+
+            if (!expected_covariants.count(covariant_name)) {
+                throw std::runtime_error("Unexpected covariant recieved.");
+            }
+            institutions[name]->set_covariant_data(covariant_name, name_data_split.back());
+
+            // once we have all the covariants, request data
+            if (expected_covariants.size() == institutions[name]->get_covariant_size()) {
+                institutions[name]->request_conn = send_msg(name, DATA_REQUEST, std::to_string(MIN_BLOCK_COUNT), institutions[name]->request_conn);
+                // start listener thread for data!
+                boost::thread data_listener_thread(&Server::data_listener, this, institutions[name]->request_conn);
+                data_listener_thread.detach();
+            }
             break;
         }
         case EOF_DATA:
@@ -233,9 +247,9 @@ bool Server::handle_message(int connFD, const std::string& name, unsigned int si
     }
     if (mtype != DATA) {
         // cool, well handled!
-        guarded_cout("\nClosing connection", cout_lock);
+        //guarded_cout("\nClosing connection", cout_lock);
         close(connFD);
-        guarded_cout("\n--------------", cout_lock);
+        //guarded_cout("\n--------------", cout_lock);
         return false;
     }   
     return true;  
@@ -257,10 +271,6 @@ void Server::check_in(std::string name) {
         for (auto it : institutions) {
             Institution* inst = it.second;
             send_msg(it.first, Y_AND_COV, covariant_list + y_val_name);
-            inst->request_conn = send_msg(it.first, DATA_REQUEST, std::to_string(MIN_BLOCK_COUNT), inst->request_conn);
-            // start listener thread for data!
-            boost::thread data_listener_thread(&Server::data_listener, this, inst->request_conn);
-            data_listener_thread.detach();  
         }
         
     }
@@ -324,15 +334,14 @@ std::string Server::get_y_data(const std::string& institution_name) {
 }
 
 std::string Server::get_covariant_data(const std::string& institution_name, const std::string& covariant_name) {
-    std::string cov_list;
-    std::vector<std::string> cov_vals = Parser::split(get_instance().institutions[institution_name]->get_covariant_data(covariant_name));
-    for (std::string cov_val : cov_vals) {
-        cov_list.append(cov_val + "\t");
-    }
-    return cov_list;
+    // std::string cov_list;
+    std::string cov_vals = get_instance().institutions[institution_name]->get_covariant_data(covariant_name);
+    // for (std::string cov_val : cov_vals) {
+    //     cov_list.append(cov_val + "\t");
+    // }
+    return cov_vals;
 }
 
 std::string Server::get_x_data(const std::string& institution_name, int num_blocks) {
-    return "";
-    //return get_instance().institutions[institution_name]->get_blocks(num_blocks);
+    return get_instance().institutions[institution_name]->get_blocks(num_blocks);
 }

@@ -143,6 +143,9 @@ Row* Buffer::get_nextrow(const Log_gwas& gwas) {
             case (LOG_t):
                 new_row = new Log_row(gwas);
                 break;
+            default:
+                throw std::runtime_error("Unexpected batch type.");
+                break;
         }
         if (!batch->end() && batch->toploci() == loci) {
             try {

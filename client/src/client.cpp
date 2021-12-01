@@ -157,7 +157,6 @@ void Client::handle_message(int connFD, unsigned int size, ClientMessageType mty
         }
         case DATA_REQUEST:
         {   
-            return;
             response_mtype = DATA;
             std::string block;
             while(get_block(block)) {
@@ -213,9 +212,6 @@ void Client::data_sender(int connFD) {
 void Client::send_tsv_file(std::string filename, ServerMessageType mtype) {
     std::ifstream tsv_file(filename + ".tsv");
     std::string data;
-    if (mtype == COVARIANT) {
-        data.append(filename + " ");
-    }
     // TODO: fix this code once Joy's enclave can handle a different format
     std::string line;
     // // read in first line garbage
@@ -228,5 +224,9 @@ void Client::send_tsv_file(std::string filename, ServerMessageType mtype) {
     }
     // remove extra space at end of list
     data.pop_back();
-    send_msg(mtype, aes_encryptor.encrypt_line((byte *)&data[0], data.length()));
+    data = aes_encryptor.encrypt_line((byte *)&data[0], data.length());
+    if (mtype == COVARIANT) {
+        data = filename + " " + data;
+    }
+    send_msg(mtype, data);
 }

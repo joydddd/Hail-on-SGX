@@ -74,8 +74,8 @@ void log_regression() {
     }
 
     map<string, int> client_size_map;
+    char* buffer_decrypt = new char[ENCLAVE_READ_BUFFER_SIZE];
     char* y_buffer = new char[ENCLAVE_READ_BUFFER_SIZE];
-    char* y_buffer_decrypt = new char[ENCLAVE_READ_BUFFER_SIZE];
     Log_var gwas_y;
     try {
         int client_num = 0;
@@ -88,9 +88,9 @@ void log_regression() {
                         client_aes[client_num].aes_iv, 
                         (const unsigned char*) y_buffer, 
                         y_buffer_size, 
-                        (unsigned char*) y_buffer_decrypt);
+                        (unsigned char*) buffer_decrypt);
             
-            stringstream y_ss(y_buffer_decrypt);
+            stringstream y_ss(buffer_decrypt);
             Log_var new_y;
             new_y.read(y_ss);
             client_size_map[client] = new_y.size();
@@ -113,30 +113,38 @@ void log_regression() {
     split_tab(covlist, covariants);
 
     try{
-    char* cov_buffer = new char[ENCLAVE_READ_BUFFER_SIZE];
-    for (auto& cov : covariants) {
-        if (cov == "1") {
-            Log_var intercept(gwas_y.size());
-            gwas.add_covariant(intercept);
-            continue;
+        char* cov_buffer = new char[ENCLAVE_READ_BUFFER_SIZE];
+        for (auto& cov : covariants) {
+            if (cov == "1") {
+                Log_var intercept(gwas_y.size());
+                gwas.add_covariant(intercept);
+                continue;
+            }
+            Log_var cov_var;
+            int client_num = 0;
+            for (auto& client : clients) {
+                int cov_buffer_size = 0;
+                while (!cov_buffer_size) {
+                    getcov(&cov_buffer_size, client.c_str(), cov.c_str(), cov_buffer);
+                }
+                decrypt_data(client_aes[client_num].aes_context, 
+                             client_aes[client_num].aes_iv, 
+                             (const unsigned char*) cov_buffer, 
+                             cov_buffer_size, 
+                             (unsigned char*) buffer_decrypt);
+                stringstream cov_ss(buffer_decrypt);
+                Log_var new_cov_var;
+                new_cov_var.read(cov_ss);
+                if (new_cov_var.size() != client_size_map[client])
+                    throw ReadtsvERROR("covariant size mismatch from client: " +
+                                    client);
+                cov_var.combine(new_cov_var);
+                client_num++;
+            }
+            gwas.add_covariant(cov_var);
         }
-        Log_var cov_var;
-        for (auto& client : clients) {
-            bool rt = false;
-            while (!rt)
-                getcov(&rt, client.c_str(), cov.c_str(), cov_buffer);
-            stringstream cov_ss(cov_buffer);
-            Log_var new_cov_var;
-            new_cov_var.read(cov_ss);
-            if (new_cov_var.size() != client_size_map[client])
-                throw ReadtsvERROR("covariant size mismatch from client: " +
-                                   client);
-            cov_var.combine(new_cov_var);
-        }
-        gwas.add_covariant(cov_var);
-    }
-    delete[] cov_buffer;
-    cout << "GWAS setup finished" << endl;
+        delete[] cov_buffer;
+        cout << "GWAS setup finished" << endl;
     }
     catch (ERROR_t& err) {
         cerr << "ERROR: fail to get correct covariant values: " << err.msg << endl;
