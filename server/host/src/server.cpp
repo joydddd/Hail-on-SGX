@@ -38,6 +38,7 @@ void Server::init() {
     std::string institution;
     while(getline(instituion_file, institution)) {
         expected_institutions.insert(institution);
+        institution_list.push_back(institution);
     }
 
     // read in list of covariants
@@ -99,9 +100,7 @@ void Server::run() {
     }
 
     port = ntohs(addr.sin_port);
-    cout_lock.lock();
-    cout << "\nRunning on port " << port << endl;
-    cout_lock.unlock();
+    guarded_cout("\n Running on port " + std::to_string(port), cout_lock);
 
 
     // (5) Serve incoming connections one by one forever (a lonely fate).
@@ -143,10 +142,10 @@ bool Server::start_thread(int connFD) {
         std::string header(header_buffer, header_size);
         // get the username and size of who sent this plaintext header
         auto parsed_header = Parser::parse_server_header(header);
-        guarded_cout("\nInstitution: " + std::get<0>(parsed_header) +
-        " Size: " + std::to_string(std::get<1>(parsed_header)) +
-        " Msg Type: " + std::to_string(std::get<2>(parsed_header)),
-        cout_lock);
+        // guarded_cout("\nInstitution: " + std::get<0>(parsed_header) +
+        // " Size: " + std::to_string(std::get<1>(parsed_header)) +
+        // " Msg Type: " + std::to_string(std::get<2>(parsed_header)),
+        // cout_lock);
         
         // read in encrypted body
         char body_buffer[8192];
@@ -155,7 +154,7 @@ bool Server::start_thread(int connFD) {
             throw std::runtime_error("Error reading request body");
         }
         std::string encrypted_body(body_buffer, std::get<1>(parsed_header));
-        //guarded_cout("\nEncrypted body:\n" + encrypted_body, cout_lock);
+        // guarded_cout("\nEncrypted body:\n" + encrypted_body, cout_lock);
         return handle_message(connFD, std::get<0>(parsed_header), std::get<1>(parsed_header), std::get<2>(parsed_header), encrypted_body);
     }
     catch (const std::runtime_error e)  {
@@ -168,7 +167,10 @@ bool Server::start_thread(int connFD) {
 
 bool Server::handle_message(int connFD, const std::string& name, unsigned int size, ServerMessageType mtype,
                             std::string& msg) {
-    DataBlock* block = Parser::parse_body(msg, mtype);
+    DataBlock* block;
+    if (institutions.count(name)) {
+        block = Parser::parse_body(msg, mtype, institutions[name]->decoder);
+    }
 
     std::string response;
     ClientMessageType response_mtype;
@@ -181,8 +183,18 @@ bool Server::handle_message(int connFD, const std::string& name, unsigned int si
             }
             std::vector<std::string> hostname_and_port = Parser::split(msg);
             institutions[name] = new Institution(hostname_and_port[0], Parser::convert_to_num(hostname_and_port[1]));
-            check_in(name);
             response_mtype = SUCCESS;
+            response = "RSA KEY";
+            break;
+        }
+        case AES_KEY:
+        {
+            check_in(name);
+            auto key_and_iv = Parser::split(msg, '\t');
+            institutions[name]->set_key_and_iv(
+                                    key_and_iv.front(), 
+                                    key_and_iv.back()
+                                );
             break;
         }
         case Y_VAL:
@@ -236,6 +248,9 @@ int Server::send_msg(const std::string& name, ClientMessageType mtype, const std
 
 void Server::check_in(std::string name) {
     std::lock_guard<std::mutex> raii(expected_lock);
+    if (!expected_institutions.count(name)) {
+        throw std::runtime_error("Unexpected institution!\n");
+    }
     expected_institutions.erase(name);
     if (!expected_institutions.size()) {
         // request y, cov, and data
@@ -278,16 +293,34 @@ std::string Server::get_covariants() {
     return cov_list;
 }
 
-std::string Server::get_y_data(const std::string& institution_name) {
-    std::string y_list;
+std::string Server::get_aes_key(const int institution_num) {
+    const std::string institution_name = get_instance().institution_list[institution_num];
     if (!get_instance().institutions.count(institution_name)) {
         return "";
     }
-    std::vector<std::string> y_vals = Parser::split(get_instance().institutions[institution_name]->get_y_data());
-    for (std::string y_val : y_vals) {
-        y_list.append(y_val + "\t");
+
+    return get_instance().institutions[institution_name]->get_aes_key();
+}
+
+std::string Server::get_aes_iv(const int institution_num) {
+    const std::string institution_name = get_instance().institution_list[institution_num];
+    if (!get_instance().institutions.count(institution_name)) {
+        return "";
     }
-    return y_list;
+
+    return get_instance().institutions[institution_name]->get_aes_iv();
+}
+
+std::string Server::get_y_data(const std::string& institution_name) {
+    //std::string y_list;
+    if (!get_instance().institutions.count(institution_name)) {
+        return "";
+    }
+    std::string y_vals = get_instance().institutions[institution_name]->get_y_data();
+    // for (std::string y_val : y_vals) {
+    //     y_list.append(y_val + "\t");
+    // }
+    return y_vals;
 }
 
 std::string Server::get_covariant_data(const std::string& institution_name, const std::string& covariant_name) {
@@ -300,5 +333,6 @@ std::string Server::get_covariant_data(const std::string& institution_name, cons
 }
 
 std::string Server::get_x_data(const std::string& institution_name, int num_blocks) {
-    return get_instance().institutions[institution_name]->get_blocks(num_blocks);
+    return "";
+    //return get_instance().institutions[institution_name]->get_blocks(num_blocks);
 }

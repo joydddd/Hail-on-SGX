@@ -54,6 +54,7 @@ int make_client_sockaddr(struct sockaddr_in *addr, const char *hostname, int por
 
 int send_message(const char *hostname, int port, const char *message, int sock) {
 	if (strlen(message) > MAX_MESSAGE_SIZE) {
+		std::cout << std::to_string(strlen(message));
 		perror("Error: Message exceeds maximum length\n");
 		return -1;
 	}

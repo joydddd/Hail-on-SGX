@@ -15,6 +15,8 @@
 #include <stdexcept>
 #include <utility>
 
+#include "aes-crypto.h"
+
 enum ClientMessageType { 
   SUCCESS,
   Y_AND_COV,
@@ -23,6 +25,7 @@ enum ClientMessageType {
 
 enum ServerMessageType { 
     REGISTER,
+    AES_KEY,
     COVARIANT,
     Y_VAL,
     DATA,
@@ -30,6 +33,7 @@ enum ServerMessageType {
 };
 
 struct DataBlock {
+  std::string locus;
   std::string data;
   int pos;
 };
@@ -53,9 +57,9 @@ class Parser {
                                         std::unordered_map<std::string, std::string> &passwords);
 
     // parse message body into the relevant arguments we need
-    static DataBlock* parse_body(const std::string& message_body, ServerMessageType mtype);
+    static DataBlock* parse_body(const std::string& message_body, ServerMessageType mtype, AESCrypto& decoder);
 
-    static std::string parse_allele_line(const std::string& line, std::string& vals);
+    static std::string parse_allele_line(const std::string& line, std::string& vals, AESCrypto& encryptor, int num_clients);
 
     // split a given string based on the specified delimiter
     static std::vector<std::string> split(const std::string& s, char delim=' ', int num_splits=-1);

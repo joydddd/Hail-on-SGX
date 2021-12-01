@@ -8,6 +8,7 @@
 Institution::Institution(std::string hostname, int port) : hostname(hostname), port(port), 
                                                            requested_for_data(false), listener_running(false), 
                                                            request_conn(-1), current_block(0), all_data_recieved(false) {
+    // y_val_data = new char[10000];
 }
 
 Institution::~Institution() {
@@ -23,12 +24,31 @@ int Institution::get_size() {
     return blocks.size();
 }
 
-void Institution::set_y_data(const std::string& y_data) {
-    y_val_data = y_data;
+void Institution::set_key_and_iv(std::string aes_key, std::string aes_iv) {
+    aes_encrypted_key = decoder.decode(aes_key);
+    aes_encrypted_iv = decoder.decode(aes_iv);
+    std::cout << "KEY: ";
+    for (int i = 0; i < 15; ++i) {
+        std::cout << (char)aes_encrypted_key[i];
+    }
+    std::cout << "\n";
+}
+
+void Institution::set_y_data(std::string& y_data) {
+    y_val_data = decoder.decode(y_data);
+    //std::memcpy(y_val_data, &decoder.decode(y_data)[0], 2528);
 }
 
 void Institution::set_covariant_data(const std::string& covariant_name, const std::string& data) {
     covariant_data[covariant_name] = data;
+}
+
+std::string Institution::get_aes_key() {
+    return aes_encrypted_key;
+}
+
+std::string Institution::get_aes_iv() {
+    return aes_encrypted_iv;
 }
 
 std::string Institution::get_y_data() {

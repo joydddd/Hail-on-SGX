@@ -25,15 +25,24 @@ class Institution {
     std::unordered_map<std::string, std::string> covariant_data;
     std::string y_val_data;
 
+    std::string aes_encrypted_key;
+    std::string aes_encrypted_iv;
+
   public:
     Institution(std::string hostname, int port);
     ~Institution();
 
+    void set_key_and_iv(std::string aes_key, std::string aes_iv);
+
     void add_block(DataBlock* block);
 
-    void set_y_data(const std::string& y_data);
+    void set_y_data(std::string& y_data);
 
     void set_covariant_data(const std::string& covariant_name, const std::string& data);
+
+    std::string get_aes_key();
+
+    std::string get_aes_iv();
   
     std::string get_y_data();
 
@@ -50,6 +59,8 @@ class Institution {
     bool requested_for_data;
     bool listener_running;
     bool all_data_recieved;
+
+    AESCrypto decoder;
 
     std::string hostname;
     

@@ -1,12 +1,7 @@
 #include "client.h"
 #include <boost/thread.hpp>
 
-using std::cout;
-using std::cin;
-using std::endl;
-
 std::mutex cout_lock;
-
 
 Client::Client(std::string clientname, std::string client_hostname, std::string server_hostname, int listen_port, int server_port) 
     : clientname(clientname), client_hostname(client_hostname), server_hostname(server_hostname), 
@@ -52,30 +47,21 @@ void Client::run() {
 
     // bind to our given port, or randomly get one if port = 0
 	if (bind(sockfd, (struct sockaddr*) &addr, addrSize) < 0) {
-        cout_lock.lock();
-        cout << "bind failure: " << errno << endl;
-        cout_lock.unlock();
+        guarded_cout("bind failure " + std::to_string(errno), cout_lock);
     } 
 
     // update our member variable to the port we just assigned
     if (getsockname(sockfd, (struct sockaddr*) &addr, &addrSize) < 0) {
-        cout_lock.lock();
-        cout << "getsockname failure: " << errno << endl;
-        cout_lock.unlock();
+        guarded_cout("getsockname failure: " + std::to_string(errno), cout_lock);
     }
 
     // (4) Begin listening for incoming connections.
 	if (listen(sockfd, 30) < 0) {
-        cout_lock.lock();
-        cout << "listen: " << errno << endl;
-        cout_lock.unlock();
+        guarded_cout("listen: " + std::to_string(errno), cout_lock);
     }
 
     listen_port = ntohs(addr.sin_port);
-    cout_lock.lock();
-    cout << "\nRunning on port " << listen_port << endl;
-    cout_lock.unlock();
-
+    guarded_cout("\n Running on port " + std::to_string(listen_port), cout_lock);
 
     // (5) Serve incoming connections one by one forever (a lonely fate).
 	while (true) {
@@ -133,9 +119,7 @@ bool Client::start_thread(int connFD) {
         handle_message(connFD, std::get<0>(parsed_header), std::get<1>(parsed_header), encrypted_body);
     }
     catch (const std::runtime_error e)  {
-        cout_lock.lock();
-        cout << "Exception: " << e.what() << endl;
-        cout_lock.unlock();
+        guarded_cout("Exception " + std::string(e.what()) + "\n", cout_lock);
         close(connFD);
         return false;
     }
@@ -152,6 +136,7 @@ void Client::handle_message(int connFD, unsigned int size, ClientMessageType mty
     switch (mtype) {
         case SUCCESS:
         {
+            send_msg(AES_KEY, aes_encryptor.get_key_and_iv());
             guarded_cout("IMPLEMENT ATTESTATION!\n", cout_lock);
             break;
         }
@@ -172,6 +157,7 @@ void Client::handle_message(int connFD, unsigned int size, ClientMessageType mty
         }
         case DATA_REQUEST:
         {   
+            return;
             response_mtype = DATA;
             std::string block;
             while(get_block(block)) {
@@ -203,7 +189,7 @@ bool Client::get_block(std::string& block) {
     std::string vals;
     vals.resize(num_clients);
 
-    block = std::to_string(blocks_sent++) + " ";
+    block = std::to_string(blocks_sent++) + "\t";
     // TODO: see if we can read in BLOCK_SIZE lines in at a time
     for(int i = 0; i < BLOCK_SIZE; ++i) {
         if (!getline(xval, line)) {
@@ -214,7 +200,7 @@ bool Client::get_block(std::string& block) {
             num_clients = Parser::split(line, '\t').size() - 2;
             vals.resize(num_clients);
         }
-        block.append(Parser::parse_allele_line(line, vals));
+        block.append(Parser::parse_allele_line(line, vals, aes_encryptor, num_clients)); 
     }
     return true;
 }
@@ -242,6 +228,5 @@ void Client::send_tsv_file(std::string filename, ServerMessageType mtype) {
     }
     // remove extra space at end of list
     data.pop_back();
-
-    send_msg(mtype, data);
+    send_msg(mtype, aes_encryptor.encrypt_line((byte *)&data[0], data.length()));
 }

@@ -3,6 +3,7 @@
 #include <thread>
 
 #include "buffer.h"
+#include "crypto.h"
 
 #ifdef ENC_TEST
 #include "enclave_old.h"
@@ -10,36 +11,96 @@
 #include "gwas_t.h"
 #endif
 
+void decrypt_data(mbedtls_aes_context* aes_context, unsigned char aes_iv[AES_IV_LENGTH], const unsigned char* input_data, int input_size, unsigned char* output_data) {
+    int ret = mbedtls_aes_crypt_cbc(
+                aes_context,
+                MBEDTLS_AES_DECRYPT,
+                input_size, // input data length in bytes,
+                aes_iv, // Initialization vector (updated after use)
+                input_data,
+                output_data);
+    if (ret != 0) {
+        cout << "Decryption failed with error: " << ret << std::endl;
+        exit(0);
+    }
+}
 
 void log_regression() {
+    // Crypto c = Crypto();
+    // if (c.m_initialized) {
+    //     cout << "CRYPTO WORKING!\n";
+    // }
     cout << "Logistic Regression started" << endl;
     /* setup gwas */
     char clientl[ENCLAVE_READ_BUFFER_SIZE];
+
     getclientlist(clientl);
     vector<string> clients;
     string clientl_str(clientl);
-    split_tab(clientl_str, clients);
+    int num_clients = split_tab(clientl_str, clients);
+
+    // We should store num_client number of aes keys/iv/contexts.
+    std::vector<AESData> client_aes;
+    client_aes.resize(num_clients);
+    for (int i = 0; i < num_clients; ++i) {
+        AESData aes;
+        aes.aes_context = new mbedtls_aes_context();
+        mbedtls_aes_init(aes.aes_context);
+        client_aes[i] = aes;
+    }
+
     cout << "enclave running on " << clients.size() << " clients: " << endl;
     cout << clientl << endl;
 
+    try {
+        for (int client = 0; client < num_clients; ++client) {
+            bool rt = false;
+            while (!rt){
+                getaes(&rt, client, client_aes[client].aes_key, client_aes[client].aes_iv);
+            }
+            // Initialize AES context so that we can decrypt data coming into the enclave.
+            int ret = mbedtls_aes_setkey_dec(client_aes[client].aes_context, 
+                                            client_aes[client].aes_key, 
+                                            AES_KEY_LENGTH * 8);
+            if (ret != 0) {
+                cout << "Set key failed.\n";
+                exit(0);
+            }
+        }
+        cout << "AES KEY and IV loaded" << endl;
+    } 
+    catch (ERROR_t& err) {
+        cerr << "ERROR: fail to get AES KEY" << err.msg << endl;
+    }
+
     map<string, int> client_size_map;
     char* y_buffer = new char[ENCLAVE_READ_BUFFER_SIZE];
+    char* y_buffer_decrypt = new char[ENCLAVE_READ_BUFFER_SIZE];
     Log_var gwas_y;
     try {
-    for (auto& client : clients) {
-        bool rt = false;
-        while (!rt){
-            gety(&rt, client.c_str(), y_buffer);
+        int client_num = 0;
+        for (auto& client : clients) {
+            int y_buffer_size = 0;
+            while (!y_buffer_size){
+                gety(&y_buffer_size, client.c_str(), y_buffer);
+            }
+            decrypt_data(client_aes[client_num].aes_context, 
+                        client_aes[client_num].aes_iv, 
+                        (const unsigned char*) y_buffer, 
+                        y_buffer_size, 
+                        (unsigned char*) y_buffer_decrypt);
+            
+            stringstream y_ss(y_buffer_decrypt);
+            Log_var new_y;
+            new_y.read(y_ss);
+            client_size_map[client] = new_y.size();
+            gwas_y.combine(new_y);
+            client_num++;
         }
-        stringstream y_ss(y_buffer);
-        Log_var new_y;
-        new_y.read(y_ss);
-        client_size_map[client] = new_y.size();
-        gwas_y.combine(new_y);
-    }
-    delete[] y_buffer;
-    cout << "Y value loaded" << endl;
-    } catch (ERROR_t& err) {
+        delete[] y_buffer;
+        cout << "Y value loaded" << endl;
+    } 
+    catch (ERROR_t& err) {
         cerr << "ERROR: fail to get correct y values" << err.msg << endl;
     }
 

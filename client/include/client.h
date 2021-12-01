@@ -17,12 +17,13 @@
 #include "parser.h"
 #include "socket_send.h"
 #include "output.h"
+#include "aes-crypto.h"
 
 #ifndef _CLIENT_H_
 #define _CLIENT_H_
 
 #define REGISTER_MESSAGE "REGISTER"
-#define BLOCK_SIZE 3
+#define BLOCK_SIZE 1
 
 class Client {
   private:
@@ -39,6 +40,8 @@ class Client {
     bool sent_all_data;
 
     std::ifstream xval;
+
+    AESCrypto aes_encryptor;
 
   public:
     Client(std::string clientname, std::string client_hostname, std::string server_hostname, int listen_port, int server_port);

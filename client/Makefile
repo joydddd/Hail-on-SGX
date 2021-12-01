@@ -13,9 +13,10 @@ SOURCES = $(shell find $(SRCDIR) -type f -name *.cpp)
 # Generate the names of the thread library's object files
 OBJECTS := $(patsubst $(SRCDIR)/%,$(BUILDDIR)/%,$(SOURCES:.$(SRCEXT)=.o))
 OBJECTS += $(shell find $(SHAREDBUILDDIR) -type f -name *.o)
-CFLAGS := -g -Wall -std=c++14 -pthread 
+CFLAGS := -g -Wall -std=c++14 -pthread
 FSFLAGS := -ldl
 INC := -I ../shared/include -I include
+CRYPTFLAG := -lcryptopp
 
 # list of test drivers (with main()) for development
 TESTSOURCES := $(wildcard $(TESTDIR)/*test*.$(SRCEXT))
@@ -60,7 +61,10 @@ shared:
 # Compile the pager and tag this compilation
 client: ${OBJECTS}
 	@mkdir -p ${TARGETDIR}
-	${CC} ${CFLAGS} ${INC} -o ${TARGETDIR}/$@ $^ ${LIBTHREAD} ${FSFLAGS}
+	${CC} ${CFLAGS} ${INC} -o ${TARGETDIR}/$@ $^ ${LIBTHREAD} ${FSFLAGS} ${CRYPTFLAG}
+
+run:
+	./bin/client client1 localhost 8081 localhost 6500
 
 clean:
 	@echo "Cleaning..."

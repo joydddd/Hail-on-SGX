@@ -19,14 +19,18 @@
 #include <boost/thread.hpp>
 #include "institution.h"
 #include "output.h"
+#include "aes-crypto.h"
 
 class Server {
   private:
     int port;
 
     std::unordered_set<std::string> expected_institutions;
+    std::vector<std::string> institution_list;
     std::string covariant_list;
     std::string y_val_name;
+    char* encrypted_aes_key;
+    char* encrypted_aes_iv;
 
     std::unordered_map<std::string, Institution*> institutions;
     
@@ -65,6 +69,10 @@ class Server {
     static std::string get_institutions();
 
     static std::string get_covariants();
+
+    static std::string get_aes_key(const int institution_num);
+
+    static std::string get_aes_iv(const int institution_num);
 
     static std::string get_y_data(const std::string& institution_name);
 

@@ -4,6 +4,8 @@
 
 #include "parser.h"
 
+#include <iostream>
+
 Parser::Parser(/* args */) {
 
 }
@@ -41,7 +43,6 @@ std::tuple<unsigned int, ClientMessageType> Parser::parse_client_header(std::str
 
 std::tuple<std::string, unsigned int, ServerMessageType> Parser::parse_server_header(std::string header) {
     // get username and size of message body
-    // TODO: error checking
     auto words = split(header, ' ');
     if (words.size() != 3) throw std::runtime_error("Invalid header - not name, size, message type");
     unsigned int size = convert_to_num(words[1]);
@@ -49,21 +50,23 @@ std::tuple<std::string, unsigned int, ServerMessageType> Parser::parse_server_he
     return std::make_tuple(words.front(), size, mtype);
 }
 
-DataBlock* Parser::parse_body(const std::string& message_body, ServerMessageType mtype) {
+DataBlock* Parser::parse_body(const std::string& message_body, ServerMessageType mtype, AESCrypto& decoder) {
     if (mtype != DATA && mtype != EOF_DATA) return nullptr;
-    std::vector<std::string> split_msg = Parser::split(message_body, ' ', 1);
-    if (split_msg.size() != 2) {
-        split_msg.push_back("<EOF>");
+    std::vector<std::string> split_line = Parser::split(message_body, '\t', 3);
+    if (split_line.size() != 4) {
+        split_line.push_back("<EOF>");
+        split_line.push_back("");
+        split_line.push_back("");
     }
-    int counter = Parser::convert_to_num(split_msg.front());
-    std::string encrypted_block = split_msg.back();
     struct DataBlock* block = new DataBlock;
-    block->data = encrypted_block;
-    block->pos = counter;
+    block->pos = Parser::convert_to_num(split_line.front());
+    block->locus = split_line[1] + '\t' + split_line[2];
+    block->data = decoder.decode(split_line.back());
+    
     return block;
 }
 
-std::string Parser::parse_allele_line(const std::string& line, std::string& vals) {
+std::string Parser::parse_allele_line(const std::string& line, std::string& vals, AESCrypto& encryptor, int num_clients) {
     std::vector<std::string> line_split = Parser::split(line, '\t', 2);
     std::string line_vals = line_split.back();
     int val_idx = 0;
@@ -71,19 +74,19 @@ std::string Parser::parse_allele_line(const std::string& line, std::string& vals
     for (int line_idx = 0; line_idx < line_vals.length(); line_idx += 2) {
         switch(line_vals[line_idx]) {
             case '0':
-                vals[val_idx++] = static_cast<char>(0) + '0';
+                vals[val_idx++] = static_cast<char>(0);
                 break;
 
             case '1':
-                vals[val_idx++] = static_cast<char>(1) + '0';
+                vals[val_idx++] = static_cast<char>(1);
                 break;
 
             case '2':
-                vals[val_idx++] = static_cast<char>(2) + '0';
+                vals[val_idx++] = static_cast<char>(2);
                 break;
 
             case 'N':
-                vals[val_idx++] = static_cast<char>(3) + '0';
+                vals[val_idx++] = static_cast<char>(3);
                 line_idx++;
                 break;
 
@@ -91,7 +94,7 @@ std::string Parser::parse_allele_line(const std::string& line, std::string& vals
                 throw std::runtime_error("Invalid alleles file!");
         }
     }
-    return line_split[0] + '\t' + line_split[1] + '\t' + vals + "\n";
+    return line_split[0] + '\t' + line_split[1] + '\t' + encryptor.encrypt_line((byte *)&vals[0], num_clients) + "\n";
 }
 
 unsigned int Parser::convert_to_num(const std::string& str) {

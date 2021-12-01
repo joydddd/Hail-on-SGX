@@ -11,6 +11,7 @@
 #include <string>
 #include <thread>
 #include <vector>
+#include <stdio.h>
 #include "server.h"
 
 #define MAX_ATTEMPT_TIMES 10
@@ -47,14 +48,32 @@ void getcovlist(char covlist[ENCLAVE_READ_BUFFER_SIZE]) {
     strcpy(covlist, Server::get_covariants().c_str());
 }
 
-bool gety(const char client[MAX_CLIENTNAME_LENGTH],
+bool getaes(const int client_num,
+          unsigned char key[AES_KEY_LENGTH],
+          unsigned char iv[AES_IV_LENGTH]) {
+    std::string aes_key = Server::get_aes_key(client_num);
+    std::string aes_iv = Server::get_aes_iv(client_num);
+    if (!aes_key.length() || !aes_iv.length()) {
+        return false;
+    }
+    std::memcpy(key, &aes_key[0], 16);
+    std::memcpy(iv, &aes_iv[0], 16);
+    std::cout << "KEY: ";
+    for (int i = 0; i < 15; ++i) {
+        std::cout << (char)aes_key[i];
+    }
+    std::cout << "\n";
+    return true;
+}
+
+int gety(const char client[MAX_CLIENTNAME_LENGTH],
           char y[ENCLAVE_READ_BUFFER_SIZE]) {
     std::string y_data = Server::get_y_data(client);
     if (!y_data.length()) {
-        return false;
+        return 0;
     }
-    strcpy(y, y_data.c_str());
-    return true;
+    std::memcpy(y, &y_data[0], y_data.length());
+    return y_data.length();
 }
 
 bool getcov(const char client[MAX_CLIENTNAME_LENGTH],
