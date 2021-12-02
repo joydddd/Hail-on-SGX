@@ -17,9 +17,11 @@
 #include <unordered_set>
 #include <functional>
 #include <boost/thread.hpp>
+
 #include "institution.h"
 #include "output.h"
 #include "aes-crypto.h"
+#include "buffer_size.h"
 
 class Server {
   private:
@@ -32,6 +34,9 @@ class Server {
     std::string y_val_name;
     char* encrypted_aes_key;
     char* encrypted_aes_iv;
+
+    uint8_t rsa_public_key[RSA_PUB_KEY_SIZE];
+    AESCrypto encoder;
 
     std::unordered_map<std::string, Institution*> institutions;
     
@@ -58,6 +63,7 @@ class Server {
     void data_listener(int connFD);
 
   public:
+
     Server(int port_in);
 
     ~Server();
@@ -66,6 +72,8 @@ class Server {
     void run();
 
     static Server& get_instance(int port=0);
+
+    static uint8_t* get_rsa_pub_key();
 
     static std::string get_institutions();
 

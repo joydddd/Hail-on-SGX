@@ -134,9 +134,28 @@ void Client::handle_message(int connFD, unsigned int size, ClientMessageType mty
     ServerMessageType response_mtype;
 
     switch (mtype) {
-        case SUCCESS:
+        case RSA_PUB_KEY:
         {
-            send_msg(AES_KEY, aes_encryptor.get_key_and_iv());
+            
+            const std::string header = "-----BEGIN PUBLIC KEY-----";
+            const std::string footer = "-----END PUBLIC KEY-----";
+
+            size_t pos1 = msg.find(header);
+            size_t pos2 = msg.find(footer, pos1+1);
+            if (pos1 == std::string::npos || pos2 == std::string::npos) {
+                throw std::runtime_error("PEM header/footer not found");
+            }
+            // Start position and length
+            pos1 = pos1 + header.length();
+            pos2 = pos2 - pos1;
+
+            CryptoPP::StringSource pub_key_source(aes_encryptor.decode(msg.substr(pos1, pos2)), true);
+            CryptoPP::RSA::PublicKey public_key;
+            public_key.Load(pub_key_source);
+            
+            CryptoPP::RSAES<CryptoPP::OAEP<CryptoPP::SHA256> >::Encryptor rsa_encryptor(public_key);
+
+            send_msg(AES_KEY, aes_encryptor.get_key_and_iv(rsa_encryptor));
             guarded_cout("IMPLEMENT ATTESTATION!\n", cout_lock);
             break;
         }

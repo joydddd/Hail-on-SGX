@@ -39,6 +39,9 @@ map<string, int> cov_map;
 
 static oe_enclave_t* enclave;
 
+void setrsapubkey(uint8_t enc_rsa_pub_key[RSA_PUB_KEY_SIZE]) {
+    std::memcpy(Server::get_rsa_pub_key(), enc_rsa_pub_key, RSA_PUB_KEY_SIZE);
+}
 
 void getclientlist(char clientlist[ENCLAVE_READ_BUFFER_SIZE]) {
     strcpy(clientlist, Server::get_institutions().c_str());
@@ -49,15 +52,15 @@ void getcovlist(char covlist[ENCLAVE_READ_BUFFER_SIZE]) {
 }
 
 bool getaes(const int client_num,
-          unsigned char key[AES_KEY_LENGTH],
-          unsigned char iv[AES_IV_LENGTH]) {
-    std::string aes_key = Server::get_aes_key(client_num);
-    std::string aes_iv = Server::get_aes_iv(client_num);
-    if (!aes_key.length() || !aes_iv.length()) {
+          unsigned char key[256],
+          unsigned char iv[256]) {
+    std::string encrypted_aes_key = Server::get_aes_key(client_num);
+    std::string encrypted_aes_iv = Server::get_aes_iv(client_num);
+    if (!encrypted_aes_key.length() || !encrypted_aes_iv.length()) {
         return false;
     }
-    std::memcpy(key, &aes_key[0], 16);
-    std::memcpy(iv, &aes_iv[0], 16);
+    std::memcpy(key, &encrypted_aes_key[0], 256);
+    std::memcpy(iv, &encrypted_aes_iv[0], 256);
     return true;
 }
 

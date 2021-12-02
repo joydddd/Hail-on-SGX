@@ -4,18 +4,36 @@
 #include "crypto.h"
 #include <stdlib.h>
 #include <string.h>
+#include <iostream>
 
-Crypto::Crypto() {
+void aes_decrypt_data(mbedtls_aes_context* aes_context, 
+                      unsigned char aes_iv[AES_IV_LENGTH], 
+                      const unsigned char* input_data, 
+                      int input_size, unsigned char* output_data) {
+    int ret = mbedtls_aes_crypt_cbc(
+                aes_context,
+                MBEDTLS_AES_DECRYPT,
+                input_size, // input data length in bytes,
+                aes_iv, // Initialization vector (updated after use)
+                input_data,
+                output_data);
+    if (ret != 0) {
+        std::cout << "Decryption failed with error: " << ret << std::endl;
+        exit(0);
+    }
+}
+
+RSACrypto::RSACrypto() {
     m_initialized = false;
     int res = -1;
 
-    mbedtls_ctr_drbg_init(&m_ctr_drbg_contex);
+    mbedtls_ctr_drbg_init(&m_ctr_drbg_context);
     mbedtls_entropy_init(&m_entropy_context);
     mbedtls_pk_init(&m_pk_context);
 
     // Initialize entropy.
     res = mbedtls_ctr_drbg_seed(
-        &m_ctr_drbg_contex,
+        &m_ctr_drbg_context,
         mbedtls_entropy_func,
         &m_entropy_context,
         nullptr,
@@ -25,8 +43,7 @@ Crypto::Crypto() {
     }
 
     // Initialize RSA context.
-    res = mbedtls_pk_setup(
-        &m_pk_context, mbedtls_pk_info_from_type(MBEDTLS_PK_RSA));
+    res = mbedtls_pk_setup(&m_pk_context, mbedtls_pk_info_from_type(MBEDTLS_PK_RSA));
     if (res != 0) {
         return;
     }
@@ -36,7 +53,7 @@ Crypto::Crypto() {
     res = mbedtls_rsa_gen_key(
         mbedtls_pk_rsa(m_pk_context),
         mbedtls_ctr_drbg_random,
-        &m_ctr_drbg_contex,
+        &m_ctr_drbg_context,
         2048,
         65537);
     if (res != 0) {
@@ -51,15 +68,14 @@ Crypto::Crypto() {
     m_initialized = true;
 }
 
-Crypto::~Crypto() {
+RSACrypto::~RSACrypto() {
     mbedtls_pk_free(&m_pk_context);
     mbedtls_entropy_free(&m_entropy_context);
-    mbedtls_ctr_drbg_free(&m_ctr_drbg_contex);
+    mbedtls_ctr_drbg_free(&m_ctr_drbg_context);
 }
 
 // Compute the sha256 hash of given data.
-int Crypto::Sha256(const uint8_t* data, size_t data_size, uint8_t sha256[32])
-{
+int RSACrypto::sha256(const uint8_t* data, size_t data_size, uint8_t sha256[32]) {
     int ret = 0;
     mbedtls_sha256_context ctx;
 
@@ -83,62 +99,10 @@ exit:
 }
 
 /**
- * Encrypt encrypts the given data using the given public key.
- * Used to encrypt data using the public key of another enclave.
- */
-bool Crypto::Encrypt(
-    const uint8_t* pem_public_key,
-    const uint8_t* data,
-    size_t data_size,
-    uint8_t* encrypted_data,
-    size_t* encrypted_data_size) {
-    bool result = false;
-    mbedtls_pk_context key;
-    size_t key_size = 0;
-    int res = -1;
-    mbedtls_rsa_context* rsa_context;
-
-    mbedtls_pk_init(&key);
-
-    if (!m_initialized)
-        goto exit;
-
-    // Read the given public key.
-    key_size = strlen((const char*)pem_public_key) + 1; // Include ending '\0'.
-    res = mbedtls_pk_parse_public_key(&key, pem_public_key, key_size);
-    if (res != 0) {
-        goto exit;
-    }
-
-    rsa_context = mbedtls_pk_rsa(key);
-    rsa_context->padding = MBEDTLS_RSA_PKCS_V21;
-    rsa_context->hash_id = MBEDTLS_MD_SHA256;
-
-    // Encrypt the data.
-    res = mbedtls_rsa_pkcs1_encrypt(
-        rsa_context,
-        mbedtls_ctr_drbg_random,
-        &m_ctr_drbg_contex,
-        MBEDTLS_RSA_PUBLIC,
-        data_size,
-        data,
-        encrypted_data);
-    if (res != 0) {
-        goto exit;
-    }
-
-    *encrypted_data_size = rsa_context->len;
-    result = true;
-exit:
-    mbedtls_pk_free(&key);
-    return result;
-}
-
-/**
  * decrypt the given data using current enclave's private key.
  * Used to receive encrypted data from another enclave.
  */
-bool Crypto::decrypt(
+bool RSACrypto::decrypt(
     const uint8_t* encrypted_data,
     size_t encrypted_data_size,
     uint8_t* data,
@@ -157,16 +121,19 @@ bool Crypto::decrypt(
     rsa_context->hash_id = MBEDTLS_MD_SHA256;
 
     output_size = *data_size;
-    res = mbedtls_rsa_pkcs1_decrypt(
+    res = mbedtls_rsa_rsaes_oaep_decrypt(
         rsa_context,
         mbedtls_ctr_drbg_random,
-        &m_ctr_drbg_contex,
+        &m_ctr_drbg_context,
         MBEDTLS_RSA_PRIVATE,
+        NULL,
+        0,
         &output_size,
         encrypted_data,
         data,
         output_size);
     if (res != 0) {
+        std::cout << "RSA decryption failed with error: " << res << std::endl;
         goto exit;
     }
     *data_size = output_size;
@@ -174,4 +141,8 @@ bool Crypto::decrypt(
 
 exit:
     return ret;
+}
+
+uint8_t* RSACrypto::get_pub_key() {
+    return m_public_key;
 }

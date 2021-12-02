@@ -11,26 +11,17 @@
 #include "gwas_t.h"
 #endif
 
-void decrypt_data(mbedtls_aes_context* aes_context, unsigned char aes_iv[AES_IV_LENGTH], const unsigned char* input_data, int input_size, unsigned char* output_data) {
-    int ret = mbedtls_aes_crypt_cbc(
-                aes_context,
-                MBEDTLS_AES_DECRYPT,
-                input_size, // input data length in bytes,
-                aes_iv, // Initialization vector (updated after use)
-                input_data,
-                output_data);
-    if (ret != 0) {
-        cout << "Decryption failed with error: " << ret << std::endl;
-        exit(0);
-    }
-}
-
 void log_regression() {
-    // Crypto c = Crypto();
-    // if (c.m_initialized) {
-    //     cout << "CRYPTO WORKING!\n";
-    // }
     cout << "Logistic Regression started" << endl;
+
+    RSACrypto rsa = RSACrypto();
+    if (rsa.m_initialized) {
+        cout << "CRYPTO WORKING!\n";
+    }
+    setrsapubkey(rsa.get_pub_key());
+
+    cout << "RSA Pub Key Set\n";
+
     /* setup gwas */
     char clientl[ENCLAVE_READ_BUFFER_SIZE];
 
@@ -53,11 +44,17 @@ void log_regression() {
     cout << clientl << endl;
 
     try {
+        unsigned char enc_aes_key[256];
+        unsigned char enc_aes_iv[256];
+        size_t* aes_length = new size_t(AES_KEY_LENGTH);
+
         for (int client = 0; client < num_clients; ++client) {
             bool rt = false;
             while (!rt){
-                getaes(&rt, client, client_aes[client].aes_key, client_aes[client].aes_iv);
+                getaes(&rt, client, enc_aes_key, enc_aes_iv);
             }
+            rsa.decrypt(enc_aes_key, 256, (uint8_t *)&client_aes[client].aes_key, aes_length);
+            rsa.decrypt(enc_aes_iv, 256, (uint8_t *)&client_aes[client].aes_iv, aes_length);
             // Initialize AES context so that we can decrypt data coming into the enclave.
             int ret = mbedtls_aes_setkey_dec(client_aes[client].aes_context, 
                                             client_aes[client].aes_key, 
@@ -67,10 +64,11 @@ void log_regression() {
                 exit(0);
             }
         }
+        delete aes_length;
         cout << "AES KEY and IV loaded" << endl;
     } 
     catch (ERROR_t& err) {
-        cerr << "ERROR: fail to get AES KEY" << err.msg << endl;
+        cerr << "ERROR: fail to get AES KEY " << err.msg << endl;
     }
 
     map<string, int> client_size_map;
@@ -84,12 +82,11 @@ void log_regression() {
             while (!y_buffer_size){
                 gety(&y_buffer_size, client.c_str(), y_buffer);
             }
-            decrypt_data(client_aes[client_num].aes_context, 
+            aes_decrypt_data(client_aes[client_num].aes_context, 
                         client_aes[client_num].aes_iv, 
                         (const unsigned char*) y_buffer, 
                         y_buffer_size, 
                         (unsigned char*) buffer_decrypt);
-            
             stringstream y_ss(buffer_decrypt);
             Log_var new_y;
             new_y.read(y_ss);
@@ -127,7 +124,7 @@ void log_regression() {
                 while (!cov_buffer_size) {
                     getcov(&cov_buffer_size, client.c_str(), cov.c_str(), cov_buffer);
                 }
-                decrypt_data(client_aes[client_num].aes_context, 
+                aes_decrypt_data(client_aes[client_num].aes_context, 
                              client_aes[client_num].aes_iv, 
                              (const unsigned char*) cov_buffer, 
                              cov_buffer_size, 

@@ -4,6 +4,7 @@
 #include <cryptopp/files.h>
 #include <cryptopp/osrng.h>
 #include <cryptopp/base64.h>
+#include <cryptopp/rsa.h>
 
 #include <iostream>
 #include <string>
@@ -22,9 +23,10 @@ class AESCrypto {
 
         std::string decode(const std::string& encoded_data);
 
-        std::string get_key_and_iv();
+        std::string get_key_and_iv(CryptoPP::RSAES<CryptoPP::OAEP<CryptoPP::SHA256> >::Encryptor& rsa_encryptor);
 
     private:
+        CryptoPP::AutoSeededRandomPool prng;
         CryptoPP::SecByteBlock key;
         CryptoPP::SecByteBlock iv;
         CryptoPP::CBC_Mode<CryptoPP::AES>::Encryption encryptor;

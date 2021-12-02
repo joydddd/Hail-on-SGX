@@ -184,8 +184,9 @@ bool Server::handle_message(int connFD, const std::string& name, unsigned int si
             }
             std::vector<std::string> hostname_and_port = Parser::split(msg);
             institutions[name] = new Institution(hostname_and_port[0], Parser::convert_to_num(hostname_and_port[1]));
-            response_mtype = SUCCESS;
-            response = "RSA KEY";
+            response_mtype = RSA_PUB_KEY;
+            response = reinterpret_cast<char *>(rsa_public_key);
+            //encoder.encode(rsa_public_key, RSA_PUB_KEY); 
             break;
         }
         case AES_KEY:
@@ -286,9 +287,13 @@ Server& Server::get_instance(int port) {
     return instance;
 }
 
+uint8_t* Server::get_rsa_pub_key() {
+    return get_instance().rsa_public_key;
+}
+
 std::string Server::get_institutions() {
     std::string clientlist;
-    for (std::string institution : get_instance().expected_institutions) {
+    for (std::string institution : get_instance().institution_list) {
         clientlist.append(institution + "\t");
     }
     return clientlist;

@@ -20,70 +20,54 @@
 
 #include "buffer_size.h"
 
-#define PUBLIC_KEY_SIZE 512
-
 struct AESData {
     mbedtls_aes_context* aes_context;
     unsigned char aes_key[AES_KEY_LENGTH];
     unsigned char aes_iv[AES_IV_LENGTH];
 };
 
-class Crypto {
-  private:
-    mbedtls_ctr_drbg_context m_ctr_drbg_contex;
-    mbedtls_entropy_context m_entropy_context;
-    mbedtls_pk_context m_pk_context;
-    uint8_t m_public_key[512];
-    
+void aes_decrypt_data(mbedtls_aes_context* aes_context, 
+                      unsigned char aes_iv[AES_IV_LENGTH], 
+                      const unsigned char* input_data, 
+                      int input_size, 
+                      unsigned char* output_data);
 
-    // Public key of another enclave.
-    uint8_t m_other_enclave_pubkey[PUBLIC_KEY_SIZE];
+class RSACrypto {
+    private:
+      mbedtls_ctr_drbg_context m_ctr_drbg_context;
+      mbedtls_entropy_context m_entropy_context;
+      mbedtls_pk_context m_pk_context;
+      uint8_t m_public_key[RSA_PUB_KEY_SIZE];
 
-  public:
-    bool m_initialized;
-    Crypto();
-    ~Crypto();
+    public:
+        bool m_initialized;
+        RSACrypto();
+        ~RSACrypto();
 
-    /**
-     * Encrypt encrypts the given data using the given public key.
-     * Used to encrypt data using the public key of another enclave.
-     */
-    bool Encrypt(
-        const uint8_t* pem_public_key,
-        const uint8_t* data,
-        size_t size,
-        uint8_t* encrypted_data,
-        size_t* encrypted_data_size);
+        /**
+         * decrypt decrypts the given data using current enclave's private key.
+         * Used to receive encrypted data from another enclave.
+         */
+        bool decrypt(
+            const uint8_t* encrypted_data,
+            size_t encrypted_data_size,
+            uint8_t* data,
+            size_t* data_size);
 
-    /**
-     * decrypt decrypts the given data using current enclave's private key.
-     * Used to receive encrypted data from another enclave.
-     */
-    bool decrypt(
-        const uint8_t* encrypted_data,
-        size_t encrypted_data_size,
-        uint8_t* data,
-        size_t* data_size);
+        /**
+         * Compute the sha256 hash of given data.
+         */
+        int sha256(const uint8_t* data, size_t data_size, uint8_t sha256[32]);
 
-    /**
-     * Compute the sha256 hash of given data.
-     */
-    int Sha256(const uint8_t* data, size_t data_size, uint8_t sha256[32]);
+
+        uint8_t* get_pub_key();
 
   private:
-    /**
-     * Crypto demonstrates use of mbedtls within the enclave to generate keys
-     * and perform encryption. In this sample, each enclave instance generates
-     * an ephemeral 2048-bit RSA key pair and shares the public key with the
-     * other instance. The other enclave instance then replies with data
-     * encrypted to the provided public key.
-     */
+      /** init_mbedtls initializes the crypto module.
+       */
+      bool init_mbedtls(void);
 
-    /** init_mbedtls initializes the crypto module.
-     */
-    bool init_mbedtls(void);
-
-    void cleanup_mbedtls(void);
+      void cleanup_mbedtls(void);
 };
 
 #endif // OE_SAMPLES_ATTESTATION_ENC_CRYPTO_H

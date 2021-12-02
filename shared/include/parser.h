@@ -18,7 +18,7 @@
 #include "aes-crypto.h"
 
 enum ClientMessageType { 
-  SUCCESS,
+  RSA_PUB_KEY,
   Y_AND_COV,
   DATA_REQUEST
 };

@@ -1,15 +1,16 @@
 #include "aes-crypto.h"
 
 AESCrypto::AESCrypto() {
-    CryptoPP::AutoSeededRandomPool prng;
+    key = CryptoPP::SecByteBlock(CryptoPP::AES::DEFAULT_KEYLENGTH);
+    iv = CryptoPP::SecByteBlock(CryptoPP::AES::BLOCKSIZE);
     prng.GenerateBlock(key, CryptoPP::AES::DEFAULT_KEYLENGTH);
     prng.GenerateBlock(iv, CryptoPP::AES::BLOCKSIZE);
 
-    std::string s1("2973AC956985BE259E84A48E29132793");
-    std::string s2("0118D0B93074455740D175BDEF3475C6");
+    // std::string s1("2973AC956985BE259E84A48E29132793");
+    // std::string s2("0118D0B93074455740D175BDEF3475C6");
     
-    key = CryptoPP::SecByteBlock((const byte*)&s1[0], CryptoPP::AES::DEFAULT_KEYLENGTH);
-    iv = CryptoPP::SecByteBlock((const byte*)&s2[0], CryptoPP::AES::BLOCKSIZE);
+    // key = CryptoPP::SecByteBlock((const byte*)&s1[0], CryptoPP::AES::DEFAULT_KEYLENGTH);
+    // iv = CryptoPP::SecByteBlock((const byte*)&s2[0], CryptoPP::AES::BLOCKSIZE);
     encryptor.SetKeyWithIV(key, key.size(), iv);
     //decryptor.SetKeyWithIV(key, key.size(), iv);
 
@@ -47,6 +48,19 @@ std::string AESCrypto::decode(const std::string& encoded_line) {
     return decoded;
 }
 
-std::string AESCrypto::get_key_and_iv() {
-    return encode(key, key.size()) + '\t' + encode(iv, iv.size());
+std::string AESCrypto::get_key_and_iv(CryptoPP::RSAES<CryptoPP::OAEP<CryptoPP::SHA256> >::Encryptor& rsa_encryptor) {
+    std::string enc_key;
+    std::string enc_iv;
+    CryptoPP::ArraySource keysource(key, key.size(), true, /* pump all data */
+        new CryptoPP::PK_EncryptorFilter(prng, rsa_encryptor,
+            new CryptoPP::StringSink(enc_key)
+        )
+    );
+
+    CryptoPP::ArraySource ivsource(iv, iv.size(), true, /* pump all data */
+        new CryptoPP::PK_EncryptorFilter(prng, rsa_encryptor,
+            new CryptoPP::StringSink(enc_iv)
+        )
+    );
+    return encode((const byte*)enc_key.data(), enc_key.size()) + '\t' + encode((const byte*)enc_iv.data(), enc_iv.size());
 }

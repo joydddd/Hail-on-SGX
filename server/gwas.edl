@@ -11,6 +11,8 @@ enclave {
     };
 
     untrusted {
+        void setrsapubkey([in] uint8_t enc_rsa_pub_key[RSA_PUB_KEY_SIZE]);
+
         /* get enclave setup data */
         // copy hostlist from host machine to enclave
         void getclientlist([out] char hostlist[ENCLAVE_READ_BUFFER_SIZE]);
@@ -24,8 +26,8 @@ enclave {
         // copy aes key and iv from host machine to enclave;
         bool getaes(
             const int client_num, 
-            [out] unsigned char key[AES_KEY_LENGTH],
-            [out] unsigned char iv[AES_IV_LENGTH]);
+            [out] unsigned char key[256],
+            [out] unsigned char iv[256]);
 
         // copy y from host machine to enclave;
         int gety(

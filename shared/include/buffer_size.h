@@ -14,3 +14,5 @@
 #define ENCLAVE_READ_BUFFER_SIZE ENCLAVE_READ_BUFFER * 1024  // in B
 
 #endif
+
+#define RSA_PUB_KEY_SIZE 512
