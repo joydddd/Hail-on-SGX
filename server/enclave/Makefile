@@ -11,8 +11,8 @@ KEYDIR := keys
 EXECUTABLE = $(PROJECTNAME)enc
 
 # list of test drivers (with main()) for development
-# TESTSOURCES = $(wildcard $(TESTDIR)/test*.cpp)
-TESTSOURCES = $(TESTDIR)/test_logistic.cpp
+TESTSOURCES = $(wildcard $(TESTDIR)/test*.cpp)
+# TESTSOURCES = $(TESTDIR)/test_logistic.cpp
 # names of test executables
 TESTS       = $(patsubst $(TESTDIR)/%,%,$(TESTSOURCES:.cpp=))
 
@@ -87,12 +87,16 @@ CXX_NONENC_FLAGS = -std=c++1z -pedantic
 CXX_NONENC_FLAGS+= -I ../../include/shared -I .. -I include -I .
 # non-enclave tests
 define make_tests
-    $(1): CXX_NONENC_FLAGS += -g3 -DDEBUG -DENC_TEST
+    $(1): CXX_NONENC_FLAGS += -g3 -DDEBUG
     $(1): $$(TESTDIR)/$(1).cpp $$(SOURCES)
 	$$(CXX) $$(CXX_NONENC_FLAGS) $$(SOURCES) $$(TESTDIR)/$(1).cpp -o $(1)
 	# valgrind -s --leak-check=yes ./$(1)
-	./$(1)
+	gdb $(1)
+	# ./$(1)
 endef
 $(foreach test, $(TESTS), $(eval $(call make_tests,$(test))))
 
 tests: $(TESTS)
+
+test_logistic_stat: $(SRCDIR)/logistic_regression.cpp $(SRCDIR)/enc_gwas.cpp $(TESTDIR)/test_logistic_stat.cpp
+	$(CXX) $(CXX_NONENC_FLAGS) -DDEBUG -o $@ $^

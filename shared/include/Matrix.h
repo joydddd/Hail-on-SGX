@@ -145,6 +145,12 @@ class SqrMatrix{
         return (COF().T())*(1/det);
     }
     
+    void print() {
+        for(auto& row:m){
+            for (auto& elt : row) cout << elt << " ";
+            cout << endl;
+        }
+    }
 };
 
 

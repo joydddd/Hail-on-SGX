@@ -1,4 +1,3 @@
-#include <chrono>
 #include <iostream>
 #include <thread>
 #include <map>
@@ -67,7 +66,7 @@ void setup(){
 
 #include "logistic_regression.h"
 
-void log_regression() {
+void log_regression(){
     cout << "Logistic Regression started" << endl;
     /* setup gwas */
     char clientl[ENCLAVE_READ_BUFFER_SIZE];
@@ -206,6 +205,5 @@ void log_regression() {
         out_st << ss.str();
         batch->write(ss.str());
     }
-
     cout << "Logistic regression Finished! " << endl;
 }
