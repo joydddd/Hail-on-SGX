@@ -16,6 +16,7 @@
 #include <utility>
 
 #include "aes-crypto.h"
+#include "buffer_size.h"
 
 enum ClientMessageType { 
   RSA_PUB_KEY,

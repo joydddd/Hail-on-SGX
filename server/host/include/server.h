@@ -92,8 +92,10 @@ class Server {
     static std::string get_y_data(const std::string& institution_name);
 
     static std::string get_covariant_data(const std::string& institution_name, const std::string& covariant_name);
+    
+    static int get_encypted_allele_size(const int institution_num);
 
-    static std::string get_x_data(const std::string& institution_name, int num_blocks);
+    static std::string get_allele_data(const std::string& institution_name, int num_blocks);
 };
 
 #endif /* _SERVER_H_ */

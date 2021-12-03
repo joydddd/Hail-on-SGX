@@ -91,21 +91,3 @@ DataBlock* Institution::get_top_block() {
 void Institution::pop_top_block() {
     eligible_blocks.pop();
 }
-
-std::string Institution::get_blocks(int num_blocks) {
-    std::lock_guard<std::mutex> raii(blocks_lock);
-    int count = 0;
-
-    std::string res;
-    while(count++ < num_blocks && !blocks.empty()) {
-        DataBlock* block = blocks.top();
-        if(block->pos != current_block) {
-            break;
-        }
-        res.append(block->locus + "\t" + block->data);
-        blocks.pop();
-        delete block;
-        current_block++;
-    }
-    return res;
-}

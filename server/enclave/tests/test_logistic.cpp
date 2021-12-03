@@ -123,7 +123,7 @@ bool getbatch(bool* rt, const char client[MAX_CLIENTNAME_LENGTH], Row_T type,
     string client_str(client);
     int index = client_map[client_str];
     if (alleles_stream[index].eof()) {
-        strcpy(batch, EndSeperator);
+        strcpy(batch, EOFSeperator);
         *rt = true;
         return true;
     }
@@ -134,7 +134,7 @@ bool getbatch(bool* rt, const char client[MAX_CLIENTNAME_LENGTH], Row_T type,
         buffer_ss << line << "\n";
     }
     if (buffer_ss.str() == "\n") {
-        strcpy(batch, EndSeperator);
+        strcpy(batch, EOFSeperator);
         *rt = true;
         return true;
     }

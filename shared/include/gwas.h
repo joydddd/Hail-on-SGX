@@ -6,8 +6,6 @@
 #include <string>
 #include "buffer_size.h"
 
-#define EndSeperator "<EOF>" // mark end of dataset
-
 #include "gwas_error.h"
 
 using namespace std;

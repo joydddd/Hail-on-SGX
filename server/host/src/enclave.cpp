@@ -89,10 +89,14 @@ int getcov(const char client[MAX_CLIENTNAME_LENGTH],
     return cov_data.length();
 }
 
+int get_encrypted_x_size(const int client_num) {
+    return Server::get_encypted_allele_size(client_num);
+}
+
 bool getbatch(const char client[MAX_CLIENTNAME_LENGTH], Row_T type,
               char batch[ENCLAVE_READ_BUFFER_SIZE]) {
     // TODO: maybe change this so we read in a diff number for each 
-    std::string batch_data = Server::get_x_data(client, BUFFER_LINES);
+    std::string batch_data = Server::get_allele_data(client, BUFFER_LINES);
     if (!batch_data.length()) {
         return false;
     }

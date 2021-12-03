@@ -54,7 +54,7 @@ DataBlock* Parser::parse_body(const std::string& message_body, ServerMessageType
     if (mtype != DATA && mtype != EOF_DATA) return nullptr;
     std::vector<std::string> split_line = Parser::split(message_body, '\t', 3);
     if (split_line.size() != 4) {
-        split_line.push_back("<EOF>");
+        split_line.push_back(EOFSeperator);
         split_line.push_back("");
         split_line.push_back("");
     }

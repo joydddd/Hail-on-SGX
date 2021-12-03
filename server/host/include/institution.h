@@ -63,8 +63,6 @@ class Institution {
 
     void pop_top_block();
 
-    std::string get_blocks(int num_blocks);
-
     int port;
     int request_conn;
 

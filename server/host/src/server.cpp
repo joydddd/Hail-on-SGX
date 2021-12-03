@@ -236,9 +236,9 @@ bool Server::handle_message(int connFD, const std::string& name, unsigned int si
         {
             // intentionally missing break, we want to run the general data case after we do some clean up
             institutions[name]->all_data_received = true;
-            if (block->data != "<EOF>") {
+            if (block->data != EOFSeperator) {
                 DataBlock* eof = new DataBlock;
-                eof->data = "<EOF>";
+                eof->data = EOFSeperator;
                 eof->pos = block->pos + 1;
                 institutions[name]->add_block(eof);
             }
@@ -327,6 +327,7 @@ void Server::allele_matcher() {
             // if we did not find a min locus, all data has been recieved and we have processed all of it.
             // shut down the matcher, its work is done.
             if (min_locus == "~") {
+                allele_queue.enqueue(EOFSeperator);
                 return;
             }
 
@@ -349,7 +350,6 @@ void Server::allele_matcher() {
             // replace last tab with a space so that we know where the data starts
             allele_line.pop_back();
             allele_line.push_back(' ');
-            std::cout << allele_line << std::endl;
 
             allele_line.append(data);
             
@@ -416,7 +416,19 @@ std::string Server::get_covariant_data(const std::string& institution_name, cons
     return cov_vals;
 }
 
-std::string Server::get_x_data(const std::string& institution_name, int num_blocks) {
-    return "";
-    return get_instance().institutions[institution_name]->get_blocks(num_blocks);
+int Server::get_encypted_allele_size(const int institution_num) {
+    const std::string institution_name = get_instance().institution_list[institution_num];
+    DataBlock* block = get_instance().institutions[institution_name]->get_top_block();
+    if (!block) {
+        return 0;
+    }
+    return block->data.length();
+}
+
+std::string Server::get_allele_data(const std::string& institution_name, int num_blocks) {
+    std::string allele_data;
+    if (!get_instance().allele_queue.try_dequeue(allele_data)) {
+        return "";
+    }
+    return allele_data;
 }

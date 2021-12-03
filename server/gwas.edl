@@ -42,9 +42,11 @@ enclave {
             [in] const char cov_name[MAX_CLIENTNAME_LENGTH], 
             [out] char cov[ENCLAVE_READ_BUFFER_SIZE]);
 
+        int get_encrypted_x_size(const int client_num);
+
         /* input data requests*/
         // get batch from outside of enclave
-        // return const char* EndSeperator if reaches end of dataset
+        // return const char* EOFSeperator if reaches end of dataset
         // *rt = false if the batch isn't avaialbe on host
         bool getbatch(  
             [in] const char hostname[MAX_CLIENTNAME_LENGTH], 

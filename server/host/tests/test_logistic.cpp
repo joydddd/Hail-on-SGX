@@ -134,13 +134,13 @@ bool getbatch(const char client[MAX_CLIENTNAME_LENGTH], Row_T type,
     int index = client_map[client_str];
     
     // if data stream from this client has reached eof, 
-    // copy only EndSeperator to enclave
+    // copy only EOFSeperator to enclave
     if (alleles_stream[index].eof()) {
-        strcpy(batch, EndSeperator);
+        strcpy(batch, EOFSeperator);
         return true;
     }
 
-    // copy BUFFER_LINE rows to enclave. add EndSeperator at the end
+    // copy BUFFER_LINE rows to enclave. add EOFSeperator at the end
     stringstream buffer_ss;
     for (size_t i = 0; i < BUFFER_LINES; i++) {
         string line;
@@ -148,7 +148,7 @@ bool getbatch(const char client[MAX_CLIENTNAME_LENGTH], Row_T type,
         buffer_ss << line << "\n";
     }
     if (buffer_ss.str() == "\n") {
-        strcpy(batch, EndSeperator);
+        strcpy(batch, EOFSeperator);
         return true;
     }
     strcpy(batch, buffer_ss.str().c_str());
