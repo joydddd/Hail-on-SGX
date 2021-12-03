@@ -21,10 +21,9 @@ void writebatch(Row_T type, char buffer[ENCLAVE_OUTPUT_BUFFER_SIZE]);
 // copy encrypted batch to host machine
 
 
-bool getbatch(bool* rt, const char hostname[MAX_CLIENTNAME_LENGTH], Row_T type,
-                     char batch[ENCLAVE_READ_BUFFER_SIZE]);
+bool getbatch(bool* rt, char batch[ENCLAVE_READ_BUFFER_SIZE]);
 // get batch from outside of enclave
-// return const char* EOFSeperator if reaches end of dataset
+// return const char* EndSperator if reaches end of dataset
 // *rt = false if the batch isn't avaialbe on host
 
 void getclientlist(char hostlist[ENCLAVE_READ_BUFFER_SIZE]);

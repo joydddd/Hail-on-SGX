@@ -95,7 +95,7 @@ class Server {
     
     static int get_encypted_allele_size(const int institution_num);
 
-    static std::string get_allele_data(const std::string& institution_name, int num_blocks);
+    static std::string get_allele_data(int num_blocks);
 };
 
 #endif /* _SERVER_H_ */

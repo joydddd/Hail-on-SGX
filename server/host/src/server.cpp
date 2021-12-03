@@ -425,7 +425,7 @@ int Server::get_encypted_allele_size(const int institution_num) {
     return block->data.length();
 }
 
-std::string Server::get_allele_data(const std::string& institution_name, int num_blocks) {
+std::string Server::get_allele_data(int num_blocks) {
     std::string allele_data;
     if (!get_instance().allele_queue.try_dequeue(allele_data)) {
         return "";
