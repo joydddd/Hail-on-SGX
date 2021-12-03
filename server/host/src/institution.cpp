@@ -5,10 +5,11 @@
 
 #include "institution.h"
 
-Institution::Institution(std::string hostname, int port) : hostname(hostname), port(port), 
-                                                           requested_for_data(false), listener_running(false), 
-                                                           request_conn(-1), current_block(0), all_data_recieved(false) {
-    // y_val_data = new char[10000];
+Institution::Institution(std::string hostname, int port, int id) : hostname(hostname), port(port), 
+                                                                   requested_for_data(false), listener_running(false), 
+                                                                   request_conn(-1), current_block(0), 
+                                                                   all_data_received(false), id(id) {
+
 }
 
 Institution::~Institution() {
@@ -26,6 +27,10 @@ int Institution::get_blocks_size() {
 
 int Institution::get_covariant_size() {
     return covariant_data.size();
+}
+
+int Institution::get_id() {
+    return id;
 }
 
 void Institution::set_key_and_iv(std::string aes_key, std::string aes_iv) {
@@ -62,6 +67,29 @@ std::string Institution::get_covariant_data(const std::string& covariant_name) {
         return "";
     }
     return covariant_data[covariant_name];
+}
+
+void Institution::transfer_eligible_blocks() {
+    std::lock_guard<std::mutex> raii(blocks_lock);
+
+    while(!blocks.empty()) {
+        DataBlock* block = blocks.top();
+        if(block->pos != current_block) {
+            return;
+        }
+        blocks.pop();
+        eligible_blocks.push(block);
+        current_block++;
+    }
+}
+
+DataBlock* Institution::get_top_block() {
+    if (eligible_blocks.empty()) return nullptr;
+    return eligible_blocks.front();
+}
+
+void Institution::pop_top_block() {
+    eligible_blocks.pop();
 }
 
 std::string Institution::get_blocks(int num_blocks) {

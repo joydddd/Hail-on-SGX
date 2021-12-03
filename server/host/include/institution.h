@@ -22,19 +22,24 @@ class Institution {
   private:
     std::mutex blocks_lock;
     std::priority_queue<DataBlock*, std::vector<DataBlock* >, BlockPointerGT > blocks;
+    std::queue<DataBlock*> eligible_blocks;
     std::unordered_map<std::string, std::string> covariant_data;
     std::string y_val_data;
 
     std::string aes_encrypted_key;
     std::string aes_encrypted_iv;
 
+    int id;
+
   public:
-    Institution(std::string hostname, int port);
+    Institution(std::string hostname, int port, int id);
     ~Institution();
 
     void set_key_and_iv(std::string aes_key, std::string aes_iv);
 
     void add_block(DataBlock* block);
+
+    void transfer_eligible_blocks();
 
     void set_y_data(std::string& y_data);
 
@@ -48,9 +53,15 @@ class Institution {
 
     std::string get_covariant_data(const std::string& covariant_name);
 
+    int get_id();
+
     int get_blocks_size();
 
     int get_covariant_size();
+
+    DataBlock* get_top_block();
+
+    void pop_top_block();
 
     std::string get_blocks(int num_blocks);
 
@@ -60,7 +71,7 @@ class Institution {
     int current_block;
     bool requested_for_data;
     bool listener_running;
-    bool all_data_recieved;
+    bool all_data_received;
 
     AESCrypto decoder;
 

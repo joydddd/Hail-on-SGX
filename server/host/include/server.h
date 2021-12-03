@@ -22,6 +22,7 @@
 #include "output.h"
 #include "aes-crypto.h"
 #include "buffer_size.h"
+#include "readerwriterqueue.h"
 
 class Server {
   private:
@@ -30,6 +31,7 @@ class Server {
     std::unordered_set<std::string> expected_institutions;
     std::unordered_set<std::string> expected_covariants;
     std::vector<std::string> institution_list;
+    moodycamel::ReaderWriterQueue<std::string> allele_queue;
     std::string covariant_list;
     std::string y_val_name;
     char* encrypted_aes_key;
@@ -43,6 +45,8 @@ class Server {
     std::unordered_map<std::string, std::string> covariant_dtype;
 
     std::mutex expected_lock;
+
+    std::mutex institutions_lock;
 
     // set up Server data structures
     void init();
@@ -61,6 +65,8 @@ class Server {
     void data_requester();
 
     void data_listener(int connFD);
+
+    void allele_matcher();
 
   public:
 

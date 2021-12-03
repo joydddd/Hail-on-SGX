@@ -96,7 +96,8 @@ bool getbatch(const char client[MAX_CLIENTNAME_LENGTH], Row_T type,
     if (!batch_data.length()) {
         return false;
     }
-    strcpy(batch, batch_data.c_str());
+    std::cout << "BATCH DATA: " << batch_data << std::endl;
+    std::memcpy(batch, &batch_data[0], batch_data.length());
     return true;
 }
 

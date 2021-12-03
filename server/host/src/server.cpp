@@ -58,6 +58,9 @@ void Server::init() {
     // read in name of Y value
     std::ifstream y_file("y_val.txt");
     getline(y_file, y_val_name);
+
+    // resize allele queue
+    allele_queue = moodycamel::ReaderWriterQueue<std::string>(1000);
 }
 
 void Server::run() {
@@ -183,10 +186,16 @@ bool Server::handle_message(int connFD, const std::string& name, unsigned int si
                 throw std::runtime_error("User already registered");
             }
             std::vector<std::string> hostname_and_port = Parser::split(msg);
-            institutions[name] = new Institution(hostname_and_port[0], Parser::convert_to_num(hostname_and_port[1]));
+            for (int id = 0; id < institution_list.size(); ++id) {
+                // Look for client id!
+                if (institution_list[id] == name) {
+                    institutions[name] = new Institution(hostname_and_port[0], 
+                                                         Parser::convert_to_num(hostname_and_port[1]),
+                                                         id);
+                }
+            }
             response_mtype = RSA_PUB_KEY;
             response = reinterpret_cast<char *>(rsa_public_key);
-            //encoder.encode(rsa_public_key, RSA_PUB_KEY); 
             break;
         }
         case AES_KEY:
@@ -226,7 +235,7 @@ bool Server::handle_message(int connFD, const std::string& name, unsigned int si
         case EOF_DATA:
         {
             // intentionally missing break, we want to run the general data case after we do some clean up
-            institutions[name]->all_data_recieved = true;
+            institutions[name]->all_data_received = true;
             if (block->data != "<EOF>") {
                 DataBlock* eof = new DataBlock;
                 eof->data = "<EOF>";
@@ -269,17 +278,85 @@ void Server::check_in(std::string name) {
     expected_institutions.erase(name);
     if (!expected_institutions.size()) {
         // request y, cov, and data
-        for (auto it : institutions) {
-            Institution* inst = it.second;
+        for (const auto& it : institutions) {
             send_msg(it.first, Y_AND_COV, covariant_list + y_val_name);
         }
-        
+        // Now that all institutions are registered, start up the allele matching thread
+        boost::thread msg_thread(&Server::allele_matcher, this);
+        msg_thread.detach();
     }
 }
 
 void Server::data_listener(int connFD) {
     // We need a serial listener for this agreed upon connection!
     while(start_thread(connFD)) {}
+}
+
+void Server::allele_matcher() {
+    while(true) {
+    loop_start:
+        // transfer all blocks to eligible queue, making sure they are in order
+        for (const auto& it : institutions) {
+            Institution* inst = it.second;
+            inst->transfer_eligible_blocks();
+        }
+        // match as many alleles together as possible
+        while(true) {
+            // arbitary "high" string, all real loci should be smaller than this string.
+            std::string min_locus = "~";
+            for (const auto& it : institutions) {
+                Institution* inst = it.second;
+                DataBlock* block = inst->get_top_block();
+                // check if the institution has data
+                if (!block) {
+                    // if we've already recieved an <EOF> notice and emptied the blocks pq, skip this block
+                    if (inst->all_data_received && !inst->get_blocks_size()) {
+                        continue;
+                    }
+                    // otherwise, we need to wait for all institutions to send their data!
+                    else {
+                        goto loop_start;
+                    }
+                }
+                // test if block->locus < min_locus
+                if (min_locus.compare(block->locus) > 0) {
+                    min_locus = block->locus;
+                }
+            }
+
+            // if we did not find a min locus, all data has been recieved and we have processed all of it.
+            // shut down the matcher, its work is done.
+            if (min_locus == "~") {
+                return;
+            }
+
+            std::string allele_line = min_locus + "\t";
+            std::string data;
+
+            for (const auto& it : institutions) {
+                Institution* inst = it.second;
+                DataBlock* block = inst->get_top_block();
+                // if this institution is <EOF>, skip it.
+                if (!block) continue;
+
+                if (block->locus == min_locus) {
+                    inst->pop_top_block();
+                    allele_line.append(std::to_string(inst->get_id()) + "\t");
+                    data.append(block->data);
+                    delete block;
+                }
+            }
+            // replace last tab with a space so that we know where the data starts
+            allele_line.pop_back();
+            allele_line.push_back(' ');
+            std::cout << allele_line << std::endl;
+
+            allele_line.append(data);
+            
+            // thread-safe enqueue
+            allele_queue.enqueue(allele_line);
+        }
+    }
 }
 
 Server& Server::get_instance(int port) {
@@ -327,26 +404,19 @@ std::string Server::get_aes_iv(const int institution_num) {
 }
 
 std::string Server::get_y_data(const std::string& institution_name) {
-    //std::string y_list;
     if (!get_instance().institutions.count(institution_name)) {
         return "";
     }
     std::string y_vals = get_instance().institutions[institution_name]->get_y_data();
-    // for (std::string y_val : y_vals) {
-    //     y_list.append(y_val + "\t");
-    // }
     return y_vals;
 }
 
 std::string Server::get_covariant_data(const std::string& institution_name, const std::string& covariant_name) {
-    // std::string cov_list;
     std::string cov_vals = get_instance().institutions[institution_name]->get_covariant_data(covariant_name);
-    // for (std::string cov_val : cov_vals) {
-    //     cov_list.append(cov_val + "\t");
-    // }
     return cov_vals;
 }
 
 std::string Server::get_x_data(const std::string& institution_name, int num_blocks) {
+    return "";
     return get_instance().institutions[institution_name]->get_blocks(num_blocks);
 }
