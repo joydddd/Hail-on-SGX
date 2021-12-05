@@ -124,18 +124,10 @@ bool getbatch(char batch[ENCLAVE_READ_BUFFER_SIZE]) {
             // throw away the header line
         }
     }
-<<<<<<< HEAD:server/host/tests/test_logistic.cpp
-    string client_str(client);
-    int index = client_map[client_str];
-    
-    // if data stream from this client has reached eof, 
-    // copy only EOFSeperator to enclave
-=======
     int index = 0;
 
     // if data stream from this client has reached eof,
     // copy only EndSeperator to enclave
->>>>>>> enc_opt:server/host/tests/test_logitic_single_client.cpp
     if (alleles_stream[index].eof()) {
         strcpy(batch, EOFSeperator);
         return true;

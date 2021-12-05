@@ -62,6 +62,15 @@ void setup(){
     } catch (ERROR_t& err) {
         cerr << "ERROR: fail to get AES KEY " << err.msg << endl;
     }
+
+    /* set up encrypted size */
+    for (int i = 0; i < num_clients; i++){
+        int size;
+        while(!size)
+            get_encrypted_x_size(&size, i);
+        cout << "client " << i << " crypto size: " << size << endl;
+        clientinfo[i].crypto_size = size;
+    }
 }
 
 #include "logistic_regression.h"

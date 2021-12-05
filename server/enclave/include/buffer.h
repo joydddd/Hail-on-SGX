@@ -22,7 +22,8 @@ struct ClientInfo{
 
 extern vector<ClientInfo> clientinfo;
 
-void decrypt(char* crypt, char* plaintxt, size_t* plaintxt_length);
+void decrypt(int client, char* crypto, char* plaintxt);
+void decrypt_line(char* crypt, char* plaintxt, size_t* plaintxt_length);
 
 class Batch {
     /* data members */

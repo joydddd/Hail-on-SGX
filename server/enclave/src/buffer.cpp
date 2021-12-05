@@ -3,12 +3,72 @@
 #include "logistic_regression.h"
 #include "string.h"
 
+void decrypt(int client, char* crypto, char* plaintxt){
+    cout << "PLAIN CRYPTO:" << crypto << endl;
+    aes_decrypt_data(clientinfo[client].aes.aes_context,
+                     clientinfo[client].aes.aes_iv,
+                     (const unsigned char*)crypto,
+                     clientinfo[client].crypto_size, (unsigned char*)plaintxt);
+    cout << "PLAIN TXT" << plaintxt << endl;
+}
 
-void decrypt(char* crypt, char* plaintxt, size_t* plaintxt_length) {
-    for (size_t i = 0; i < ENCLAVE_READ_BUFFER_SIZE; i++) {
-        plaintxt[i] = crypt[i];
+void decrypt_line(char* crypt, char* plaintxt, size_t* plaintxt_length) {
+    vector<char*> client_begin;
+    char* head = crypt;
+    char* end_of_allele = crypt, *end_of_loci = crypt;
+    while (true) {
+        if (*head == '\t') {
+            if (end_of_allele != crypt) {
+                end_of_loci = head;
+                break;
+            } else {
+                end_of_allele = head;
+            }
+        }
+        head++;
     }
-    *plaintxt_length = strlen(plaintxt);
+    /* copy allele & loci to plaintxt */
+    char* plaintxt_head = plaintxt;
+    strncpy(plaintxt, crypt, end_of_loci - crypt + 1);
+    plaintxt_head += end_of_loci - crypt + 1;
+    printf("Alelle & Loci %s\n", plaintxt);
+
+    char* tab_pos = end_of_loci;
+    deque<int> client_list;
+    /* get client list */
+    while(true) {
+        if(*head == '\t'){
+            *head == '\0';
+            int client = atoi(tab_pos + 1);
+            client_list.push_back(client);
+            cout << "client: " << client << endl;
+            *head = '\t';
+            tab_pos = head;
+        }
+        if (*head == ' ') {
+            head++;
+            break;
+        }
+        head++;
+    }
+    
+
+    /* decrypt data */
+    for (int i = 0; i < clientinfo.size(); i++){
+        if (i != client_list.front()) { // this client does have target allele
+            for(int j=0; j<clientinfo[i].size; j++)
+                *(plaintxt_head + j) = NA_uint8;
+    
+        } else {
+            decrypt(i, head, plaintxt_head);
+            head += clientinfo[i].crypto_size;
+        }
+        plaintxt_head + clientinfo[i].size;
+    }
+    *plaintxt_head = '\n';
+    plaintxt_head++;
+    *plaintxt_head = '\0';
+    *plaintxt_length = plaintxt_head - plaintxt;
 }
 
 Batch::Batch(size_t _row_size, Row_T row_type)
@@ -45,7 +105,7 @@ Row* Batch::get_row() {
     return row;
 }
 
-void Batch::write(const string &output){
+void Batch::write(const string& output) {
     strcpy(outtxt + out_tail, output.c_str());
     out_tail += output.size();
 }
@@ -63,7 +123,7 @@ Buffer::~Buffer() {
     }
 }
 
-void Buffer::output(const char* out){
+void Buffer::output(const char* out) {
     int len = strlen(out);
     if (output_tail + len >= ENCLAVE_OUTPUT_BUFFER) {
         writebatch(type, output_buffer);
@@ -86,6 +146,7 @@ Batch* Buffer::launch() {
     if (free_batches.empty()) return nullptr;
     Batch* new_b = free_batches.front();
     free_batches.pop_front();
-    decrypt(crypttxt, new_b->load_plaintxt(), new_b->plaintxt_size());
+    decrypt_line(crypttxt, new_b->load_plaintxt(), new_b->plaintxt_size());
+    cout << "PLAIN TXT: " << new_b->load_plaintxt() << endl;
     return new_b;
 }

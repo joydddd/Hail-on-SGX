@@ -116,7 +116,7 @@ bool getbatch(bool* rt, char batch[ENCLAVE_READ_BUFFER_SIZE]) {
     }
     int index = 0;
     if (alleles_stream[index].eof()) {
-        strcpy(batch, EndSperator);
+        strcpy(batch, EOFSeperator);
         *rt = true;
         return true;
     }
