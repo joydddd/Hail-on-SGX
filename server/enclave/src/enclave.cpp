@@ -65,9 +65,10 @@ void setup(){
 
     /* set up encrypted size */
     for (int i = 0; i < num_clients; i++){
-        int size;
-        while(!size)
+        int size = 0;
+        while(!size) {
             get_encrypted_x_size(&size, i);
+        }
         cout << "client " << i << " crypto size: " << size << endl;
         clientinfo[i].crypto_size = size;
     }
