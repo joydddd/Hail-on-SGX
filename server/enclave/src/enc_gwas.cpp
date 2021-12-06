@@ -27,13 +27,12 @@ size_t Row::read(const char line[]) {
 #endif
         );
     }
-    for (size_t i = 0; i < n; i++){
+    for (size_t i = 0; i < n; i++) {
         data[0][i] =
             (uint8_t)line[i + loci_str.size() + alleles_str.size() + 2] - uint8_OFFSET;
         if (data[0][i] != 0 && data[0][i] != 1 && data[0][i] != 2 && data[0][i] != NA_uint8){
             throw ReadtsvERROR("Invalid row entry");
         }
-
     }
     if (line[n + loci_str.size() + alleles_str.size() + 2] != '\n')
         throw ReadtsvERROR("Invalid row terminator");

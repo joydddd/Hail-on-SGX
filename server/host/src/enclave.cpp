@@ -99,7 +99,7 @@ bool getbatch(char batch[ENCLAVE_READ_BUFFER_SIZE]) {
     if (!batch_data.length()) {
         return false;
     }
-    std::cout << "BATCH DATA: " << batch_data << std::endl;
+    // std::cout << "BATCH DATA: " << batch_data << std::endl;
     std::memcpy(batch, &batch_data[0], batch_data.length());
     return true;
 }

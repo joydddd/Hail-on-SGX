@@ -4,12 +4,10 @@
 #include "string.h"
 
 void decrypt(int client, char* crypto, char* plaintxt){
-    cout << "PLAIN CRYPTO:" << crypto << endl;
     aes_decrypt_data(clientinfo[client].aes.aes_context,
                      clientinfo[client].aes.aes_iv,
                      (const unsigned char*)crypto,
                      clientinfo[client].crypto_size, (unsigned char*)plaintxt);
-    cout << "PLAIN TXT" << plaintxt << endl;
 }
 
 void decrypt_line(char* crypt, char* plaintxt, size_t* plaintxt_length) {
@@ -31,7 +29,6 @@ void decrypt_line(char* crypt, char* plaintxt, size_t* plaintxt_length) {
     char* plaintxt_head = plaintxt;
     strncpy(plaintxt, crypt, end_of_loci - crypt + 1);
     plaintxt_head += end_of_loci - crypt + 1;
-    printf("Alelle & Loci %s\n", plaintxt);
 
     char* tab_pos = end_of_loci;
     deque<int> client_list;
@@ -41,7 +38,7 @@ void decrypt_line(char* crypt, char* plaintxt, size_t* plaintxt_length) {
             *head == '\0';
             int client = atoi(tab_pos + 1);
             client_list.push_back(client);
-            cout << "client: " << client << endl;
+            // cout << "client: " << client << endl;
             *head = '\t';
             tab_pos = head;
         }
@@ -58,12 +55,11 @@ void decrypt_line(char* crypt, char* plaintxt, size_t* plaintxt_length) {
         if (i != client_list.front()) { // this client does have target allele
             for(int j=0; j<clientinfo[i].size; j++)
                 *(plaintxt_head + j) = NA_uint8;
-    
         } else {
             decrypt(i, head, plaintxt_head);
             head += clientinfo[i].crypto_size;
         }
-        plaintxt_head + clientinfo[i].size;
+        plaintxt_head += clientinfo[i].size;
     }
     *plaintxt_head = '\n';
     plaintxt_head++;
@@ -147,6 +143,5 @@ Batch* Buffer::launch() {
     Batch* new_b = free_batches.front();
     free_batches.pop_front();
     decrypt_line(crypttxt, new_b->load_plaintxt(), new_b->plaintxt_size());
-    cout << "PLAIN TXT: " << new_b->load_plaintxt() << endl;
     return new_b;
 }

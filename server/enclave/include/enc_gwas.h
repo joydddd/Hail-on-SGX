@@ -14,7 +14,7 @@ using namespace std;
 
 #define NA_uint8 0x3
 #define NA_uint UINT_MAX
-#define uint8_OFFSET 48
+#define uint8_OFFSET 0
 
 template <typename T>
 inline bool is_NA(T a) {
