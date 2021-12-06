@@ -16,9 +16,6 @@ vector<ClientInfo> clientinfo;
 
 void setup(){
     RSACrypto rsa = RSACrypto();
-    if (rsa.m_initialized) {
-        cout << "CRYPTO WORKING!\n";
-    }
     setrsapubkey(rsa.get_pub_key());
 
     cout << "RSA Pub Key Set\n";

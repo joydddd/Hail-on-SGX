@@ -6,13 +6,7 @@ AESCrypto::AESCrypto() {
     prng.GenerateBlock(key, CryptoPP::AES::DEFAULT_KEYLENGTH);
     prng.GenerateBlock(iv, CryptoPP::AES::BLOCKSIZE);
 
-    // std::string s1("2973AC956985BE259E84A48E29132793");
-    // std::string s2("0118D0B93074455740D175BDEF3475C6");
-    
-    // key = CryptoPP::SecByteBlock((const byte*)&s1[0], CryptoPP::AES::DEFAULT_KEYLENGTH);
-    // iv = CryptoPP::SecByteBlock((const byte*)&s2[0], CryptoPP::AES::BLOCKSIZE);
     encryptor.SetKeyWithIV(key, key.size(), iv);
-    //decryptor.SetKeyWithIV(key, key.size(), iv);
 
     encoder.Attach(new CryptoPP::StringSink(encoded));
     decoder.Attach(new CryptoPP::StringSink(decoded));
@@ -26,7 +20,6 @@ std::string AESCrypto::encrypt_line(const byte* line, int line_size) {
                         new CryptoPP::StringSink(cipher)
                     ) // StreamTransformationFilter
                 );
-
     return encode((const byte*)&cipher[0], cipher.size());
 }
 
