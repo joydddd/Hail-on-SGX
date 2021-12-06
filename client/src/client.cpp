@@ -170,7 +170,10 @@ void Client::handle_message(int connFD, unsigned int size, ClientMessageType mty
             // send the data in each TSV file over to the server
             send_tsv_file(y_val, Y_VAL);
             for (std::string covariant : covariants) {
-                send_tsv_file(covariant, COVARIANT);
+                // Ignore requests for "1", this is handled within the enclave
+                if (covariant != "1") {
+                    send_tsv_file(covariant, COVARIANT);
+                }
             }
             break;
         }

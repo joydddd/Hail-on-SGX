@@ -50,9 +50,9 @@ void Server::init() {
         std::string dtype = covariant_and_dtype.back();
         covariant_dtype[covariant] = dtype;
         if (covariant != "1") {
-            covariant_list.append(covariant + " ");
             expected_covariants.insert(covariant);
         }
+        covariant_list.append(covariant + " ");
     }
 
     // read in name of Y value
