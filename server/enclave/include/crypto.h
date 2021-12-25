@@ -27,7 +27,7 @@ struct AESData {
 };
 
 void aes_decrypt_data(mbedtls_aes_context* aes_context, 
-                      unsigned char aes_iv[AES_IV_LENGTH], 
+                      unsigned char* aes_iv, 
                       const unsigned char* input_data, 
                       int input_size, 
                       unsigned char* output_data);

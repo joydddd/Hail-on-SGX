@@ -3,8 +3,12 @@
  */
 
 #include "parser.h"
+#include "hashing.h"
 
 #include <iostream>
+
+#include <unordered_map>
+#include <string>
 
 Parser::Parser(/* args */) {
 
@@ -68,6 +72,11 @@ DataBlock* Parser::parse_body(const std::string& message_body, ServerMessageType
 
 std::string Parser::parse_allele_line(const std::string& line, std::string& vals, AESCrypto& encryptor, int num_clients) {
     std::vector<std::string> line_split = Parser::split(line, '\t', 2);
+    // std::string locus_and_allele = line_split[0] + '\t' + line_split[1] + '\t';
+    // std::cout << hash_string(locus_and_allele, 32, true) << "\n";
+    // static std::hash<std::string> hasher;
+    // std::cout << hasher(locus_and_allele) % 32 << "\n";
+
     std::string line_vals = line_split.back();
     int val_idx = 0;
     // TODO: When encryption is added, remove these + '0's.

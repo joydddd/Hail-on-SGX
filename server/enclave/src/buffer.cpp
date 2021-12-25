@@ -1,16 +1,18 @@
+#include "batch.h"
 #include "buffer.h"
 
 #include "logistic_regression.h"
 #include "string.h"
 
-void decrypt(int client, char* crypto, char* plaintxt){
-    aes_decrypt_data(clientinfo[client].aes.aes_context,
-                     clientinfo[client].aes.aes_iv,
-                     (const unsigned char*)crypto,
-                     clientinfo[client].crypto_size, (unsigned char*)plaintxt);
+void aes_decrypt_client(const unsigned char* crypto, unsigned char* plaintxt, const ClientInfo& client){
+    aes_decrypt_data(client.aes.aes_context,
+                     (unsigned char *)client.aes.aes_iv,
+                     crypto,
+                     client.crypto_size, 
+                     plaintxt);
 }
 
-void decrypt_line(char* crypt, char* plaintxt, size_t* plaintxt_length) {
+void decrypt_line(char* crypt, char* plaintxt, size_t* plaintxt_length, const std::vector<ClientInfo>& client_info_list) {
     vector<char*> client_begin;
     char* head = crypt;
     char* end_of_allele = crypt, *end_of_loci = crypt;
@@ -35,7 +37,7 @@ void decrypt_line(char* crypt, char* plaintxt, size_t* plaintxt_length) {
     /* get client list */
     while(true) {
         if(*head == '\t'){
-            *head == '\0';
+            *head = '\0';
             int client = atoi(tab_pos + 1);
             client_list.push_back(client);
             // cout << "client: " << client << endl;
@@ -51,59 +53,20 @@ void decrypt_line(char* crypt, char* plaintxt, size_t* plaintxt_length) {
     
 
     /* decrypt data */
-    for (int i = 0; i < clientinfo.size(); i++){
-        if (i != client_list.front()) { // this client does have target allele
-            for(int j=0; j<clientinfo[i].size; j++)
+    for (int client = 0; client < client_info_list.size(); client++){
+        if (client != client_list.front()) { // this client does have target allele
+            for(int j = 0; j < client_info_list[client].size; j++)
                 *(plaintxt_head + j) = NA_uint8;
         } else {
-            decrypt(i, head, plaintxt_head);
-            head += clientinfo[i].crypto_size;
+            aes_decrypt_client((const unsigned char *)head, (unsigned char *)plaintxt_head, client_info_list[client]);
+            head += client_info_list[client].crypto_size;
         }
-        plaintxt_head += clientinfo[i].size;
+        plaintxt_head += client_info_list[client].size;
     }
     *plaintxt_head = '\n';
     plaintxt_head++;
     *plaintxt_head = '\0';
     *plaintxt_length = plaintxt_head - plaintxt;
-}
-
-Batch::Batch(size_t _row_size, Row_T row_type)
-    : row_size(_row_size), type(row_type) {
-    switch (type) {
-        case LOG_t:
-            row = new Log_row(row_size);
-            break;
-        default:
-            row = new Row(row_size);
-            break;
-    }
-}
-
-void Batch::reset() {
-    head = 0;
-    st = Empty;
-    txt_size = 0;
-    out_tail = 0;
-}
-
-Row* Batch::get_row() {
-    if (head >= txt_size) {
-        st = Finished;
-        buffer->finish(this);
-        return nullptr;
-    }
-    st = Working;
-    row->reset();
-    head += row->read(plaintxt + head);
-#ifdef DEBUG
-    // row->print();
-#endif
-    return row;
-}
-
-void Batch::write(const string& output) {
-    strcpy(outtxt + out_tail, output.c_str());
-    out_tail += output.size();
 }
 
 Buffer::Buffer(size_t _row_size, Row_T row_type)
@@ -135,13 +98,13 @@ void Buffer::finish(Batch* finishing_batch) {
     free_batches.push_back(finishing_batch);
 }
 
-Batch* Buffer::launch() {
+Batch* Buffer::launch(std::vector<ClientInfo>& client_info_list) {
     bool rt;
     getbatch(&rt, crypttxt);
     if (!strcmp(crypttxt, EOFSeperator)) return nullptr;
     if (free_batches.empty()) return nullptr;
     Batch* new_b = free_batches.front();
     free_batches.pop_front();
-    decrypt_line(crypttxt, new_b->load_plaintxt(), new_b->plaintxt_size());
+    decrypt_line(crypttxt, new_b->load_plaintxt(), new_b->plaintxt_size(), client_info_list);
     return new_b;
 }

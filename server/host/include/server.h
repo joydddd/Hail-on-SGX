@@ -81,7 +81,7 @@ class Server {
 
     static uint8_t* get_rsa_pub_key();
 
-    static std::string get_institutions();
+    static int get_num_institutions();
 
     static std::string get_covariants();
 
@@ -89,9 +89,9 @@ class Server {
 
     static std::string get_aes_iv(const int institution_num);
 
-    static std::string get_y_data(const std::string& institution_name);
+    static std::string get_y_data(const int institution_num);
 
-    static std::string get_covariant_data(const std::string& institution_name, const std::string& covariant_name);
+    static std::string get_covariant_data(const int institution_num, const std::string& covariant_name);
     
     static int get_encypted_allele_size(const int institution_num);
 

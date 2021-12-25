@@ -43,8 +43,8 @@ void setrsapubkey(uint8_t enc_rsa_pub_key[RSA_PUB_KEY_SIZE]) {
     std::memcpy(Server::get_rsa_pub_key(), enc_rsa_pub_key, RSA_PUB_KEY_SIZE);
 }
 
-void getclientlist(char clientlist[ENCLAVE_READ_BUFFER_SIZE]) {
-    strcpy(clientlist, Server::get_institutions().c_str());
+int getclientnum() {
+    return Server::get_num_institutions();
 }
 
 void getcovlist(char covlist[ENCLAVE_READ_BUFFER_SIZE]) {
@@ -52,8 +52,8 @@ void getcovlist(char covlist[ENCLAVE_READ_BUFFER_SIZE]) {
 }
 
 bool getaes(const int client_num,
-          unsigned char key[256],
-          unsigned char iv[256]) {
+            unsigned char key[256],
+            unsigned char iv[256]) {
     std::string encrypted_aes_key = Server::get_aes_key(client_num);
     std::string encrypted_aes_iv = Server::get_aes_iv(client_num);
     if (!encrypted_aes_key.length() || !encrypted_aes_iv.length()) {
@@ -64,9 +64,8 @@ bool getaes(const int client_num,
     return true;
 }
 
-int gety(const char client[MAX_CLIENTNAME_LENGTH],
-          char y[ENCLAVE_READ_BUFFER_SIZE]) {
-    std::string y_data = Server::get_y_data(client);
+int gety(const int client_num, char y[ENCLAVE_READ_BUFFER_SIZE]) {
+    std::string y_data = Server::get_y_data(client_num);
     if (!y_data.length()) {
         return 0;
     }
@@ -74,14 +73,14 @@ int gety(const char client[MAX_CLIENTNAME_LENGTH],
     return y_data.length();
 }
 
-int getcov(const char client[MAX_CLIENTNAME_LENGTH],
+int getcov(const int client_num,
            const char cov_name[MAX_CLIENTNAME_LENGTH],
            char cov[ENCLAVE_READ_BUFFER_SIZE]) {
     if (strcmp(cov_name, "1") == 0) {
         strcpy(cov, "1");
         return 1;
     }
-    std::string cov_data = Server::get_covariant_data(client, cov_name);
+    std::string cov_data = Server::get_covariant_data(client_num, cov_name);
     if (!cov_data.length()) {
         return false;
     }
@@ -136,27 +135,27 @@ bool check_debug_opt(int* argc, const char* argv[]) {
     return false;
 }
 
-int start_enclave(int argc, const char* argv[]) {
+int start_enclave() {
     oe_result_t result;
     int ret = 1;
     enclave = NULL;
 
     uint32_t flags = 0;
-    if (check_debug_opt(&argc, argv)) {
-        flags |= OE_ENCLAVE_FLAG_DEBUG;
-    }
-    if (check_simulate_opt(&argc, argv)) {
-        flags |= OE_ENCLAVE_FLAG_SIMULATE;
-    }
+    // if (check_debug_opt(&argc, argv)) {
+    //     flags |= OE_ENCLAVE_FLAG_DEBUG;
+    // }
+    // if (check_simulate_opt(&argc, argv)) {
+    //     flags |= OE_ENCLAVE_FLAG_SIMULATE;
+    // }
 
-    if (argc != 3) {
-        fprintf(stderr, "Usage: %s enclave_image_path [ --simulate  ]\n",
-                argv[0]);
-        goto exit;
-    }
+    // if (argc != 3) {
+    //     fprintf(stderr, "Usage: %s enclave_image_path [ --simulate  ]\n",
+    //             argv[0]);
+    //     goto exit;
+    // }
 
     // Create the enclave
-    result = oe_create_gwas_enclave(argv[2], OE_ENCLAVE_TYPE_AUTO, flags, NULL,
+    result = oe_create_gwas_enclave("../enclave/gwasenc.signed", OE_ENCLAVE_TYPE_AUTO, flags, NULL,
                                     0, &enclave);
     if (result != OE_OK) {
         fprintf(stderr, "oe_create_gwas_enclave(): result=%u (%s)\n", result,
@@ -167,6 +166,15 @@ int start_enclave(int argc, const char* argv[]) {
     try {
         std::cout << "\n\n**RUNNING LOG REGRESSION**\n\n";
         // DEBUG:
+       
+        // test_static(enclave);
+        result = setup_enclave(enclave);
+        if (result != OE_OK) {
+            fprintf(stderr,
+                    "calling into enclave_gwas failed: result=%u (%s)\n",
+                    result, oe_result_str(result));
+            goto exit;
+        }
         auto start = std::chrono::high_resolution_clock::now();
         result = log_regression(enclave);
         // DEBUG: total execution time

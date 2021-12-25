@@ -5,6 +5,8 @@ enclave {
     include "buffer_size.h"
 
     trusted {
+        public void setup_enclave();
+
         public void log_regression();
         // public void linear_regression_beta();
         // public void linear_regression_t_stat();
@@ -14,8 +16,8 @@ enclave {
         void setrsapubkey([in] uint8_t enc_rsa_pub_key[RSA_PUB_KEY_SIZE]);
 
         /* get enclave setup data */
-        // copy hostlist from host machine to enclave
-        void getclientlist([out] char hostlist[ENCLAVE_READ_BUFFER_SIZE]);
+        // return number of clients
+        int getclientnum();
 
         // get covariantnumber from host
         // sepcially, when the covariant is indent 1, covariant name must be "1"
@@ -31,14 +33,14 @@ enclave {
 
         // copy y from host machine to enclave;
         int gety(
-            [in] const char host[MAX_CLIENTNAME_LENGTH],
+            const int client_num,
             [out] char y[ENCLAVE_READ_BUFFER_SIZE]);
 
 
         // copy no. covariant from host to enclave
         // cov == "1" if the covariant is indent 1
         int getcov(
-            [in] const char host[MAX_CLIENTNAME_LENGTH], 
+            const int client_num, 
             [in] const char cov_name[MAX_CLIENTNAME_LENGTH], 
             [out] char cov[ENCLAVE_READ_BUFFER_SIZE]);
 

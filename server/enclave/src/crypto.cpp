@@ -7,9 +7,10 @@
 #include <iostream>
 
 void aes_decrypt_data(mbedtls_aes_context* aes_context, 
-                      unsigned char aes_iv[AES_IV_LENGTH], 
+                      unsigned char* aes_iv, 
                       const unsigned char* input_data, 
-                      int input_size, unsigned char* output_data) {
+                      int input_size, 
+                      unsigned char* output_data) {
     int ret = mbedtls_aes_crypt_cbc(
                 aes_context,
                 MBEDTLS_AES_DECRYPT,

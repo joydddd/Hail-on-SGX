@@ -14,7 +14,8 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netdb.h>
-
+#include "gwas_u.h"
+#include "enclave.h"
 
 using std::cout;
 using std::cin;
@@ -61,6 +62,10 @@ void Server::init() {
 
     // resize allele queue
     allele_queue = moodycamel::ReaderWriterQueue<std::string>(1000);
+
+    // Also start the enclave thread.
+    boost::thread enclave_thread(start_enclave);
+    enclave_thread.detach();
 }
 
 void Server::run() {
@@ -276,12 +281,13 @@ void Server::check_in(std::string name) {
         throw std::runtime_error("Unexpected institution!\n");
     }
     expected_institutions.erase(name);
+    // All clients checked in!
     if (!expected_institutions.size()) {
         // request y, cov, and data
         for (const auto& it : institutions) {
             send_msg(it.first, Y_AND_COV, covariant_list + y_val_name);
         }
-        // Now that all institutions are registered, start up the allele matching thread
+        // Now that all institutions are registered, start up the allele matching thread.
         boost::thread msg_thread(&Server::allele_matcher, this);
         msg_thread.detach();
     }
@@ -368,12 +374,8 @@ uint8_t* Server::get_rsa_pub_key() {
     return get_instance().rsa_public_key;
 }
 
-std::string Server::get_institutions() {
-    std::string clientlist;
-    for (std::string institution : get_instance().institution_list) {
-        clientlist.append(institution + "\t");
-    }
-    return clientlist;
+int Server::get_num_institutions() {
+    return get_instance().institution_list.size();
 }
 
 std::string Server::get_covariants() {
@@ -403,7 +405,8 @@ std::string Server::get_aes_iv(const int institution_num) {
     return get_instance().institutions[institution_name]->get_aes_iv();
 }
 
-std::string Server::get_y_data(const std::string& institution_name) {
+std::string Server::get_y_data(const int institution_num) {
+    const std::string institution_name = get_instance().institution_list[institution_num];
     if (!get_instance().institutions.count(institution_name)) {
         return "";
     }
@@ -411,7 +414,11 @@ std::string Server::get_y_data(const std::string& institution_name) {
     return y_vals;
 }
 
-std::string Server::get_covariant_data(const std::string& institution_name, const std::string& covariant_name) {
+std::string Server::get_covariant_data(const int institution_num, const std::string& covariant_name) {
+    const std::string institution_name = get_instance().institution_list[institution_num];
+    if (!get_instance().institutions.count(institution_name)) {
+        return "";
+    }
     std::string cov_vals = get_instance().institutions[institution_name]->get_covariant_data(covariant_name);
     return cov_vals;
 }
