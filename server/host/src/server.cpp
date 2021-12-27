@@ -16,6 +16,7 @@
 #include <netdb.h>
 #include "gwas_u.h"
 #include "enclave.h"
+#include "hashing.h"
 
 using std::cout;
 using std::cin;
@@ -60,8 +61,10 @@ void Server::init() {
     std::ifstream y_file("y_val.txt");
     getline(y_file, y_val_name);
 
+    num_threads = boost::thread::hardware_concurrency();
+
     // resize allele queue
-    allele_queue = moodycamel::ReaderWriterQueue<std::string>(1000);
+    allele_queue_list.resize(num_threads);
 
     // Also start the enclave thread.
     boost::thread enclave_thread(start_enclave);
@@ -196,21 +199,27 @@ bool Server::handle_message(int connFD, const std::string& name, unsigned int si
                 if (institution_list[id] == name) {
                     institutions[name] = new Institution(hostname_and_port[0], 
                                                          Parser::convert_to_num(hostname_and_port[1]),
-                                                         id);
+                                                         id,
+                                                         num_threads);
                 }
             }
             response_mtype = RSA_PUB_KEY;
-            response = reinterpret_cast<char *>(rsa_public_key);
+            response = std::to_string(num_threads) + "\t" + reinterpret_cast<char *>(rsa_public_key);
             break;
         }
         case AES_KEY:
         {
-            check_in(name);
-            auto key_and_iv = Parser::split(msg, '\t');
+            
+            auto aes_info = Parser::split(msg, '\t');
+            int thread_id = std::stoi(aes_info[2]);
+            // We only want 1 "check in"
+            if (thread_id == 0) {
+                check_in(name);
+            }
             institutions[name]->set_key_and_iv(
-                                    key_and_iv.front(), 
-                                    key_and_iv.back()
-                                );
+                                    aes_info[0], // encrypted key
+                                    aes_info[1], // encrypted iv
+                                    thread_id); // thread id      
             break;
         }
         case Y_VAL:
@@ -277,6 +286,8 @@ int Server::send_msg(const std::string& name, ClientMessageType mtype, const std
 
 void Server::check_in(std::string name) {
     std::lock_guard<std::mutex> raii(expected_lock);
+    std::cout << name;
+    // for (std::string inst : expected_institutions)
     if (!expected_institutions.count(name)) {
         throw std::runtime_error("Unexpected institution!\n");
     }
@@ -331,14 +342,19 @@ void Server::allele_matcher() {
             }
 
             // if we did not find a min locus, all data has been recieved and we have processed all of it.
-            // shut down the matcher, its work is done.
+            // enqueue EOF for all enclave threads then shut down the matcher, its work is done.
             if (min_locus == "~") {
-                allele_queue.enqueue(EOFSeperator);
+                for(int thread_id = 0; thread_id < num_threads; ++thread_id) {
+                    allele_queue_list[thread_id].enqueue(EOFSeperator);
+                }
                 return;
             }
 
             std::string allele_line = min_locus + "\t";
             std::string data;
+
+            int locus_hash_thread = hash_string(allele_line, num_threads, true); 
+
 
             for (const auto& it : institutions) {
                 Institution* inst = it.second;
@@ -360,7 +376,7 @@ void Server::allele_matcher() {
             allele_line.append(data);
             
             // thread-safe enqueue
-            allele_queue.enqueue(allele_line);
+            allele_queue_list[locus_hash_thread].enqueue(allele_line);
         }
     }
 }
@@ -372,6 +388,10 @@ Server& Server::get_instance(int port) {
 
 uint8_t* Server::get_rsa_pub_key() {
     return get_instance().rsa_public_key;
+}
+
+int Server::get_num_threads() {
+    return get_instance().num_threads;
 }
 
 int Server::get_num_institutions() {
@@ -387,22 +407,22 @@ std::string Server::get_covariants() {
     return cov_list;
 }
 
-std::string Server::get_aes_key(const int institution_num) {
+std::string Server::get_aes_key(const int institution_num, const int thread_id) {
     const std::string institution_name = get_instance().institution_list[institution_num];
     if (!get_instance().institutions.count(institution_name)) {
         return "";
     }
 
-    return get_instance().institutions[institution_name]->get_aes_key();
+    return get_instance().institutions[institution_name]->get_aes_key(thread_id);
 }
 
-std::string Server::get_aes_iv(const int institution_num) {
+std::string Server::get_aes_iv(const int institution_num, const int thread_id) {
     const std::string institution_name = get_instance().institution_list[institution_num];
     if (!get_instance().institutions.count(institution_name)) {
         return "";
     }
 
-    return get_instance().institutions[institution_name]->get_aes_iv();
+    return get_instance().institutions[institution_name]->get_aes_iv(thread_id);
 }
 
 std::string Server::get_y_data(const int institution_num) {
@@ -432,9 +452,9 @@ int Server::get_encypted_allele_size(const int institution_num) {
     return block->data.length();
 }
 
-std::string Server::get_allele_data(int num_blocks) {
+std::string Server::get_allele_data(int num_blocks, const int thread_id) {
     std::string allele_data;
-    if (!get_instance().allele_queue.try_dequeue(allele_data)) {
+    if (!get_instance().allele_queue_list[thread_id].try_dequeue(allele_data)) {
         return "";
     }
     return allele_data;

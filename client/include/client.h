@@ -34,14 +34,15 @@ class Client {
     int server_port;
     int blocks_sent;
 
-    int num_clients;
+    int server_num_threads;
+    int num_patients;
 
     bool sender_running;
     bool sent_all_data;
 
     std::ifstream xval;
 
-    AESCrypto aes_encryptor;
+    std::vector<AESCrypto> aes_encryptor_list;
 
   public:
     Client(std::string clientname, std::string client_hostname, std::string server_hostname, int listen_port, int server_port);

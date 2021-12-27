@@ -27,11 +27,12 @@
 class Server {
   private:
     int port;
+    int num_threads;
 
     std::unordered_set<std::string> expected_institutions;
     std::unordered_set<std::string> expected_covariants;
     std::vector<std::string> institution_list;
-    moodycamel::ReaderWriterQueue<std::string> allele_queue;
+    std::vector<moodycamel::ReaderWriterQueue<std::string>> allele_queue_list;
     std::string covariant_list;
     std::string y_val_name;
     char* encrypted_aes_key;
@@ -80,14 +81,16 @@ class Server {
     static Server& get_instance(int port=0);
 
     static uint8_t* get_rsa_pub_key();
+    
+    static int get_num_threads();
 
     static int get_num_institutions();
 
     static std::string get_covariants();
 
-    static std::string get_aes_key(const int institution_num);
+    static std::string get_aes_key(const int institution_num, const int thread_id);
 
-    static std::string get_aes_iv(const int institution_num);
+    static std::string get_aes_iv(const int institution_num, const int thread_id);
 
     static std::string get_y_data(const int institution_num);
 
@@ -95,7 +98,7 @@ class Server {
     
     static int get_encypted_allele_size(const int institution_num);
 
-    static std::string get_allele_data(int num_blocks);
+    static std::string get_allele_data(int num_blocks, const int thread_id);
 };
 
 #endif /* _SERVER_H_ */

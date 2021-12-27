@@ -4,15 +4,15 @@
 #include "logistic_regression.h"
 #include "string.h"
 
-void aes_decrypt_client(const unsigned char* crypto, unsigned char* plaintxt, const ClientInfo& client){
-    aes_decrypt_data(client.aes.aes_context,
-                     (unsigned char *)client.aes.aes_iv,
+void aes_decrypt_client(const unsigned char* crypto, unsigned char* plaintxt, const ClientInfo& client, const int thread_id){
+    aes_decrypt_data(client.aes_list[thread_id].aes_context,
+                     (unsigned char *)client.aes_list[thread_id].aes_iv,
                      crypto,
                      client.crypto_size, 
                      plaintxt);
 }
 
-void decrypt_line(char* crypt, char* plaintxt, size_t* plaintxt_length, const std::vector<ClientInfo>& client_info_list) {
+void decrypt_line(char* crypt, char* plaintxt, size_t* plaintxt_length, const std::vector<ClientInfo>& client_info_list, const int thread_id) {
     vector<char*> client_begin;
     char* head = crypt;
     char* end_of_allele = crypt, *end_of_loci = crypt;
@@ -58,7 +58,7 @@ void decrypt_line(char* crypt, char* plaintxt, size_t* plaintxt_length, const st
             for(int j = 0; j < client_info_list[client].size; j++)
                 *(plaintxt_head + j) = NA_uint8;
         } else {
-            aes_decrypt_client((const unsigned char *)head, (unsigned char *)plaintxt_head, client_info_list[client]);
+            aes_decrypt_client((const unsigned char *)head, (unsigned char *)plaintxt_head, client_info_list[client], thread_id);
             head += client_info_list[client].crypto_size;
         }
         plaintxt_head += client_info_list[client].size;
@@ -98,13 +98,13 @@ void Buffer::finish(Batch* finishing_batch) {
     free_batches.push_back(finishing_batch);
 }
 
-Batch* Buffer::launch(std::vector<ClientInfo>& client_info_list) {
+Batch* Buffer::launch(std::vector<ClientInfo>& client_info_list, const int thread_id) {
     bool rt;
-    getbatch(&rt, crypttxt);
+    getbatch(&rt, crypttxt, thread_id);
     if (!strcmp(crypttxt, EOFSeperator)) return nullptr;
     if (free_batches.empty()) return nullptr;
     Batch* new_b = free_batches.front();
     free_batches.pop_front();
-    decrypt_line(crypttxt, new_b->load_plaintxt(), new_b->plaintxt_size(), client_info_list);
+    decrypt_line(crypttxt, new_b->load_plaintxt(), new_b->plaintxt_size(), client_info_list, thread_id);
     return new_b;
 }

@@ -20,6 +20,7 @@ size_t Row::read(const char line[]) {
         getline(ss, alleles_str, '\t');
         alleles.read(alleles_str);
     } catch (ReadtsvERROR &error) {
+        std::cout << string("(loci)") + loci_str + " (alleles)" + alleles_str << std::flush;
         throw ENC_ERROR("Invalid loci/alleles "
 #ifdef DEBUG
                         + string("(loci)") + loci_str + " (alleles)" +

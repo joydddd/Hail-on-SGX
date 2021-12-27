@@ -5,11 +5,11 @@
 
 #include "institution.h"
 
-Institution::Institution(std::string hostname, int port, int id) : hostname(hostname), port(port), 
-                                                                   requested_for_data(false), listener_running(false), 
-                                                                   request_conn(-1), current_block(0), 
-                                                                   all_data_received(false), id(id) {
-
+Institution::Institution(std::string hostname, int port, int id, const int num_threads) 
+        : hostname(hostname), port(port), requested_for_data(false), listener_running(false), 
+          request_conn(-1), current_block(0), all_data_received(false), id(id) {
+    aes_encrypted_key_list.resize(num_threads);
+    aes_encrypted_iv_list.resize(num_threads);
 }
 
 Institution::~Institution() {
@@ -33,9 +33,9 @@ int Institution::get_id() {
     return id;
 }
 
-void Institution::set_key_and_iv(std::string aes_key, std::string aes_iv) {
-    aes_encrypted_key = decoder.decode(aes_key);
-    aes_encrypted_iv = decoder.decode(aes_iv);
+void Institution::set_key_and_iv(std::string aes_key, std::string aes_iv, const int thread_id) {
+    aes_encrypted_key_list[thread_id] = decoder.decode(aes_key);
+    aes_encrypted_iv_list[thread_id] = decoder.decode(aes_iv);
 }
 
 void Institution::set_y_data(std::string& y_data) {
@@ -50,12 +50,12 @@ void Institution::set_covariant_data(const std::string& covariant_name, const st
     covariant_data[covariant_name] = decoder.decode(data);
 }
 
-std::string Institution::get_aes_key() {
-    return aes_encrypted_key;
+std::string Institution::get_aes_key(const int thread_id) {
+    return aes_encrypted_key_list[thread_id];
 }
 
-std::string Institution::get_aes_iv() {
-    return aes_encrypted_iv;
+std::string Institution::get_aes_iv(const int thread_id) {
+    return aes_encrypted_iv_list[thread_id];
 }
 
 std::string Institution::get_y_data() {

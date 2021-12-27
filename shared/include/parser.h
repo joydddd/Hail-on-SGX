@@ -60,7 +60,7 @@ class Parser {
     // parse message body into the relevant arguments we need
     static DataBlock* parse_body(const std::string& message_body, ServerMessageType mtype, AESCrypto& decoder);
 
-    static std::string parse_allele_line(const std::string& line, std::string& vals, AESCrypto& encryptor, int num_clients);
+    static std::string parse_allele_line(const std::string& line, std::string& vals, std::vector<AESCrypto>& encryptor_list, int num_patients);
 
     // split a given string based on the specified delimiter
     static std::vector<std::string> split(const std::string& s, char delim=' ', int num_splits=-1);

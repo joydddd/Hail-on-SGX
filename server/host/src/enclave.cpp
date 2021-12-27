@@ -12,6 +12,7 @@
 #include <thread>
 #include <vector>
 #include <stdio.h>
+#include <boost/thread.hpp>
 #include "server.h"
 
 #define MAX_ATTEMPT_TIMES 10
@@ -52,10 +53,11 @@ void getcovlist(char covlist[ENCLAVE_READ_BUFFER_SIZE]) {
 }
 
 bool getaes(const int client_num,
+            const int thread_id,
             unsigned char key[256],
             unsigned char iv[256]) {
-    std::string encrypted_aes_key = Server::get_aes_key(client_num);
-    std::string encrypted_aes_iv = Server::get_aes_iv(client_num);
+    std::string encrypted_aes_key = Server::get_aes_key(client_num, thread_id);
+    std::string encrypted_aes_iv = Server::get_aes_iv(client_num, thread_id);
     if (!encrypted_aes_key.length() || !encrypted_aes_iv.length()) {
         return false;
     }
@@ -92,9 +94,9 @@ int get_encrypted_x_size(const int client_num) {
     return Server::get_encypted_allele_size(client_num);
 }
 
-bool getbatch(char batch[ENCLAVE_READ_BUFFER_SIZE]) {
+bool getbatch(char batch[ENCLAVE_READ_BUFFER_SIZE], const int thread_id) {
     // TODO: maybe change this so we read in a diff number for each 
-    std::string batch_data = Server::get_allele_data(BUFFER_LINES);
+    std::string batch_data = Server::get_allele_data(BUFFER_LINES, thread_id);
     if (!batch_data.length()) {
         return false;
     }
@@ -168,15 +170,23 @@ int start_enclave() {
         // DEBUG:
        
         // test_static(enclave);
-        result = setup_enclave(enclave);
+        int num_threads = Server::get_num_threads();
+        result = setup_enclave(enclave, num_threads);
         if (result != OE_OK) {
             fprintf(stderr,
                     "calling into enclave_gwas failed: result=%u (%s)\n",
                     result, oe_result_str(result));
             goto exit;
         }
+
+        boost::thread_group thread_group;
         auto start = std::chrono::high_resolution_clock::now();
-        result = log_regression(enclave);
+        for (int thread_id = 0; thread_id < num_threads; ++thread_id) {
+            boost::thread* enclave_thread = new boost::thread(log_regression, enclave, thread_id);
+            thread_group.add_thread(enclave_thread);
+        }
+        thread_group.join_all();
+
         // DEBUG: total execution time
         auto stop = std::chrono::high_resolution_clock::now();
         auto duration = duration_cast<std::chrono::microseconds>(stop - start);

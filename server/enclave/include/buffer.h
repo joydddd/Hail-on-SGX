@@ -18,13 +18,13 @@ using std::deque;
 class Batch;
 
 struct ClientInfo{
-    AESData aes;
+    std::vector<AESData> aes_list;
     size_t crypto_size;
     size_t size;
 };
 
-void aes_decrypt_client(const unsigned char* crypto, unsigned char* plaintxt, const ClientInfo& client);
-void decrypt_line(char* crypt, char* plaintxt, size_t* plaintxt_length, const std::vector<ClientInfo>& client_info_list);
+void aes_decrypt_client(const unsigned char* crypto, unsigned char* plaintxt, const ClientInfo& client, const int thread_id);
+void decrypt_line(char* crypt, char* plaintxt, size_t* plaintxt_length, const std::vector<ClientInfo>& client_info_list, const int thread_id);
 
 class Buffer {
     /* meta data */
@@ -47,7 +47,7 @@ public:
     Buffer(size_t _row_size, Row_T row_type);
     ~Buffer();
     void finish(Batch*);
-    Batch* launch(std::vector<ClientInfo>& client_info_list);  // return nullptr if there is no free batches
+    Batch* launch(std::vector<ClientInfo>& client_info_list, const int thread_id);  // return nullptr if there is no free batches
 };
 
 #endif

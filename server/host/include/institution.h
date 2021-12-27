@@ -26,16 +26,16 @@ class Institution {
     std::unordered_map<std::string, std::string> covariant_data;
     std::string y_val_data;
 
-    std::string aes_encrypted_key;
-    std::string aes_encrypted_iv;
+    std::vector<std::string> aes_encrypted_key_list;
+    std::vector<std::string> aes_encrypted_iv_list;
 
     int id;
 
   public:
-    Institution(std::string hostname, int port, int id);
+    Institution(std::string hostname, int port, int id, const int num_threads);
     ~Institution();
 
-    void set_key_and_iv(std::string aes_key, std::string aes_iv);
+    void set_key_and_iv(std::string aes_key, std::string aes_iv, const int thread_id);
 
     void add_block(DataBlock* block);
 
@@ -45,9 +45,9 @@ class Institution {
 
     void set_covariant_data(const std::string& covariant_name, const std::string& data);
 
-    std::string get_aes_key();
+    std::string get_aes_key(const int thread_id);
 
-    std::string get_aes_iv();
+    std::string get_aes_iv(const int thread_id);
   
     std::string get_y_data();
 

@@ -5,9 +5,9 @@ enclave {
     include "buffer_size.h"
 
     trusted {
-        public void setup_enclave();
+        public void setup_enclave(const int num_threads);
 
-        public void log_regression();
+        public void log_regression(const int thread_id);
         // public void linear_regression_beta();
         // public void linear_regression_t_stat();
     };
@@ -27,7 +27,8 @@ enclave {
         
         // copy aes key and iv from host machine to enclave;
         bool getaes(
-            const int client_num, 
+            const int client_num,
+            const int thread_id, 
             [out] unsigned char key[256],
             [out] unsigned char iv[256]);
 
@@ -51,7 +52,8 @@ enclave {
         // return const char* EOFSeperator if reaches end of dataset
         // *rt = false if the batch isn't avaialbe on host
         bool getbatch(  
-            [out] char batch[ENCLAVE_READ_BUFFER_SIZE]);
+            [out] char batch[ENCLAVE_READ_BUFFER_SIZE],
+            const int thread_id);
 
         /* output data requests */
         // copy encrypted batch to host machine

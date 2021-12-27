@@ -70,16 +70,14 @@ DataBlock* Parser::parse_body(const std::string& message_body, ServerMessageType
     return block;
 }
 
-std::string Parser::parse_allele_line(const std::string& line, std::string& vals, AESCrypto& encryptor, int num_clients) {
+std::string Parser::parse_allele_line(const std::string& line, std::string& vals, std::vector<AESCrypto>& encryptor_list, int num_patients) {
     std::vector<std::string> line_split = Parser::split(line, '\t', 2);
-    // std::string locus_and_allele = line_split[0] + '\t' + line_split[1] + '\t';
-    // std::cout << hash_string(locus_and_allele, 32, true) << "\n";
-    // static std::hash<std::string> hasher;
-    // std::cout << hasher(locus_and_allele) % 32 << "\n";
+    std::string locus_and_allele = line_split[0] + '\t' + line_split[1] + '\t';
+    // Use the AES encryptor that corresponds to the appropriate thread on the server end
+    AESCrypto& encryptor = encryptor_list[hash_string(locus_and_allele, encryptor_list.size(), true)];
 
     std::string line_vals = line_split.back();
     int val_idx = 0;
-    // TODO: When encryption is added, remove these + '0's.
     for (std::size_t line_idx = 0; line_idx < line_vals.length(); line_idx += 2) {
         switch(line_vals[line_idx]) {
             case '0':
@@ -103,7 +101,7 @@ std::string Parser::parse_allele_line(const std::string& line, std::string& vals
                 throw std::runtime_error("Invalid alleles file!");
         }
     }
-    return line_split[0] + '\t' + line_split[1] + '\t' + encryptor.encrypt_line((byte *)&vals[0], num_clients) + "\n";
+    return locus_and_allele + encryptor.encrypt_line((byte *)&vals[0], num_patients) + "\n";
 }
 
 unsigned int Parser::convert_to_num(const std::string& str) {
