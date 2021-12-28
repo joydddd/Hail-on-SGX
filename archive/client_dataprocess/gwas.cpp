@@ -280,7 +280,7 @@ void GWAS::read_alleles(string filename){
     while (getline(tsv, line)){
         try{data.push_back(line);
         } catch (ReadtsvERROR &error) {
-            cerr << "read tsv ERROR in line " << line << " " << error.msg << endl;
+            cerr << "read tsv ERROR in line " << line << " " << error.msg << endl << std::flush;
         }
     }
     tsv.close();
@@ -317,7 +317,7 @@ void GWAS::print_SSE(std::ostream &fs, std::vector<Beta_row> &betas){
                 if (!(beta_it->alleles == sse_it->alleles) )
                     throw ERROR_t("allele unmatch at loci "+ beta_it->loci.str());
                 sse_it->print_SSE(fs, beta_it->beta, covariant, y);
-            } catch(ERROR_t &error) {cerr << "Allele ERROR: " << error.msg << endl; }
+            } catch(ERROR_t &error) {cerr << "Allele ERROR: " << error.msg << endl << std::flush;}
             sse_it++;
             beta_it++;
         }
@@ -363,7 +363,7 @@ void export_SSE(GWAS &gwas, string beta_filename, string SSE_filename){
         try{
         beta.push_back(Beta_row(parts, loci_str, allele_str));
         } catch(ReadtsvERROR &error) {
-            cerr << "read tsv ERROR: in line " << line << " " << error.msg << endl;
+            cerr << "read tsv ERROR: in line " << line << " " << error.msg << endl << std::flush;
         }
     }
     gwas.SSE_init();

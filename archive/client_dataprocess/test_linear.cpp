@@ -22,7 +22,7 @@ int main() {
         export_XTX_XTY(gwas, XTX_OUTPUT_FILE, XTY_OUTPUT_FILE);
         export_SSE(gwas, BETA_FILE, SSE_OUTPUT_FILE);
     } catch (ERROR_t &error) {
-        cerr << "ERROR: " << error.msg << endl;
+        cerr << "ERROR: " << error.msg << endl << std::flush;
         exit(1);
     }
 }

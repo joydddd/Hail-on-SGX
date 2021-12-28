@@ -1,12 +1,13 @@
 #include "client.h"
 #include <boost/thread.hpp>
+#include <chrono>
 
 std::mutex cout_lock;
 
 Client::Client(std::string clientname, std::string client_hostname, std::string server_hostname, int listen_port, int server_port) 
     : clientname(clientname), client_hostname(client_hostname), server_hostname(server_hostname), 
       listen_port(listen_port), server_port(server_port), blocks_sent(0), num_patients(0), 
-      sender_running(false), sent_all_data(false), xval("alleles.tsv") {
+      sender_running(false), sent_all_data(false), xval("alleles-multiplied.tsv") {
     init();
 }
 
@@ -140,7 +141,6 @@ void Client::handle_message(int connFD, unsigned int size, ClientMessageType mty
             int server_num_threads = std::stoi(Parser::split(msg, '\t', 1).front());
             // I wanted to use .resize() but the compiler cried about it, this is not ideal but acceptable.
             aes_encryptor_list = std::vector<AESCrypto>(server_num_threads);
-            
             const std::string header = "-----BEGIN PUBLIC KEY-----";
             const std::string footer = "-----END PUBLIC KEY-----";
 
@@ -185,6 +185,7 @@ void Client::handle_message(int connFD, unsigned int size, ClientMessageType mty
         }
         case DATA_REQUEST:
         {   
+            auto start = std::chrono::high_resolution_clock::now();
             response_mtype = DATA;
             std::string block;
             while(get_block(block)) {
@@ -194,6 +195,9 @@ void Client::handle_message(int connFD, unsigned int size, ClientMessageType mty
             response_mtype = EOF_DATA;
             sent_all_data = true;
             send_msg(response_mtype, block, connFD);
+            auto stop = std::chrono::high_resolution_clock::now();
+            auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
+            std::cout << "Data send time total: " << duration.count() << std::endl;
             break;
         }
         default:

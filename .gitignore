@@ -14,3 +14,5 @@ gwashost
 test_logistic
 *_debug
 .vscode/
+callgrind*
+*-multiplied.tsv

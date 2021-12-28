@@ -19,6 +19,7 @@ static std::vector<ClientInfo> client_info_list;
 static std::vector<int> client_y_size;
 static int num_clients;
 static Log_gwas* gwas;
+static volatile bool start_thread = false;
 
 void setup_enclave(const int num_threads) {
     RSACrypto rsa = RSACrypto();
@@ -167,9 +168,16 @@ void setup_enclave(const int num_threads) {
     std::cout << "Buffer initialized" << endl;
 
     std::cout << "Setup finished\n";
+    start_thread = true;
 }
 
 void log_regression(const int thread_id) {
+
+    // experimental - checking to see if spinning up threads adds a noticable amount of overhead... need +1 threads
+    while(!start_thread) {
+        // spin until ready to go!
+    }
+
     Buffer* buffer = buffer_list[thread_id];
     //if (thread_id == 1) return;
     Batch* batch = nullptr;
@@ -188,7 +196,7 @@ void log_regression(const int thread_id) {
         try {
             if (!(row = (Log_row*)batch->get_row(buffer))) continue;
         } catch (ERROR_t& err) {
-            cerr << "ERROR: " << err.msg << endl;
+            cerr << "ERROR: " << err.msg << endl << std::flush;
             exit(0);
             continue;
         }
@@ -207,7 +215,7 @@ void log_regression(const int thread_id) {
                  << endl;
             ss << "\tNA\tNA\tNA" << endl;
         } catch (ERROR_t& err) {
-            cerr << "ERROR " << ss.str() << ": " << err.msg << endl;
+            cerr << "ERROR " << ss.str() << ": " << err.msg << endl << std::flush;
             ss << "\tNA\tNA\tNA" << endl;
             exit(1);
         }
