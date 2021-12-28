@@ -41,6 +41,8 @@ all:
 	$(MAKE) keys
 	$(MAKE) sign
 pre:
+	@ echo "Modifying enclave config"
+	python settcs.py
 	@ echo "Compilers used: $(CC), $(CXX)"
 	oeedger8r ../$(EDL_FILE) --trusted \
 		--search-path $(INCDIR) \
