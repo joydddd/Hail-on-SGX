@@ -99,8 +99,10 @@ void Buffer::finish(Batch* finishing_batch) {
 }
 
 Batch* Buffer::launch(std::vector<ClientInfo>& client_info_list, const int thread_id) {
-    bool rt;
-    getbatch(&rt, crypttxt, thread_id);
+    bool rt = false;
+    while (!rt) {
+        getbatch(&rt, crypttxt, thread_id);
+    }
     if (!strcmp(crypttxt, EOFSeperator)) return nullptr;
     if (free_batches.empty()) return nullptr;
     Batch* new_b = free_batches.front();

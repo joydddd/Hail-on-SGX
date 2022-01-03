@@ -8,6 +8,7 @@
 #include <fstream>
 #include <assert.h>
 #include <stdexcept>
+#include <chrono>
 #include <stdint.h>
 #include <string>
 #include "parser.h"
@@ -310,6 +311,7 @@ void Server::data_listener(int connFD) {
 }
 
 void Server::allele_matcher() {
+    auto start = std::chrono::high_resolution_clock::now();
     while(true) {
     loop_start:
         // transfer all blocks to eligible queue, making sure they are in order
@@ -347,6 +349,9 @@ void Server::allele_matcher() {
                 for(int thread_id = 0; thread_id < num_threads; ++thread_id) {
                     allele_queue_list[thread_id].enqueue(EOFSeperator);
                 }
+                auto stop = std::chrono::high_resolution_clock::now();
+                auto duration = duration_cast<std::chrono::microseconds>(stop - start);
+                guarded_cout("Matcher time total: " + std::to_string(duration.count()), cout_lock);
                 return;
             }
 

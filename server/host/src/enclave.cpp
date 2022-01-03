@@ -171,6 +171,13 @@ int start_enclave() {
        
         // test_static(enclave);
         int num_threads = Server::get_num_threads();
+
+        boost::thread_group thread_group;
+        for (int thread_id = 0; thread_id < num_threads; ++thread_id) {
+            boost::thread* enclave_thread = new boost::thread(log_regression, enclave, thread_id);
+            thread_group.add_thread(enclave_thread);
+        }
+
         result = setup_enclave(enclave, num_threads);
         if (result != OE_OK) {
             fprintf(stderr,
@@ -179,26 +186,14 @@ int start_enclave() {
             goto exit;
         }
 
-        boost::thread_group thread_group;
         auto start = std::chrono::high_resolution_clock::now();
-        for (int thread_id = 0; thread_id < num_threads; ++thread_id) {
-            boost::thread* enclave_thread = new boost::thread(log_regression, enclave, thread_id);
-            thread_group.add_thread(enclave_thread);
-        }
         thread_group.join_all();
-
         // DEBUG: total execution time
         auto stop = std::chrono::high_resolution_clock::now();
         auto duration = duration_cast<std::chrono::microseconds>(stop - start);
         cout << "Enclave time total: " << duration.count() << endl;
-        if (result != OE_OK) {
-            fprintf(stderr,
-                    "calling into enclave_gwas failed: result=%u (%s)\n",
-                    result, oe_result_str(result));
-            goto exit;
-        }
     } catch (ERROR_t& err) {
-        cerr << "ERROR: " << err.msg << endl;
+        cerr << "ERROR: " << err.msg << endl << std::flush;
     }
 
     ret = 0;
