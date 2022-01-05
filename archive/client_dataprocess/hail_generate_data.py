@@ -5,8 +5,8 @@ hl.init()
 output_notebook()
 
 # Second chunk
-mt = hl.experimental.load_dataset(name='gnomad_hgdp_1kg_callset',
-                                  version='3.1',
+mt = hl.experimental.load_dataset(name='1000_Genomes_HighCov_autosomes',
+                                  version='NYGC_30x_phased',
                                   reference_genome='GRCh38',
                                   region='us',
                                   cloud='aws')
