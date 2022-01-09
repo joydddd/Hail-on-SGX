@@ -2,7 +2,7 @@
  * Initialize and run a Server.
  */
 
-#include "server.h"
+#include "compute_server.h"
 #include <iostream>
 #include <stdlib.h>
 
@@ -18,8 +18,8 @@ int main(int argc, char const *argv[]) {
     int port = atoi(argv[1]);
 
     // initialize our server with the given port, and run it forever
-    Server::get_instance(port);
-    Server::get_instance().run();
+    ComputeServer::get_instance(port);
+    ComputeServer::get_instance().run();
     
 
 

@@ -13,7 +13,7 @@
 #include <vector>
 #include <stdio.h>
 #include <boost/thread.hpp>
-#include "server.h"
+#include "compute_server.h"
 
 #define MAX_ATTEMPT_TIMES 10
 #define ATTEMPT_TIMEOUT 500  // in milliseconds
@@ -41,23 +41,23 @@ map<string, int> cov_map;
 static oe_enclave_t* enclave;
 
 void setrsapubkey(uint8_t enc_rsa_pub_key[RSA_PUB_KEY_SIZE]) {
-    std::memcpy(Server::get_rsa_pub_key(), enc_rsa_pub_key, RSA_PUB_KEY_SIZE);
+    std::memcpy(ComputeServer::get_rsa_pub_key(), enc_rsa_pub_key, RSA_PUB_KEY_SIZE);
 }
 
 int getclientnum() {
-    return Server::get_num_institutions();
+    return ComputeServer::get_num_institutions();
 }
 
 void getcovlist(char covlist[ENCLAVE_READ_BUFFER_SIZE]) {
-    strcpy(covlist, Server::get_covariants().c_str());
+    strcpy(covlist, ComputeServer::get_covariants().c_str());
 }
 
 bool getaes(const int client_num,
             const int thread_id,
             unsigned char key[256],
             unsigned char iv[256]) {
-    std::string encrypted_aes_key = Server::get_aes_key(client_num, thread_id);
-    std::string encrypted_aes_iv = Server::get_aes_iv(client_num, thread_id);
+    std::string encrypted_aes_key = ComputeServer::get_aes_key(client_num, thread_id);
+    std::string encrypted_aes_iv = ComputeServer::get_aes_iv(client_num, thread_id);
     if (!encrypted_aes_key.length() || !encrypted_aes_iv.length()) {
         return false;
     }
@@ -67,7 +67,7 @@ bool getaes(const int client_num,
 }
 
 int gety(const int client_num, char y[ENCLAVE_READ_BUFFER_SIZE]) {
-    std::string y_data = Server::get_y_data(client_num);
+    std::string y_data = ComputeServer::get_y_data(client_num);
     if (!y_data.length()) {
         return 0;
     }
@@ -82,7 +82,7 @@ int getcov(const int client_num,
         strcpy(cov, "1");
         return 1;
     }
-    std::string cov_data = Server::get_covariant_data(client_num, cov_name);
+    std::string cov_data = ComputeServer::get_covariant_data(client_num, cov_name);
     if (!cov_data.length()) {
         return false;
     }
@@ -91,12 +91,12 @@ int getcov(const int client_num,
 }
 
 int get_encrypted_x_size(const int client_num) {
-    return Server::get_encypted_allele_size(client_num);
+    return ComputeServer::get_encypted_allele_size(client_num);
 }
 
 bool getbatch(char batch[ENCLAVE_READ_BUFFER_SIZE], const int thread_id) {
     // TODO: maybe change this so we read in a diff number for each 
-    std::string batch_data = Server::get_allele_data(BUFFER_LINES, thread_id);
+    std::string batch_data = ComputeServer::get_allele_data(BUFFER_LINES, thread_id);
     if (!batch_data.length()) {
         return false;
     }
@@ -168,7 +168,7 @@ int start_enclave() {
     try {
         std::cout << "\n\n**RUNNING LOG REGRESSION**\n\n";
 
-        int num_threads = Server::get_num_threads();
+        int num_threads = ComputeServer::get_num_threads();
         boost::thread_group thread_group;
         for (int thread_id = 0; thread_id < num_threads; ++thread_id) {
             boost::thread* enclave_thread = new boost::thread(log_regression, enclave, thread_id);

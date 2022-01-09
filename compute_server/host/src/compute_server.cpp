@@ -2,7 +2,7 @@
  * Implementation for our server class.
  */
 
-#include "server.h"
+#include "compute_server.h"
 #include "socket_send.h"
 #include <iostream>
 #include <fstream>
@@ -27,15 +27,15 @@ std::mutex cout_lock;
 
 const int MIN_BLOCK_COUNT = 50;
 
-Server::Server(int port_in) : port(port_in) {
+ComputeServer::ComputeServer(int port_in) : port(port_in) {
     init();
 }
 
-Server::~Server() {
+ComputeServer::~ComputeServer() {
 
 }
 
-void Server::init() {
+void ComputeServer::init() {
     // read in list institutions/clients involved in GWAS
     std::ifstream instituion_file("institutions.txt");
     std::string institution;
@@ -72,7 +72,7 @@ void Server::init() {
     enclave_thread.detach();
 }
 
-void Server::run() {
+void ComputeServer::run() {
     // set up the server to do nothing when it receives a broken pipe error
     //signal(SIGPIPE, signal_handler);
     // create a master socket to listen for requests on
@@ -122,12 +122,12 @@ void Server::run() {
         int connFD = accept(sockfd, (struct sockaddr*) &addr, &addrSize);
 
         // spin up a new thread to handle this message
-        boost::thread msg_thread(&Server::start_thread, this, connFD);
+        boost::thread msg_thread(&ComputeServer::start_thread, this, connFD);
         msg_thread.detach();
     }
 }
 
-bool Server::start_thread(int connFD) {
+bool ComputeServer::start_thread(int connFD) {
     // if we catch any errors we will throw an error to catch and close the connection
     try {
         char header_buffer[128];
@@ -178,7 +178,7 @@ bool Server::start_thread(int connFD) {
     return true;
 }
 
-bool Server::handle_message(int connFD, const std::string& name, unsigned int size, ServerMessageType mtype,
+bool ComputeServer::handle_message(int connFD, const std::string& name, unsigned int size, ServerMessageType mtype,
                             std::string& msg) {
     DataBlock* block;
     if (institutions.count(name)) {
@@ -242,7 +242,7 @@ bool Server::handle_message(int connFD, const std::string& name, unsigned int si
             if (expected_covariants.size() == institutions[name]->get_covariant_size()) {
                 institutions[name]->request_conn = send_msg(name, DATA_REQUEST, std::to_string(MIN_BLOCK_COUNT), institutions[name]->request_conn);
                 // start listener thread for data!
-                boost::thread data_listener_thread(&Server::data_listener, this, institutions[name]->request_conn);
+                boost::thread data_listener_thread(&ComputeServer::data_listener, this, institutions[name]->request_conn);
                 data_listener_thread.detach();
             }
             break;
@@ -280,12 +280,12 @@ bool Server::handle_message(int connFD, const std::string& name, unsigned int si
     return true;  
 }
 
-int Server::send_msg(const std::string& name, ClientMessageType mtype, const std::string& msg, int connFD) {
+int ComputeServer::send_msg(const std::string& name, ClientMessageType mtype, const std::string& msg, int connFD) {
     std::string message = std::to_string(msg.length()) + " " + std::to_string(mtype) + '\n' + msg;
     return send_message(institutions[name]->hostname.c_str(), institutions[name]->port, message.c_str(), connFD);
 }
 
-void Server::check_in(std::string name) {
+void ComputeServer::check_in(std::string name) {
     std::lock_guard<std::mutex> raii(expected_lock);
     // for (std::string inst : expected_institutions)
     if (!expected_institutions.count(name)) {
@@ -299,17 +299,17 @@ void Server::check_in(std::string name) {
             send_msg(it.first, Y_AND_COV, covariant_list + y_val_name);
         }
         // Now that all institutions are registered, start up the allele matching thread.
-        boost::thread msg_thread(&Server::allele_matcher, this);
+        boost::thread msg_thread(&ComputeServer::allele_matcher, this);
         msg_thread.detach();
     }
 }
 
-void Server::data_listener(int connFD) {
+void ComputeServer::data_listener(int connFD) {
     // We need a serial listener for this agreed upon connection!
     while(start_thread(connFD)) {}
 }
 
-void Server::allele_matcher() {
+void ComputeServer::allele_matcher() {
     auto start = std::chrono::high_resolution_clock::now();
     while(true) {
     loop_start:
@@ -385,24 +385,24 @@ void Server::allele_matcher() {
     }
 }
 
-Server& Server::get_instance(int port) {
-    static Server instance(port);
+ComputeServer& ComputeServer::get_instance(int port) {
+    static ComputeServer instance(port);
     return instance;
 }
 
-uint8_t* Server::get_rsa_pub_key() {
+uint8_t* ComputeServer::get_rsa_pub_key() {
     return get_instance().rsa_public_key;
 }
 
-int Server::get_num_threads() {
+int ComputeServer::get_num_threads() {
     return get_instance().num_threads;
 }
 
-int Server::get_num_institutions() {
+int ComputeServer::get_num_institutions() {
     return get_instance().institution_list.size();
 }
 
-std::string Server::get_covariants() {
+std::string ComputeServer::get_covariants() {
     std::string cov_list;
     std::vector<std::string> covariants = Parser::split(get_instance().covariant_list);
     for (std::string covariant : covariants) {
@@ -411,7 +411,7 @@ std::string Server::get_covariants() {
     return cov_list;
 }
 
-std::string Server::get_aes_key(const int institution_num, const int thread_id) {
+std::string ComputeServer::get_aes_key(const int institution_num, const int thread_id) {
     const std::string institution_name = get_instance().institution_list[institution_num];
     if (!get_instance().institutions.count(institution_name)) {
         return "";
@@ -420,7 +420,7 @@ std::string Server::get_aes_key(const int institution_num, const int thread_id) 
     return get_instance().institutions[institution_name]->get_aes_key(thread_id);
 }
 
-std::string Server::get_aes_iv(const int institution_num, const int thread_id) {
+std::string ComputeServer::get_aes_iv(const int institution_num, const int thread_id) {
     const std::string institution_name = get_instance().institution_list[institution_num];
     if (!get_instance().institutions.count(institution_name)) {
         return "";
@@ -429,7 +429,7 @@ std::string Server::get_aes_iv(const int institution_num, const int thread_id) {
     return get_instance().institutions[institution_name]->get_aes_iv(thread_id);
 }
 
-std::string Server::get_y_data(const int institution_num) {
+std::string ComputeServer::get_y_data(const int institution_num) {
     const std::string institution_name = get_instance().institution_list[institution_num];
     if (!get_instance().institutions.count(institution_name)) {
         return "";
@@ -438,7 +438,7 @@ std::string Server::get_y_data(const int institution_num) {
     return y_vals;
 }
 
-std::string Server::get_covariant_data(const int institution_num, const std::string& covariant_name) {
+std::string ComputeServer::get_covariant_data(const int institution_num, const std::string& covariant_name) {
     const std::string institution_name = get_instance().institution_list[institution_num];
     if (!get_instance().institutions.count(institution_name)) {
         return "";
@@ -447,7 +447,7 @@ std::string Server::get_covariant_data(const int institution_num, const std::str
     return cov_vals;
 }
 
-int Server::get_encypted_allele_size(const int institution_num) {
+int ComputeServer::get_encypted_allele_size(const int institution_num) {
     const std::string institution_name = get_instance().institution_list[institution_num];
     DataBlock* block = get_instance().institutions[institution_name]->get_top_block();
     if (!block) {
@@ -456,7 +456,7 @@ int Server::get_encypted_allele_size(const int institution_num) {
     return block->data.length();
 }
 
-std::string Server::get_allele_data(int num_blocks, const int thread_id) {
+std::string ComputeServer::get_allele_data(int num_blocks, const int thread_id) {
     std::string allele_data;
     if (!get_instance().allele_queue_list[thread_id].try_dequeue(allele_data)) {
         return "";

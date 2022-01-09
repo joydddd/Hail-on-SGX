@@ -57,7 +57,7 @@ ${BUILDDIR}/%.o: ${SRCDIR}/%.cpp
 	${CXX} ${CXXFLAGS} -c -o $@ $<
 
 build: pre $(OBJECTS)
-	cd ../../shared && $(MAKE) && cd ../server/host
+	cd ../../shared && $(MAKE) && cd ../compute_server/host
 	$(CXX) -o $(EXECUTABLE) $(BUILDDIR)/$(PROJECTNAME)_u.o $(OBJECTS) $(LDFLAGS) ${CRYPTFLAG}
 
 run: 

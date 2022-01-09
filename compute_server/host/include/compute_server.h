@@ -24,7 +24,7 @@
 #include "buffer_size.h"
 #include "readerwriterqueue.h"
 
-class Server {
+class ComputeServer {
   private:
     int port;
     int num_threads;
@@ -73,14 +73,14 @@ class Server {
 
   public:
 
-    Server(int port_in);
+    ComputeServer(int port_in);
 
-    ~Server();
+    ~ComputeServer();
 
     // create listening socket to handle requests on indefinitely
     void run();
 
-    static Server& get_instance(int port=0);
+    static ComputeServer& get_instance(int port=0);
 
     static uint8_t* get_rsa_pub_key();
     
