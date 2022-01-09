@@ -16,3 +16,4 @@ test_logistic
 .vscode/
 callgrind*
 *-multiplied.tsv
+.gdbinit
