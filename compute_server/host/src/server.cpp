@@ -287,7 +287,6 @@ int Server::send_msg(const std::string& name, ClientMessageType mtype, const std
 
 void Server::check_in(std::string name) {
     std::lock_guard<std::mutex> raii(expected_lock);
-    std::cout << name;
     // for (std::string inst : expected_institutions)
     if (!expected_institutions.count(name)) {
         throw std::runtime_error("Unexpected institution!\n");

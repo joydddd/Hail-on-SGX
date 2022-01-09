@@ -173,13 +173,12 @@ void setup_enclave(const int num_threads) {
 
 void log_regression(const int thread_id) {
 
-    // experimental - checking to see if spinning up threads adds a noticable amount of overhead... need +1 threads
+    // experimental - checking to see if spinning up threads adds a noticable amount of overhead... need +1 TCS in config
     while(!start_thread) {
         // spin until ready to go!
     }
 
     Buffer* buffer = buffer_list[thread_id];
-    //if (thread_id == 1) return;
     Batch* batch = nullptr;
     // DEBUG: tmp output file
     ofstream out_st("enc" + std::to_string(thread_id) + ".out");
@@ -211,8 +210,8 @@ void log_regression(const int thread_id) {
             ss << endl;
             // cout << ss.str();
         } catch (MathError& err) {
-            cerr << "MathError while fiting " << ss.str() << ": " << err.msg
-                 << endl;
+            // cerr << "MathError while fiting " << ss.str() << ": " << err.msg
+            //      << endl;
             ss << "\tNA\tNA\tNA" << endl;
         } catch (ERROR_t& err) {
             cerr << "ERROR " << ss.str() << ": " << err.msg << endl << std::flush;
@@ -223,5 +222,4 @@ void log_regression(const int thread_id) {
         out_st << ss.str();
         batch->write(ss.str());
     }
-    cout << "Logistic regression Finished! " << endl;
 }

@@ -2,7 +2,7 @@
 #include <iostream>
 #include <map>
 #define BUFFER_LINES 1
-#define OUTPUT_FILE "writeback.out"
+#define OUTPUT_FILE "gwasoutput/writeback.out"
 
 #include <gwas.h>
 
@@ -167,11 +167,8 @@ int start_enclave() {
 
     try {
         std::cout << "\n\n**RUNNING LOG REGRESSION**\n\n";
-        // DEBUG:
-       
-        // test_static(enclave);
-        int num_threads = Server::get_num_threads();
 
+        int num_threads = Server::get_num_threads();
         boost::thread_group thread_group;
         for (int thread_id = 0; thread_id < num_threads; ++thread_id) {
             boost::thread* enclave_thread = new boost::thread(log_regression, enclave, thread_id);
@@ -190,6 +187,7 @@ int start_enclave() {
         thread_group.join_all();
         // DEBUG: total execution time
         auto stop = std::chrono::high_resolution_clock::now();
+        cout << "Logistic regression finished!" << endl;
         auto duration = duration_cast<std::chrono::microseconds>(stop - start);
         cout << "Enclave time total: " << duration.count() << endl;
     } catch (ERROR_t& err) {

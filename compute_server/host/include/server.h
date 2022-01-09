@@ -29,6 +29,8 @@ class Server {
     int port;
     int num_threads;
 
+    bool server_eof = false;
+
     std::unordered_set<std::string> expected_institutions;
     std::unordered_set<std::string> expected_covariants;
     std::vector<std::string> institution_list;
