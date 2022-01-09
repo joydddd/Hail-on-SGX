@@ -8,7 +8,6 @@
 
 #include <iostream>
 #include <string>
-#include <mutex>
 
 #ifndef _AES_CRYPTO_H_
 #define _AES_CRYPTO_H_
@@ -30,17 +29,6 @@ class AESCrypto {
         CryptoPP::SecByteBlock key;
         CryptoPP::SecByteBlock iv;
         CryptoPP::CBC_Mode<CryptoPP::AES>::Encryption encryptor;
-        // TEST PURPOSES ONLY! DELETE THIS SOON!!!
-        //CryptoPP::CBC_Mode<CryptoPP::AES>::Decryption decryptor;
-
-        CryptoPP::Base64Encoder encoder;
-        std::string encoded;
-        CryptoPP::Base64Decoder decoder;
-        std::string decoded;
-
-        std::mutex encoding_lock;
-
-        std::mutex decoding_lock;
 
         
 };

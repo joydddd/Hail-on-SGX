@@ -7,9 +7,6 @@ AESCrypto::AESCrypto() {
     prng.GenerateBlock(iv, CryptoPP::AES::BLOCKSIZE);
 
     encryptor.SetKeyWithIV(key, key.size(), iv);
-
-    encoder.Attach(new CryptoPP::StringSink(encoded));
-    decoder.Attach(new CryptoPP::StringSink(decoded));
 }
 
 std::string AESCrypto::encrypt_line(const byte* line, int line_size) {
@@ -24,8 +21,10 @@ std::string AESCrypto::encrypt_line(const byte* line, int line_size) {
 }
 
 std::string AESCrypto::encode(const byte* data, int data_size) {
-    std::lock_guard<std::mutex> raii(encoding_lock);
-    encoded.clear();
+    CryptoPP::Base64Encoder encoder;
+    std::string encoded;
+    encoder.Attach(new CryptoPP::StringSink(encoded));
+
     encoder.Put(data, data_size);
     encoder.MessageEnd();
 
@@ -33,8 +32,10 @@ std::string AESCrypto::encode(const byte* data, int data_size) {
 }
 
 std::string AESCrypto::decode(const std::string& encoded_line) {
-    std::lock_guard<std::mutex> raii(decoding_lock);
-    decoded.clear();
+    CryptoPP::Base64Decoder decoder;
+    std::string decoded;
+    decoder.Attach(new CryptoPP::StringSink(decoded));
+
     decoder.Put((const byte*)&encoded_line[0], encoded_line.size());
     decoder.MessageEnd();
 
