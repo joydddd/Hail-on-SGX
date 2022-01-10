@@ -1,5 +1,7 @@
 build/
 bin/
+env/
+data/
 *.o
 */.DS_Store
 .DS_Store
@@ -11,6 +13,7 @@ gwas_args.h
 gwasenc
 gwashost
 *.out
+*.log
 test_logistic
 *_debug
 .vscode/
