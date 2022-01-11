@@ -63,6 +63,7 @@ void ComputeServer::init() {
     getline(y_file, y_val_name);
 
     num_threads = boost::thread::hardware_concurrency();
+    // num_threads = 1;
 
     // resize allele queue
     allele_queue_list.resize(num_threads);

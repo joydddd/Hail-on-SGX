@@ -3,6 +3,7 @@
 
 #include "logistic_regression.h"
 #include "string.h"
+#include <map>
 
 void aes_decrypt_client(const unsigned char* crypto, unsigned char* plaintxt, const ClientInfo& client, const int thread_id){
     aes_decrypt_data(client.aes_list[thread_id].aes_context,
@@ -35,31 +36,46 @@ void decrypt_line(char* crypt, char* plaintxt, size_t* plaintxt_length, const st
     char* tab_pos = end_of_loci;
     deque<int> client_list;
     /* get client list */
-    while(true) {
+    head++;
+    while (true) {
         if(*head == '\t'){
             *head = '\0';
             int client = atoi(tab_pos + 1);
             client_list.push_back(client);
+            // cout << "head = " << head - crypt
+            //      << " tab_pos = " << tab_pos - crypt << endl;
             // cout << "client: " << client << endl;
             *head = '\t';
             tab_pos = head;
         }
         if (*head == ' ') {
+            *head = '\0';
+            int client = atoi(tab_pos + 1);
+            client_list.push_back(client);
+            // cout << "head = " << head - crypt
+            //      << " tab_pos = " << tab_pos - crypt << endl;
+            // cout << "client: " << client << endl;
+            *head = ' ';
             head++;
             break;
         }
         head++;
     }
-    
 
     /* decrypt data */
-    for (int client = 0; client < client_info_list.size(); client++){
-        if (client != client_list.front()) { // this client does have target allele
-            for(int j = 0; j < client_info_list[client].size; j++)
+    map<int, char*> client_crypto_map;
+    for (size_t i = 0; i < client_list.size(); i++){
+        client_crypto_map[client_list[i]] = head;
+        head += client_info_list[client_list[i]].crypto_size;
+    }
+    for (int client = 0; client < client_info_list.size(); client++) {
+        if (client_crypto_map.find(client) == client_crypto_map.end()){  // this client does have target allele
+            for (int j = 0; j < client_info_list[client].size; j++)
                 *(plaintxt_head + j) = NA_uint8;
         } else {
-            aes_decrypt_client((const unsigned char *)head, (unsigned char *)plaintxt_head, client_info_list[client], thread_id);
-            head += client_info_list[client].crypto_size;
+            aes_decrypt_client((const unsigned char*)client_crypto_map[client],
+                                (unsigned char*)plaintxt_head,
+                                client_info_list[client], thread_id);
         }
         plaintxt_head += client_info_list[client].size;
     }
