@@ -154,7 +154,7 @@ bool ComputeServer::start_thread(int connFD) {
         }
         std::string header(header_buffer, header_size);
         // get the username and size of who sent this plaintext header
-        auto parsed_header = Parser::parse_server_header(header);
+        auto parsed_header = Parser::parse_compute_header(header);
         // guarded_cout("\nInstitution: " + std::get<0>(parsed_header) +
         // " Size: " + std::to_string(std::get<1>(parsed_header)) +
         // " Msg Type: " + std::to_string(std::get<2>(parsed_header)),
@@ -178,7 +178,7 @@ bool ComputeServer::start_thread(int connFD) {
     return true;
 }
 
-bool ComputeServer::handle_message(int connFD, const std::string& name, unsigned int size, ServerMessageType mtype,
+bool ComputeServer::handle_message(int connFD, const std::string& name, unsigned int size, ComputeServerMessageType mtype,
                             std::string& msg) {
     DataBlock* block;
     if (institutions.count(name)) {

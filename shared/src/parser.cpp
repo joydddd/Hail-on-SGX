@@ -36,8 +36,16 @@ std::vector<std::string> Parser::split(const std::string& s, char delim, int num
     return split_strings;
 }
 
-std::tuple<unsigned int, ClientMessageType> Parser::parse_client_header(std::string header) {
-    // get username and size of message body
+SocketInfo Parser::parse_socket_info(const std::string& s) {
+    auto hostname_and_port = Parser::split(s);
+    SocketInfo info;
+    info.hostname = hostname_and_port.front();
+    info.port = std::stoi(hostname_and_port.back());
+    return info;
+}
+
+std::tuple<unsigned int, ClientMessageType> Parser::parse_client_header(const std::string& header) {
+    // get size of message body and message type
     auto words = split(header, ' ');
     if (words.size() != 2) throw std::runtime_error("Invalid header - not size, message type");
     unsigned int size = convert_to_num(words.front());
@@ -45,16 +53,25 @@ std::tuple<unsigned int, ClientMessageType> Parser::parse_client_header(std::str
     return std::make_tuple(size, mtype);
 }
 
-std::tuple<std::string, unsigned int, ServerMessageType> Parser::parse_server_header(std::string header) {
-    // get username and size of message body
+std::tuple<std::string, unsigned int, ComputeServerMessageType> Parser::parse_compute_header(const std::string& header) {
+    // get username, size of message body, and message type
     auto words = split(header, ' ');
     if (words.size() != 3) throw std::runtime_error("Invalid header - not name, size, message type");
     unsigned int size = convert_to_num(words[1]);
-    ServerMessageType mtype = static_cast<ServerMessageType>(convert_to_num(words.back()));
+    ComputeServerMessageType mtype = static_cast<ComputeServerMessageType>(convert_to_num(words.back()));
     return std::make_tuple(words.front(), size, mtype);
 }
 
-DataBlock* Parser::parse_body(const std::string& message_body, ServerMessageType mtype, AESCrypto& decoder) {
+std::tuple<unsigned int, RegisterServerMessageType> Parser::parse_register_header(const std::string& header) {
+    // get size of message body and message type
+    auto words = split(header, ' ');
+    if (words.size() != 2) throw std::runtime_error("Invalid header - not size, message type");
+    unsigned int size = convert_to_num(words.front());
+    RegisterServerMessageType mtype = static_cast<RegisterServerMessageType>(convert_to_num(words.back()));
+    return std::make_tuple(size, mtype);
+}
+
+DataBlock* Parser::parse_body(const std::string& message_body, ComputeServerMessageType mtype, AESCrypto& decoder) {
     if (mtype != DATA && mtype != EOF_DATA) return nullptr;
     std::vector<std::string> split_line = Parser::split(message_body, '\t', 3);
     if (split_line.size() != 4) {

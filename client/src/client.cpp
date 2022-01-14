@@ -133,7 +133,7 @@ void Client::handle_message(int connFD, unsigned int size, ClientMessageType mty
     }
 
     std::string response;
-    ServerMessageType response_mtype;
+    ComputeServerMessageType response_mtype;
 
     switch (mtype) {
         case RSA_PUB_KEY:
@@ -210,7 +210,7 @@ void Client::handle_message(int connFD, unsigned int size, ClientMessageType mty
     }
 }
 
-void Client::send_msg(ServerMessageType mtype, const std::string& msg, int connFD) {
+void Client::send_msg(ComputeServerMessageType mtype, const std::string& msg, int connFD) {
     std::string message = clientname + " " + std::to_string(msg.length()) + " " + std::to_string(mtype) +"\n" + msg;
     send_message(server_hostname.c_str(), server_port, message.c_str(), connFD);
 }
@@ -241,7 +241,7 @@ void Client::data_sender(int connFD) {
     while(start_thread(connFD)) {}
 }
 
-void Client::send_tsv_file(std::string filename, ServerMessageType mtype) {
+void Client::send_tsv_file(std::string filename, ComputeServerMessageType mtype) {
     std::ifstream tsv_file(filename + ".tsv");
     std::string data;
     // TODO: fix this code once Joy's enclave can handle a different format

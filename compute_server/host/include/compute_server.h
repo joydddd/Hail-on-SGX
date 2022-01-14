@@ -55,7 +55,7 @@ class ComputeServer {
     void init();
     
     // parses and calls the appropriate handler for an incoming client request
-    bool handle_message(int connFD, const std::string& name, unsigned int size, ServerMessageType mtype, std::string& msg);
+    bool handle_message(int connFD, const std::string& name, unsigned int size, ComputeServerMessageType mtype, std::string& msg);
 
     // construct response header, encrypt response body, and send
     int send_msg(const std::string& name, ClientMessageType mtype, const std::string& msg, int connFD=-1);

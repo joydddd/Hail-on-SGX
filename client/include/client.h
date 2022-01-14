@@ -57,7 +57,7 @@ class Client {
     void handle_message(int connFD, unsigned int size, ClientMessageType mtype, std::string& msg);
 
     // construct response header, encrypt response body, and send
-    void send_msg(ServerMessageType mtype, const std::string& msg, int connFD=-1);
+    void send_msg(ComputeServerMessageType mtype, const std::string& msg, int connFD=-1);
 
     // start a thread that will handle a message and exit properly if it finds an error
     bool start_thread(int connFD);
@@ -66,7 +66,7 @@ class Client {
 
     void data_sender(int connFD);
 
-    void send_tsv_file(std::string filename, ServerMessageType mtype);
+    void send_tsv_file(std::string filename, ComputeServerMessageType mtype);
 
 };
 
