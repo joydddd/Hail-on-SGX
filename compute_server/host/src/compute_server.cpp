@@ -457,10 +457,17 @@ int ComputeServer::get_encypted_allele_size(const int institution_num) {
     return block->data.length();
 }
 
-std::string ComputeServer::get_allele_data(int num_blocks, const int thread_id) {
-    std::string allele_data;
-    if (!get_instance().allele_queue_list[thread_id].try_dequeue(allele_data)) {
-        return "";
+std::vector<std::string> ComputeServer::get_allele_data(int num_blocks, const int thread_id) {
+    std::vector<std::string> allele_data;
+    allele_data.reserve(num_blocks);
+    for (int i = 0; i < num_blocks; i++) {
+        allele_data.push_back(std::string());
+        if (!get_instance().allele_queue_list[thread_id].try_dequeue(
+                allele_data[i])) {
+            allele_data.pop_back();
+            return allele_data;
+        }
     }
+
     return allele_data;
 }

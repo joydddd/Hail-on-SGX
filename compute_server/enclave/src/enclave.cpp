@@ -14,10 +14,12 @@
 #include "gwas_t.h"
 #endif
 
+#include "enclave.h"
+
 static std::vector<Buffer*> buffer_list;
-static std::vector<ClientInfo> client_info_list;
-static std::vector<int> client_y_size;
 static int num_clients;
+std::vector<ClientInfo> client_info_list;
+std::vector<int> client_y_size;
 static Log_gwas* gwas;
 static volatile bool start_thread = false;
 
@@ -187,7 +189,7 @@ void log_regression(const int thread_id) {
     
     /* process rows */
     while (true) {
-        if (!batch || batch->st != Batch::Working) batch = buffer->launch(client_info_list, thread_id);
+        if (!batch || batch->st != Batch::Working) batch = buffer->launch(thread_id);
         if (!batch) {
             // out_st << "End of Output" << endl;
             break;
@@ -221,7 +223,8 @@ void log_regression(const int thread_id) {
             exit(1);
         }
         // DEBUG: tmp output to file
-        out_st << ss.str();
+        // cout << ss.str();
+        // out_st << ss.str();
         batch->write(ss.str());
     }
 }

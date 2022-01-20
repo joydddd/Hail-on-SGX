@@ -1,6 +1,7 @@
 #include "batch.h"
 #include "buffer.h"
 
+#include "enclave.h"
 #include "logistic_regression.h"
 #include "string.h"
 #include <map>
@@ -13,7 +14,29 @@ void aes_decrypt_client(const unsigned char* crypto, unsigned char* plaintxt, co
                      plaintxt);
 }
 
-void decrypt_line(char* crypt, char* plaintxt, size_t* plaintxt_length, const std::vector<ClientInfo>& client_info_list, const int thread_id) {
+void decrypt_batch(char* crypt, char* plaintxt, size_t* plaintxt_length, const int thread_id, const int line_num){
+    *plaintxt_length = 0;
+    char* plaintxt_head = plaintxt;
+    for (int i = 0; i < line_num; i++) {
+        size_t plaintxt_len = 0;
+        crypt = decrypt_line(crypt, plaintxt_head, &plaintxt_len, thread_id);
+        *plaintxt_length += plaintxt_len;
+        plaintxt_head += plaintxt_len;
+    }
+    // cout << "plaintxt: ";
+    // for (int i = 0; i < 2000; i++){
+    //     printf("%x ", (uint8_t)plaintxt[i]);
+    // }
+    // cout << "plaintxt length: " << *plaintxt_length << endl;
+}
+
+char* decrypt_line(char* crypt, char* plaintxt, size_t* plaintxt_length, const int thread_id) {
+    // cout << "crypto" << endl;
+    // for (int i = 0; i < 500; i++) {
+    //     printf("%x ", (uint8_t)crypt[i]);
+    // }
+    // cout << endl;
+
     vector<char*> client_begin;
     char* head = crypt;
     char* end_of_allele = crypt, *end_of_loci = crypt;
@@ -83,6 +106,13 @@ void decrypt_line(char* crypt, char* plaintxt, size_t* plaintxt_length, const st
     plaintxt_head++;
     *plaintxt_head = '\0';
     *plaintxt_length = plaintxt_head - plaintxt;
+
+    // cout << "addr: " << (uint64_t)plaintxt << "plaintxt: " << endl;
+    // for (int i = 0; i < 520; i++) {
+    //     printf("%x ", (uint8_t)plaintxt[i]);
+    // }
+    // cout << endl;
+    return head;
 }
 
 Buffer::Buffer(size_t _row_size, Row_T row_type)
@@ -114,8 +144,8 @@ void Buffer::finish(Batch* finishing_batch) {
     free_batches.push_back(finishing_batch);
 }
 
-Batch* Buffer::launch(std::vector<ClientInfo>& client_info_list, const int thread_id) {
-    bool rt = false;
+Batch* Buffer::launch(const int thread_id) {
+    int rt = 0;
     while (!rt) {
         getbatch(&rt, crypttxt, thread_id);
     }
@@ -123,6 +153,6 @@ Batch* Buffer::launch(std::vector<ClientInfo>& client_info_list, const int threa
     if (free_batches.empty()) return nullptr;
     Batch* new_b = free_batches.front();
     free_batches.pop_front();
-    decrypt_line(crypttxt, new_b->load_plaintxt(), new_b->plaintxt_size(), client_info_list, thread_id);
+    decrypt_batch(crypttxt, new_b->load_plaintxt(), new_b->plaintxt_size(), thread_id, rt);
     return new_b;
 }

@@ -1,7 +1,7 @@
 #include <fstream>
 #include <iostream>
 #include <map>
-#define BUFFER_LINES 1
+#define BUFFER_LINES 5
 #define OUTPUT_FILE "gwasoutput/writeback.out"
 
 #include <gwas.h>
@@ -94,15 +94,18 @@ int get_encrypted_x_size(const int client_num) {
     return ComputeServer::get_encypted_allele_size(client_num);
 }
 
-bool getbatch(char batch[ENCLAVE_READ_BUFFER_SIZE], const int thread_id) {
-    // TODO: maybe change this so we read in a diff number for each 
-    std::string batch_data = ComputeServer::get_allele_data(BUFFER_LINES, thread_id);
-    if (!batch_data.length()) {
-        return false;
+int getbatch(char batch[ENCLAVE_READ_BUFFER_SIZE], const int thread_id) {
+    char* batch_head = batch;
+    // TODO: maybe change this so we read in a diff number for each
+    std::vector<std::string> batch_data = ComputeServer::get_allele_data(BUFFER_LINES, thread_id);
+    for (auto& line : batch_data) {
+        // std::cout << "BATCH DATA: " << batch_data << std::endl;
+        std::memcpy(batch_head, &line[0], line.length());
+        // cerr << " line length " << line.length() << endl;
+        // printf("%s\n", batch_head);
+        batch_head += line.length();
     }
-    // std::cout << "BATCH DATA: " << batch_data << std::endl;
-    std::memcpy(batch, &batch_data[0], batch_data.length());
-    return true;
+    return batch_data.size();
 }
 
 void writebatch(Row_T type, char buffer[ENCLAVE_OUTPUT_BUFFER_SIZE]) {

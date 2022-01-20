@@ -51,7 +51,7 @@ enclave {
         // get batch from outside of enclave
         // return const char* EOFSeperator if reaches end of dataset
         // *rt = false if the batch isn't avaialbe on host
-        bool getbatch(  
+        int getbatch(  
             [out] char batch[ENCLAVE_READ_BUFFER_SIZE],
             const int thread_id);
 

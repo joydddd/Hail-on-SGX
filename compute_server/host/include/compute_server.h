@@ -100,7 +100,7 @@ class ComputeServer {
     
     static int get_encypted_allele_size(const int institution_num);
 
-    static std::string get_allele_data(int num_blocks, const int thread_id);
+    static std::vector<std::string> get_allele_data(int num_blocks, const int thread_id);
 };
 
 #endif /* _SERVER_H_ */
