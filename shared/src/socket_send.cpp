@@ -41,7 +41,7 @@ int make_client_sockaddr(struct sockaddr_in *addr, const char *hostname, int por
 	return 0;
 }
 
- int get_port_number(int sockfd) {
+int get_port_number(int sockfd) {
  	struct sockaddr_in addr;
 	socklen_t length = sizeof(addr);
 	if (getsockname(sockfd, (sockaddr *) &addr, &length) == -1) {
@@ -81,4 +81,12 @@ int send_message(const char *hostname, int port, const char *message, int sock) 
 	}
 
 	return sockfd;
+}
+
+char* get_hostname_str() {
+	char hostname[HOST_NAME_MAX + 1];
+	gethostname(hostname, HOST_NAME_MAX + 1);
+	struct hostent* h;
+	h = gethostbyname(hostname);
+	return h->h_name;
 }

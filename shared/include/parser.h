@@ -40,9 +40,10 @@ enum RegisterServerMessageType {
   CLIENT_REGISTER
 };
 
-struct SocketInfo {
+struct ConnectionInfo {
   std::string hostname;
   unsigned int port;
+  unsigned int num_threads; // only for compute server
 };
 
 struct DataBlock {
@@ -58,11 +59,7 @@ class Parser {
     Parser(/* args */);
     ~Parser();
     // parse header and return tuple containing relevant info
-    static std::tuple<unsigned int, ClientMessageType> parse_client_header(const std::string& header);
-
-    static std::tuple<std::string, unsigned int, ComputeServerMessageType> parse_compute_header(const std::string& header);
-
-    static std::tuple<unsigned int, RegisterServerMessageType> parse_register_header(const std::string& header);
+    static std::tuple<std::string, unsigned int, unsigned int> parse_header(const std::string& header);
 
     // decrypt the message body
     static std::string decrypt_body(std::string user, unsigned int size, 
@@ -74,12 +71,12 @@ class Parser {
     // parse message body into the relevant arguments we need
     static DataBlock* parse_body(const std::string& message_body, ComputeServerMessageType mtype, AESCrypto& decoder);
 
-    static std::string parse_allele_line(const std::string& line, std::string& vals, std::vector<AESCrypto>& encryptor_list, int num_patients);
+    static std::string parse_allele_line(const std::string& line, std::string& vals, std::vector<AESCrypto>& encryptor_list, int num_patients, int num_threads);
 
     // split a given string based on the specified delimiter
-    static std::vector<std::string> split(const std::string& s, char delim=' ', int num_splits=-1);
+    static std::vector<std::string> split(const std::string& str, char delim=' ', int num_splits=-1);
 
-    static SocketInfo parse_socket_info(const std::string& s);
+    static void parse_connection_info(const std::string& str, ConnectionInfo& info, bool parse_num_threads=false);
 
     static void validate_path(const std::string& pathname, std::vector<std::string>& split_path);
 

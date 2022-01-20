@@ -5,6 +5,7 @@
 #include <string.h>		// memcpy()
 #include <sys/socket.h>		// getsockname()
 #include <unistd.h>		// stderr
+#include <limits.h> // HOSTNAME_MAX
 
 #ifndef _HELPERS_H_
 #define _HELPERS_H_
@@ -60,5 +61,7 @@ int make_client_sockaddr(struct sockaddr_in *addr, const char *hostname, int por
  *		0 on success, -1 on failure.
  */
 int send_message(const char *hostname, int port, const char *message, int sock = -1);
+
+char* get_hostname_str();
 
 #endif

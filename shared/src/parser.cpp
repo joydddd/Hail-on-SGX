@@ -18,13 +18,13 @@ Parser::~Parser() {
 
 }
 
-std::vector<std::string> Parser::split(const std::string& s, char delim, int num_splits) {
+std::vector<std::string> Parser::split(const std::string& str, char delim, int num_splits) {
     std::vector<std::string> split_strings;
     std::string split_string;
     int i = 0;
-    for (char c : s) {
-        if (c != delim || i == num_splits) {
-            split_string += c;
+    for (char ch : str) {
+        if (ch != delim || i == num_splits) {
+            split_string += ch;
         } 
         else {
             ++i;
@@ -36,39 +36,21 @@ std::vector<std::string> Parser::split(const std::string& s, char delim, int num
     return split_strings;
 }
 
-SocketInfo Parser::parse_socket_info(const std::string& s) {
-    auto hostname_and_port = Parser::split(s);
-    SocketInfo info;
-    info.hostname = hostname_and_port.front();
-    info.port = std::stoi(hostname_and_port.back());
-    return info;
+void Parser::parse_connection_info(const std::string& str, ConnectionInfo& info, bool parse_num_threads) {
+    std::vector<std::string> parsed_info = Parser::split(str, '\t');
+    info.hostname = parsed_info[0];
+    info.port = std::stoi(parsed_info[1]);
+
+    if (parse_num_threads) {
+        info.num_threads = std::stoi(parsed_info[2]);
+    }
 }
 
-std::tuple<unsigned int, ClientMessageType> Parser::parse_client_header(const std::string& header) {
-    // get size of message body and message type
-    auto words = split(header, ' ');
-    if (words.size() != 2) throw std::runtime_error("Invalid header - not size, message type");
-    unsigned int size = convert_to_num(words.front());
-    ClientMessageType mtype = static_cast<ClientMessageType>(convert_to_num(words.back()));
-    return std::make_tuple(size, mtype);
-}
-
-std::tuple<std::string, unsigned int, ComputeServerMessageType> Parser::parse_compute_header(const std::string& header) {
+std::tuple<std::string, unsigned int, unsigned int> Parser::parse_header(const std::string& header) {
     // get username, size of message body, and message type
-    auto words = split(header, ' ');
-    if (words.size() != 3) throw std::runtime_error("Invalid header - not name, size, message type");
-    unsigned int size = convert_to_num(words[1]);
-    ComputeServerMessageType mtype = static_cast<ComputeServerMessageType>(convert_to_num(words.back()));
-    return std::make_tuple(words.front(), size, mtype);
-}
-
-std::tuple<unsigned int, RegisterServerMessageType> Parser::parse_register_header(const std::string& header) {
-    // get size of message body and message type
-    auto words = split(header, ' ');
-    if (words.size() != 2) throw std::runtime_error("Invalid header - not size, message type");
-    unsigned int size = convert_to_num(words.front());
-    RegisterServerMessageType mtype = static_cast<RegisterServerMessageType>(convert_to_num(words.back()));
-    return std::make_tuple(size, mtype);
+    auto header_split = split(header, ' ');
+    if (header_split.size() != 3) throw std::runtime_error("Invalid header - not name, size, message type");
+    return std::make_tuple(header_split[0], convert_to_num(header_split[1]), convert_to_num(header_split[2]));
 }
 
 DataBlock* Parser::parse_body(const std::string& message_body, ComputeServerMessageType mtype, AESCrypto& decoder) {
@@ -87,11 +69,11 @@ DataBlock* Parser::parse_body(const std::string& message_body, ComputeServerMess
     return block;
 }
 
-std::string Parser::parse_allele_line(const std::string& line, std::string& vals, std::vector<AESCrypto>& encryptor_list, int num_patients) {
+std::string Parser::parse_allele_line(const std::string& line, std::string& vals, std::vector<AESCrypto>& encryptor_list, int num_patients, int num_threads) {
     std::vector<std::string> line_split = Parser::split(line, '\t', 2);
     std::string locus_and_allele = line_split[0] + '\t' + line_split[1] + '\t';
     // Use the AES encryptor that corresponds to the appropriate thread on the server end
-    AESCrypto& encryptor = encryptor_list[hash_string(locus_and_allele, encryptor_list.size(), true)];
+    AESCrypto& encryptor = encryptor_list[hash_string(locus_and_allele, num_threads, true)];
 
     std::string line_vals = line_split.back();
     int val_idx = 0;

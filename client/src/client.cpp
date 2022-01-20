@@ -4,21 +4,33 @@
 
 std::mutex cout_lock;
 
-Client::Client(std::string clientname, std::string client_hostname, std::string server_hostname, int listen_port, int server_port) 
-    : clientname(clientname), client_hostname(client_hostname), server_hostname(server_hostname), 
-      listen_port(listen_port), server_port(server_port), blocks_sent(0), num_patients(0), 
-      sender_running(false), sent_all_data(false), xval("alleles-multiplied.tsv") {
-    init();
+Client::Client(const std::string& config_file) {
+    init(config_file);
 }
 
 Client::~Client() {}
 
-void Client::init() {
+void Client::init(const std::string& config_file) {
+    std::ifstream client_config_file(config_file);
+    client_config_file >> client_config;
+
+    client_name = client_config["client_name"];
+    client_hostname = std::string(get_hostname_str());
+    listen_port = client_config["client_bind_port"];
+
+
+    xval.open(client_config["allele_file"]);
     // remove first line from file
     std::string garbage;
     getline(xval, garbage);
 
-    send_msg(REGISTER, client_hostname + " " + std::to_string(listen_port));
+    auto info = client_config["register_server_info"];
+    send_msg(info["hostname"], info["port"], RegisterServerMessageType::CLIENT_REGISTER, client_hostname + "\t" + std::to_string(listen_port));
+
+    blocks_sent = 0;
+    num_patients = 0;
+    sender_running = false;
+    sent_all_data = false;
 }
 
 void Client::run() {
@@ -102,22 +114,23 @@ bool Client::start_thread(int connFD) {
         }
         std::string header(header_buffer, header_size);
 
-        auto parsed_header = Parser::parse_client_header(header);
-        guarded_cout("Size: " + std::to_string(std::get<0>(parsed_header)) + 
-                     " Msg Type: " + std::to_string(std::get<1>(parsed_header)), cout_lock);
+        auto parsed_header = Parser::parse_header(header);
+        guarded_cout("ID: " + std::get<0>(parsed_header) +
+                     " Size: " + std::to_string(std::get<1>(parsed_header)) + 
+                     " Msg Type: " + std::to_string(std::get<2>(parsed_header)), cout_lock);
         
         char body_buffer[1024];
-        if (std::get<0>(parsed_header) != 0) {
+        if (std::get<1>(parsed_header) != 0) {
             // read in encrypted body
-            int rval = recv(connFD, body_buffer, std::get<0>(parsed_header), MSG_WAITALL);
+            int rval = recv(connFD, body_buffer, std::get<1>(parsed_header), MSG_WAITALL);
             if (rval == -1) {
                 throw std::runtime_error("Error reading request body");
             }
         }
-        std::string encrypted_body(body_buffer, std::get<0>(parsed_header));
+        std::string encrypted_body(body_buffer, std::get<1>(parsed_header));
         guarded_cout("\nEncrypted body:\n" + encrypted_body, cout_lock);
 
-        handle_message(connFD, std::get<0>(parsed_header), std::get<1>(parsed_header), encrypted_body);
+        handle_message(connFD, std::stoi(std::get<0>(parsed_header)), static_cast<ClientMessageType>(std::get<2>(parsed_header)), encrypted_body);
     }
     catch (const std::runtime_error e)  {
         guarded_cout("Exception " + std::string(e.what()) + "\n", cout_lock);
@@ -127,20 +140,41 @@ bool Client::start_thread(int connFD) {
     return true;
 }
 
-void Client::handle_message(int connFD, unsigned int size, ClientMessageType mtype, std::string& msg) {
-    if (sent_all_data) {
-        return;
-    }
+void Client::handle_message(int connFD, const unsigned int global_id, const ClientMessageType mtype, std::string& msg) {
+    // if (sent_all_data) {
+    //     return;
+    // }
 
     std::string response;
     ComputeServerMessageType response_mtype;
 
     switch (mtype) {
+        case COMPUTE_INFO:
+        {
+            std::vector<std::string> parsed_compute_info = Parser::split(msg, '\n');
+            int max_thread_count = 0;
+            // All received data should be formatted as:
+            // [hostname]   [port]   [thread count]
+            for (const std::string& compute_info : parsed_compute_info) {
+                ConnectionInfo info;
+                Parser::parse_connection_info(compute_info, info, true);
+                compute_server_info.push_back(info);
+
+                max_thread_count = std::max(static_cast<int>(info.num_threads), max_thread_count);
+            }
+            // Create enough AES encryptors for the largest compute server
+            aes_encryptor_list = std::vector<AESCrypto>(max_thread_count);
+
+            for (int id = 0; id < compute_server_info.size(); ++id) {
+                send_msg(id, REGISTER, client_hostname + "\t" + std::to_string(listen_port));
+            }
+
+            break;
+        }
         case RSA_PUB_KEY:
         {
-            int server_num_threads = std::stoi(Parser::split(msg, '\t', 1).front());
             // I wanted to use .resize() but the compiler cried about it, this is not ideal but acceptable.
-            aes_encryptor_list = std::vector<AESCrypto>(server_num_threads);
+            
             const std::string header = "-----BEGIN PUBLIC KEY-----";
             const std::string footer = "-----END PUBLIC KEY-----";
 
@@ -159,8 +193,8 @@ void Client::handle_message(int connFD, unsigned int size, ClientMessageType mty
             
             CryptoPP::RSAES<CryptoPP::OAEP<CryptoPP::SHA256> >::Encryptor rsa_encryptor(public_key);
 
-            for (int thread_id = 0; thread_id < server_num_threads; ++thread_id) {
-                send_msg(AES_KEY, aes_encryptor_list[thread_id].get_key_and_iv(rsa_encryptor) + '\t' + std::to_string(thread_id));
+            for (int thread_id = 0; thread_id < compute_server_info[global_id].num_threads; ++thread_id) {
+                send_msg(global_id, AES_KEY, aes_encryptor_list[thread_id].get_key_and_iv(rsa_encryptor) + "\t" + std::to_string(thread_id));
             }
             guarded_cout("IMPLEMENT ATTESTATION!\n", cout_lock);
             break;
@@ -174,11 +208,11 @@ void Client::handle_message(int connFD, unsigned int size, ClientMessageType mty
             covariants.pop_back();
 
             // send the data in each TSV file over to the server
-            send_tsv_file(y_val, Y_VAL);
+            send_tsv_file(global_id, y_val, Y_VAL);
             for (std::string covariant : covariants) {
                 // Ignore requests for "1", this is handled within the enclave
                 if (covariant != "1") {
-                    send_tsv_file(covariant, COVARIANT);
+                    send_tsv_file(global_id, covariant, COVARIANT);
                 }
             }
             break;
@@ -188,13 +222,14 @@ void Client::handle_message(int connFD, unsigned int size, ClientMessageType mty
             auto start = std::chrono::high_resolution_clock::now();
             response_mtype = DATA;
             std::string block;
-            while(get_block(block)) {
-                send_msg(response_mtype, block, connFD);
+            ConnectionInfo info = compute_server_info[global_id];
+            while(get_block(block, info.num_threads)) {
+                send_msg(info.hostname, info.port, response_mtype, block, connFD);
             }
             // If get_block failed we have reached the end of the file, send an EOF.
             response_mtype = EOF_DATA;
             sent_all_data = true;
-            send_msg(response_mtype, block, connFD);
+            send_msg(global_id, response_mtype, block, connFD);
             auto stop = std::chrono::high_resolution_clock::now();
             auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
             std::cout << "Data send time total: " << duration.count() << std::endl;
@@ -210,12 +245,18 @@ void Client::handle_message(int connFD, unsigned int size, ClientMessageType mty
     }
 }
 
-void Client::send_msg(ComputeServerMessageType mtype, const std::string& msg, int connFD) {
-    std::string message = clientname + " " + std::to_string(msg.length()) + " " + std::to_string(mtype) +"\n" + msg;
-    send_message(server_hostname.c_str(), server_port, message.c_str(), connFD);
+void Client::send_msg(const unsigned int global_id, const unsigned int mtype, const std::string& msg, int connFD) {
+    std::string message = client_name + " " + std::to_string(msg.length()) + " " + std::to_string(mtype) + "\n" + msg;
+    ConnectionInfo info = compute_server_info[global_id];
+    send_message(info.hostname.c_str(), info.port, message.c_str(), connFD);
 }
 
-bool Client::get_block(std::string& block) {
+void Client::send_msg(const std::string& hostname, unsigned int port, unsigned int mtype, const std::string& msg, int connFD) {
+    std::string message = client_name + " " + std::to_string(msg.length()) + " " + std::to_string(mtype) + "\n" + msg;
+    send_message(hostname.c_str(), port, message.c_str(), connFD);
+}
+
+bool Client::get_block(std::string& block, int num_threads) {
     std::string line;
     std::string vals;
     vals.resize(num_patients);
@@ -231,7 +272,7 @@ bool Client::get_block(std::string& block) {
             num_patients = Parser::split(line, '\t').size() - 2;
             vals.resize(num_patients);
         }
-        block.append(Parser::parse_allele_line(line, vals, aes_encryptor_list, num_patients)); 
+        block.append(Parser::parse_allele_line(line, vals, aes_encryptor_list, num_patients, num_threads)); 
     }
     return true;
 }
@@ -241,7 +282,7 @@ void Client::data_sender(int connFD) {
     while(start_thread(connFD)) {}
 }
 
-void Client::send_tsv_file(std::string filename, ComputeServerMessageType mtype) {
+void Client::send_tsv_file(unsigned int global_id, const std::string& filename, ComputeServerMessageType mtype) {
     std::ifstream tsv_file(filename + ".tsv");
     std::string data;
     // TODO: fix this code once Joy's enclave can handle a different format
@@ -263,5 +304,5 @@ void Client::send_tsv_file(std::string filename, ComputeServerMessageType mtype)
     if (mtype == COVARIANT) {
         data = filename + " " + data;
     }
-    send_msg(mtype, data);
+    send_msg(global_id, mtype, data);
 }

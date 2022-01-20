@@ -11,7 +11,6 @@
 #include <chrono>
 #include <stdint.h>
 #include <string>
-#include "parser.h"
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netdb.h>
@@ -19,51 +18,48 @@
 #include "enclave.h"
 #include "hashing.h"
 
-using std::cout;
-using std::cin;
-using std::endl;
-
 std::mutex cout_lock;
 
 const int MIN_BLOCK_COUNT = 50;
 
-ComputeServer::ComputeServer(int port_in) : port(port_in) {
-    init();
+ComputeServer::ComputeServer(const std::string& config_file) {
+    init(config_file);
 }
 
 ComputeServer::~ComputeServer() {
 
 }
 
-void ComputeServer::init() {
+void ComputeServer::init(const std::string& config_file) {
+    num_threads = boost::thread::hardware_concurrency();
+
+    std::ifstream compute_config_file(config_file);
+    compute_config_file >> compute_config;
+
+    // Read in information we need to register compute server
+    port = compute_config["compute_server_bind_port"];
+    std::string msg = std::string(get_hostname_str()) + "\t" + std::to_string(port) + "\t" + std::to_string(num_threads);
+    send_msg(compute_config["register_server_info"]["hostname"], 
+             compute_config["register_server_info"]["port"],
+             RegisterServerMessageType::COMPUTE_REGISTER,
+             msg);
+
     // read in list institutions/clients involved in GWAS
-    std::ifstream instituion_file("institutions.txt");
-    std::string institution;
-    while(getline(instituion_file, institution)) {
-        expected_institutions.insert(institution);
+    for (int i = 0; i < compute_config["institutions"].size(); ++i) {
+        std::string institution = compute_config["institutions"][i];
         institution_list.push_back(institution);
+        expected_institutions.insert(institution);
     }
 
-    // read in list of covariants
-    std::ifstream covariant_file("covariants.txt");
-    std::string covariant_line;
-    while(getline(covariant_file, covariant_line)) {
-        std::vector<std::string> covariant_and_dtype = Parser::split(covariant_line);
-        std::string covariant = covariant_and_dtype.front();
-        std::string dtype = covariant_and_dtype.back();
-        covariant_dtype[covariant] = dtype;
+    for (int i = 0; i < compute_config["covariants"].size(); ++i) {
+        std::string covariant = compute_config["covariants"][i];
         if (covariant != "1") {
             expected_covariants.insert(covariant);
         }
         covariant_list.append(covariant + " ");
     }
 
-    // read in name of Y value
-    std::ifstream y_file("y_val.txt");
-    getline(y_file, y_val_name);
-
-    num_threads = boost::thread::hardware_concurrency();
-    // num_threads = 1;
+    y_val_name = compute_config["y_val_name"];
 
     // resize allele queue
     allele_queue_list.resize(num_threads);
@@ -155,7 +151,7 @@ bool ComputeServer::start_thread(int connFD) {
         }
         std::string header(header_buffer, header_size);
         // get the username and size of who sent this plaintext header
-        auto parsed_header = Parser::parse_compute_header(header);
+        auto parsed_header = Parser::parse_header(header);
         // guarded_cout("\nInstitution: " + std::get<0>(parsed_header) +
         // " Size: " + std::to_string(std::get<1>(parsed_header)) +
         // " Msg Type: " + std::to_string(std::get<2>(parsed_header)),
@@ -169,7 +165,7 @@ bool ComputeServer::start_thread(int connFD) {
         }
         std::string encrypted_body(body_buffer, std::get<1>(parsed_header));
         // guarded_cout("\nEncrypted body:\n" + encrypted_body, cout_lock);
-        return handle_message(connFD, std::get<0>(parsed_header), std::get<1>(parsed_header), std::get<2>(parsed_header), encrypted_body);
+        return handle_message(connFD, std::get<0>(parsed_header), std::get<1>(parsed_header), static_cast<ComputeServerMessageType>(std::get<2>(parsed_header)), encrypted_body);
     }
     catch (const std::runtime_error e)  {
         guarded_cout("Exception: " + std::string(e.what()), cout_lock);
@@ -190,12 +186,17 @@ bool ComputeServer::handle_message(int connFD, const std::string& name, unsigned
     ClientMessageType response_mtype;
 
     switch (mtype) {
+        case GLOBAL_ID:
+        {  
+            global_id = std::stoi(msg);
+            break;
+        }
         case REGISTER:
         {
             if (institutions.count(name)) {
                 throw std::runtime_error("User already registered");
             }
-            std::vector<std::string> hostname_and_port = Parser::split(msg);
+            std::vector<std::string> hostname_and_port = Parser::split(msg, '\t');
             for (int id = 0; id < institution_list.size(); ++id) {
                 // Look for client id!
                 if (institution_list[id] == name) {
@@ -206,7 +207,7 @@ bool ComputeServer::handle_message(int connFD, const std::string& name, unsigned
                 }
             }
             response_mtype = RSA_PUB_KEY;
-            response = std::to_string(num_threads) + "\t" + reinterpret_cast<char *>(rsa_public_key);
+            response = reinterpret_cast<char *>(rsa_public_key);
             break;
         }
         case AES_KEY:
@@ -281,9 +282,14 @@ bool ComputeServer::handle_message(int connFD, const std::string& name, unsigned
     return true;  
 }
 
-int ComputeServer::send_msg(const std::string& name, ClientMessageType mtype, const std::string& msg, int connFD) {
-    std::string message = std::to_string(msg.length()) + " " + std::to_string(mtype) + '\n' + msg;
+int ComputeServer::send_msg(const std::string& name, const int mtype, const std::string& msg, int connFD) {
+    std::string message = std::to_string(global_id) + " " + std::to_string(msg.length()) + " " + std::to_string(mtype) + '\n' + msg;
     return send_message(institutions[name]->hostname.c_str(), institutions[name]->port, message.c_str(), connFD);
+}
+
+int ComputeServer::send_msg(const std::string& hostname, const int port, const int mtype, const std::string& msg, int connFD) {
+    std::string message = std::to_string(global_id) + " " + std::to_string(msg.length()) + " " + std::to_string(mtype) + '\n' + msg;
+    return send_message(hostname.c_str(), port, message.c_str(), connFD);
 }
 
 void ComputeServer::check_in(std::string name) {
@@ -386,8 +392,8 @@ void ComputeServer::allele_matcher() {
     }
 }
 
-ComputeServer& ComputeServer::get_instance(int port) {
-    static ComputeServer instance(port);
+ComputeServer& ComputeServer::get_instance(const std::string& config_file) {
+    static ComputeServer instance(config_file);
     return instance;
 }
 

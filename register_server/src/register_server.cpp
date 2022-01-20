@@ -115,9 +115,9 @@ bool RegisterServer::start_thread(int connFD) {
         }
         std::string header(header_buffer, header_size);
         // get the username and size of who sent this plaintext header
-        auto parsed_header = Parser::parse_register_header(header);
-        guarded_cout(" Size: " + std::to_string(std::get<0>(parsed_header)) +
-                     " Msg Type: " + std::to_string(std::get<1>(parsed_header)),
+        auto parsed_header = Parser::parse_header(header);
+        guarded_cout(" Size: " + std::to_string(std::get<1>(parsed_header)) +
+                     " Msg Type: " + std::to_string(std::get<2>(parsed_header)),
                     cout_lock);
         
         // read in encrypted body
@@ -128,7 +128,7 @@ bool RegisterServer::start_thread(int connFD) {
         }
         std::string encrypted_body(body_buffer, std::get<1>(parsed_header));
         // guarded_cout("\nEncrypted body:\n" + encrypted_body, cout_lock);
-        return handle_message(connFD, std::get<0>(parsed_header), std::get<1>(parsed_header), encrypted_body);
+        return handle_message(connFD, std::get<1>(parsed_header), static_cast<RegisterServerMessageType>(std::get<2>(parsed_header)), encrypted_body);
     }
     catch (const std::runtime_error e)  {
         guarded_cout("Exception: " + std::string(e.what()), cout_lock);
@@ -139,30 +139,32 @@ bool RegisterServer::start_thread(int connFD) {
 }
 
 bool RegisterServer::handle_message(int connFD, unsigned int size, RegisterServerMessageType mtype, std::string& msg) {
-
     std::string response;
     //ClientMessageType response_mtype;
 
     switch (mtype) {
         case COMPUTE_REGISTER:
         {
+            ConnectionInfo compute_info;
+            // Compare the max thread count of this machine with the others before it
+            Parser::parse_connection_info(msg, compute_info);
             // Send the compute server its global ID
-            SocketInfo compute_info = Parser::parse_socket_info(msg);
+            
             send_msg(compute_info.hostname, compute_info.port, ComputeServerMessageType::GLOBAL_ID, std::to_string(compute_server_info.size()));
 
             std::lock_guard<std::mutex> raii(compute_lock);
             compute_server_info.push_back(msg);
             if (compute_server_info.size() == compute_server_count) {
                 // Create message containing all compute server info
-                for (std::string& compute_info : compute_server_info) {
-                    serialized_server_info.append(compute_info + "\t");
+                for (std::string& info : compute_server_info) {
+                    serialized_server_info.append(info + "\n");
                 }
                 // Remove trailing '\t'
                 serialized_server_info.pop_back();
 
                 // Send the compute server info to all waiting clients
                 while(!institution_info_queue.empty()) {
-                    SocketInfo institution_info = institution_info_queue.front();
+                    ConnectionInfo institution_info = institution_info_queue.front();
                     institution_info_queue.pop();
                     send_msg(institution_info.hostname, institution_info.port, ClientMessageType::COMPUTE_INFO, serialized_server_info);
                 }
@@ -172,7 +174,8 @@ bool RegisterServer::handle_message(int connFD, unsigned int size, RegisterServe
         case CLIENT_REGISTER:
         {   
             // Parse body to get hostname and port
-            SocketInfo institution_info = Parser::parse_socket_info(msg);
+            ConnectionInfo institution_info;
+            Parser::parse_connection_info(msg, institution_info);
 
             std::lock_guard<std::mutex> raii(compute_lock);
             // If we don't have all compute server info, add to waiting queue
@@ -193,7 +196,7 @@ bool RegisterServer::handle_message(int connFD, unsigned int size, RegisterServe
 }
 
 int RegisterServer::send_msg(const std::string& hostname, const int port, int mtype, const std::string& msg, int connFD) {
-    std::string message = std::to_string(msg.length()) + " " + std::to_string(mtype) + '\n' + msg;
+    std::string message = "-1rs " + std::to_string(msg.length()) + " " + std::to_string(mtype) + '\n' + msg;
     return send_message(hostname.c_str(), port, message.c_str(), connFD);
 }
 

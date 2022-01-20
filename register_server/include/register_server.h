@@ -29,7 +29,7 @@ class RegisterServer {
     std::string serialized_server_info;
     std::mutex compute_lock;
 
-    std::queue<SocketInfo> institution_info_queue;
+    std::queue<ConnectionInfo> institution_info_queue;
 
     // set up data structures
     void init(const std::string& config_file);

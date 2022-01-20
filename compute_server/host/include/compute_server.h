@@ -20,14 +20,20 @@
 
 #include "institution.h"
 #include "output.h"
+#include "parser.h"
+#include "json.hpp"
 #include "aes-crypto.h"
 #include "buffer_size.h"
 #include "readerwriterqueue.h"
 
 class ComputeServer {
   private:
+    nlohmann::json compute_config;
+
     int port;
     int num_threads;
+
+    unsigned int global_id;
 
     bool server_eof = false;
 
@@ -52,13 +58,14 @@ class ComputeServer {
     std::mutex institutions_lock;
 
     // set up Server data structures
-    void init();
+    void init(const std::string& config_file);
     
     // parses and calls the appropriate handler for an incoming client request
     bool handle_message(int connFD, const std::string& name, unsigned int size, ComputeServerMessageType mtype, std::string& msg);
 
     // construct response header, encrypt response body, and send
-    int send_msg(const std::string& name, ClientMessageType mtype, const std::string& msg, int connFD=-1);
+    int send_msg(const std::string& name, const int mtype, const std::string& msg, int connFD=-1);
+    int send_msg(const std::string& hostname, const int port, const int mtype, const std::string& msg, int connFD=-1);
 
     // start a thread that will handle a message and exit properly if it finds an error
     bool start_thread(int connFD);
@@ -73,14 +80,14 @@ class ComputeServer {
 
   public:
 
-    ComputeServer(int port_in);
+    ComputeServer(const std::string& config_file);
 
     ~ComputeServer();
 
     // create listening socket to handle requests on indefinitely
     void run();
 
-    static ComputeServer& get_instance(int port=0);
+    static ComputeServer& get_instance(const std::string& config_file="");
 
     static uint8_t* get_rsa_pub_key();
     

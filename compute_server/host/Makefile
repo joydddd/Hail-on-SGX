@@ -7,6 +7,7 @@ TESTDIR := tests
 include ../config.mk
 ####################################
 EXECUTABLE = $(PROJECTNAME)host
+CONFIG = compute_server_config.json
 
 TESTSOURCES = $(wildcard $(TESTDIR)/test*.cpp)
 # names of test executables
@@ -61,7 +62,7 @@ build: pre $(OBJECTS)
 	$(CXX) -o $(EXECUTABLE) $(BUILDDIR)/$(PROJECTNAME)_u.o $(OBJECTS) $(LDFLAGS) ${CRYPTFLAG}
 
 run: 
-	./$(EXECUTABLE) $(HOST_PORT) ../enclave/$(PROJECTNAME)enc.signed
+	./$(EXECUTABLE) $(CONFIG)
 
 # Automatically generate any build rules for test*.cpp files
 define make_tests

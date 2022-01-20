@@ -6,6 +6,7 @@ SHAREDBUILDDIR := ../shared/build
 TARGETDIR := bin
 TESTDIR := tests
 UNITTESTDIR := unit_tests
+CONFIG:= client_config.json
 
 SRCEXT := cpp
 # List of source files for your thread library
@@ -64,7 +65,7 @@ client: ${OBJECTS}
 	${CC} ${CFLAGS} ${INC} -o ${TARGETDIR}/$@ $^ ${LIBTHREAD} ${FSFLAGS} ${CRYPTFLAG}
 
 run:
-	./bin/client client1 localhost 8081 localhost 6500
+	./bin/client $(CONFIG)
 
 clean:
 	@echo "Cleaning..."

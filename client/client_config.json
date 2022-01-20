@@ -1,0 +1,9 @@
+{
+    "client_name": "client1",
+    "client_bind_port": 8500,
+    "allele_file": "alleles-multiplied.tsv",
+    "register_server_info": {
+        "hostname": "localhost",
+        "port": 6499
+    }
+}
