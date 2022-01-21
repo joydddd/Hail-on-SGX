@@ -57,6 +57,7 @@ void ComputeServer::init(const std::string& config_file) {
     y_val_name = compute_config["y_val_name"];
 
     server_eof = false;
+    eof_read = false;
     max_batch_lines = 0;
     global_id = -1;
 
@@ -494,12 +495,22 @@ int ComputeServer::get_encypted_allele_size(const int institution_num) {
 
 int ComputeServer::get_allele_data(std::string& batch_data, const int thread_id) {
     std::string tmp;
+    // Currently the enclave expects the ~EOF~ to be by itself (not in a batch).
+    // This is not very clean code, but searching for ~EOF~ in the enclave is slow!
+    if (get_instance().eof_read) {
+        // Set this back to false so that later function calls return 0!
+        get_instance().eof_read = false;
+        batch_data = EOFSeperator;
+        return 1;
+    }
 
     int num_lines = 0;
     moodycamel::ReaderWriterQueue<std::string>& allele_queue = get_instance().allele_queue_list[thread_id];
-    while (num_lines < get_instance().max_batch_lines //&& 
-          //(strcmp(allele_queue.peek()->c_str(), EOFSeperator) != 0 || num_lines == 0) // The only time the EOF can be batched is when it's by itself.
-          && allele_queue.try_dequeue(tmp)) {
+    while (num_lines < get_instance().max_batch_lines && allele_queue.try_dequeue(tmp)) {
+        if (strcmp(EOFSeperator, tmp.c_str()) == 0) {
+            get_instance().eof_read = true;
+            break;
+        }
         num_lines++;
         batch_data.append(tmp);
     }

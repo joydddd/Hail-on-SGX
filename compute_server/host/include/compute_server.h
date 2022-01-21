@@ -37,6 +37,7 @@ class ComputeServer {
     int max_batch_lines;
 
     bool server_eof;
+    bool eof_read;
 
     std::unordered_set<std::string> expected_institutions;
     std::unordered_set<std::string> expected_covariants;
