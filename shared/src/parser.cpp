@@ -69,7 +69,7 @@ DataBlock* Parser::parse_body(const std::string& message_body, ComputeServerMess
     return block;
 }
 
-int Parser::parse_allele_line(std::string& line, std::string& vals, std::vector<std::vector<AESCrypto> >& encryptor_list, std::vector<int>& blocks_sent_list) {
+int Parser::parse_allele_line(std::string& line, std::string& vals, std::vector<std::vector<AESCrypto> >& encryptor_list) {
     std::vector<std::string> line_split = Parser::split(line, '\t', 2);
     std::string locus_and_allele = line_split[0] + '\t' + line_split[1] + '\t';
     // Use the AES encryptor that corresponds to the appropriate thread on the server end
@@ -103,7 +103,7 @@ int Parser::parse_allele_line(std::string& line, std::string& vals, std::vector<
                 throw std::runtime_error("Invalid alleles file!");
         }
     }
-    line = std::to_string(blocks_sent_list[compute_server_hash]++) + "\t" + locus_and_allele + encryptor.encrypt_line((byte *)&vals[0], vals.length()) + "\n";
+    line = locus_and_allele + encryptor.encrypt_line((byte *)&vals[0], vals.length()) + "\n";
 
     return compute_server_hash;
 }

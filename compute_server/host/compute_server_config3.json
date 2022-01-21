@@ -1,5 +1,5 @@
 {
-    "compute_server_bind_port": 6700,
+    "compute_server_bind_port": 6702,
     "covariants": ["1", "isFemale"],
     "institutions": ["client1"],
     "y_val_name": "PurpleHair",

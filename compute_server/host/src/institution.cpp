@@ -82,11 +82,9 @@ int Institution::get_allele_data_size() {
 
 void Institution::transfer_eligible_blocks() {
     std::lock_guard<std::mutex> raii(blocks_lock);
-
     while(!blocks.empty()) {
         DataBlock* block = blocks.top();
         if(block->pos != current_block) {
-            std::cout << "not right\n";
             return;
         }
         blocks.pop();

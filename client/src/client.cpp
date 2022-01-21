@@ -223,6 +223,7 @@ void Client::handle_message(int connFD, const unsigned int global_id, const Clie
             
             if(++y_and_cov_count == aes_encryptor_list.size()) {
                 fill_queue();
+                filled = true;
             }
 
             break;
@@ -233,12 +234,18 @@ void Client::handle_message(int connFD, const unsigned int global_id, const Clie
             while(!filled) {}
             auto start = std::chrono::high_resolution_clock::now();
             response_mtype = DATA;
-            std::string block;
+            
             ConnectionInfo info = compute_server_info[global_id];
-            while(allele_queue_list[global_id].try_dequeue(block)) {
+            std::queue<std::string>& allele_queue = allele_queue_list[global_id];
+            int blocks_sent = 0;
+            while(!allele_queue.empty()) {
+                std::string block = std::to_string(blocks_sent++) + "\t" + allele_queue.front();
+                allele_queue.pop();
+
                 send_msg(info.hostname, info.port, response_mtype, block, connFD);
             }
             // If get_block failed we have reached the end of the file, send an EOF.
+            std::string block = std::to_string(blocks_sent) + "\t";
             response_mtype = EOF_DATA;
             send_msg(global_id, EOF_DATA, block, connFD);
             sent_all_data = true;
@@ -278,10 +285,9 @@ void Client::fill_queue() {
             num_patients = Parser::split(line, '\t').size() - 2;
             vals.resize(num_patients);
         }
-        int compute_server_hash = Parser::parse_allele_line(line, vals, aes_encryptor_list, blocks_sent_list);
-        allele_queue_list[compute_server_hash].enqueue(line);
+        int compute_server_hash = Parser::parse_allele_line(line, vals, aes_encryptor_list);
+        allele_queue_list[compute_server_hash].push(line);
     }
-    filled = true;
 }
 
 void Client::data_sender(int connFD) {

@@ -496,7 +496,10 @@ int ComputeServer::get_allele_data(std::string& batch_data, const int thread_id)
     std::string tmp;
 
     int num_lines = 0;
-    while (num_lines < get_instance().max_batch_lines && get_instance().allele_queue_list[thread_id].try_dequeue(tmp)) {
+    moodycamel::ReaderWriterQueue<std::string>& allele_queue = get_instance().allele_queue_list[thread_id];
+    while (num_lines < get_instance().max_batch_lines //&& 
+          //(strcmp(allele_queue.peek()->c_str(), EOFSeperator) != 0 || num_lines == 0) // The only time the EOF can be batched is when it's by itself.
+          && allele_queue.try_dequeue(tmp)) {
         num_lines++;
         batch_data.append(tmp);
     }

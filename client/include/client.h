@@ -10,6 +10,7 @@
 #include <stdint.h>
 #include <string>
 #include <atomic>
+#include <queue>
 #include <boost/thread.hpp>
 #include <sys/types.h>
 #include <sys/socket.h>
@@ -20,7 +21,6 @@
 #include "output.h"
 #include "aes-crypto.h"
 #include "json.hpp"
-#include "readerwriterqueue.h"
 
 #ifndef _CLIENT_H_
 #define _CLIENT_H_
@@ -42,13 +42,13 @@ class Client {
 
     bool sender_running;
     bool sent_all_data;
-    bool filled;
+    volatile bool filled;
 
     std::ifstream xval;
 
     std::vector<std::vector<AESCrypto> > aes_encryptor_list;
     std::vector<ConnectionInfo> compute_server_info;
-    std::vector<moodycamel::ReaderWriterQueue<std::string>> allele_queue_list;
+    std::vector<std::queue<std::string> > allele_queue_list;
     std::vector<int> blocks_sent_list;
     std::atomic<int> y_and_cov_count;
 

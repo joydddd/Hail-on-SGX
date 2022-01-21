@@ -72,7 +72,7 @@ class Parser {
     static DataBlock* parse_body(const std::string& message_body, ComputeServerMessageType mtype, AESCrypto& decoder);
 
     // Returns the compute server we should send this allele to
-    static int parse_allele_line(std::string& line, std::string& vals, std::vector<std::vector<AESCrypto> >& encryptor_list, std::vector<int>& blocks_sent_list);
+    static int parse_allele_line(std::string& line, std::string& vals, std::vector<std::vector<AESCrypto> >& encryptor_list);
 
     // split a given string based on the specified delimiter
     static std::vector<std::string> split(const std::string& str, char delim=' ', int num_splits=-1);

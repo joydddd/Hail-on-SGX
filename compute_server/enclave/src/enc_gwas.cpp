@@ -21,7 +21,7 @@ size_t Row::read(const char line[]) {
         alleles.read(alleles_str);
     } catch (ReadtsvERROR &error) {
         std::cout << string("(loci)") + loci_str + " (alleles)" + alleles_str << std::flush;
-        throw ENC_ERROR("Invalid loci/alleles "
+        throw ENC_ERROR("Invalid loci/alleles " + loci_str + "\t" + alleles_str
 #ifdef DEBUG
                         + string("(loci)") + loci_str + " (alleles)" +
                         alleles_str
@@ -32,7 +32,7 @@ size_t Row::read(const char line[]) {
         data[0][i] =
             (uint8_t)line[i + loci_str.size() + alleles_str.size() + 2] - uint8_OFFSET;
         if (data[0][i] != 0 && data[0][i] != 1 && data[0][i] != 2 && data[0][i] != NA_uint8){
-            throw ReadtsvERROR("Invalid row entry");
+            throw ReadtsvERROR("Invalid row entry for " + loci_str + "\t" + alleles_str);
         }
     }
     if (line[n + loci_str.size() + alleles_str.size() + 2] != '\n')
