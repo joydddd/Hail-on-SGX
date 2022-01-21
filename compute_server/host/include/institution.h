@@ -30,6 +30,8 @@ class Institution {
     std::vector<std::string> aes_encrypted_iv_list;
 
     int id;
+    int encrypted_allele_data_size;
+    bool encrypted_allele_data_size_set;
 
   public:
     Institution(std::string hostname, int port, int id, const int num_threads);
@@ -58,6 +60,8 @@ class Institution {
     int get_blocks_size();
 
     int get_covariant_size();
+
+    int get_allele_data_size();
 
     DataBlock* get_top_block();
 

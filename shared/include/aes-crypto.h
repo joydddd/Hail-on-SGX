@@ -24,6 +24,8 @@ class AESCrypto {
 
         std::string get_key_and_iv(CryptoPP::RSAES<CryptoPP::OAEP<CryptoPP::SHA256> >::Encryptor& rsa_encryptor);
 
+        //std::string rsa_encrypt(std::string& input, CryptoPP::RSAES<CryptoPP::OAEP<CryptoPP::SHA256> >::Encryptor& rsa_encryptor);
+
     private:
         CryptoPP::AutoSeededRandomPool prng;
         CryptoPP::SecByteBlock key;

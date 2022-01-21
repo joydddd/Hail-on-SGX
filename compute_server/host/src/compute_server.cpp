@@ -38,11 +38,6 @@ void ComputeServer::init(const std::string& config_file) {
 
     // Read in information we need to register compute server
     port = compute_config["compute_server_bind_port"];
-    std::string msg = std::string(get_hostname_str()) + "\t" + std::to_string(port) + "\t" + std::to_string(num_threads);
-    send_msg(compute_config["register_server_info"]["hostname"], 
-             compute_config["register_server_info"]["port"],
-             RegisterServerMessageType::COMPUTE_REGISTER,
-             msg);
 
     // read in list institutions/clients involved in GWAS
     for (int i = 0; i < compute_config["institutions"].size(); ++i) {
@@ -60,6 +55,10 @@ void ComputeServer::init(const std::string& config_file) {
     }
 
     y_val_name = compute_config["y_val_name"];
+
+    server_eof = false;
+    max_batch_lines = 0;
+    global_id = -1;
 
     // resize allele queue
     allele_queue_list.resize(num_threads);
@@ -152,10 +151,12 @@ bool ComputeServer::start_thread(int connFD) {
         std::string header(header_buffer, header_size);
         // get the username and size of who sent this plaintext header
         auto parsed_header = Parser::parse_header(header);
-        // guarded_cout("\nInstitution: " + std::get<0>(parsed_header) +
-        // " Size: " + std::to_string(std::get<1>(parsed_header)) +
-        // " Msg Type: " + std::to_string(std::get<2>(parsed_header)),
-        // cout_lock);
+        // if (std::get<2>(parsed_header) != 5) {
+        //     guarded_cout("\nInstitution: " + std::get<0>(parsed_header) +
+        //     " Size: " + std::to_string(std::get<1>(parsed_header)) +
+        //     " Msg Type: " + std::to_string(std::get<2>(parsed_header)),
+        //     cout_lock);
+        // }
         
         // read in encrypted body
         char body_buffer[8192];
@@ -165,7 +166,7 @@ bool ComputeServer::start_thread(int connFD) {
         }
         std::string encrypted_body(body_buffer, std::get<1>(parsed_header));
         // guarded_cout("\nEncrypted body:\n" + encrypted_body, cout_lock);
-        return handle_message(connFD, std::get<0>(parsed_header), std::get<1>(parsed_header), static_cast<ComputeServerMessageType>(std::get<2>(parsed_header)), encrypted_body);
+        return handle_message(connFD, std::get<0>(parsed_header), static_cast<ComputeServerMessageType>(std::get<2>(parsed_header)), encrypted_body);
     }
     catch (const std::runtime_error e)  {
         guarded_cout("Exception: " + std::string(e.what()), cout_lock);
@@ -175,7 +176,7 @@ bool ComputeServer::start_thread(int connFD) {
     return true;
 }
 
-bool ComputeServer::handle_message(int connFD, const std::string& name, unsigned int size, ComputeServerMessageType mtype,
+bool ComputeServer::handle_message(int connFD, const std::string& name, ComputeServerMessageType mtype,
                             std::string& msg) {
     DataBlock* block;
     if (institutions.count(name)) {
@@ -193,10 +194,16 @@ bool ComputeServer::handle_message(int connFD, const std::string& name, unsigned
         }
         case REGISTER:
         {
+            // Wait until we have a global id!
+            while (get_instance().global_id < 0) {}
+
             if (institutions.count(name)) {
                 throw std::runtime_error("User already registered");
             }
             std::vector<std::string> hostname_and_port = Parser::split(msg, '\t');
+            if (hostname_and_port.size() != 2) {
+                throw std::runtime_error("Invalid register message: " + msg);
+            }
             for (int id = 0; id < institution_list.size(); ++id) {
                 // Look for client id!
                 if (institution_list[id] == name) {
@@ -318,6 +325,8 @@ void ComputeServer::data_listener(int connFD) {
 
 void ComputeServer::allele_matcher() {
     auto start = std::chrono::high_resolution_clock::now();
+
+    bool first = true;
     while(true) {
     loop_start:
         // transfer all blocks to eligible queue, making sure they are in order
@@ -386,6 +395,20 @@ void ComputeServer::allele_matcher() {
 
             allele_line.append(data);
             
+            // For the first line we want to calculate the max number of lines per batch
+            if (first) {
+                first = false;
+                // 128 MB divided by four, divided by the number of threads, divided by size of an allele line
+                max_batch_lines = ((1 << 25) / num_threads) / sizeof(allele_line);
+                // Ideally we will not use more than a quarter the encalve for performance reasons, 
+                // but if that is not possible just go one line at a time
+                max_batch_lines = std::max(max_batch_lines, 1);
+
+                // TODO: remove this
+                max_batch_lines = 1;
+                guarded_cout("Max batch lines: " + std::to_string(max_batch_lines), cout_lock);
+            }
+            
             // thread-safe enqueue
             allele_queue_list[locus_hash_thread].enqueue(allele_line);
         }
@@ -395,6 +418,16 @@ void ComputeServer::allele_matcher() {
 ComputeServer& ComputeServer::get_instance(const std::string& config_file) {
     static ComputeServer instance(config_file);
     return instance;
+}
+
+void ComputeServer::finish_setup() {
+    // Register with the register server!
+    const nlohmann::json config = get_instance().compute_config;
+    std::string msg = std::string(get_hostname_str()) + "\t" + std::to_string(get_instance().port) + "\t" + std::to_string(get_instance().num_threads);
+    get_instance().send_msg(config["register_server_info"]["hostname"], 
+                            config["register_server_info"]["port"],
+                            RegisterServerMessageType::COMPUTE_REGISTER,
+                            msg);
 }
 
 uint8_t* ComputeServer::get_rsa_pub_key() {
@@ -456,17 +489,16 @@ std::string ComputeServer::get_covariant_data(const int institution_num, const s
 
 int ComputeServer::get_encypted_allele_size(const int institution_num) {
     const std::string institution_name = get_instance().institution_list[institution_num];
-    DataBlock* block = get_instance().institutions[institution_name]->get_top_block();
-    if (!block) {
-        return 0;
-    }
-    return block->data.length();
+    return get_instance().institutions[institution_name]->get_allele_data_size();
 }
 
-std::string ComputeServer::get_allele_data(int num_blocks, const int thread_id) {
-    std::string allele_data;
-    if (!get_instance().allele_queue_list[thread_id].try_dequeue(allele_data)) {
-        return "";
+int ComputeServer::get_allele_data(std::string& batch_data, const int thread_id) {
+    std::string tmp;
+
+    int num_lines = 0;
+    while (num_lines < get_instance().max_batch_lines && get_instance().allele_queue_list[thread_id].try_dequeue(tmp)) {
+        num_lines++;
+        batch_data.append(tmp);
     }
-    return allele_data;
+    return num_lines;
 }

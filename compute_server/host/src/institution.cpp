@@ -10,6 +10,9 @@ Institution::Institution(std::string hostname, int port, int id, const int num_t
           request_conn(-1), current_block(0), all_data_received(false), id(id) {
     aes_encrypted_key_list.resize(num_threads);
     aes_encrypted_iv_list.resize(num_threads);
+
+    encrypted_allele_data_size = 0;
+    encrypted_allele_data_size_set = false;
 }
 
 Institution::~Institution() {
@@ -18,6 +21,10 @@ Institution::~Institution() {
 
 void Institution::add_block(DataBlock* block) {
     std::lock_guard<std::mutex> raii(blocks_lock);
+    if (!encrypted_allele_data_size_set) {
+        encrypted_allele_data_size = block->data.length();
+        encrypted_allele_data_size_set = true;
+    }
     blocks.push(block);
 }
 
@@ -69,12 +76,17 @@ std::string Institution::get_covariant_data(const std::string& covariant_name) {
     return covariant_data[covariant_name];
 }
 
+int Institution::get_allele_data_size() {
+    return encrypted_allele_data_size;
+}
+
 void Institution::transfer_eligible_blocks() {
     std::lock_guard<std::mutex> raii(blocks_lock);
 
     while(!blocks.empty()) {
         DataBlock* block = blocks.top();
         if(block->pos != current_block) {
+            std::cout << "not right\n";
             return;
         }
         blocks.pop();

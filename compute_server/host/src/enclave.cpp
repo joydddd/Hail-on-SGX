@@ -42,6 +42,9 @@ static oe_enclave_t* enclave;
 
 void setrsapubkey(uint8_t enc_rsa_pub_key[RSA_PUB_KEY_SIZE]) {
     std::memcpy(ComputeServer::get_rsa_pub_key(), enc_rsa_pub_key, RSA_PUB_KEY_SIZE);
+    
+    // Once we have generated an RSA key pair we can start communication!
+    ComputeServer::finish_setup();
 }
 
 int getclientnum() {
@@ -94,15 +97,15 @@ int get_encrypted_x_size(const int client_num) {
     return ComputeServer::get_encypted_allele_size(client_num);
 }
 
-bool getbatch(char batch[ENCLAVE_READ_BUFFER_SIZE], const int thread_id) {
+int getbatch(char batch[ENCLAVE_READ_BUFFER_SIZE], const int thread_id) {
     // TODO: maybe change this so we read in a diff number for each 
-    std::string batch_data = ComputeServer::get_allele_data(BUFFER_LINES, thread_id);
-    if (!batch_data.length()) {
-        return false;
+    std::string batch_data; 
+    int num_lines = ComputeServer::get_allele_data(batch_data, thread_id);
+    if (num_lines) {
+        std::memcpy(batch, &batch_data[0], batch_data.length());
     }
-    // std::cout << "BATCH DATA: " << batch_data << std::endl;
-    std::memcpy(batch, &batch_data[0], batch_data.length());
-    return true;
+
+    return num_lines;
 }
 
 void writebatch(Row_T type, char buffer[ENCLAVE_OUTPUT_BUFFER_SIZE]) {
@@ -143,18 +146,6 @@ int start_enclave() {
     enclave = NULL;
 
     uint32_t flags = 0;
-    // if (check_debug_opt(&argc, argv)) {
-    //     flags |= OE_ENCLAVE_FLAG_DEBUG;
-    // }
-    // if (check_simulate_opt(&argc, argv)) {
-    //     flags |= OE_ENCLAVE_FLAG_SIMULATE;
-    // }
-
-    // if (argc != 3) {
-    //     fprintf(stderr, "Usage: %s enclave_image_path [ --simulate  ]\n",
-    //             argv[0]);
-    //     goto exit;
-    // }
 
     // Create the enclave
     result = oe_create_gwas_enclave("../enclave/gwasenc.signed", OE_ENCLAVE_TYPE_AUTO, flags, NULL,

@@ -33,9 +33,10 @@ class ComputeServer {
     int port;
     int num_threads;
 
-    unsigned int global_id;
+    int global_id;
+    int max_batch_lines;
 
-    bool server_eof = false;
+    bool server_eof;
 
     std::unordered_set<std::string> expected_institutions;
     std::unordered_set<std::string> expected_covariants;
@@ -61,7 +62,7 @@ class ComputeServer {
     void init(const std::string& config_file);
     
     // parses and calls the appropriate handler for an incoming client request
-    bool handle_message(int connFD, const std::string& name, unsigned int size, ComputeServerMessageType mtype, std::string& msg);
+    bool handle_message(int connFD, const std::string& name, ComputeServerMessageType mtype, std::string& msg);
 
     // construct response header, encrypt response body, and send
     int send_msg(const std::string& name, const int mtype, const std::string& msg, int connFD=-1);
@@ -89,6 +90,8 @@ class ComputeServer {
 
     static ComputeServer& get_instance(const std::string& config_file="");
 
+    static void finish_setup();
+
     static uint8_t* get_rsa_pub_key();
     
     static int get_num_threads();
@@ -107,7 +110,7 @@ class ComputeServer {
     
     static int get_encypted_allele_size(const int institution_num);
 
-    static std::string get_allele_data(int num_blocks, const int thread_id);
+    static int get_allele_data(std::string& batch_data, const int thread_id);
 };
 
 #endif /* _SERVER_H_ */

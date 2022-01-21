@@ -69,11 +69,14 @@ DataBlock* Parser::parse_body(const std::string& message_body, ComputeServerMess
     return block;
 }
 
-std::string Parser::parse_allele_line(const std::string& line, std::string& vals, std::vector<AESCrypto>& encryptor_list, int num_patients, int num_threads) {
+int Parser::parse_allele_line(std::string& line, std::string& vals, std::vector<std::vector<AESCrypto> >& encryptor_list, std::vector<int>& blocks_sent_list) {
     std::vector<std::string> line_split = Parser::split(line, '\t', 2);
     std::string locus_and_allele = line_split[0] + '\t' + line_split[1] + '\t';
     // Use the AES encryptor that corresponds to the appropriate thread on the server end
-    AESCrypto& encryptor = encryptor_list[hash_string(locus_and_allele, num_threads, true)];
+    int compute_server_hash = hash_string(locus_and_allele, encryptor_list.size(), false);
+
+    std::vector<AESCrypto>& aes_list = encryptor_list[compute_server_hash];
+    AESCrypto& encryptor = aes_list[hash_string(locus_and_allele, aes_list.size(), true)];
 
     std::string line_vals = line_split.back();
     int val_idx = 0;
@@ -100,7 +103,9 @@ std::string Parser::parse_allele_line(const std::string& line, std::string& vals
                 throw std::runtime_error("Invalid alleles file!");
         }
     }
-    return locus_and_allele + encryptor.encrypt_line((byte *)&vals[0], num_patients) + "\n";
+    line = std::to_string(blocks_sent_list[compute_server_hash]++) + "\t" + locus_and_allele + encryptor.encrypt_line((byte *)&vals[0], vals.length()) + "\n";
+
+    return compute_server_hash;
 }
 
 unsigned int Parser::convert_to_num(const std::string& str) {
@@ -110,7 +115,7 @@ unsigned int Parser::convert_to_num(const std::string& str) {
         throw std::runtime_error("Number is too big");
     }
     if (std::string::npos != str.find_first_not_of("0123456789")) {
-        throw std::runtime_error("Number contains non-digits");
+        throw std::runtime_error("Number contains non-digits: " + str);
     }
     // convert the string to an unsigned long long to check its not too large
     // (even within the digit constraints, it could still be too large)

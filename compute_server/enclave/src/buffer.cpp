@@ -115,7 +115,7 @@ void Buffer::finish(Batch* finishing_batch) {
 }
 
 Batch* Buffer::launch(std::vector<ClientInfo>& client_info_list, const int thread_id) {
-    bool rt = false;
+    int rt = 0;
     while (!rt) {
         getbatch(&rt, crypttxt, thread_id);
     }

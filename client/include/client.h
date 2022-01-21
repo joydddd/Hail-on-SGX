@@ -9,6 +9,7 @@
 #include <stdexcept>
 #include <stdint.h>
 #include <string>
+#include <atomic>
 #include <boost/thread.hpp>
 #include <sys/types.h>
 #include <sys/socket.h>
@@ -19,6 +20,7 @@
 #include "output.h"
 #include "aes-crypto.h"
 #include "json.hpp"
+#include "readerwriterqueue.h"
 
 #ifndef _CLIENT_H_
 #define _CLIENT_H_
@@ -35,17 +37,20 @@ class Client {
     std::string server_hostname;
     int listen_port;
     int server_port;
-    int blocks_sent;
 
     int num_patients;
 
     bool sender_running;
     bool sent_all_data;
+    bool filled;
 
     std::ifstream xval;
 
-    std::vector<AESCrypto> aes_encryptor_list;
+    std::vector<std::vector<AESCrypto> > aes_encryptor_list;
     std::vector<ConnectionInfo> compute_server_info;
+    std::vector<moodycamel::ReaderWriterQueue<std::string>> allele_queue_list;
+    std::vector<int> blocks_sent_list;
+    std::atomic<int> y_and_cov_count;
 
   public:
     Client(const std::string& config_file);
@@ -66,7 +71,7 @@ class Client {
     // start a thread that will handle a message and exit properly if it finds an error
     bool start_thread(int connFD);
 
-    bool get_block(std::string& block, int num_threads); 
+    void fill_queue();
 
     void data_sender(int connFD);
 

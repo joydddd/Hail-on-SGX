@@ -27,10 +27,11 @@ void Client::init(const std::string& config_file) {
     auto info = client_config["register_server_info"];
     send_msg(info["hostname"], info["port"], RegisterServerMessageType::CLIENT_REGISTER, client_hostname + "\t" + std::to_string(listen_port));
 
-    blocks_sent = 0;
     num_patients = 0;
     sender_running = false;
     sent_all_data = false;
+    filled = false;
+    y_and_cov_count = 0;
 }
 
 void Client::run() {
@@ -152,18 +153,23 @@ void Client::handle_message(int connFD, const unsigned int global_id, const Clie
         case COMPUTE_INFO:
         {
             std::vector<std::string> parsed_compute_info = Parser::split(msg, '\n');
-            int max_thread_count = 0;
             // All received data should be formatted as:
             // [hostname]   [port]   [thread count]
+            int aes_idx = 0;
+            const int num_compute_servers = parsed_compute_info.size();
+            aes_encryptor_list = std::vector<std::vector<AESCrypto> >(num_compute_servers);
+            allele_queue_list.resize(num_compute_servers);
+            for (int _ = 0; _ < num_compute_servers; ++_) {
+                blocks_sent_list.push_back(0);
+            }
             for (const std::string& compute_info : parsed_compute_info) {
                 ConnectionInfo info;
                 Parser::parse_connection_info(compute_info, info, true);
                 compute_server_info.push_back(info);
 
-                max_thread_count = std::max(static_cast<int>(info.num_threads), max_thread_count);
+                // Create AES keys for each thread of this compute server
+                aes_encryptor_list[aes_idx++] = std::vector<AESCrypto>(info.num_threads);
             }
-            // Create enough AES encryptors for the largest compute server
-            aes_encryptor_list = std::vector<AESCrypto>(max_thread_count);
 
             for (int id = 0; id < compute_server_info.size(); ++id) {
                 send_msg(id, REGISTER, client_hostname + "\t" + std::to_string(listen_port));
@@ -186,15 +192,13 @@ void Client::handle_message(int connFD, const unsigned int global_id, const Clie
             // Start position and length
             pos1 = pos1 + header.length();
             pos2 = pos2 - pos1;
-
-            CryptoPP::StringSource pub_key_source(aes_encryptor_list.front().decode(msg.substr(pos1, pos2)), true);
+            CryptoPP::StringSource pub_key_source(aes_encryptor_list[global_id].front().decode(msg.substr(pos1, pos2)), true);
             CryptoPP::RSA::PublicKey public_key;
             public_key.Load(pub_key_source);
             
             CryptoPP::RSAES<CryptoPP::OAEP<CryptoPP::SHA256> >::Encryptor rsa_encryptor(public_key);
-
             for (int thread_id = 0; thread_id < compute_server_info[global_id].num_threads; ++thread_id) {
-                send_msg(global_id, AES_KEY, aes_encryptor_list[thread_id].get_key_and_iv(rsa_encryptor) + "\t" + std::to_string(thread_id));
+                send_msg(global_id, AES_KEY, aes_encryptor_list[global_id][thread_id].get_key_and_iv(rsa_encryptor) + "\t" + std::to_string(thread_id));
             }
             guarded_cout("IMPLEMENT ATTESTATION!\n", cout_lock);
             break;
@@ -207,29 +211,38 @@ void Client::handle_message(int connFD, const unsigned int global_id, const Clie
             std::string y_val = covariants.back();
             covariants.pop_back();
 
-            // send the data in each TSV file over to the server
             send_tsv_file(global_id, y_val, Y_VAL);
+            // send the data in each TSV file over to the server
             for (std::string covariant : covariants) {
                 // Ignore requests for "1", this is handled within the enclave
                 if (covariant != "1") {
                     send_tsv_file(global_id, covariant, COVARIANT);
                 }
             }
+            
+            
+            if(++y_and_cov_count == aes_encryptor_list.size()) {
+                fill_queue();
+            }
+
             break;
         }
         case DATA_REQUEST:
         {   
+            // Wait until all data is ready to go!
+            while(!filled) {}
             auto start = std::chrono::high_resolution_clock::now();
             response_mtype = DATA;
             std::string block;
             ConnectionInfo info = compute_server_info[global_id];
-            while(get_block(block, info.num_threads)) {
+            while(allele_queue_list[global_id].try_dequeue(block)) {
                 send_msg(info.hostname, info.port, response_mtype, block, connFD);
             }
             // If get_block failed we have reached the end of the file, send an EOF.
             response_mtype = EOF_DATA;
+            send_msg(global_id, EOF_DATA, block, connFD);
             sent_all_data = true;
-            send_msg(global_id, response_mtype, block, connFD);
+            
             auto stop = std::chrono::high_resolution_clock::now();
             auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
             std::cout << "Data send time total: " << duration.count() << std::endl;
@@ -256,25 +269,19 @@ void Client::send_msg(const std::string& hostname, unsigned int port, unsigned i
     send_message(hostname.c_str(), port, message.c_str(), connFD);
 }
 
-bool Client::get_block(std::string& block, int num_threads) {
+void Client::fill_queue() {
     std::string line;
     std::string vals;
-    vals.resize(num_patients);
-
-    block = std::to_string(blocks_sent++) + "\t";
-    // TODO: see if we can read in BLOCK_SIZE lines in at a time
-    for(int i = 0; i < BLOCK_SIZE; ++i) {
-        if (!getline(xval, line)) {
-            return false;
-        }
+    while(getline(xval, line)) {
         if (!num_patients) {
             // Subtract 2 for locus->alleles tab and alleles->first value tab
             num_patients = Parser::split(line, '\t').size() - 2;
             vals.resize(num_patients);
         }
-        block.append(Parser::parse_allele_line(line, vals, aes_encryptor_list, num_patients, num_threads)); 
+        int compute_server_hash = Parser::parse_allele_line(line, vals, aes_encryptor_list, blocks_sent_list);
+        allele_queue_list[compute_server_hash].enqueue(line);
     }
-    return true;
+    filled = true;
 }
 
 void Client::data_sender(int connFD) {
@@ -300,7 +307,7 @@ void Client::send_tsv_file(unsigned int global_id, const std::string& filename, 
 
     // Some things are read by all threads (y values, covariants, etc.) and therefore 
     // should use the same AES key across all threads - we just thread id 0.
-    data = aes_encryptor_list.front().encrypt_line((byte *)&data[0], data.length());
+    data = aes_encryptor_list[global_id].front().encrypt_line((byte *)&data[0], data.length());
     if (mtype == COVARIANT) {
         data = filename + " " + data;
     }

@@ -58,3 +58,13 @@ std::string AESCrypto::get_key_and_iv(CryptoPP::RSAES<CryptoPP::OAEP<CryptoPP::S
     );
     return encode((const byte*)enc_key.data(), enc_key.size()) + '\t' + encode((const byte*)enc_iv.data(), enc_iv.size());
 }
+
+// std::string AESCrypto::rsa_encrypt(std::string& input, CryptoPP::RSAES<CryptoPP::OAEP<CryptoPP::SHA256> >::Encryptor& rsa_encryptor) {
+//     std::string enc_input;
+//     CryptoPP::StringSource keysource(input, true, /* pump all data */
+//         new CryptoPP::PK_EncryptorFilter(prng, rsa_encryptor,
+//             new CryptoPP::StringSink(enc_input)
+//         )
+//     );
+//     return;
+// }
