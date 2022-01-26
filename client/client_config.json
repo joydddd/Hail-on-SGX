@@ -3,7 +3,7 @@
     "client_bind_port": 8600,
     "allele_file": "alleles-multiplied.tsv",
     "register_server_info": {
-        "hostname": "localhost",
+        "hostname": "sgx.eecs.umich.edu",
         "port": 6499
     }
 }

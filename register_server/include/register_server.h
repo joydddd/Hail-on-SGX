@@ -35,17 +35,13 @@ class RegisterServer {
     void init(const std::string& config_file);
     
     // parses and calls the appropriate handler for an incoming client request
-    bool handle_message(int connFD, unsigned int size, RegisterServerMessageType mtype, std::string& msg);
+    bool handle_message(int connFD, RegisterServerMessageType mtype, std::string& msg);
 
     // send messages to the client
     int send_msg(const std::string& hostname, const int port, int mtype, const std::string& msg, int connFD=-1);
 
     // start a thread that will handle a message and exit properly if it finds an error
     bool start_thread(int connFD);
-
-    void check_in_compute(std::string& msg);
-
-    void check_in_institution();
 
   public:
 

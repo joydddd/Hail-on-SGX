@@ -75,7 +75,7 @@ class Parser {
     static int parse_allele_line(std::string& line, std::string& vals, std::vector<std::vector<AESCrypto> >& encryptor_list);
 
     // split a given string based on the specified delimiter
-    static std::vector<std::string> split(const std::string& str, char delim=' ', int num_splits=-1);
+    static void split(std::vector<std::string>& split_strings, const std::string& str, char delim=' ', int num_splits=-1);
 
     static void parse_connection_info(const std::string& str, ConnectionInfo& info, bool parse_num_threads=false);
 

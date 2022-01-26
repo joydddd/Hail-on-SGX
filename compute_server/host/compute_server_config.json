@@ -5,7 +5,7 @@
     "y_val_name": "PurpleHair",
     "enclave_path": "../enclave/gwasenc.signed",
     "register_server_info": {
-        "hostname": "localhost",
+        "hostname": "sgx.eecs.umich.edu",
         "port": 6499
     }
 }

@@ -57,12 +57,17 @@ void ComputeServer::init(const std::string& config_file) {
     y_val_name = compute_config["y_val_name"];
 
     server_eof = false;
-    eof_read = false;
     max_batch_lines = 0;
     global_id = -1;
 
     // resize allele queue
     allele_queue_list.resize(num_threads);
+
+    // initialize eof list
+    eof_read_list.resize(num_threads);
+    for (int id = 0; id < num_threads; ++id) {
+        eof_read_list[id] = false;
+    }
 
     // Also start the enclave thread.
     boost::thread enclave_thread(start_enclave);
@@ -137,7 +142,8 @@ bool ComputeServer::start_thread(int connFD) {
             // Receive exactly one byte
             int rval = recv(connFD, header_buffer + header_size, 1, MSG_WAITALL);
             if (rval == -1) {
-                throw std::runtime_error("Error reading stream message");
+                return false;
+                //throw std::runtime_error("Error reading stream message");
             }
             // Stop if we received a deliminating character
             if (header_buffer[header_size] == '\n') {
@@ -150,27 +156,28 @@ bool ComputeServer::start_thread(int connFD) {
             throw std::runtime_error("Didn't read in a null terminating char");
         }
         std::string header(header_buffer, header_size);
-        // get the username and size of who sent this plaintext header
-        auto parsed_header = Parser::parse_header(header);
-        // if (std::get<2>(parsed_header) != 5) {
-        //     guarded_cout("\nInstitution: " + std::get<0>(parsed_header) +
-        //     " Size: " + std::to_string(std::get<1>(parsed_header)) +
-        //     " Msg Type: " + std::to_string(std::get<2>(parsed_header)),
-        //     cout_lock);
-        // }
+        unsigned int body_size = std::stoi(header);
         
-        // read in encrypted body
         char body_buffer[8192];
-        int rval = recv(connFD, body_buffer, std::get<1>(parsed_header), MSG_WAITALL);
-        if (rval == -1) {
-            throw std::runtime_error("Error reading request body");
+        if (body_size != 0) {
+            // read in encrypted body
+            int rval = recv(connFD, body_buffer, body_size, MSG_WAITALL);
+            if (rval == -1) {
+                throw std::runtime_error("Error reading request body");
+            }
         }
-        std::string encrypted_body(body_buffer, std::get<1>(parsed_header));
-        // guarded_cout("\nEncrypted body:\n" + encrypted_body, cout_lock);
-        return handle_message(connFD, std::get<0>(parsed_header), static_cast<ComputeServerMessageType>(std::get<2>(parsed_header)), encrypted_body);
+        std::string encrypted_body(body_buffer, body_size);
+        std::vector<std::string> parsed_header;
+        Parser::split(parsed_header, encrypted_body, ' ', 2);
+
+        //guarded_cout("Client: " + parsed_header[0] + 
+        //             " Msg Type: " + parsed_header[1], cout_lock);
+        //guarded_cout("\nEncrypted body:\n" + parsed_header[2], cout_lock);
+
+        handle_message(connFD, parsed_header[0], static_cast<ComputeServerMessageType>(std::stoi(parsed_header[1])), parsed_header[2]);
     }
     catch (const std::runtime_error e)  {
-        guarded_cout("Exception: " + std::string(e.what()), cout_lock);
+        guarded_cout("Exception " + std::string(e.what()) + "\n", cout_lock);
         close(connFD);
         return false;
     }
@@ -201,7 +208,8 @@ bool ComputeServer::handle_message(int connFD, const std::string& name, ComputeS
             if (institutions.count(name)) {
                 throw std::runtime_error("User already registered");
             }
-            std::vector<std::string> hostname_and_port = Parser::split(msg, '\t');
+            std::vector<std::string> hostname_and_port;
+            Parser::split(hostname_and_port, msg, '\t');
             if (hostname_and_port.size() != 2) {
                 throw std::runtime_error("Invalid register message: " + msg);
             }
@@ -221,7 +229,8 @@ bool ComputeServer::handle_message(int connFD, const std::string& name, ComputeS
         case AES_KEY:
         {
             
-            auto aes_info = Parser::split(msg, '\t');
+            std::vector<std::string> aes_info;
+            Parser::split(aes_info, msg, '\t');
             int thread_id = std::stoi(aes_info[2]);
             // We only want 1 "check in"
             if (thread_id == 0) {
@@ -240,7 +249,8 @@ bool ComputeServer::handle_message(int connFD, const std::string& name, ComputeS
         }
         case COVARIANT:
         {
-            std::vector<std::string> name_data_split = Parser::split(msg, ' ', 1);
+            std::vector<std::string> name_data_split;
+            Parser::split(name_data_split, msg, ' ', 1);
             std::string covariant_name = name_data_split.front();
 
             if (!expected_covariants.count(covariant_name)) {
@@ -291,12 +301,14 @@ bool ComputeServer::handle_message(int connFD, const std::string& name, ComputeS
 }
 
 int ComputeServer::send_msg(const std::string& name, const int mtype, const std::string& msg, int connFD) {
-    std::string message = std::to_string(global_id) + " " + std::to_string(msg.length()) + " " + std::to_string(mtype) + '\n' + msg;
+    std::string message = std::to_string(global_id) + " " + std::to_string(mtype) + " ";
+    message = std::to_string(message.length() + msg.length()) + "\n" + message + msg;
     return send_message(institutions[name]->hostname.c_str(), institutions[name]->port, message.c_str(), connFD);
 }
 
 int ComputeServer::send_msg(const std::string& hostname, const int port, const int mtype, const std::string& msg, int connFD) {
-    std::string message = std::to_string(global_id) + " " + std::to_string(msg.length()) + " " + std::to_string(mtype) + '\n' + msg;
+    std::string message = std::to_string(global_id) + " " + std::to_string(mtype) + " ";
+    message = std::to_string(message.length() + msg.length()) + "\n" + message + msg;
     return send_message(hostname.c_str(), port, message.c_str(), connFD);
 }
 
@@ -400,13 +412,13 @@ void ComputeServer::allele_matcher() {
             if (first) {
                 first = false;
                 // 128 MB divided by four, divided by the number of threads, divided by size of an allele line
-                max_batch_lines = ((1 << 25) / num_threads) / sizeof(allele_line);
+                max_batch_lines = (ENCLAVE_READ_BUFFER_SIZE / num_threads) / sizeof(allele_line);
                 // Ideally we will not use more than a quarter the encalve for performance reasons, 
                 // but if that is not possible just go one line at a time
                 max_batch_lines = std::max(max_batch_lines, 1);
 
-                // TODO: remove this
                 max_batch_lines = 1;
+
                 guarded_cout("Max batch lines: " + std::to_string(max_batch_lines), cout_lock);
             }
             
@@ -445,7 +457,8 @@ int ComputeServer::get_num_institutions() {
 
 std::string ComputeServer::get_covariants() {
     std::string cov_list;
-    std::vector<std::string> covariants = Parser::split(get_instance().covariant_list);
+    std::vector<std::string> covariants;
+    Parser::split(covariants, get_instance().covariant_list);
     for (std::string covariant : covariants) {
         cov_list.append(covariant + "\t");
     }
@@ -497,9 +510,9 @@ int ComputeServer::get_allele_data(std::string& batch_data, const int thread_id)
     std::string tmp;
     // Currently the enclave expects the ~EOF~ to be by itself (not in a batch).
     // This is not very clean code, but searching for ~EOF~ in the enclave is slow!
-    if (get_instance().eof_read) {
+    if (get_instance().eof_read_list[thread_id]) {
         // Set this back to false so that later function calls return 0!
-        get_instance().eof_read = false;
+        get_instance().eof_read_list[thread_id] = false;
         batch_data = EOFSeperator;
         return 1;
     }
@@ -508,7 +521,7 @@ int ComputeServer::get_allele_data(std::string& batch_data, const int thread_id)
     moodycamel::ReaderWriterQueue<std::string>& allele_queue = get_instance().allele_queue_list[thread_id];
     while (num_lines < get_instance().max_batch_lines && allele_queue.try_dequeue(tmp)) {
         if (strcmp(EOFSeperator, tmp.c_str()) == 0) {
-            get_instance().eof_read = true;
+            get_instance().eof_read_list[thread_id] = true;
             break;
         }
         num_lines++;

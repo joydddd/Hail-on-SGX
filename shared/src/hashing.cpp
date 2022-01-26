@@ -12,8 +12,16 @@ unsigned int jump_hash(uint64_t key, uint32_t mod) {
 
 unsigned int hash_string(const std::string& input, uint32_t mod, bool thread_hash) {
     uint64_t hash = thread_hash ? prime_init_thread : prime_init_machine;
+    bool start_hashing = false;
     for (const char c : input) {
+        if (!start_hashing) {
+            start_hashing = (c == ':');
+            continue;
+        }
         hash = (hash * prime_a) ^ (c * prime_b);
+    }
+    if (!start_hashing) {
+        throw std::runtime_error("Colon never found in hashing process!\n");
     }
     return jump_hash(hash, mod);
 }

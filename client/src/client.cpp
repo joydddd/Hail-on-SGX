@@ -114,24 +114,25 @@ bool Client::start_thread(int connFD) {
             throw std::runtime_error("Didn't read in a null terminating char");
         }
         std::string header(header_buffer, header_size);
-
-        auto parsed_header = Parser::parse_header(header);
-        guarded_cout("ID: " + std::get<0>(parsed_header) +
-                     " Size: " + std::to_string(std::get<1>(parsed_header)) + 
-                     " Msg Type: " + std::to_string(std::get<2>(parsed_header)), cout_lock);
+        unsigned int body_size = std::stoi(header);
         
-        char body_buffer[1024];
-        if (std::get<1>(parsed_header) != 0) {
+        char body_buffer[8192];
+        if (body_size != 0) {
             // read in encrypted body
-            int rval = recv(connFD, body_buffer, std::get<1>(parsed_header), MSG_WAITALL);
+            int rval = recv(connFD, body_buffer, body_size, MSG_WAITALL);
             if (rval == -1) {
                 throw std::runtime_error("Error reading request body");
             }
         }
-        std::string encrypted_body(body_buffer, std::get<1>(parsed_header));
-        guarded_cout("\nEncrypted body:\n" + encrypted_body, cout_lock);
+        std::string encrypted_body(body_buffer, body_size);
+        std::vector<std::string> parsed_header;
+        Parser::split(parsed_header, encrypted_body, ' ', 2);
 
-        handle_message(connFD, std::stoi(std::get<0>(parsed_header)), static_cast<ClientMessageType>(std::get<2>(parsed_header)), encrypted_body);
+        guarded_cout("ID: " + parsed_header[0] + 
+                     " Msg Type: " + parsed_header[1], cout_lock);
+        guarded_cout("\nEncrypted body:\n" + parsed_header[2], cout_lock);
+
+        handle_message(connFD, std::stoi(parsed_header[0]), static_cast<ClientMessageType>(std::stoi(parsed_header[1])), parsed_header[2]);
     }
     catch (const std::runtime_error e)  {
         guarded_cout("Exception " + std::string(e.what()) + "\n", cout_lock);
@@ -152,7 +153,8 @@ void Client::handle_message(int connFD, const unsigned int global_id, const Clie
     switch (mtype) {
         case COMPUTE_INFO:
         {
-            std::vector<std::string> parsed_compute_info = Parser::split(msg, '\n');
+            std::vector<std::string> parsed_compute_info;
+            Parser::split(parsed_compute_info, msg, '\n');
             // All received data should be formatted as:
             // [hostname]   [port]   [thread count]
             int aes_idx = 0;
@@ -205,7 +207,8 @@ void Client::handle_message(int connFD, const unsigned int global_id, const Clie
         }
         case Y_AND_COV:
         {
-            std::vector<std::string> covariants = Parser::split(msg);
+            std::vector<std::string> covariants;
+            Parser::split(covariants, msg);
             
             // the last covariant is actually our Y value, remove it from the list
             std::string y_val = covariants.back();
@@ -266,13 +269,15 @@ void Client::handle_message(int connFD, const unsigned int global_id, const Clie
 }
 
 void Client::send_msg(const unsigned int global_id, const unsigned int mtype, const std::string& msg, int connFD) {
-    std::string message = client_name + " " + std::to_string(msg.length()) + " " + std::to_string(mtype) + "\n" + msg;
+    std::string message = client_name + " " + std::to_string(mtype) + " ";
+    message = std::to_string(message.length() + msg.length()) + "\n" + message + msg;
     ConnectionInfo info = compute_server_info[global_id];
     send_message(info.hostname.c_str(), info.port, message.c_str(), connFD);
 }
 
 void Client::send_msg(const std::string& hostname, unsigned int port, unsigned int mtype, const std::string& msg, int connFD) {
-    std::string message = client_name + " " + std::to_string(msg.length()) + " " + std::to_string(mtype) + "\n" + msg;
+    std::string message = client_name + " " + std::to_string(mtype) + " ";
+    message = std::to_string(message.length() + msg.length()) + "\n" + message + msg;
     send_message(hostname.c_str(), port, message.c_str(), connFD);
 }
 
@@ -282,7 +287,9 @@ void Client::fill_queue() {
     while(getline(xval, line)) {
         if (!num_patients) {
             // Subtract 2 for locus->alleles tab and alleles->first value tab
-            num_patients = Parser::split(line, '\t').size() - 2;
+            std::vector<std::string> patients_split;
+            Parser::split(patients_split, line, '\t');
+            num_patients = patients_split.size() - 2;
             vals.resize(num_patients);
         }
         int compute_server_hash = Parser::parse_allele_line(line, vals, aes_encryptor_list);

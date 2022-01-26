@@ -114,31 +114,35 @@ bool RegisterServer::start_thread(int connFD) {
             throw std::runtime_error("Didn't read in a null terminating char");
         }
         std::string header(header_buffer, header_size);
-        // get the username and size of who sent this plaintext header
-        auto parsed_header = Parser::parse_header(header);
-        guarded_cout(" Size: " + std::to_string(std::get<1>(parsed_header)) +
-                     " Msg Type: " + std::to_string(std::get<2>(parsed_header)),
-                    cout_lock);
+        unsigned int body_size = std::stoi(header);
         
-        // read in encrypted body
         char body_buffer[8192];
-        int rval = recv(connFD, body_buffer, std::get<1>(parsed_header), MSG_WAITALL);
-        if (rval == -1) {
-            throw std::runtime_error("Error reading request body");
+        if (body_size != 0) {
+            // read in encrypted body
+            int rval = recv(connFD, body_buffer, body_size, MSG_WAITALL);
+            if (rval == -1) {
+                throw std::runtime_error("Error reading request body");
+            }
         }
-        std::string encrypted_body(body_buffer, std::get<1>(parsed_header));
-        // guarded_cout("\nEncrypted body:\n" + encrypted_body, cout_lock);
-        return handle_message(connFD, std::get<1>(parsed_header), static_cast<RegisterServerMessageType>(std::get<2>(parsed_header)), encrypted_body);
+        std::string encrypted_body(body_buffer, body_size);
+        std::vector<std::string> parsed_header;
+        Parser::split(parsed_header, encrypted_body, ' ', 2);
+
+        guarded_cout("ID/Client: " + parsed_header[0] + 
+                     " Msg Type: " + parsed_header[1], cout_lock);
+        guarded_cout("\nEncrypted body:\n" + parsed_header[2], cout_lock);
+
+        handle_message(connFD, static_cast<RegisterServerMessageType>(std::stoi(parsed_header[1])), parsed_header[2]);
     }
     catch (const std::runtime_error e)  {
-        guarded_cout("Exception: " + std::string(e.what()), cout_lock);
+        guarded_cout("Exception " + std::string(e.what()) + "\n", cout_lock);
         close(connFD);
         return false;
     }
     return true;
 }
 
-bool RegisterServer::handle_message(int connFD, unsigned int size, RegisterServerMessageType mtype, std::string& msg) {
+bool RegisterServer::handle_message(int connFD, RegisterServerMessageType mtype, std::string& msg) {
     std::string response;
     //ClientMessageType response_mtype;
 
@@ -196,12 +200,7 @@ bool RegisterServer::handle_message(int connFD, unsigned int size, RegisterServe
 }
 
 int RegisterServer::send_msg(const std::string& hostname, const int port, int mtype, const std::string& msg, int connFD) {
-    std::string message = "-1rs " + std::to_string(msg.length()) + " " + std::to_string(mtype) + '\n' + msg;
+    std::string message = "-1rs " + std::to_string(mtype) + " ";
+    message = std::to_string(message.length() + msg.length()) + "\n" + message + msg;
     return send_message(hostname.c_str(), port, message.c_str(), connFD);
 }
-
-void RegisterServer::check_in_compute(std::string& msg) {
-
-}
-
-// void RegisterServer::check_in_institution();

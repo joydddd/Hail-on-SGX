@@ -2,6 +2,7 @@
 #define HASHING_H
 
 #include <string>
+#include <stdexcept>
 
 #define prime_a 533122189
 #define prime_b 4156559549
