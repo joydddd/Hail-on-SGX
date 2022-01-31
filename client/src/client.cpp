@@ -283,7 +283,8 @@ void Client::send_msg(const std::string& hostname, unsigned int port, unsigned i
 
 void Client::fill_queue() {
     std::string line;
-    std::string vals;
+    std::vector<uint8_t> vals;
+    std::vector<uint8_t> compressed_vals;
     while(getline(xval, line)) {
         if (!num_patients) {
             // Subtract 2 for locus->alleles tab and alleles->first value tab
@@ -291,8 +292,10 @@ void Client::fill_queue() {
             Parser::split(patients_split, line, '\t');
             num_patients = patients_split.size() - 2;
             vals.resize(num_patients);
+            compressed_vals.resize((num_patients / TWO_BIT_INT_ARR_SIZE) 
+                                    + (num_patients % TWO_BIT_INT_ARR_SIZE ? 1 : 0));
         }
-        int compute_server_hash = Parser::parse_allele_line(line, vals, aes_encryptor_list);
+        int compute_server_hash = Parser::parse_allele_line(line, vals, compressed_vals, aes_encryptor_list);
         allele_queue_list[compute_server_hash].push(line);
     }
 }

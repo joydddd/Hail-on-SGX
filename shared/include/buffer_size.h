@@ -15,6 +15,8 @@
 
 #define RSA_PUB_KEY_SIZE 512
 
+#define TWO_BIT_INT_ARR_SIZE 4 // compressed two bit uint8_t array size (8 bits / 2 bits per value)
+
 #define EOFSeperator "~EOF~" // mark end of dataset
 
 #endif

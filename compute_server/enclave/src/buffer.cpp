@@ -13,13 +13,27 @@ void aes_decrypt_client(const unsigned char* crypto, unsigned char* plaintxt, co
                      plaintxt);
 }
 
-void decrypt_line(char* crypt, char* plaintxt, size_t* plaintxt_length, const std::vector<ClientInfo>& client_info_list, const int thread_id) {
+void two_bit_decompress(uint8_t* input, uint8_t* decompressed, unsigned int size) {
+    int input_idx = 0;
+    int two_bit_arr_count = 0;
+    for (int decompressed_idx = 0; decompressed_idx < size; ++decompressed_idx) {
+        decompressed[decompressed_idx] = input[input_idx] & 0b11;
+        if (++two_bit_arr_count == TWO_BIT_INT_ARR_SIZE) {
+            input_idx++;
+            two_bit_arr_count = 0;
+        } else {
+            input[input_idx] >>= 2;
+        }
+    }
+}
+
+void Buffer::decrypt_line(char* plaintxt, size_t* plaintxt_length, const std::vector<ClientInfo>& client_info_list, const int thread_id) {
     vector<char*> client_begin;
-    char* head = crypt;
-    char* end_of_allele = crypt, *end_of_loci = crypt;
+    char* head = crypttxt;
+    char* end_of_allele = crypttxt, *end_of_loci = crypttxt;
     while (true) {
         if (*head == '\t') {
-            if (end_of_allele != crypt) {
+            if (end_of_allele != crypttxt) {
                 end_of_loci = head;
                 break;
             } else {
@@ -30,8 +44,8 @@ void decrypt_line(char* crypt, char* plaintxt, size_t* plaintxt_length, const st
     }
     /* copy allele & loci to plaintxt */
     char* plaintxt_head = plaintxt;
-    strncpy(plaintxt, crypt, end_of_loci - crypt + 1);
-    plaintxt_head += end_of_loci - crypt + 1;
+    strncpy(plaintxt, crypttxt, end_of_loci - crypttxt + 1);
+    plaintxt_head += end_of_loci - crypttxt + 1;
 
     char* tab_pos = end_of_loci;
     deque<int> client_list;
@@ -74,8 +88,9 @@ void decrypt_line(char* crypt, char* plaintxt, size_t* plaintxt_length, const st
                 *(plaintxt_head + j) = NA_uint8;
         } else {
             aes_decrypt_client((const unsigned char*)client_crypto_map[client],
-                                (unsigned char*)plaintxt_head,
+                                (unsigned char*)plain_txt_compressed,
                                 client_info_list[client], thread_id);
+            two_bit_decompress(plain_txt_compressed, (uint8_t*)plaintxt_head, client_info_list[client].size);
         }
         plaintxt_head += client_info_list[client].size;
     }
@@ -123,6 +138,6 @@ Batch* Buffer::launch(std::vector<ClientInfo>& client_info_list, const int threa
     if (free_batches.empty()) return nullptr;
     Batch* new_b = free_batches.front();
     free_batches.pop_front();
-    decrypt_line(crypttxt, new_b->load_plaintxt(), new_b->plaintxt_size(), client_info_list, thread_id);
+    decrypt_line(new_b->load_plaintxt(), new_b->plaintxt_size(), client_info_list, thread_id);
     return new_b;
 }

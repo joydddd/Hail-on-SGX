@@ -70,7 +70,7 @@ DataBlock* Parser::parse_body(const std::string& message_body, ComputeServerMess
     return block;
 }
 
-int Parser::parse_allele_line(std::string& line, std::string& vals, std::vector<std::vector<AESCrypto> >& encryptor_list) {
+int Parser::parse_allele_line(std::string& line, std::vector<uint8_t>& vals, std::vector<uint8_t>& compressed_vals, std::vector<std::vector<AESCrypto> >& encryptor_list) {
     std::vector<std::string> line_split;
     Parser::split(line_split, line, '\t', 2);
     std::string locus_and_allele = line_split[0] + '\t' + line_split[1] + '\t';
@@ -105,7 +105,8 @@ int Parser::parse_allele_line(std::string& line, std::string& vals, std::vector<
                 throw std::runtime_error("Invalid alleles file!");
         }
     }
-    line = locus_and_allele + encryptor.encrypt_line((byte *)&vals[0], vals.length()) + "\n";
+    two_bit_compress(&vals[0], &compressed_vals[0], vals.size());
+    line = locus_and_allele + encryptor.encrypt_line((byte *)&compressed_vals[0], compressed_vals.size()) + "\n";
 
     return compute_server_hash;
 }
@@ -130,5 +131,23 @@ unsigned int Parser::convert_to_num(const std::string& str) {
 void Parser::assert_non_empty(const std::string& str) {
     if (!str.length()) {
         throw std::runtime_error("String is empty");
+    }
+}
+
+void Parser::two_bit_compress(uint8_t* input, uint8_t* compressed, unsigned int size) {
+    int two_bit_arr = 0;
+    int two_bit_arr_count = 0;
+    int compressed_idx = 0;
+    for (int input_idx = 0; input_idx < size; ++input_idx) {
+        two_bit_arr += input[input_idx] << (2 * two_bit_arr_count++);
+        if (two_bit_arr_count == TWO_BIT_INT_ARR_SIZE) {
+            compressed[compressed_idx++] = two_bit_arr;
+            two_bit_arr = 0;
+            two_bit_arr_count = 0;
+        } 
+    }
+    // If our input is not a multiple of 4 we will have some trailing bits!
+    if (two_bit_arr_count != 0) {
+        compressed[compressed_idx] = two_bit_arr;
     }
 }

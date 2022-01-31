@@ -54,7 +54,8 @@ struct DataBlock {
 
 class Parser {
   private:
-    
+    static void two_bit_compress(uint8_t* input, uint8_t* compressed, unsigned int size);
+
   public:
     Parser(/* args */);
     ~Parser();
@@ -72,7 +73,7 @@ class Parser {
     static DataBlock* parse_body(const std::string& message_body, ComputeServerMessageType mtype, AESCrypto& decoder);
 
     // Returns the compute server we should send this allele to
-    static int parse_allele_line(std::string& line, std::string& vals, std::vector<std::vector<AESCrypto> >& encryptor_list);
+    static int parse_allele_line(std::string& line, std::vector<uint8_t>& vals, std::vector<uint8_t>& compressed_vals, std::vector<std::vector<AESCrypto> >& encryptor_list);
 
     // split a given string based on the specified delimiter
     static void split(std::vector<std::string>& split_strings, const std::string& str, char delim=' ', int num_splits=-1);

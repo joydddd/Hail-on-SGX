@@ -410,6 +410,8 @@ void ComputeServer::allele_matcher() {
             
             // For the first line we want to calculate the max number of lines per batch
             if (first) {
+                start = std::chrono::high_resolution_clock::now();
+
                 first = false;
                 // 128 MB divided by four, divided by the number of threads, divided by size of an allele line
                 max_batch_lines = (ENCLAVE_READ_BUFFER_SIZE / num_threads) / sizeof(allele_line);
