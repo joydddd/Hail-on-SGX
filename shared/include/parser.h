@@ -69,8 +69,10 @@ class Parser {
     static std::string encrypt_response(std::string user, std::string response,
                                         std::unordered_map<std::string, std::string> &passwords);
 
+    static int parse_first_int(const std::string& str, char delim='\t');
+
     // parse message body into the relevant arguments we need
-    static DataBlock* parse_body(const std::string& message_body, ComputeServerMessageType mtype, AESCrypto& decoder);
+    static void parse_data_body(std::vector<DataBlock*>& blocks, const std::string& message_body, AESCrypto& decoder);
 
     // Returns the compute server we should send this allele to
     static int parse_allele_line(std::string& line, std::vector<uint8_t>& vals, std::vector<uint8_t>& compressed_vals, std::vector<std::vector<AESCrypto> >& encryptor_list);

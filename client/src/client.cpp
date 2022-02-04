@@ -116,7 +116,7 @@ bool Client::start_thread(int connFD) {
         std::string header(header_buffer, header_size);
         unsigned int body_size = std::stoi(header);
         
-        char body_buffer[8192];
+        char body_buffer[MAX_MESSAGE_SIZE];
         if (body_size != 0) {
             // read in encrypted body
             int rval = recv(connFD, body_buffer, body_size, MSG_WAITALL);
@@ -241,14 +241,27 @@ void Client::handle_message(int connFD, const unsigned int global_id, const Clie
             ConnectionInfo info = compute_server_info[global_id];
             std::queue<std::string>& allele_queue = allele_queue_list[global_id];
             int blocks_sent = 0;
+
             while(!allele_queue.empty()) {
-                std::string block = std::to_string(blocks_sent++) + "\t" + allele_queue.front();
-                allele_queue.pop();
+                std::string block = std::to_string(blocks_sent++) + "\t";
+                while(!allele_queue.empty()) {
+                    std::string line = allele_queue.front();
+                    
+                    // If adding this line would cause us to exceed the max message size
+                    // we are done with this batch of lines! Assume largest header possible is 30.
+                    if ((block.length() + line.length() + 30) >= MAX_MESSAGE_SIZE) {
+                        break;
+                    }
+                    block += line + "\t";
+                    allele_queue.pop();
+                }
+                // Remove trailing '\t'
+                block.pop_back();
 
                 send_msg(info.hostname, info.port, response_mtype, block, connFD);
             }
             // If get_block failed we have reached the end of the file, send an EOF.
-            std::string block = std::to_string(blocks_sent) + "\t";
+            std::string block = std::to_string(blocks_sent) + "\t" + EOFSeperator;
             response_mtype = EOF_DATA;
             send_msg(global_id, EOF_DATA, block, connFD);
             sent_all_data = true;
@@ -278,6 +291,7 @@ void Client::send_msg(const unsigned int global_id, const unsigned int mtype, co
 void Client::send_msg(const std::string& hostname, unsigned int port, unsigned int mtype, const std::string& msg, int connFD) {
     std::string message = client_name + " " + std::to_string(mtype) + " ";
     message = std::to_string(message.length() + msg.length()) + "\n" + message + msg;
+    //guarded_cout("MSG LENGTH: " + std::to_string(message.length()), cout_lock);
     send_message(hostname.c_str(), port, message.c_str(), connFD);
 }
 
@@ -290,6 +304,7 @@ void Client::fill_queue() {
             // Subtract 2 for locus->alleles tab and alleles->first value tab
             std::vector<std::string> patients_split;
             Parser::split(patients_split, line, '\t');
+            // This isn't very clean but I want to check the size of the encrypted/encoded line once
             num_patients = patients_split.size() - 2;
             vals.resize(num_patients);
             compressed_vals.resize((num_patients / TWO_BIT_INT_ARR_SIZE) 

@@ -54,8 +54,7 @@ int get_port_number(int sockfd) {
 
 int send_message(const char *hostname, int port, const char *message, int sock) {
 	if (strlen(message) > MAX_MESSAGE_SIZE) {
-		std::cout << std::to_string(strlen(message));
-		perror("Error: Message exceeds maximum length\n");
+		throw std::runtime_error("Message exceeds maximum length: " + std::to_string(strlen(message)) + "\t" + message);
 		return -1;
 	}
     int sockfd = sock == -1 ? socket(AF_INET, SOCK_STREAM, 0) : sock;

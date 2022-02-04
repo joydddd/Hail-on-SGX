@@ -53,21 +53,30 @@ std::tuple<std::string, unsigned int, unsigned int> Parser::parse_header(const s
     return std::make_tuple(header_split[0], convert_to_num(header_split[1]), convert_to_num(header_split[2]));
 }
 
-DataBlock* Parser::parse_body(const std::string& message_body, ComputeServerMessageType mtype, AESCrypto& decoder) {
-    if (mtype != DATA && mtype != EOF_DATA) return nullptr;
-    std::vector<std::string> split_line; 
-    Parser::split(split_line, message_body, '\t', 3);
-    if (split_line.size() != 4) {
-        split_line.push_back(EOFSeperator);
-        split_line.push_back("");
-        split_line.push_back("");
+int Parser::parse_first_int(const std::string& str, char delim) {
+    std::string parsed_int;
+    for (char c: str) {
+        if (c == delim) break;
+        parsed_int.push_back(c);
     }
-    struct DataBlock* block = new DataBlock;
-    block->pos = Parser::convert_to_num(split_line.front());
-    block->locus = split_line[1] + '\t' + split_line[2];
-    block->data = decoder.decode(split_line.back());
-    
-    return block;
+
+    return std::stoi(parsed_int);
+}
+
+void Parser::parse_data_body(std::vector<DataBlock*>& blocks, const std::string& message_body, AESCrypto& decoder) {
+    // TODO: optimize this... super inefficient currently
+
+    std::vector<std::string> split_msg;
+    Parser::split(split_msg, message_body, '\t');
+
+    // Start idx at 1 to skip over the block id
+    for (int msg_idx = 1; msg_idx < split_msg.size(); msg_idx += 3) {
+        DataBlock* block = new DataBlock;
+
+        block->locus = split_msg[msg_idx] + "\t" + split_msg[msg_idx + 1];
+        block->data = decoder.decode(split_msg[msg_idx + 2]);
+        blocks.push_back(block);
+    }
 }
 
 int Parser::parse_allele_line(std::string& line, std::vector<uint8_t>& vals, std::vector<uint8_t>& compressed_vals, std::vector<std::vector<AESCrypto> >& encryptor_list) {
