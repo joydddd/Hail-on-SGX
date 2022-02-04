@@ -21,10 +21,6 @@ Institution::~Institution() {
 
 void Institution::add_block(DataBlock* block) {
     std::lock_guard<std::mutex> raii(blocks_lock);
-    if (!encrypted_allele_data_size_set) {
-        encrypted_allele_data_size = block->data.length();
-        encrypted_allele_data_size_set = true;
-    }
     blocks.push(block);
 }
 
@@ -88,7 +84,24 @@ void Institution::transfer_eligible_blocks() {
             return;
         }
         blocks.pop();
-        eligible_blocks.push(block);
+        // If we have reached the EOF, break
+        if (strcmp(block->locus.c_str(), EOFSeperator) == 0) {
+            eligible_blocks.push(block);
+            return;
+        } 
+
+        std::vector<DataBlock*> parsed_blocks;
+        Parser::parse_data_body(parsed_blocks, block->data, decoder);
+        // Clean up the old block
+        delete block;
+
+        if (!encrypted_allele_data_size_set) {
+            encrypted_allele_data_size = parsed_blocks.front()->data.length();
+            encrypted_allele_data_size_set = true;
+        }
+        for (DataBlock* parsed_block : parsed_blocks) {
+            eligible_blocks.push(parsed_block);
+        }
         current_block++;
     }
 }

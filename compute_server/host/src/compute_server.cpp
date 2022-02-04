@@ -158,7 +158,7 @@ bool ComputeServer::start_thread(int connFD) {
         std::string header(header_buffer, header_size);
         unsigned int body_size = std::stoi(header);
         
-        char body_buffer[8192];
+        char body_buffer[MAX_MESSAGE_SIZE];
         if (body_size != 0) {
             // read in encrypted body
             int rval = recv(connFD, body_buffer, body_size, MSG_WAITALL);
@@ -186,10 +186,10 @@ bool ComputeServer::start_thread(int connFD) {
 
 bool ComputeServer::handle_message(int connFD, const std::string& name, ComputeServerMessageType mtype,
                             std::string& msg) {
-    DataBlock* block;
-    if (institutions.count(name)) {
-        block = Parser::parse_body(msg, mtype, institutions[name]->decoder);
-    }
+    //DataBlock* block;
+    // if (institutions.count(name)) {
+    //     block = Parser::parse_body(msg, mtype, institutions[name]->decoder);
+    // }
 
     std::string response;
     ClientMessageType response_mtype;
@@ -245,6 +245,13 @@ bool ComputeServer::handle_message(int connFD, const std::string& name, ComputeS
         case Y_VAL:
         {
             institutions[name]->set_y_data(msg);
+            // If we are not using covariants OR if the only covariant we are using is "1", we should start asking for data!
+            if (expected_covariants.size() == 0 || (expected_covariants.size() == 1 && expected_covariants.count("1"))) {
+                institutions[name]->request_conn = send_msg(name, DATA_REQUEST, std::to_string(MIN_BLOCK_COUNT), institutions[name]->request_conn);
+                // start listener thread for data!
+                boost::thread data_listener_thread(&ComputeServer::data_listener, this, institutions[name]->request_conn);
+                data_listener_thread.detach();
+            }
             break;
         }
         case COVARIANT:
@@ -270,16 +277,31 @@ bool ComputeServer::handle_message(int connFD, const std::string& name, ComputeS
         case EOF_DATA:
         {
             // intentionally missing break, we want to run the general data case after we do some clean up
-            institutions[name]->all_data_received = true;
-            if (block->data != EOFSeperator) {
-                DataBlock* eof = new DataBlock;
-                eof->data = EOFSeperator;
-                eof->pos = block->pos + 1;
-                institutions[name]->add_block(eof);
-            }
+            // institutions[name]->all_data_received = true;
+            // if (block->data != EOFSeperator) {
+            //     DataBlock* eof = new DataBlock;
+            //     eof->data = EOFSeperator;
+            //     eof->pos = block->pos + 1;
+            //     institutions[name]->add_block(eof);
+            // }
+            // std::vector<std::string> parsed_msg;
+            // Parser::split(parsed_msg, msg, '\t');
+            // // if 
+            // if (parsed_msg.length() == 1) 
+            DataBlock* block = new DataBlock;
+            block->locus = EOFSeperator;
+            block->data = EOFSeperator;
+            block->pos = Parser::parse_first_int(msg);
+
+            institutions[name]->add_block(block);
+            break;
         }
         case DATA:
         {
+            DataBlock* block = new DataBlock;
+            block->data = msg;
+            block->pos = Parser::parse_first_int(msg);
+
             institutions[name]->add_block(block);
             break;
         }
@@ -388,9 +410,8 @@ void ComputeServer::allele_matcher() {
 
             int locus_hash_thread = hash_string(allele_line, num_threads, true); 
 
-
-            for (const auto& it : institutions) {
-                Institution* inst = it.second;
+            for (int institutions_idx = 0; institutions_idx < institution_list.size(); ++institutions_idx) {
+                Institution* inst = institutions[institution_list[institutions_idx]];
                 DataBlock* block = inst->get_top_block();
                 // if this institution is <EOF>, skip it.
                 if (!block) continue;
@@ -413,8 +434,9 @@ void ComputeServer::allele_matcher() {
                 start = std::chrono::high_resolution_clock::now();
 
                 first = false;
+
                 // 128 MB divided by four, divided by the number of threads, divided by size of an allele line
-                max_batch_lines = (ENCLAVE_READ_BUFFER_SIZE / num_threads) / sizeof(allele_line);
+                max_batch_lines = (ENCLAVE_READ_BUFFER_SIZE / num_threads) / allele_line.length();
                 // Ideally we will not use more than a quarter the encalve for performance reasons, 
                 // but if that is not possible just go one line at a time
                 max_batch_lines = std::max(max_batch_lines, 1);

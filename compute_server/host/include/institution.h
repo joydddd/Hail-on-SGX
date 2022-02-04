@@ -33,6 +33,8 @@ class Institution {
     int encrypted_allele_data_size;
     bool encrypted_allele_data_size_set;
 
+    AESCrypto decoder;
+
   public:
     Institution(std::string hostname, int port, int id, const int num_threads);
     ~Institution();
@@ -74,8 +76,6 @@ class Institution {
     bool requested_for_data;
     bool listener_running;
     bool all_data_received;
-
-    AESCrypto decoder;
 
     std::string hostname;
     

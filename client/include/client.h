@@ -16,6 +16,7 @@
 #include <sys/socket.h>
 #include <netdb.h>
 
+#include "buffer_size.h"
 #include "parser.h"
 #include "socket_send.h"
 #include "output.h"
@@ -39,6 +40,7 @@ class Client {
     int server_port;
 
     int num_patients;
+    int num_lines_per_block;
 
     bool sender_running;
     bool sent_all_data;

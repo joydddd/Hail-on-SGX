@@ -116,7 +116,7 @@ bool RegisterServer::start_thread(int connFD) {
         std::string header(header_buffer, header_size);
         unsigned int body_size = std::stoi(header);
         
-        char body_buffer[8192];
+        char body_buffer[MAX_MESSAGE_SIZE];
         if (body_size != 0) {
             // read in encrypted body
             int rval = recv(connFD, body_buffer, body_size, MSG_WAITALL);
