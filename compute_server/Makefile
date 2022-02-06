@@ -34,3 +34,6 @@ clean:
 run:
 	$(MAKE) -C host run
 
+simulate: 
+	$(MAKE) -C host simulate
+

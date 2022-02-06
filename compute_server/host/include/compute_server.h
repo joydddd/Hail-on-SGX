@@ -26,6 +26,8 @@
 #include "buffer_size.h"
 #include "readerwriterqueue.h"
 
+enum EncMode { sgx, simulate, debug, NA };
+
 class ComputeServer {
   private:
     nlohmann::json compute_config;
@@ -88,6 +90,8 @@ class ComputeServer {
     ComputeServer(const std::string& config_file);
 
     ~ComputeServer();
+
+    static EncMode enc_mode;
 
     // create listening socket to handle requests on indefinitely
     void run();

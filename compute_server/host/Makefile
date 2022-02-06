@@ -64,6 +64,9 @@ build: pre $(OBJECTS)
 run: 
 	./$(EXECUTABLE) $(CONFIG)
 
+simulate:
+	./$(EXECUTABLE) $(CONFIG) --simulate
+
 # Automatically generate any build rules for test*.cpp files
 define make_tests
 	$(CXX) -c $(CXXFLAGS) -g $(TESTDIR)/$(1).cpp
@@ -101,3 +104,6 @@ clean:
 	rm -rf ${BUILDDIR}
 	rm -f $(PROJECTNAME)host $(PROJECTNAME)host.o $(PROJECTNAME)_u.o $(PROJECTNAME)_u.c $(PROJECTNAME)_u.h $(PROJECTNAME)_args.h $(PROJECT_NAME).signed
 	rm -f *.o $(TESTS) *.out *_debug test_*
+
+
+.PHONY: all build clean run debug simulate
