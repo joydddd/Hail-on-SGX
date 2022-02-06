@@ -80,6 +80,9 @@ class ComputeServer {
 
     void allele_matcher();
 
+    void parse_header_compute_server_header(const std::string& header, std::string& msg,
+                                            std::string& client_name, ComputeServerMessageType& mtype);
+
   public:
 
     ComputeServer(const std::string& config_file);

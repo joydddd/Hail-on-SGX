@@ -166,15 +166,18 @@ bool ComputeServer::start_thread(int connFD) {
                 throw std::runtime_error("Error reading request body");
             }
         }
-        std::string encrypted_body(body_buffer, body_size);
-        std::vector<std::string> parsed_header;
-        Parser::split(parsed_header, encrypted_body, ' ', 2);
+        std::string body(body_buffer, body_size);
 
+        //guarded_cout("Body: " + body, cout_lock);
         //guarded_cout("Client: " + parsed_header[0] + 
         //             " Msg Type: " + parsed_header[1], cout_lock);
         //guarded_cout("\nEncrypted body:\n" + parsed_header[2], cout_lock);
+        std::string msg;
+        std::string client_name;
+        ComputeServerMessageType mtype;
+        parse_header_compute_server_header(body, msg, client_name, mtype);
 
-        handle_message(connFD, parsed_header[0], static_cast<ComputeServerMessageType>(std::stoi(parsed_header[1])), parsed_header[2]);
+        handle_message(connFD, client_name, mtype, msg);
     }
     catch (const std::runtime_error e)  {
         guarded_cout("Exception " + std::string(e.what()) + "\n", cout_lock);
@@ -184,19 +187,12 @@ bool ComputeServer::start_thread(int connFD) {
     return true;
 }
 
-bool ComputeServer::handle_message(int connFD, const std::string& name, ComputeServerMessageType mtype,
-                            std::string& msg) {
-    //DataBlock* block;
-    // if (institutions.count(name)) {
-    //     block = Parser::parse_body(msg, mtype, institutions[name]->decoder);
-    // }
-
+bool ComputeServer::handle_message(int connFD, const std::string& name, ComputeServerMessageType mtype, std::string& msg) {
     std::string response;
     ClientMessageType response_mtype;
-
     switch (mtype) {
         case GLOBAL_ID:
-        {  
+        {   
             global_id = std::stoi(msg);
             break;
         }
@@ -217,7 +213,7 @@ bool ComputeServer::handle_message(int connFD, const std::string& name, ComputeS
                 // Look for client id!
                 if (institution_list[id] == name) {
                     institutions[name] = new Institution(hostname_and_port[0], 
-                                                         Parser::convert_to_num(hostname_and_port[1]),
+                                                         std::stoi(hostname_and_port[1]),
                                                          id,
                                                          num_threads);
                 }
@@ -276,33 +272,12 @@ bool ComputeServer::handle_message(int connFD, const std::string& name, ComputeS
         }
         case EOF_DATA:
         {
-            // intentionally missing break, we want to run the general data case after we do some clean up
-            // institutions[name]->all_data_received = true;
-            // if (block->data != EOFSeperator) {
-            //     DataBlock* eof = new DataBlock;
-            //     eof->data = EOFSeperator;
-            //     eof->pos = block->pos + 1;
-            //     institutions[name]->add_block(eof);
-            // }
-            // std::vector<std::string> parsed_msg;
-            // Parser::split(parsed_msg, msg, '\t');
-            // // if 
-            // if (parsed_msg.length() == 1) 
-            DataBlock* block = new DataBlock;
-            block->locus = EOFSeperator;
-            block->data = EOFSeperator;
-            block->pos = Parser::parse_first_int(msg);
-
-            institutions[name]->add_block(block);
+            // Currently this is not needed, keeping in case we decide to use it again.
             break;
         }
         case DATA:
         {
-            DataBlock* block = new DataBlock;
-            block->data = msg;
-            block->pos = Parser::parse_first_int(msg);
-
-            institutions[name]->add_block(block);
+            // Added optimization to handle this within in the parser... might undo in the future.
             break;
         }
         default:
@@ -450,6 +425,81 @@ void ComputeServer::allele_matcher() {
             allele_queue_list[locus_hash_thread].enqueue(allele_line);
         }
     }
+}
+
+void ComputeServer::parse_header_compute_server_header(const std::string& header, std::string& msg, 
+                                                       std::string& client_name, ComputeServerMessageType& mtype) {
+    int header_idx = 0;
+    // Parse client name
+    while(header[header_idx] != ' ') {
+        client_name.push_back(header[header_idx++]);
+    }
+    header_idx++;
+
+    // Parse mtype
+    std::string mtype_str;
+
+    while(header[header_idx] != ' ') {
+        mtype_str.push_back(header[header_idx++]);
+    }
+    header_idx++;
+    mtype = static_cast<ComputeServerMessageType>(std::stoi(mtype_str));
+
+    if (mtype != ComputeServerMessageType::DATA) {
+        for (; header_idx < header.length(); ++header_idx) {
+            msg.push_back(header[header_idx]);
+        }
+        return;
+    }
+
+    DataBlockBatch* batch = new DataBlockBatch;
+    std::string pos_str;
+    // Parse batch position
+    while(header[header_idx++] != '\t') {
+        pos_str.push_back(header[header_idx - 1]);
+    }
+
+    batch->pos = std::stoi(pos_str);
+
+    // Parse all DataBlocks
+    bool create_new_block = true;
+    int num_delims = 0;
+    std::string encoded_data;
+    DataBlock* block;
+    for (; header_idx < header.length(); ++header_idx) {
+        if (header[header_idx] == '\t') {
+            // If we have seen 3 '\t' that means we have rolled over into the next datablock
+            if (++num_delims == 3) {
+                block->data = institutions[client_name]->decoder.decode(encoded_data);
+                batch->blocks_batch.push_back(block);
+                create_new_block = true;
+                num_delims = 0;
+            }
+            if (num_delims != 1) {
+                header_idx++;
+            }
+        }
+        // Create a new DataBlock
+        if (create_new_block) {
+            block = new DataBlock;
+            create_new_block = false;
+            encoded_data = "";
+        }
+
+        // For the first two delims we are reading in the locus + allele
+        if (num_delims < 2) {
+            block->locus.push_back(header[header_idx]);
+        }
+        // Last delim is the encoded data
+        else {
+            encoded_data.push_back(header[header_idx]);
+        }
+    }
+    // Decode the final block
+    block->data = institutions[client_name]->decoder.decode(encoded_data);
+    batch->blocks_batch.push_back(block);
+
+    institutions[client_name]->add_block_batch(batch);
 }
 
 ComputeServer& ComputeServer::get_instance(const std::string& config_file) {

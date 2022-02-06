@@ -53,10 +53,16 @@ std::tuple<std::string, unsigned int, unsigned int> Parser::parse_header(const s
     return std::make_tuple(header_split[0], convert_to_num(header_split[1]), convert_to_num(header_split[2]));
 }
 
-int Parser::parse_first_int(const std::string& str, char delim) {
+int Parser::parse_nth_int(const std::string& str, const int n, const char delim) {
     std::string parsed_int;
+    int num_delims = 0;
     for (char c: str) {
-        if (c == delim) break;
+        if (c == delim) {
+            if (n == num_delims++) {
+                break;
+            }
+            parsed_int = "";
+        }
         parsed_int.push_back(c);
     }
 

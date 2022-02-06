@@ -261,9 +261,8 @@ void Client::handle_message(int connFD, const unsigned int global_id, const Clie
                 send_msg(info.hostname, info.port, response_mtype, block, connFD);
             }
             // If get_block failed we have reached the end of the file, send an EOF.
-            std::string block = std::to_string(blocks_sent) + "\t" + EOFSeperator;
-            response_mtype = EOF_DATA;
-            send_msg(global_id, EOF_DATA, block, connFD);
+            std::string block = std::to_string(blocks_sent) + "\t" + EOFSeperator + "\t" + EOFSeperator + "\t" + EOFSeperator;
+            send_msg(global_id, DATA, block, connFD);
             sent_all_data = true;
             
             auto stop = std::chrono::high_resolution_clock::now();

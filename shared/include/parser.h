@@ -49,6 +49,10 @@ struct ConnectionInfo {
 struct DataBlock {
   std::string locus;
   std::string data;
+};
+
+struct DataBlockBatch {
+  std::vector<DataBlock*> blocks_batch;
   int pos;
 };
 
@@ -69,7 +73,7 @@ class Parser {
     static std::string encrypt_response(std::string user, std::string response,
                                         std::unordered_map<std::string, std::string> &passwords);
 
-    static int parse_first_int(const std::string& str, char delim='\t');
+    static int parse_nth_int(const std::string& str, const int n, const char delim='\t');
 
     // parse message body into the relevant arguments we need
     static void parse_data_body(std::vector<DataBlock*>& blocks, const std::string& message_body, AESCrypto& decoder);

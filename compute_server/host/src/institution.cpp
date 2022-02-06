@@ -7,7 +7,7 @@
 
 Institution::Institution(std::string hostname, int port, int id, const int num_threads) 
         : hostname(hostname), port(port), requested_for_data(false), listener_running(false), 
-          request_conn(-1), current_block(0), all_data_received(false), id(id) {
+          request_conn(-1), current_pos(0), all_data_received(false), id(id) {
     aes_encrypted_key_list.resize(num_threads);
     aes_encrypted_iv_list.resize(num_threads);
 
@@ -19,9 +19,9 @@ Institution::~Institution() {
 
 }
 
-void Institution::add_block(DataBlock* block) {
+void Institution::add_block_batch(DataBlockBatch* block_batch) {
     std::lock_guard<std::mutex> raii(blocks_lock);
-    blocks.push(block);
+    blocks.push(block_batch);
 }
 
 int Institution::get_blocks_size() {
@@ -79,30 +79,22 @@ int Institution::get_allele_data_size() {
 void Institution::transfer_eligible_blocks() {
     std::lock_guard<std::mutex> raii(blocks_lock);
     while(!blocks.empty()) {
-        DataBlock* block = blocks.top();
-        if(block->pos != current_block) {
+        DataBlockBatch* batch = blocks.top();
+        if(batch->pos != current_pos) {
             return;
         }
         blocks.pop();
-        // If we have reached the EOF, break
-        if (strcmp(block->locus.c_str(), EOFSeperator) == 0) {
-            eligible_blocks.push(block);
-            return;
-        } 
-
-        std::vector<DataBlock*> parsed_blocks;
-        Parser::parse_data_body(parsed_blocks, block->data, decoder);
-        // Clean up the old block
-        delete block;
 
         if (!encrypted_allele_data_size_set) {
-            encrypted_allele_data_size = parsed_blocks.front()->data.length();
+            encrypted_allele_data_size = batch->blocks_batch.front()->data.length();
             encrypted_allele_data_size_set = true;
         }
-        for (DataBlock* parsed_block : parsed_blocks) {
+        for (DataBlock* parsed_block : batch->blocks_batch) {
             eligible_blocks.push(parsed_block);
         }
-        current_block++;
+        // Clean up block batch!
+        delete batch;
+        current_pos++;
     }
 }
 

@@ -12,8 +12,8 @@
 #include <mutex>
 #include "parser.h"
 
-struct BlockPointerGT {
-  inline bool operator()(const DataBlock* a, const DataBlock* b) const {
+struct BlockPointerBatchGT {
+  inline bool operator()(const DataBlockBatch* a, const DataBlockBatch* b) const {
     return a->pos > b->pos;
   }
 };
@@ -21,7 +21,7 @@ struct BlockPointerGT {
 class Institution {
   private:
     std::mutex blocks_lock;
-    std::priority_queue<DataBlock*, std::vector<DataBlock* >, BlockPointerGT > blocks;
+    std::priority_queue<DataBlockBatch*, std::vector<DataBlockBatch* >, BlockPointerBatchGT > blocks;
     std::queue<DataBlock*> eligible_blocks;
     std::unordered_map<std::string, std::string> covariant_data;
     std::string y_val_data;
@@ -33,15 +33,13 @@ class Institution {
     int encrypted_allele_data_size;
     bool encrypted_allele_data_size_set;
 
-    AESCrypto decoder;
-
   public:
     Institution(std::string hostname, int port, int id, const int num_threads);
     ~Institution();
 
     void set_key_and_iv(std::string aes_key, std::string aes_iv, const int thread_id);
 
-    void add_block(DataBlock* block);
+    void add_block_batch(DataBlockBatch* block_batch);
 
     void transfer_eligible_blocks();
 
@@ -69,10 +67,11 @@ class Institution {
 
     void pop_top_block();
 
+    AESCrypto decoder;
     int port;
     int request_conn;
 
-    int current_block;
+    int current_pos;
     bool requested_for_data;
     bool listener_running;
     bool all_data_received;
