@@ -40,6 +40,10 @@ class Buffer {
     /* Batch pool */
     deque<Batch*> free_batches;
 
+    int* client_list;
+    char** client_crypto_map;
+    int client_count;
+
     /* thread pool */
 
     void output(const char*);
@@ -47,7 +51,7 @@ class Buffer {
     void decrypt_line(char* plaintxt, size_t* plaintxt_length, const std::vector<ClientInfo>& client_info_list, const int thread_id);
 
 public:
-    Buffer(size_t _row_size, Row_T row_type);
+    Buffer(size_t _row_size, Row_T row_type, int num_clients);
     ~Buffer();
     void finish(Batch*);
     Batch* launch(std::vector<ClientInfo>& client_info_list, const int thread_id);  // return nullptr if there is no free batches

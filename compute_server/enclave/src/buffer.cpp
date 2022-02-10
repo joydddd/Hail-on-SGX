@@ -48,14 +48,14 @@ void Buffer::decrypt_line(char* plaintxt, size_t* plaintxt_length, const std::ve
     plaintxt_head += end_of_loci - crypttxt + 1;
 
     char* tab_pos = end_of_loci;
-    deque<int> client_list;
+    client_count = 0;
     /* get client list */
     head++;
     while (true) {
         if(*head == '\t'){
             *head = '\0';
             int client = atoi(tab_pos + 1);
-            client_list.push_back(client);
+            client_list[client_count++] = client;
             // cout << "head = " << head - crypt
             //      << " tab_pos = " << tab_pos - crypt << endl;
             // cout << "client: " << client << endl;
@@ -65,7 +65,7 @@ void Buffer::decrypt_line(char* plaintxt, size_t* plaintxt_length, const std::ve
         if (*head == ' ') {
             *head = '\0';
             int client = atoi(tab_pos + 1);
-            client_list.push_back(client);
+            client_list[client_count++] = client;
             // cout << "head = " << head - crypt
             //      << " tab_pos = " << tab_pos - crypt << endl;
             // cout << "client: " << client << endl;
@@ -77,20 +77,27 @@ void Buffer::decrypt_line(char* plaintxt, size_t* plaintxt_length, const std::ve
     }
 
     /* decrypt data */
-    map<int, char*> client_crypto_map;
-    for (size_t i = 0; i < client_list.size(); i++){
+    for (size_t i = 0; i < client_count; i++){
         client_crypto_map[client_list[i]] = head;
         head += client_info_list[client_list[i]].crypto_size;
     }
+    bool client_found;
     for (int client = 0; client < client_info_list.size(); client++) {
-        if (client_crypto_map.find(client) == client_crypto_map.end()){  // this client does have target allele
-            for (int j = 0; j < client_info_list[client].size; j++)
-                *(plaintxt_head + j) = NA_uint8;
-        } else {
-            aes_decrypt_client((const unsigned char*)client_crypto_map[client],
+        client_found = false;
+        for (int list_id = 0; list_id < client_count; ++list_id) {
+            if (client_list[list_id] == client) {
+                aes_decrypt_client((const unsigned char*)client_crypto_map[list_id],
                                 (unsigned char*)plain_txt_compressed,
                                 client_info_list[client], thread_id);
-            two_bit_decompress(plain_txt_compressed, (uint8_t*)plaintxt_head, client_info_list[client].size);
+                two_bit_decompress(plain_txt_compressed, (uint8_t*)plaintxt_head, client_info_list[client].size);
+                client_found = true;
+            }
+        }
+        if (!client_found) {
+            // this client does have target allele
+            for (int j = 0; j < client_info_list[client].size; j++) {
+                *(plaintxt_head + j) = NA_uint8;
+            }
         }
         plaintxt_head += client_info_list[client].size;
     }
@@ -100,17 +107,21 @@ void Buffer::decrypt_line(char* plaintxt, size_t* plaintxt_length, const std::ve
     *plaintxt_length = plaintxt_head - plaintxt;
 }
 
-Buffer::Buffer(size_t _row_size, Row_T row_type)
+Buffer::Buffer(size_t _row_size, Row_T row_type, int num_clients)
     : row_size(_row_size), type(row_type) {
     for (size_t i = 0; i < WORKING_THREAD_N; i++) {
         free_batches.push_back(new Batch(row_size, type));
     }
+    client_list = new int[num_clients];
+    client_crypto_map = new char* [num_clients];
 }
 
 Buffer::~Buffer() {
     for (Batch* bat : free_batches) {
         delete bat;
     }
+    delete [] client_list;
+    delete [] client_crypto_map;
 }
 
 void Buffer::output(const char* out) {

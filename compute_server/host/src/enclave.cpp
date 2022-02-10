@@ -147,8 +147,8 @@ int start_enclave() {
 
     uint32_t flags = 0;
 
-    if (ComputeServer::enc_mode == simulate) flags |= OE_ENCLAVE_FLAG_SIMULATE;
-    if (ComputeServer::enc_mode == debug) flags |= OE_ENCLAVE_FLAG_DEBUG;
+    if (ComputeServer::get_mode() == simulate) flags |= OE_ENCLAVE_FLAG_SIMULATE;
+    if (ComputeServer::get_mode() == debug) flags |= OE_ENCLAVE_FLAG_DEBUG;
 
     // Create the enclave
     result = oe_create_gwas_enclave("../enclave/gwasenc.signed", OE_ENCLAVE_TYPE_AUTO, flags, NULL,

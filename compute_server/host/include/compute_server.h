@@ -39,6 +39,9 @@ class ComputeServer {
     int max_batch_lines;
 
     bool server_eof;
+
+    EncMode enc_mode;
+
     std::vector<bool> eof_read_list;
 
     std::unordered_set<std::string> expected_institutions;
@@ -91,12 +94,12 @@ class ComputeServer {
 
     ~ComputeServer();
 
-    static EncMode enc_mode;
-
     // create listening socket to handle requests on indefinitely
     void run();
 
     static ComputeServer& get_instance(const std::string& config_file="");
+
+    static EncMode get_mode();
 
     static void finish_setup();
 

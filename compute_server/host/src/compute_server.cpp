@@ -56,6 +56,16 @@ void ComputeServer::init(const std::string& config_file) {
 
     y_val_name = compute_config["y_val_name"];
 
+    enc_mode = EncMode::sgx;
+    if (compute_config.count("flag")) {
+        if (compute_config["flag"] == "simulate") {
+            enc_mode = EncMode::simulate;
+        }
+        if (compute_config["flag"] == "debug") {
+            enc_mode = EncMode::debug;
+        }
+    }
+
     server_eof = false;
     max_batch_lines = 0;
     global_id = -1;
@@ -505,6 +515,10 @@ void ComputeServer::parse_header_compute_server_header(const std::string& header
 ComputeServer& ComputeServer::get_instance(const std::string& config_file) {
     static ComputeServer instance(config_file);
     return instance;
+}
+
+EncMode ComputeServer::get_mode() {
+    return get_instance().enc_mode;
 }
 
 void ComputeServer::finish_setup() {

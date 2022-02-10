@@ -165,7 +165,7 @@ void setup_enclave(const int num_threads) {
     int total_row_size = 0;
     for (auto size : client_y_size) total_row_size += size;
     for (int thread_id = 0; thread_id < num_threads; ++thread_id) {
-        buffer_list[thread_id] = new Buffer(total_row_size, LOG_t);
+        buffer_list[thread_id] = new Buffer(total_row_size, LOG_t, num_clients);
     }
     std::cout << "Buffer initialized" << endl;
 
