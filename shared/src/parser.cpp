@@ -76,7 +76,7 @@ void Parser::parse_data_body(std::vector<DataBlock*>& blocks, const std::string&
     Parser::split(split_msg, message_body, '\t');
 
     // Start idx at 1 to skip over the block id
-    for (int msg_idx = 1; msg_idx < split_msg.size(); msg_idx += 3) {
+    for (long unsigned int msg_idx = 1; msg_idx < split_msg.size(); msg_idx += 3) {
         DataBlock* block = new DataBlock;
 
         block->locus = split_msg[msg_idx] + "\t" + split_msg[msg_idx + 1];
@@ -153,7 +153,7 @@ void Parser::two_bit_compress(uint8_t* input, uint8_t* compressed, unsigned int 
     int two_bit_arr = 0;
     int two_bit_arr_count = 0;
     int compressed_idx = 0;
-    for (int input_idx = 0; input_idx < size; ++input_idx) {
+    for (unsigned int input_idx = 0; input_idx < size; ++input_idx) {
         two_bit_arr += input[input_idx] << (2 * two_bit_arr_count++);
         if (two_bit_arr_count == TWO_BIT_INT_ARR_SIZE) {
             compressed[compressed_idx++] = two_bit_arr;

@@ -13,6 +13,10 @@ enclave {
     };
 
     untrusted {
+        void start_timer([in] const char func_name[ENCLAVE_READ_BUFFER_SIZE]);
+
+        void stop_timer([in] const char func_name[ENCLAVE_READ_BUFFER_SIZE]);
+
         void setrsapubkey([in] uint8_t enc_rsa_pub_key[RSA_PUB_KEY_SIZE]);
 
         /* get enclave setup data */

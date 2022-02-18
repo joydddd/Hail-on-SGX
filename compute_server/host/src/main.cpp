@@ -13,10 +13,9 @@ int main(int argc, char const *argv[]) {
     }
 
     // initialize our server and run it forever
+    ComputeServer* instance = ComputeServer::get_instance(argv[1]);
     ComputeServer::get_instance(argv[1]);
-    ComputeServer::get_instance().run();
-    
-
+    instance->run();
 
     return 0;
 }

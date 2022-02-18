@@ -174,7 +174,6 @@ void setup_enclave(const int num_threads) {
 }
 
 void log_regression(const int thread_id) {
-
     // experimental - checking to see if spinning up threads adds a noticable amount of overhead... need +1 TCS in config
     while(!start_thread) {
         // spin until ready to go!
@@ -187,13 +186,16 @@ void log_regression(const int thread_id) {
     
     /* process rows */
     while (true) {
+        //start_timer("get_batch()");
         if (!batch || batch->st != Batch::Working) batch = buffer->launch(client_info_list, thread_id);
         if (!batch) {
             // out_st << "End of Output" << endl;
             break;
         }
+        //stop_timer("get_batch()");
         // get the next row from input buffer
         Log_row* row;
+        //start_timer("get_row()");
         try {
             if (!(row = (Log_row*)batch->get_row(buffer))) continue;
         } catch (ERROR_t& err) {
@@ -201,10 +203,12 @@ void log_regression(const int thread_id) {
             exit(0);
             continue;
         }
+        //stop_timer("get_row()");
         // compute results
         ostringstream ss;
         ss << row->getloci() << "\t" << row->getallels();
         bool converge;
+        //start_timer("converge()");
         try {
             converge = row->fit(gwas);
             ss << "\t" << row->beta()[0] << "\t" << row->t_stat();
@@ -220,8 +224,11 @@ void log_regression(const int thread_id) {
             ss << "\tNA\tNA\tNA" << endl;
             exit(1);
         }
+        //stop_timer("converge()");
         // DEBUG: tmp output to file
+        //start_timer("batch_write()");
         out_st << ss.str();
         batch->write(ss.str());
+        //stop_timer("batch_write()");
     }
 }

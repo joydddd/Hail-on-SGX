@@ -57,6 +57,9 @@ class ComputeServer {
     AESCrypto encoder;
 
     std::unordered_map<std::string, Institution*> institutions;
+  
+    std::unordered_map<std::string, std::chrono::system_clock::time_point> enclave_clocks;
+    std::unordered_map<std::string, unsigned long long> enclave_total_times;
     
     std::unordered_map<std::string, std::string> covariant_dtype;
 
@@ -97,7 +100,13 @@ class ComputeServer {
     // create listening socket to handle requests on indefinitely
     void run();
 
-    static ComputeServer& get_instance(const std::string& config_file="");
+    static ComputeServer* get_instance(const std::string& config_file="");
+
+    static void start_timer(const std::string& func_name);
+
+    static void stop_timer(const std::string& func_name);
+
+    static void print_timings();
 
     static EncMode get_mode();
 

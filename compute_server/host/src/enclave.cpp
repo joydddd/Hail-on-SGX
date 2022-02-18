@@ -47,6 +47,14 @@ void setrsapubkey(uint8_t enc_rsa_pub_key[RSA_PUB_KEY_SIZE]) {
     ComputeServer::finish_setup();
 }
 
+void start_timer(const char func_name[ENCLAVE_READ_BUFFER_SIZE]) {
+    ComputeServer::start_timer(func_name);
+}
+
+void stop_timer(const char func_name[ENCLAVE_READ_BUFFER_SIZE]) {
+    ComputeServer::stop_timer(func_name);
+}
+
 int getclientnum() {
     return ComputeServer::get_num_institutions();
 }
@@ -184,6 +192,8 @@ int start_enclave() {
         cout << "Logistic regression finished!" << endl;
         auto duration = duration_cast<std::chrono::microseconds>(stop - start);
         cout << "Enclave time total: " << duration.count() << endl;
+
+        ComputeServer::print_timings();
     } catch (ERROR_t& err) {
         cerr << "ERROR: " << err.msg << endl << std::flush;
     }
