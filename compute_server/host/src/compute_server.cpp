@@ -31,7 +31,7 @@ ComputeServer::~ComputeServer() {
 }
 
 void ComputeServer::init(const std::string& config_file) {
-    num_threads = 1; //boost::thread::hardware_concurrency();
+    num_threads = boost::thread::hardware_concurrency();
 
     std::ifstream compute_config_file(config_file);
     compute_config_file >> compute_config;
@@ -620,8 +620,7 @@ int ComputeServer::get_allele_data(std::string& batch_data, const int thread_id)
     if (get_instance()->eof_read_list[thread_id]) {
         // Set this back to false so that later function calls return 0!
         get_instance()->eof_read_list[thread_id] = false;
-        batch_data = "~EOF~";
-        guarded_cout("\n???\n", cout_lock);
+        batch_data = EOFSeperator;
         return 1;
     }
 

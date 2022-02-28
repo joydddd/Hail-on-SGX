@@ -3,6 +3,7 @@
 #include <limits>
 
 #include "logistic_regression.h"
+#include "gwas_t.h"
 using namespace std;
 
 double read_entry_int(string &entry) {
@@ -91,10 +92,16 @@ void Log_var::combine(Log_var &other) {
 bool Log_row::fit(const Log_gwas* _gwas, size_t max_it, double sig) {
     gwas = _gwas;
     /* intialize beta to 0*/
+    //start_timer("init()");
     init();
+    //stop_timer("init()");
 
+    //start_timer("change_vector_init");
     vector<double> change(gwas->dim(), 1);
+    //stop_timer("change_vector_init");
     size_t it_count = 0;
+
+    //start_timer("while_loop");
     while (it_count < max_it && max(change) > sig) {
         vector<double> old_beta = b;
         update_beta();
@@ -103,11 +110,14 @@ bool Log_row::fit(const Log_gwas* _gwas, size_t max_it, double sig) {
         }
         it_count++;
     }
+    //stop_timer("while_loop");
     if (it_count == max_it)
         return false;
     else {
         fitted = true;
+        //start_timer("calculate_standard_error");
         standard_error = sqrt(H.INV()[0][0]);
+        //stop_timer("calculate_standard_error");
         // DEBUG:
         // cout << loci << "\t" << alleles << "\t" << it_count << endl;
         return true;
