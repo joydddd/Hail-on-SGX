@@ -1,19 +1,16 @@
 #ifndef ENC_BUFFER_H
 #define ENC_BUFFER_H
-#include <deque>
 
 #include "enc_gwas.h"
 #include "crypto.h"
 #include "batch.h"
+#include <fstream>
 
 #ifdef NENC_TEST
 #include "enclave_old.h"
 #else
 #include "gwas_t.h"
 #endif
-
-#define WORKING_THREAD_N 1
-using std::deque;
 
 class Batch;
 
@@ -37,21 +34,20 @@ class Buffer {
     uint8_t plain_txt_compressed[ENCLAVE_READ_BUFFER_SIZE];
     char output_buffer[ENCLAVE_OUTPUT_BUFFER_SIZE];
 
-    /* Batch pool */
-    deque<Batch*> free_batches;
+    Batch* free_batch;
 
     int* client_list;
     char** client_crypto_map;
     int client_count;
 
-    /* thread pool */
+    int thread_id;
 
     void output(const char*);
 
     void decrypt_line(char* plaintxt, size_t* plaintxt_length, const std::vector<ClientInfo>& client_info_list, const int thread_id);
 
 public:
-    Buffer(size_t _row_size, Row_T row_type, int num_clients);
+    Buffer(size_t _row_size, Row_T row_type, int num_clients, int thread_id);
     ~Buffer();
     void finish(Batch*);
     Batch* launch(std::vector<ClientInfo>& client_info_list, const int thread_id);  // return nullptr if there is no free batches

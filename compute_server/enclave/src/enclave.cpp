@@ -20,6 +20,7 @@ static std::vector<int> client_y_size;
 static int num_clients;
 static Log_gwas* gwas;
 static volatile bool start_thread = false;
+// static std::atomic<int> conv_count(0);
 
 void setup_enclave(const int num_threads) {
     RSACrypto rsa = RSACrypto();
@@ -165,7 +166,7 @@ void setup_enclave(const int num_threads) {
     int total_row_size = 0;
     for (auto size : client_y_size) total_row_size += size;
     for (int thread_id = 0; thread_id < num_threads; ++thread_id) {
-        buffer_list[thread_id] = new Buffer(total_row_size, LOG_t, num_clients);
+        buffer_list[thread_id] = new Buffer(total_row_size, LOG_t, num_clients, thread_id);
     }
     std::cout << "Buffer initialized" << endl;
 
@@ -181,8 +182,10 @@ void log_regression(const int thread_id) {
 
     Buffer* buffer = buffer_list[thread_id];
     Batch* batch = nullptr;
+
+    std::string output_string;
     // DEBUG: tmp output file
-    ofstream out_st("enc" + std::to_string(thread_id) + ".out");
+    //ofstream out_st("enc" + std::to_string(thread_id) + ".out");
     
     /* process rows */
     while (true) {
@@ -205,30 +208,38 @@ void log_regression(const int thread_id) {
         }
         //stop_timer("get_row()");
         // compute results
-        ostringstream ss;
-        ss << row->getloci() << "\t" << row->getallels();
+        output_string += loci_to_str(row->getloci()) + "\t" + alleles_to_str(row->getalleles());
         bool converge;
         //start_timer("converge()");
         try {
+            // conv_count++;
+            // std::cout << conv_count << std::endl;
             converge = row->fit(gwas);
-            ss << "\t" << row->beta()[0] << "\t" << row->t_stat();
-            ss << "\t" << (converge ? "true" : "false");
-            ss << endl;
+            output_string += "\t" + std::to_string(row->beta()[0]) + "\t" + std::to_string(row->t_stat()) + "\t";
+            // wanted to use a ternary, but the compiler doesn't like it?
+            if (converge) {
+                output_string += "true";
+            } else {
+                 output_string += "false";
+            }
+            output_string += "\n";
             // cout << ss.str();
         } catch (MathError& err) {
             // cerr << "MathError while fiting " << ss.str() << ": " << err.msg
             //      << endl;
-            ss << "\tNA\tNA\tNA" << endl;
+            //ss << "\tNA\tNA\tNA" << endl;
         } catch (ERROR_t& err) {
-            cerr << "ERROR " << ss.str() << ": " << err.msg << endl << std::flush;
-            ss << "\tNA\tNA\tNA" << endl;
+            cerr << "ERROR " << err.msg << endl << std::flush;
+            //ss << "\tNA\tNA\tNA" << endl;
             exit(1);
         }
         //stop_timer("converge()");
         // DEBUG: tmp output to file
         //start_timer("batch_write()");
-        out_st << ss.str();
-        batch->write(ss.str());
+        //out_st << ss.str();
+        batch->write(output_string);
+        output_string.clear();
         //stop_timer("batch_write()");
     }
+
 }

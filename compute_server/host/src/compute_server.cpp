@@ -70,13 +70,13 @@ void ComputeServer::init(const std::string& config_file) {
     max_batch_lines = 0;
     global_id = -1;
 
-    // resize allele queue
     allele_queue_list.resize(num_threads);
-
-    // initialize eof list
+    output_list.resize(num_threads);
     eof_read_list.resize(num_threads);
+
     for (int id = 0; id < num_threads; ++id) {
         eof_read_list[id] = false;
+        output_list[id].open(OUTPUT_FILE + std::to_string(id) + ".out");
     }
 
     // Also start the enclave thread.
@@ -635,4 +635,8 @@ int ComputeServer::get_allele_data(std::string& batch_data, const int thread_id)
         batch_data.append(tmp);
     }
     return num_lines;
+}
+
+void ComputeServer::write_allele_data(char* output_data, const int thread_id) {
+    get_instance()->output_list[thread_id] << output_data;
 }
