@@ -16,7 +16,7 @@ void Client::init(const std::string& config_file) {
 
     client_name = client_config["client_name"];
     client_hostname = get_hostname_str();
-    guarded_cout("HOSTNAME?: " + client_hostname, cout_lock);
+
     listen_port = client_config["client_bind_port"];
 
 
