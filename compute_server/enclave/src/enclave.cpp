@@ -20,7 +20,6 @@ static std::vector<int> client_y_size;
 static int num_clients;
 static Log_gwas* gwas;
 static volatile bool start_thread = false;
-// static std::atomic<int> conv_count(0);
 
 void setup_enclave(const int num_threads) {
     RSACrypto rsa = RSACrypto();
@@ -30,7 +29,7 @@ void setup_enclave(const int num_threads) {
 
     getclientnum(&num_clients);
 
-    cout << "enclave running on " << num_clients << " clients: " << endl;
+    cout << "enclave running on " << num_clients << " clients" << endl;
 
     client_info_list.resize(num_clients);
     client_y_size.resize(num_clients);

@@ -21,6 +21,7 @@ OBJECTS += $(shell find $(SHAREDBUILDDIR) -type f -name *.o)
 DEBUGOBJECTS := $(patsubst $(SRCDIR)/%,$(BUILDDIR)/%,$(SOURCES:.cpp=_debug.o))
 INC := -I ../../shared/include -I .. -pthread -I include -I .
 CRYPTFLAG := -lcryptopp
+CURLFLAG := -lcurl
 
 ######################################
 
@@ -59,7 +60,7 @@ ${BUILDDIR}/%.o: ${SRCDIR}/%.cpp
 
 build: pre $(OBJECTS)
 	cd ../../shared && $(MAKE) && cd ../compute_server/host
-	$(CXX) -o $(EXECUTABLE) $(BUILDDIR)/$(PROJECTNAME)_u.o $(OBJECTS) $(LDFLAGS) ${CRYPTFLAG}
+	$(CXX) -o $(EXECUTABLE) $(BUILDDIR)/$(PROJECTNAME)_u.o $(OBJECTS) $(LDFLAGS) ${CRYPTFLAG} ${CURLFLAG}
 
 run: 
 	./$(EXECUTABLE) $(CONFIG)
