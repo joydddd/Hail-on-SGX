@@ -17,6 +17,7 @@ CFLAGS := -g -Wall -std=c++14 -pthread
 FSFLAGS := -ldl
 INC := -I ../shared/include -I include
 CRYPTFLAG := -lcryptopp
+CURLFLAG := -lcurl
 
 # list of test drivers (with main()) for development
 TESTSOURCES := $(wildcard $(TESTDIR)/*test*.$(SRCEXT))
@@ -61,7 +62,7 @@ shared:
 # Compile the pager and tag this compilation
 register_server: ${OBJECTS}
 	@mkdir -p ${TARGETDIR}
-	${CC} ${CFLAGS} ${INC} -o ${TARGETDIR}/$@ $^ ${LIBTHREAD} ${FSFLAGS} ${CRYPTFLAG}
+	${CC} ${CFLAGS} ${INC} -o ${TARGETDIR}/$@ $^ ${LIBTHREAD} ${FSFLAGS} ${CRYPTFLAG} ${CURLFLAG}
 
 run:
 	./bin/register_server register_config.json
