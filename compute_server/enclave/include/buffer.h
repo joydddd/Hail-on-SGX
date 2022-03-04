@@ -49,7 +49,7 @@ class Buffer {
 public:
     Buffer(size_t _row_size, Row_T row_type, int num_clients, int thread_id);
     ~Buffer();
-    void finish(Batch*);
+    void finish();
     Batch* launch(std::vector<ClientInfo>& client_info_list, const int thread_id);  // return nullptr if there is no free batches
 };
 

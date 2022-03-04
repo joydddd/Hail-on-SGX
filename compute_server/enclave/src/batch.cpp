@@ -22,7 +22,7 @@ void Batch::reset() {
 Row* Batch::get_row(Buffer* buffer) {
     if (head >= txt_size) {
         st = Finished;
-        buffer->finish(this);
+        buffer->finish();
         return nullptr;
     }
     st = Working;

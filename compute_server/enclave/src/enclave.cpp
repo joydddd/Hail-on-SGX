@@ -191,7 +191,6 @@ void log_regression(const int thread_id) {
         //start_timer("get_batch()");
         if (!batch || batch->st != Batch::Working) batch = buffer->launch(client_info_list, thread_id);
         if (!batch) {
-            // out_st << "End of Output" << endl;
             break;
         }
         //stop_timer("get_batch()");
@@ -224,6 +223,7 @@ void log_regression(const int thread_id) {
             output_string += "\n";
             // cout << ss.str();
         } catch (MathError& err) {
+            output_string += "\tNA\tNA\tNA\n";
             // cerr << "MathError while fiting " << ss.str() << ": " << err.msg
             //      << endl;
             //ss << "\tNA\tNA\tNA" << endl;

@@ -135,10 +135,9 @@ void Buffer::output(const char* out) {
     output_tail += strlen(out);
 }
 
-void Buffer::finish(Batch* finishing_batch) {
-    output(finishing_batch->output_buffer());
-    finishing_batch->reset();
-    free_batch = finishing_batch;
+void Buffer::finish() {
+    output(free_batch->output_buffer());
+    free_batch->reset();
 }
 
 Batch* Buffer::launch(std::vector<ClientInfo>& client_info_list, const int thread_id) {
