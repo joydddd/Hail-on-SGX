@@ -45,6 +45,8 @@ class Batch {
     void reset();
     Row* get_row(Buffer* buffer);  // return nullptr is reached ead of batch
     void write(const string &);
+
+    size_t get_out_tail();
 };
 
 #endif

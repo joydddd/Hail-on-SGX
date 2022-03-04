@@ -42,7 +42,7 @@ class Buffer {
 
     int thread_id;
 
-    void output(const char*);
+    void output(const char* out, const size_t& length);
 
     void decrypt_line(char* plaintxt, size_t* plaintxt_length, const std::vector<ClientInfo>& client_info_list, const int thread_id);
 
@@ -50,6 +50,8 @@ public:
     Buffer(size_t _row_size, Row_T row_type, int num_clients, int thread_id);
     ~Buffer();
     void finish();
+    void clean_up();
+
     Batch* launch(std::vector<ClientInfo>& client_info_list, const int thread_id);  // return nullptr if there is no free batches
 };
 

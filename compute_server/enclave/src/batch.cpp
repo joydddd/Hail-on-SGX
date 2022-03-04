@@ -38,3 +38,7 @@ void Batch::write(const string& output) {
     strcpy(outtxt + out_tail, output.c_str());
     out_tail += output.size();
 }
+
+size_t Batch::get_out_tail() {
+    return out_tail;
+}

@@ -191,6 +191,8 @@ void log_regression(const int thread_id) {
         //start_timer("get_batch()");
         if (!batch || batch->st != Batch::Working) batch = buffer->launch(client_info_list, thread_id);
         if (!batch) {
+            //buffer->finish();
+            buffer->clean_up();
             break;
         }
         //stop_timer("get_batch()");

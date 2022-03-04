@@ -117,26 +117,28 @@ Buffer::Buffer(size_t _row_size, Row_T row_type, int num_clients, int _thread_id
 }
 
 Buffer::~Buffer() {
-    if (output_tail > 0) {
-        writebatch(type, output_buffer, thread_id);
-    }
     delete free_batch;
     delete [] client_list;
     delete [] client_crypto_map;
 }
 
-void Buffer::output(const char* out) {
-    int len = strlen(out);
-    if (output_tail + len >= ENCLAVE_OUTPUT_BUFFER) {
+void Buffer::output(const char* out, const size_t& length) {
+    if (output_tail + length >= ENCLAVE_OUTPUT_BUFFER_SIZE) {
         writebatch(type, output_buffer, thread_id);
         output_tail = 0;
     }
     strcpy(output_buffer + output_tail, out);
-    output_tail += strlen(out);
+    output_tail += length;
+}
+
+void Buffer::clean_up() {
+    if (output_tail > 0) {
+        writebatch(type, output_buffer, thread_id);
+    }
 }
 
 void Buffer::finish() {
-    output(free_batch->output_buffer());
+    output(free_batch->output_buffer(), free_batch->get_out_tail());
     free_batch->reset();
 }
 

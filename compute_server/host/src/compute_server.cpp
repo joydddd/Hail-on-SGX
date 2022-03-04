@@ -31,7 +31,7 @@ ComputeServer::~ComputeServer() {
 }
 
 void ComputeServer::init(const std::string& config_file) {
-    num_threads = 1;//boost::thread::hardware_concurrency();
+    num_threads = boost::thread::hardware_concurrency();
 
     std::ifstream compute_config_file(config_file);
     compute_config_file >> compute_config;
@@ -639,4 +639,11 @@ int ComputeServer::get_allele_data(std::string& batch_data, const int thread_id)
 
 void ComputeServer::write_allele_data(char* output_data, const int thread_id) {
     get_instance()->output_list[thread_id] << output_data;
+}
+
+void ComputeServer::clean_up_output() {
+    for (std::ofstream& out_file : get_instance()->output_list) {
+        out_file.flush();
+        out_file.close();
+    }
 }
