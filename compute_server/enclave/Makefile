@@ -21,6 +21,7 @@ SOURCES     = $(shell find $(SRCDIR) -type f -name *.cpp)
 # list of objects used in project
 OBJECTS     = $(patsubst $(SRCDIR)/%,$(BUILDDIR)/%,$(SOURCES:.cpp=.o))
 DEBUGOBJECTS = $(patsubst $(SRCDIR)/%,$(BUILDDIR)/%,$(SOURCES:.cpp=_debug.o))
+NONOEOBJECTS = $(patsubst $(SRCDIR)/%,$(BUILDDIR)/%,$(SOURCES:.cpp=_nonoe.o))
 
 ###########################################
 CFLAGS=$(shell pkg-config oeenclave-$(C_COMPILER) --cflags)
@@ -28,11 +29,14 @@ CXXFLAGS=$(shell pkg-config oeenclave-$(CXX_COMPILER) --cflags)
 LDFLAGS=$(shell pkg-config oeenclave-$(CXX_COMPILER) --libs)
 INCDIR=$(shell pkg-config oeenclave-$(C_COMPILER) --variable=includedir)
 CRYPTO_LDFLAGS=$(shell pkg-config oeenclave-$(COMPILER) --variable=${OE_CRYPTO_LIB}libs)
+CXX_NONENC_FLAGS = -std=c++14 -pedantic
+
 
 BOOST_ROOT = /usr/local/lib/boost_1_76_0/
 # CXXFLAGS+= -I $(BOOST_ROOT)
 CFLAGS+= -I ../../shared/include -I .. -I include -I .
 CXXFLAGS+= -I ../../shared/include -I .. -I include -I .
+CXX_NONENC_FLAGS+= -I ../../shared/include -I .. -I include -I .
 LDFLAGS+= -I ../../shared/include -I .. -I include -I .
 
 
@@ -85,8 +89,6 @@ keys:
 	openssl genrsa -out $(KEYDIR)/private.pem -3 3072
 	openssl rsa -in $(KEYDIR)/private.pem -pubout -out $(KEYDIR)/public.pem
 
-CXX_NONENC_FLAGS = -std=c++1z -pedantic
-CXX_NONENC_FLAGS+= -I ../../include/shared -I .. -I include -I .
 # non-enclave tests
 define make_tests
     $(1): CXX_NONENC_FLAGS += -g3 -DDEBUG
@@ -102,3 +104,10 @@ tests: $(TESTS)
 
 test_logistic_stat: $(SRCDIR)/logistic_regression.cpp $(SRCDIR)/enc_gwas.cpp $(TESTDIR)/test_logistic_stat.cpp
 	$(CXX) $(CXX_NONENC_FLAGS) -DDEBUG -o $@ $^
+
+$(BUILDDIR)/%_nonoe.o: $(SRCDIR)/%.cpp
+	@mkdir -p ${BUILDDIR}
+	$(CXX) -c $(CXX_NONENC_FLAGS) -DNON_OE -o $@ $^
+
+nonoe: $(NONOEOBJECTS)
+	$(CXX) $(NONOEOBJECTS) -c $(CXX_NONENC_FLAGS) -o $(BUILDDIR)/$(PROJECTNAME)_nonoe.o

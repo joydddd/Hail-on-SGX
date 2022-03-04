@@ -5,8 +5,8 @@
 #include "logistic_regression.h"
 #include "enc_gwas.h"
 
-#ifdef NENC_TEST
-#include "enclave_old.h"
+#ifdef NON_OE
+#include "enclave_glue.h"
 #else
 #include "gwas_t.h"
 #endif

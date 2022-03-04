@@ -1,4 +1,5 @@
 #include "batch.h"
+#include <cstring>
 
 Batch::Batch(size_t _row_size, Row_T row_type)
     : row_size(_row_size), type(row_type) {

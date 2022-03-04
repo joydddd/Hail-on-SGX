@@ -17,7 +17,14 @@
 #define MAX_ATTEMPT_TIMES 10
 #define ATTEMPT_TIMEOUT 500  // in milliseconds
 
+#ifdef NON_OE
+#include "host_glue.h"
+#include "../../enclave/include/enclave_glue.h"
+#else
 #include "gwas_u.h"
+#endif
+
+
 using namespace std;
 // const vector<vector<string>> covFiles = {
 //     {"../../samples/1kg-logistic-regression/isFemale1.tsv",
@@ -37,7 +44,6 @@ using namespace std;
 // map<string, int> cov_map;
 // index -1 is reserved for intercept
 
-static oe_enclave_t* enclave;
 
 void setrsapubkey(uint8_t enc_rsa_pub_key[RSA_PUB_KEY_SIZE]) {
     std::memcpy(ComputeServer::get_rsa_pub_key(), enc_rsa_pub_key, RSA_PUB_KEY_SIZE);
@@ -143,6 +149,10 @@ bool check_debug_opt(int* argc, const char* argv[]) {
     return false;
 }
 
+#ifndef NON_OE
+
+static oe_enclave_t* enclave;
+
 int start_enclave() {
     oe_result_t result;
     int ret = 1;
@@ -201,3 +211,44 @@ exit:
 
     return ret;
 }
+
+#else
+
+int start_enclave() {
+    int ret;
+
+    try {
+        std::cout << "\n\n**RUNNING LOG REGRESSION**\n\n";
+
+        int num_threads = ComputeServer::get_num_threads();
+        boost::thread_group thread_group;
+        for (int thread_id = 0; thread_id < num_threads; ++thread_id) {
+            std::cout << " thread_id " << thread_id << std::endl;
+            boost::thread* enclave_thread =
+                new boost::thread(log_regression, thread_id);
+            thread_group.add_thread(enclave_thread);
+        }
+
+        setup_enclave(num_threads);
+
+        auto start = std::chrono::high_resolution_clock::now();
+        thread_group.join_all();
+        // DEBUG: total execution time
+        auto stop = std::chrono::high_resolution_clock::now();
+        cout << "Logistic regression finished!" << endl;
+        auto duration = duration_cast<std::chrono::microseconds>(stop - start);
+        cout << "Enclave time total: " << duration.count() << endl;
+
+        ComputeServer::print_timings();
+    } catch (ERROR_t& err) {
+        cerr << "ERROR: " << err.msg << endl << std::flush;
+    }
+
+    ret = 0;
+
+exit:
+
+    return ret;
+}
+
+#endif

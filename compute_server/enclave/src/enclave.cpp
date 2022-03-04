@@ -8,8 +8,8 @@
 #include "crypto.h"
 #include "logistic_regression.h"
 
-#ifdef ENC_TEST
-#include "enclave_old.h"
+#ifdef NON_OE
+#include "enclave_glue.h"
 #else
 #include "gwas_t.h"
 #endif
