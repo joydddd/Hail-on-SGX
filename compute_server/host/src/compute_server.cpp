@@ -14,7 +14,6 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netdb.h>
-#include "gwas_u.h"
 #include "enclave.h"
 #include "hashing.h"
 

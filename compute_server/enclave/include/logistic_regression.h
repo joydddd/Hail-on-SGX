@@ -3,6 +3,11 @@
 
 #include "enc_gwas.h"
 #include "Matrix.h"
+#ifdef NON_OE
+#include "enclave_glue.h"
+#else
+#include "gwas_t.h"
+#endif
 /* for logistic regression */
 
 class Log_var {

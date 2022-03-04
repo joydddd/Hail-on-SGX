@@ -37,3 +37,8 @@ run:
 simulate: 
 	$(MAKE) -C host simulate
 
+nonoe:
+	$(MAKE) -C enclave nonoe
+	$(MAKE) -C host nonoe
+	$(MAKE) -C host run_nonoe
+

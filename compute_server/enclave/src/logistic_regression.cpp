@@ -3,7 +3,6 @@
 #include <limits>
 
 #include "logistic_regression.h"
-#include "gwas_t.h"
 using namespace std;
 
 double read_entry_int(string &entry) {
