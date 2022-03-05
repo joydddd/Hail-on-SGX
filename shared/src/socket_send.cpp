@@ -1,5 +1,6 @@
 #include "socket_send.h"
 #include <iostream>
+#include <curl/curl.h>
 
 int make_server_sockaddr(struct sockaddr_in *addr, int port) {
 	// Step (1): specify socket family.
@@ -82,10 +83,29 @@ int send_message(const char *hostname, int port, const char *message, int sock) 
 	return sockfd;
 }
 
-char* get_hostname_str() {
-	char hostname[HOST_NAME_MAX + 1];
-	gethostname(hostname, HOST_NAME_MAX + 1);
-	struct hostent* h;
-	h = gethostbyname(hostname);
-	return h->h_name;
+size_t writefunc(void *ptr, size_t size, size_t nmemb, std::string *s) 
+{
+  s->append(static_cast<char *>(ptr), size*nmemb);
+  return size*nmemb;
+}
+
+std::string get_hostname_str() {
+	CURL *curl = curl_easy_init();
+	std::string readBuffer;
+
+	if (curl) {
+		curl_easy_setopt(curl, CURLOPT_URL, "https://ipv4.icanhazip.com");
+		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, writefunc);
+		curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
+
+		CURLcode res = curl_easy_perform(curl);
+
+		/* always cleanup */
+		curl_easy_cleanup(curl);
+
+		readBuffer.pop_back();
+
+		return readBuffer;
+  	}
+	return "Failed to find IP\n";
 }

@@ -16,6 +16,7 @@
 #include <mutex>
 #include <unordered_set>
 #include <functional>
+#include <fstream>
 #include <boost/thread.hpp>
 
 #include "institution.h"
@@ -25,6 +26,8 @@
 #include "aes-crypto.h"
 #include "buffer_size.h"
 #include "readerwriterqueue.h"
+
+#define OUTPUT_FILE "gwasoutput/writeback"
 
 enum EncMode { sgx, simulate, debug, NA };
 
@@ -48,6 +51,7 @@ class ComputeServer {
     std::unordered_set<std::string> expected_covariants;
     std::vector<std::string> institution_list;
     std::vector<moodycamel::ReaderWriterQueue<std::string>> allele_queue_list;
+    std::vector<std::ofstream> output_list;
     std::string covariant_list;
     std::string y_val_name;
     char* encrypted_aes_key;
@@ -57,6 +61,9 @@ class ComputeServer {
     AESCrypto encoder;
 
     std::unordered_map<std::string, Institution*> institutions;
+  
+    std::unordered_map<std::string, std::chrono::system_clock::time_point> enclave_clocks;
+    std::unordered_map<std::string, unsigned long long> enclave_total_times;
     
     std::unordered_map<std::string, std::string> covariant_dtype;
 
@@ -97,7 +104,13 @@ class ComputeServer {
     // create listening socket to handle requests on indefinitely
     void run();
 
-    static ComputeServer& get_instance(const std::string& config_file="");
+    static ComputeServer* get_instance(const std::string& config_file="");
+
+    static void start_timer(const std::string& func_name);
+
+    static void stop_timer(const std::string& func_name);
+
+    static void print_timings();
 
     static EncMode get_mode();
 
@@ -122,6 +135,10 @@ class ComputeServer {
     static int get_encypted_allele_size(const int institution_num);
 
     static int get_allele_data(std::string& batch_data, const int thread_id);
+
+    static void write_allele_data(char* output_data, const int thread_id);
+
+    static void clean_up_output();
 };
 
 #endif /* _SERVER_H_ */

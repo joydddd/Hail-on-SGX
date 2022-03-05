@@ -14,7 +14,6 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netdb.h>
-#include "gwas_u.h"
 #include "enclave.h"
 #include "hashing.h"
 
@@ -70,13 +69,13 @@ void ComputeServer::init(const std::string& config_file) {
     max_batch_lines = 0;
     global_id = -1;
 
-    // resize allele queue
     allele_queue_list.resize(num_threads);
-
-    // initialize eof list
+    output_list.resize(num_threads);
     eof_read_list.resize(num_threads);
+
     for (int id = 0; id < num_threads; ++id) {
         eof_read_list[id] = false;
+        output_list[id].open(OUTPUT_FILE + std::to_string(id) + ".out");
     }
 
     // Also start the enclave thread.
@@ -209,7 +208,7 @@ bool ComputeServer::handle_message(int connFD, const std::string& name, ComputeS
         case REGISTER:
         {
             // Wait until we have a global id!
-            while (get_instance().global_id < 0) {}
+            while (get_instance()->global_id < 0) {}
 
             if (institutions.count(name)) {
                 throw std::runtime_error("User already registered");
@@ -512,41 +511,60 @@ void ComputeServer::parse_header_compute_server_header(const std::string& header
     institutions[client_name]->add_block_batch(batch);
 }
 
-ComputeServer& ComputeServer::get_instance(const std::string& config_file) {
+ComputeServer* ComputeServer::get_instance(const std::string& config_file) {
     static ComputeServer instance(config_file);
-    return instance;
+    return &instance;
 }
 
 EncMode ComputeServer::get_mode() {
-    return get_instance().enc_mode;
+    return get_instance()->enc_mode;
 }
 
 void ComputeServer::finish_setup() {
     // Register with the register server!
-    const nlohmann::json config = get_instance().compute_config;
-    std::string msg = std::string(get_hostname_str()) + "\t" + std::to_string(get_instance().port) + "\t" + std::to_string(get_instance().num_threads);
-    get_instance().send_msg(config["register_server_info"]["hostname"], 
+    const nlohmann::json config = get_instance()->compute_config;
+    std::string msg = std::string(get_hostname_str()) + "\t" + std::to_string(get_instance()->port) + "\t" + std::to_string(get_instance()->num_threads);
+    get_instance()->send_msg(config["register_server_info"]["hostname"], 
                             config["register_server_info"]["port"],
                             RegisterServerMessageType::COMPUTE_REGISTER,
                             msg);
 }
 
+void ComputeServer::start_timer(const std::string& func_name) {
+    get_instance()->enclave_clocks[func_name] = std::chrono::high_resolution_clock::now();
+}
+
+void ComputeServer::stop_timer(const std::string& func_name) {
+    ComputeServer* inst = get_instance();
+    if (!inst->enclave_total_times.count(func_name)) {
+        inst->enclave_total_times[func_name] = 0;
+    }
+    inst->enclave_total_times[func_name] += duration_cast<std::chrono::microseconds>(std::chrono::high_resolution_clock::now() - inst->enclave_clocks[func_name]).count();
+}
+
+void ComputeServer::print_timings() {
+    ComputeServer* inst = get_instance();
+    for (auto it : inst->enclave_total_times) {
+        guarded_cout(it.first + "\t" + std::to_string(it.second), cout_lock);
+    }
+}
+
 uint8_t* ComputeServer::get_rsa_pub_key() {
-    return get_instance().rsa_public_key;
+    return get_instance()->rsa_public_key;
 }
 
 int ComputeServer::get_num_threads() {
-    return get_instance().num_threads;
+    return get_instance()->num_threads;
 }
 
 int ComputeServer::get_num_institutions() {
-    return get_instance().institution_list.size();
+    return get_instance()->institution_list.size();
 }
 
 std::string ComputeServer::get_covariants() {
     std::string cov_list;
     std::vector<std::string> covariants;
-    Parser::split(covariants, get_instance().covariant_list);
+    Parser::split(covariants, get_instance()->covariant_list);
     for (std::string covariant : covariants) {
         cov_list.append(covariant + "\t");
     }
@@ -554,66 +572,77 @@ std::string ComputeServer::get_covariants() {
 }
 
 std::string ComputeServer::get_aes_key(const int institution_num, const int thread_id) {
-    const std::string institution_name = get_instance().institution_list[institution_num];
-    if (!get_instance().institutions.count(institution_name)) {
+    const std::string institution_name = get_instance()->institution_list[institution_num];
+    if (!get_instance()->institutions.count(institution_name)) {
         return "";
     }
 
-    return get_instance().institutions[institution_name]->get_aes_key(thread_id);
+    return get_instance()->institutions[institution_name]->get_aes_key(thread_id);
 }
 
 std::string ComputeServer::get_aes_iv(const int institution_num, const int thread_id) {
-    const std::string institution_name = get_instance().institution_list[institution_num];
-    if (!get_instance().institutions.count(institution_name)) {
+    const std::string institution_name = get_instance()->institution_list[institution_num];
+    if (!get_instance()->institutions.count(institution_name)) {
         return "";
     }
 
-    return get_instance().institutions[institution_name]->get_aes_iv(thread_id);
+    return get_instance()->institutions[institution_name]->get_aes_iv(thread_id);
 }
 
 std::string ComputeServer::get_y_data(const int institution_num) {
-    const std::string institution_name = get_instance().institution_list[institution_num];
-    if (!get_instance().institutions.count(institution_name)) {
+    const std::string institution_name = get_instance()->institution_list[institution_num];
+    if (!get_instance()->institutions.count(institution_name)) {
         return "";
     }
-    std::string y_vals = get_instance().institutions[institution_name]->get_y_data();
+    std::string y_vals = get_instance()->institutions[institution_name]->get_y_data();
     return y_vals;
 }
 
 std::string ComputeServer::get_covariant_data(const int institution_num, const std::string& covariant_name) {
-    const std::string institution_name = get_instance().institution_list[institution_num];
-    if (!get_instance().institutions.count(institution_name)) {
+    const std::string institution_name = get_instance()->institution_list[institution_num];
+    if (!get_instance()->institutions.count(institution_name)) {
         return "";
     }
-    std::string cov_vals = get_instance().institutions[institution_name]->get_covariant_data(covariant_name);
+    std::string cov_vals = get_instance()->institutions[institution_name]->get_covariant_data(covariant_name);
     return cov_vals;
 }
 
 int ComputeServer::get_encypted_allele_size(const int institution_num) {
-    const std::string institution_name = get_instance().institution_list[institution_num];
-    return get_instance().institutions[institution_name]->get_allele_data_size();
+    const std::string institution_name = get_instance()->institution_list[institution_num];
+    return get_instance()->institutions[institution_name]->get_allele_data_size();
 }
 
 int ComputeServer::get_allele_data(std::string& batch_data, const int thread_id) {
     std::string tmp;
     // Currently the enclave expects the ~EOF~ to be by itself (not in a batch).
     // This is not very clean code, but searching for ~EOF~ in the enclave is slow!
-    if (get_instance().eof_read_list[thread_id]) {
+    if (get_instance()->eof_read_list[thread_id]) {
         // Set this back to false so that later function calls return 0!
-        get_instance().eof_read_list[thread_id] = false;
+        get_instance()->eof_read_list[thread_id] = false;
         batch_data = EOFSeperator;
         return 1;
     }
 
     int num_lines = 0;
-    moodycamel::ReaderWriterQueue<std::string>& allele_queue = get_instance().allele_queue_list[thread_id];
-    while (num_lines < get_instance().max_batch_lines && allele_queue.try_dequeue(tmp)) {
+    moodycamel::ReaderWriterQueue<std::string>& allele_queue = get_instance()->allele_queue_list[thread_id];
+    while (num_lines < get_instance()->max_batch_lines && allele_queue.try_dequeue(tmp)) {
         if (strcmp(EOFSeperator, tmp.c_str()) == 0) {
-            get_instance().eof_read_list[thread_id] = true;
+            get_instance()->eof_read_list[thread_id] = true;
             break;
         }
         num_lines++;
         batch_data.append(tmp);
     }
     return num_lines;
+}
+
+void ComputeServer::write_allele_data(char* output_data, const int thread_id) {
+    get_instance()->output_list[thread_id] << output_data;
+}
+
+void ComputeServer::clean_up_output() {
+    for (std::ofstream& out_file : get_instance()->output_list) {
+        out_file.flush();
+        out_file.close();
+    }
 }

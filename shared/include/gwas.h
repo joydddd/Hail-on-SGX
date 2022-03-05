@@ -10,18 +10,19 @@
 
 using namespace std;
 
+#define LOCI_X 23
+
 enum Regression_T { Logistic, Linear };
 enum ALLELE : char { A = 'A', T = 'T', C = 'C', G = 'G', NaN = 'N' };
 
 class Loci {
    public:
-    static const int X = 23;
     int chrom;
     int loc;
     Loci():chrom(0), loc(0){}
     Loci(const string &str);
     friend ostream &operator<<(ostream &os, const Loci &loci) {
-        if (loci.chrom == X)
+        if (loci.chrom == LOCI_X)
             os << "X";
         else
             os << loci.chrom;
@@ -62,6 +63,8 @@ class Alleles {
     friend bool operator!=(const Alleles &a, const Alleles &b) {
         return !(a == b);
     }
+
+    string str(const Loci &loci);
 };
 
 inline Loci::Loci(const string &str) {
@@ -71,7 +74,7 @@ inline Loci::Loci(const string &str) {
     getline(ss, loc_str, ':');
     try {
         if (chrom_str == "X")
-            chrom = X;
+            chrom = LOCI_X;
         else
             chrom = stoi(chrom_str);
         loc = stoi(loc_str);
@@ -80,10 +83,16 @@ inline Loci::Loci(const string &str) {
     }
 }
 
-inline string Loci::str() {
-    std::stringstream ss;
-    ss << *this;
-    return ss.str();
+inline string loci_to_str(const Loci &loci) {
+    std::string ret;
+    if (loci.chrom == LOCI_X) {
+            ret += "X";
+    }
+    else {
+        ret += std::to_string(loci.chrom);
+    }
+    ret += ":" + std::to_string(loci.loc);
+    return ret;
 }
 
 inline bool Alleles::read(string str) {
@@ -133,6 +142,16 @@ inline void Alleles::inverse() {
     ALLELE tmp = a1;
     a1 = a2;
     a2 = tmp;
+}
+
+inline string alleles_to_str(const Alleles &alleles) {
+    std::string ret;
+    ret += "[\"";
+    ret.push_back((char)alleles.a1);
+    ret += "\",\"";
+    ret.push_back((char)alleles.a2);
+    ret += + "\"]";
+    return ret;
 }
 
 #endif

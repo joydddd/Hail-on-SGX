@@ -107,37 +107,39 @@ void Buffer::decrypt_line(char* plaintxt, size_t* plaintxt_length, const std::ve
     *plaintxt_length = plaintxt_head - plaintxt;
 }
 
-Buffer::Buffer(size_t _row_size, Row_T row_type, int num_clients)
-    : row_size(_row_size), type(row_type) {
-    for (size_t i = 0; i < WORKING_THREAD_N; i++) {
-        free_batches.push_back(new Batch(row_size, type));
-    }
+Buffer::Buffer(size_t _row_size, Row_T row_type, int num_clients, int _thread_id)
+    : row_size(_row_size), type(row_type), thread_id(_thread_id) {
+    
+    free_batch = new Batch(row_size, type);
     client_list = new int[num_clients];
     client_crypto_map = new char* [num_clients];
+
 }
 
 Buffer::~Buffer() {
-    for (Batch* bat : free_batches) {
-        delete bat;
-    }
+    delete free_batch;
     delete [] client_list;
     delete [] client_crypto_map;
 }
 
-void Buffer::output(const char* out) {
-    int len = strlen(out);
-    if (output_tail + len >= ENCLAVE_OUTPUT_BUFFER) {
-        writebatch(type, output_buffer);
+void Buffer::output(const char* out, const size_t& length) {
+    if (output_tail + length >= ENCLAVE_OUTPUT_BUFFER_SIZE) {
+        writebatch(type, output_buffer, thread_id);
         output_tail = 0;
     }
     strcpy(output_buffer + output_tail, out);
-    output_tail += strlen(out);
+    output_tail += length;
 }
 
-void Buffer::finish(Batch* finishing_batch) {
-    output(finishing_batch->output_buffer());
-    finishing_batch->reset();
-    free_batches.push_back(finishing_batch);
+void Buffer::clean_up() {
+    if (output_tail > 0) {
+        writebatch(type, output_buffer, thread_id);
+    }
+}
+
+void Buffer::finish() {
+    output(free_batch->output_buffer(), free_batch->get_out_tail());
+    free_batch->reset();
 }
 
 Batch* Buffer::launch(std::vector<ClientInfo>& client_info_list, const int thread_id) {
@@ -146,9 +148,8 @@ Batch* Buffer::launch(std::vector<ClientInfo>& client_info_list, const int threa
         getbatch(&rt, crypttxt, thread_id);
     }
     if (!strcmp(crypttxt, EOFSeperator)) return nullptr;
-    if (free_batches.empty()) return nullptr;
-    Batch* new_b = free_batches.front();
-    free_batches.pop_front();
+    if (!free_batch) return nullptr;
+    Batch* new_b = free_batch;
     decrypt_line(new_b->load_plaintxt(), new_b->plaintxt_size(), client_info_list, thread_id);
     return new_b;
 }

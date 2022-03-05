@@ -8,8 +8,8 @@
 #include "crypto.h"
 #include "logistic_regression.h"
 
-#ifdef ENC_TEST
-#include "enclave_old.h"
+#ifdef NON_OE
+#include "enclave_glue.h"
 #else
 #include "gwas_t.h"
 #endif
@@ -29,7 +29,7 @@ void setup_enclave(const int num_threads) {
 
     getclientnum(&num_clients);
 
-    cout << "enclave running on " << num_clients << " clients: " << endl;
+    cout << "enclave running on " << num_clients << " clients" << endl;
 
     client_info_list.resize(num_clients);
     client_y_size.resize(num_clients);
@@ -165,7 +165,7 @@ void setup_enclave(const int num_threads) {
     int total_row_size = 0;
     for (auto size : client_y_size) total_row_size += size;
     for (int thread_id = 0; thread_id < num_threads; ++thread_id) {
-        buffer_list[thread_id] = new Buffer(total_row_size, LOG_t, num_clients);
+        buffer_list[thread_id] = new Buffer(total_row_size, LOG_t, num_clients, thread_id);
     }
     std::cout << "Buffer initialized" << endl;
 
@@ -174,7 +174,6 @@ void setup_enclave(const int num_threads) {
 }
 
 void log_regression(const int thread_id) {
-
     // experimental - checking to see if spinning up threads adds a noticable amount of overhead... need +1 TCS in config
     while(!start_thread) {
         // spin until ready to go!
@@ -182,18 +181,24 @@ void log_regression(const int thread_id) {
 
     Buffer* buffer = buffer_list[thread_id];
     Batch* batch = nullptr;
+
+    std::string output_string;
     // DEBUG: tmp output file
-    ofstream out_st("enc" + std::to_string(thread_id) + ".out");
+    //ofstream out_st("enc" + std::to_string(thread_id) + ".out");
     
     /* process rows */
     while (true) {
+        //start_timer("get_batch()");
         if (!batch || batch->st != Batch::Working) batch = buffer->launch(client_info_list, thread_id);
         if (!batch) {
-            // out_st << "End of Output" << endl;
+            //buffer->finish();
+            buffer->clean_up();
             break;
         }
+        //stop_timer("get_batch()");
         // get the next row from input buffer
         Log_row* row;
+        //start_timer("get_row()");
         try {
             if (!(row = (Log_row*)batch->get_row(buffer))) continue;
         } catch (ERROR_t& err) {
@@ -201,27 +206,41 @@ void log_regression(const int thread_id) {
             exit(0);
             continue;
         }
+        //stop_timer("get_row()");
         // compute results
-        ostringstream ss;
-        ss << row->getloci() << "\t" << row->getallels();
+        output_string += loci_to_str(row->getloci()) + "\t" + alleles_to_str(row->getalleles());
         bool converge;
+        //start_timer("converge()");
         try {
+            // conv_count++;
+            // std::cout << conv_count << std::endl;
             converge = row->fit(gwas);
-            ss << "\t" << row->beta()[0] << "\t" << row->t_stat();
-            ss << "\t" << (converge ? "true" : "false");
-            ss << endl;
+            output_string += "\t" + std::to_string(row->beta()[0]) + "\t" + std::to_string(row->t_stat()) + "\t";
+            // wanted to use a ternary, but the compiler doesn't like it?
+            if (converge) {
+                output_string += "true";
+            } else {
+                 output_string += "false";
+            }
+            output_string += "\n";
             // cout << ss.str();
         } catch (MathError& err) {
+            output_string += "\tNA\tNA\tNA\n";
             // cerr << "MathError while fiting " << ss.str() << ": " << err.msg
             //      << endl;
-            ss << "\tNA\tNA\tNA" << endl;
+            //ss << "\tNA\tNA\tNA" << endl;
         } catch (ERROR_t& err) {
-            cerr << "ERROR " << ss.str() << ": " << err.msg << endl << std::flush;
-            ss << "\tNA\tNA\tNA" << endl;
+            cerr << "ERROR " << err.msg << endl << std::flush;
+            //ss << "\tNA\tNA\tNA" << endl;
             exit(1);
         }
+        //stop_timer("converge()");
         // DEBUG: tmp output to file
-        out_st << ss.str();
-        batch->write(ss.str());
+        //start_timer("batch_write()");
+        //out_st << ss.str();
+        batch->write(output_string);
+        output_string.clear();
+        //stop_timer("batch_write()");
     }
+
 }

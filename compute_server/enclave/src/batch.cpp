@@ -1,4 +1,5 @@
 #include "batch.h"
+#include <cstring>
 
 Batch::Batch(size_t _row_size, Row_T row_type)
     : row_size(_row_size), type(row_type) {
@@ -22,7 +23,7 @@ void Batch::reset() {
 Row* Batch::get_row(Buffer* buffer) {
     if (head >= txt_size) {
         st = Finished;
-        buffer->finish(this);
+        buffer->finish();
         return nullptr;
     }
     st = Working;
@@ -37,4 +38,8 @@ Row* Batch::get_row(Buffer* buffer) {
 void Batch::write(const string& output) {
     strcpy(outtxt + out_tail, output.c_str());
     out_tail += output.size();
+}
+
+size_t Batch::get_out_tail() {
+    return out_tail;
 }

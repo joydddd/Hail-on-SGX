@@ -5,8 +5,8 @@
 #include "logistic_regression.h"
 #include "enc_gwas.h"
 
-#ifdef NENC_TEST
-#include "enclave_old.h"
+#ifdef NON_OE
+#include "enclave_glue.h"
 #else
 #include "gwas_t.h"
 #endif
@@ -45,6 +45,8 @@ class Batch {
     void reset();
     Row* get_row(Buffer* buffer);  // return nullptr is reached ead of batch
     void write(const string &);
+
+    size_t get_out_tail();
 };
 
 #endif

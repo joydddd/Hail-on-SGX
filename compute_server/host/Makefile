@@ -21,8 +21,13 @@ SHAREDOBJECTS += $(shell find $(SHAREDBUILDDIR) -type f -name *.o)
 OBJECTS += $(SHAREDOBJECTS)
 DEBUGOBJECTS := $(patsubst $(SRCDIR)/%,$(BUILDDIR)/%,$(SOURCES:.cpp=_debug.o))
 DEBUGOBJECTS += $(SHAREDOBJECTS)
+
+NONOEOBJECTS = $(patsubst $(SRCDIR)/%,$(BUILDDIR)/%,$(SOURCES:.cpp=_nonoe.o))
+NONOEOBJECTS += $(shell find $(SHAREDBUILDDIR) -type f -name *.o)
+CXX_NONENC_FLAGS = -std=c++14 -pedantic
 INC := -I ../../shared/include -I .. -pthread -I include -I .
-CRYPTFLAG := -lcryptopp
+CRYPTFLAG := -lcryptopp -lmbedcrypto -lmbedtls
+CURLFLAG := -lcurl
 
 ######################################
 
@@ -43,6 +48,7 @@ INCDIR=$(shell pkg-config oehost-$(C_COMPILER) --variable=includedir)
 CFLAGS+= $(INC) 
 CXXFLAGS+= $(INC) 
 LDFLAGS+= $(INC) $(LIBTHREAD)
+CXX_NONENC_FLAGS += $(INC)
 
 all: build
 
@@ -61,7 +67,7 @@ ${BUILDDIR}/%.o: ${SRCDIR}/%.cpp
 
 build: pre $(OBJECTS)
 	cd ../../shared && $(MAKE) && cd ../compute_server/host
-	$(CXX) -o $(EXECUTABLE) $(BUILDDIR)/$(PROJECTNAME)_u.o $(OBJECTS) $(LDFLAGS) ${CRYPTFLAG}
+	$(CXX) -o $(EXECUTABLE) $(BUILDDIR)/$(PROJECTNAME)_u.o $(OBJECTS) $(LDFLAGS) ${CRYPTFLAG} ${CURLFLAG}
 
 run: 
 	./$(EXECUTABLE) $(CONFIG)
@@ -104,8 +110,22 @@ debugrun:
 
 clean:
 	rm -rf ${BUILDDIR}
-	rm -f $(PROJECTNAME)host $(PROJECTNAME)host.o $(PROJECTNAME)_u.o $(PROJECTNAME)_u.c $(PROJECTNAME)_u.h $(PROJECTNAME)_args.h $(PROJECT_NAME).signed
+	rm -f $(PROJECTNAME)host $(PROJECTNAME)host.o $(PROJECTNAME)_u.o $(PROJECTNAME)_u.c $(PROJECTNAME)_u.h $(PROJECTNAME)_args.h $(PROJECTNAME).signed
 	rm -f *.o $(TESTS) *.out *_debug test_*
+	rm *_nonoe
 
+# Generic rules for compiling a source file to an non oe object file
+${BUILDDIR}/%_nonoe.o: ${SRCDIR}/%.cpp
+	@mkdir -p ${BUILDDIR}
+	${CXX} -DNON_OE ${CXX_NONENC_FLAGS} -c -o $@ $<
+
+
+ENCLAVE_NONOEOBJECTS = $(wildcard ../enclave/build/*_nonoe.o)
+
+nonoe: $(NONOEOBJECTS)
+	$(CXX) $(CXX_NONENC_FLAGS) $(LIBTHREAD) $(LIBCHRONO) ${CRYPTFLAG} ${CURLFLAG} $(NONOEOBJECTS) $(ENCLAVE_NONOEOBJECTS) -o $(PROJECTNAME)_nonoe
+
+run_nonoe: $(PROJECTNAME)_nonoe
+	./$< $(CONFIG)
 
 .PHONY: all build clean run debug simulate

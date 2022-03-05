@@ -2,7 +2,6 @@
 #include <iostream>
 #include <map>
 #define BUFFER_LINES 1
-#define OUTPUT_FILE "gwasoutput/writeback.out"
 
 #include <gwas.h>
 
@@ -21,33 +20,47 @@
 #define MAX_ATTEMPT_TIMES 10
 #define ATTEMPT_TIMEOUT 500  // in milliseconds
 
+#ifdef NON_OE
+#include "host_glue.h"
+#include "../../enclave/include/enclave_glue.h"
+#else
 #include "gwas_u.h"
+#endif
+
+
 using namespace std;
-const vector<vector<string>> covFiles = {
-    {"../../samples/1kg-logistic-regression/isFemale1.tsv",
-     "../../samples/1kg-logistic-regression/isFemale2.tsv"}};
-const vector<string> yFiles = {
-    "../../samples/1kg-logistic-regression/PurpleHair1.tsv",
-    "../../samples/1kg-logistic-regression/PurpleHair2.tsv"};
-const vector<string> allelesFiles = {
-    "../../samples/1kg-logistic-regression/alleles1.tsv",
-    "../../samples/1kg-logistic-regression/alleles2.tsv"};
-const vector<string> clientNames = {"Client1", "Client2"};
-const vector<int> client_size = {100, 150};
+// const vector<vector<string>> covFiles = {
+//     {"../../samples/1kg-logistic-regression/isFemale1.tsv",
+//      "../../samples/1kg-logistic-regression/isFemale2.tsv"}};
+// const vector<string> yFiles = {
+//     "../../samples/1kg-logistic-regression/PurpleHair1.tsv",
+//     "../../samples/1kg-logistic-regression/PurpleHair2.tsv"};
+// const vector<string> allelesFiles = {
+//     "../../samples/1kg-logistic-regression/alleles1.tsv",
+//     "../../samples/1kg-logistic-regression/alleles2.tsv"};
+// const vector<string> clientNames = {"Client1", "Client2"};
+// const vector<int> client_size = {100, 150};
 
-const vector<string> covNames = {"1", "isFemale"};
+// const vector<string> covNames = {"1", "isFemale"};
 
-map<string, int> client_map;
-map<string, int> cov_map;
+// map<string, int> client_map;
+// map<string, int> cov_map;
 // index -1 is reserved for intercept
 
-static oe_enclave_t* enclave;
 
 void setrsapubkey(uint8_t enc_rsa_pub_key[RSA_PUB_KEY_SIZE]) {
     std::memcpy(ComputeServer::get_rsa_pub_key(), enc_rsa_pub_key, RSA_PUB_KEY_SIZE);
     
     // Once we have generated an RSA key pair we can start communication!
     ComputeServer::finish_setup();
+}
+
+void start_timer(const char func_name[ENCLAVE_READ_BUFFER_SIZE]) {
+    ComputeServer::start_timer(func_name);
+}
+
+void stop_timer(const char func_name[ENCLAVE_READ_BUFFER_SIZE]) {
+    ComputeServer::stop_timer(func_name);
 }
 
 int getclientnum() {
@@ -105,18 +118,14 @@ int getbatch(char batch[ENCLAVE_READ_BUFFER_SIZE], const int thread_id) {
     std::string batch_data; 
     int num_lines = ComputeServer::get_allele_data(batch_data, thread_id);
     if (num_lines) {
-        std::memcpy(batch, &batch_data[0], batch_data.length());
+        std::strcpy(batch, &batch_data[0]);
     }
 
     return num_lines;
 }
 
-void writebatch(Row_T type, char buffer[ENCLAVE_OUTPUT_BUFFER_SIZE]) {
-    static ofstream result_f;
-    if (!result_f.is_open()) {
-        result_f.open(OUTPUT_FILE);
-    }
-    result_f << buffer;
+void writebatch(Row_T type, char buffer[ENCLAVE_OUTPUT_BUFFER_SIZE], const int thread_id) {
+    ComputeServer::write_allele_data(buffer, thread_id);
 }
 
 bool check_simulate_opt(int* argc, const char* argv[]) {
@@ -142,6 +151,10 @@ bool check_debug_opt(int* argc, const char* argv[]) {
     }
     return false;
 }
+
+#ifndef NON_OE
+
+static oe_enclave_t* enclave;
 
 int start_enclave() {
     oe_result_t result;
@@ -191,11 +204,13 @@ int start_enclave() {
 
         auto start = std::chrono::high_resolution_clock::now();
         thread_group.join_all();
-        // DEBUG: total execution time
+        ComputeServer::clean_up_output();
+
         auto stop = std::chrono::high_resolution_clock::now();
         cout << "Logistic regression finished!" << endl;
         auto duration = duration_cast<std::chrono::microseconds>(stop - start);
         cout << "Enclave time total: " << duration.count() << endl;
+        ComputeServer::print_timings();
     } catch (ERROR_t& err) {
         cerr << "ERROR: " << err.msg << endl << std::flush;
     }
@@ -208,3 +223,44 @@ exit:
 
     return ret;
 }
+
+#else
+
+int start_enclave() {
+    int ret;
+
+    try {
+        std::cout << "\n\n**RUNNING LOG REGRESSION**\n\n";
+
+        int num_threads = ComputeServer::get_num_threads();
+        boost::thread_group thread_group;
+        for (int thread_id = 0; thread_id < num_threads; ++thread_id) {
+            std::cout << " thread_id " << thread_id << std::endl;
+            boost::thread* enclave_thread =
+                new boost::thread(log_regression, thread_id);
+            thread_group.add_thread(enclave_thread);
+        }
+
+        setup_enclave(num_threads);
+
+        auto start = std::chrono::high_resolution_clock::now();
+        thread_group.join_all();
+        // DEBUG: total execution time
+        auto stop = std::chrono::high_resolution_clock::now();
+        cout << "Logistic regression finished!" << endl;
+        auto duration = duration_cast<std::chrono::microseconds>(stop - start);
+        cout << "Enclave time total: " << duration.count() << endl;
+
+        ComputeServer::print_timings();
+    } catch (ERROR_t& err) {
+        cerr << "ERROR: " << err.msg << endl << std::flush;
+    }
+
+    ret = 0;
+
+exit:
+
+    return ret;
+}
+
+#endif

@@ -37,7 +37,7 @@ class Row {
     public:
      /* return metadata */
      Loci getloci() { return loci; }
-     Alleles getallels() { return alleles; }
+     Alleles getalleles() { return alleles; }
      size_t size() { return n; }
 
 
