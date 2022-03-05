@@ -15,6 +15,9 @@
 #include <boost/thread.hpp>
 #include "compute_server.h"
 
+#include <openenclave/host.h>
+#include <openenclave/trace.h>
+
 #define MAX_ATTEMPT_TIMES 10
 #define ATTEMPT_TIMEOUT 500  // in milliseconds
 
@@ -148,10 +151,11 @@ int start_enclave() {
     uint32_t flags = 0;
 
     if (ComputeServer::get_mode() == simulate) flags |= OE_ENCLAVE_FLAG_SIMULATE;
-    if (ComputeServer::get_mode() == debug) flags |= OE_ENCLAVE_FLAG_DEBUG;
+    // if (ComputeServer::get_mode() == debug) flags |= OE_ENCLAVE_FLAG_DEBUG;
+    flags |= OE_ENCLAVE_FLAG_DEBUG;
 
     // Create the enclave
-    result = oe_create_gwas_enclave("../enclave/gwasenc.signed", OE_ENCLAVE_TYPE_AUTO, flags, NULL,
+    result = oe_create_gwas_enclave("../enclave/gwasenc_debug.signed", OE_ENCLAVE_TYPE_AUTO, flags, NULL,
                                     0, &enclave);
     if (result != OE_OK) {
         fprintf(stderr, "oe_create_gwas_enclave(): result=%u (%s)\n", result,
@@ -159,10 +163,18 @@ int start_enclave() {
         goto exit;
     }
 
+    result = oe_log_init_ecall(enclave, "/workspace/oe.log", OE_LOG_LEVEL_INFO);
+    if (result != OE_OK) {
+        fprintf(stderr, "oe_log_init_ecall(): result=%u (%s)\n", result,
+                oe_result_str(result));
+        goto exit;
+    }
+
     try {
         std::cout << "\n\n**RUNNING LOG REGRESSION**\n\n";
 
-        int num_threads = ComputeServer::get_num_threads();
+        // int num_threads = ComputeServer::get_num_threads();
+        int num_threads = 1;
         boost::thread_group thread_group;
         for (int thread_id = 0; thread_id < num_threads; ++thread_id) {
             boost::thread* enclave_thread = new boost::thread(log_regression, enclave, thread_id);

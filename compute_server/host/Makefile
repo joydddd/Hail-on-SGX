@@ -17,8 +17,10 @@ SOURCES = $(shell find $(SRCDIR) -type f -name *.cpp)
 
 # Generate the names of the thread library's object files
 OBJECTS := $(patsubst $(SRCDIR)/%,$(BUILDDIR)/%,$(SOURCES:.cpp=.o))
-OBJECTS += $(shell find $(SHAREDBUILDDIR) -type f -name *.o)
+SHAREDOBJECTS += $(shell find $(SHAREDBUILDDIR) -type f -name *.o)
+OBJECTS += $(SHAREDOBJECTS)
 DEBUGOBJECTS := $(patsubst $(SRCDIR)/%,$(BUILDDIR)/%,$(SOURCES:.cpp=_debug.o))
+DEBUGOBJECTS += $(SHAREDOBJECTS)
 INC := -I ../../shared/include -I .. -pthread -I include -I .
 CRYPTFLAG := -lcryptopp
 
@@ -29,7 +31,7 @@ ifeq ($(detected_OS),Darwin)  # Important to not have a space after the comma
 	LIBTHREAD = -lboost_thread-mt
 	LIBCHRONO = -lboost_chrono-mt
 else
-	LIBTHREAD = -lboost_thread
+	LIBTHREAD = -lboost_thread -lboost_system
 	LIBCHRONO = -lboost_chrono
 endif
 
@@ -93,12 +95,12 @@ debugtests: $(TESTS)
 	$(MAKE) -C .. debug
 	$(foreach test,$(TESTS), $(DEBUGER) ./$(test) ../enclave/$(PROJECTNAME)enc_debug.signed --debug)
 
-debug: pre $(DEBUGOBJECTS) 
-	$(CC) -c -g $(CFLAGS) $(PROJECTNAME)_u.c -o $(BUILDDIR)/$(PROJECTNAME)_u_debug.o
-	$(CXX) -g -o $(EXECUTABLE)_debug $(BUILDDIR)/$(PROJECTNAME)_u_debug.o $(DEBUGOBJECTS) $(LDFLAGS)
+debug: pre $(DEBUGOBJECTS)
+	cd ../../shared && $(MAKE) && cd ../compute_server/host
+	$(CXX) -g -o $(EXECUTABLE)_debug $(BUILDDIR)/$(PROJECTNAME)_u.o $(DEBUGOBJECTS) $(LDFLAGS) ${CRYPTFLAG}
 
 debugrun:
-	$(DEBUGER) ./$(EXECUTABLE)_debug $(HOST_PORT) ../enclave/$(PROJECTNAME)enc_debug.signed --debug
+	./$(EXECUTABLE)_debug $(CONFIG)
 
 clean:
 	rm -rf ${BUILDDIR}
