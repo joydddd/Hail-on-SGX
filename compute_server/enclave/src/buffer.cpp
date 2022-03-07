@@ -107,10 +107,10 @@ void Buffer::decrypt_line(char* plaintxt, size_t* plaintxt_length, const std::ve
     *plaintxt_length = plaintxt_head - plaintxt;
 }
 
-Buffer::Buffer(size_t _row_size, Row_T row_type, int num_clients, int _thread_id)
+Buffer::Buffer(Log_gwas* _gwas, size_t _row_size, Row_T row_type, int num_clients, int _thread_id)
     : row_size(_row_size), type(row_type), thread_id(_thread_id) {
     
-    free_batch = new Batch(row_size, type);
+    free_batch = new Batch(row_size, type, _gwas);
     client_list = new int[num_clients];
     client_crypto_map = new char* [num_clients];
 

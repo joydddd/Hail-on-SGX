@@ -165,7 +165,7 @@ void setup_enclave(const int num_threads) {
     int total_row_size = 0;
     for (auto size : client_y_size) total_row_size += size;
     for (int thread_id = 0; thread_id < num_threads; ++thread_id) {
-        buffer_list[thread_id] = new Buffer(total_row_size, LOG_t, num_clients, thread_id);
+        buffer_list[thread_id] = new Buffer(gwas, total_row_size, LOG_t, num_clients, thread_id);
     }
     std::cout << "Buffer initialized" << endl;
 
@@ -174,15 +174,18 @@ void setup_enclave(const int num_threads) {
 }
 
 void log_regression(const int thread_id) {
+    std::string output_string;
     // experimental - checking to see if spinning up threads adds a noticable amount of overhead... need +1 TCS in config
     while(!start_thread) {
         // spin until ready to go!
     }
-
+    std::vector<double> change(gwas->dim());
+    std::vector<double> old_beta(gwas->dim());
+    
     Buffer* buffer = buffer_list[thread_id];
     Batch* batch = nullptr;
 
-    std::string output_string;
+    
     // DEBUG: tmp output file
     //ofstream out_st("enc" + std::to_string(thread_id) + ".out");
     
@@ -212,9 +215,7 @@ void log_regression(const int thread_id) {
         bool converge;
         //start_timer("converge()");
         try {
-            // conv_count++;
-            // std::cout << conv_count << std::endl;
-            converge = row->fit(gwas);
+            converge = row->fit(change, old_beta);
             output_string += "\t" + std::to_string(row->beta()[0]) + "\t" + std::to_string(row->t_stat()) + "\t";
             // wanted to use a ternary, but the compiler doesn't like it?
             if (converge) {

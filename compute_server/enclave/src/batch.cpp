@@ -1,11 +1,11 @@
 #include "batch.h"
 #include <cstring>
 
-Batch::Batch(size_t _row_size, Row_T row_type)
+Batch::Batch(size_t _row_size, Row_T row_type, Log_gwas* _gwas)
     : row_size(_row_size), type(row_type) {
     switch (type) {
         case LOG_t:
-            row = new Log_row(row_size);
+            row = new Log_row(row_size, _gwas);
             break;
         default:
             row = new Row(row_size);

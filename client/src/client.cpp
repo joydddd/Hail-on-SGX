@@ -285,14 +285,14 @@ void Client::send_msg(const unsigned int global_id, const unsigned int mtype, co
     std::string message = client_name + " " + std::to_string(mtype) + " ";
     message = std::to_string(message.length() + msg.length()) + "\n" + message + msg;
     ConnectionInfo info = compute_server_info[global_id];
-    send_message(info.hostname.c_str(), info.port, message.c_str(), connFD);
+    send_message(info.hostname.c_str(), info.port, message.c_str(), message.length(), connFD);
 }
 
 void Client::send_msg(const std::string& hostname, unsigned int port, unsigned int mtype, const std::string& msg, int connFD) {
     std::string message = client_name + " " + std::to_string(mtype) + " ";
     message = std::to_string(message.length() + msg.length()) + "\n" + message + msg;
     //guarded_cout("MSG LENGTH: " + std::to_string(message.length()), cout_lock);
-    send_message(hostname.c_str(), port, message.c_str(), connFD);
+    send_message(hostname.c_str(), port, message.c_str(), message.length(), connFD);
 }
 
 void Client::fill_queue() {

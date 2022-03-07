@@ -87,22 +87,33 @@ void Log_var::combine(Log_var &other) {
 //////////              Log_row             /////////////////
 /////////////////////////////////////////////////////////////
 
-/* fitting */
-bool Log_row::fit(const Log_gwas* _gwas, size_t max_it, double sig) {
-    gwas = _gwas;
-    /* intialize beta to 0*/
-    //start_timer("init()");
-    init();
-    //stop_timer("init()");
+Log_row::Log_row(size_t size, Log_gwas* _gwas) : Row(size), gwas(_gwas) {
+    // change.resize(gwas->dim());
+    // old_beta.resize(gwas->dim());
+    beta_delta.resize(gwas->dim());
+    H = SqrMatrix(gwas->dim(), 2);
+    // sub = SqrMatrix(gwas->dim() - 1, false);
+    // cof = SqrMatrix(gwas->dim(), false);
+    // t = SqrMatrix(gwas->dim(), false);
+    Grad.resize(gwas->dim());
+    //  = vector<double>(gwas->dim(), 0);
+}
 
-    //start_timer("change_vector_init");
-    vector<double> change(gwas->dim(), 1);
-    //stop_timer("change_vector_init");
+/* fitting */
+bool Log_row::fit(std::vector<double>& change, std::vector<double>& old_beta, size_t max_it, double sig) {
+    /* intialize beta to 0*/
+    init();
+
+    for (int i = 0; i < gwas->dim(); ++i) {
+        change[i] = 1;
+    }
     size_t it_count = 0;
 
     //start_timer("while_loop");
     while (it_count < max_it && max(change) > sig) {
-        vector<double> old_beta = b;
+        for (int i = 0; i < gwas->dim(); ++i) {
+            old_beta[i] = b[i];
+        }
         update_beta();
         for (size_t j = 0; j < gwas->dim(); j++) {
             change[j] = abs(b[j] - old_beta[j]);
@@ -115,7 +126,8 @@ bool Log_row::fit(const Log_gwas* _gwas, size_t max_it, double sig) {
     else {
         fitted = true;
         //start_timer("calculate_standard_error");
-        standard_error = sqrt(H.INV()[0][0]);
+        H.INV();
+        standard_error = sqrt((*H.t)[0][0]);
         //stop_timer("calculate_standard_error");
         // DEBUG:
         // cout << loci << "\t" << alleles << "\t" << it_count << endl;
@@ -138,7 +150,9 @@ double Log_row::t_stat() {
 /* fitting helper functions */
 
 void Log_row::update_beta() {
-    vector<double> beta_delta = H.INV() * Grad;
+    // calculate_beta
+    H.INV();
+    H.t->calculate_beta_delta(Grad, beta_delta);
     for (size_t j = 0; j < gwas->dim(); j++) {
         b[j] += beta_delta[j];
     }
@@ -147,13 +161,22 @@ void Log_row::update_beta() {
 
 void Log_row::init() {
     if (gwas->size() != n) throw CombineERROR("row length mismatch");
-    b = vector<double>(gwas->dim(), 0);
+    if (!b.size()) {
+        b.resize(n);
+    }
+    for (int i = 0; i < n; ++i) {
+        b[i] = 0;
+    }
     update_estimate();
 }
 
 void Log_row::update_estimate() {
-    H = SqrMatrix(gwas->dim());
-    Grad = vector<double>(gwas->dim(), 0);
+    for (int i = 0; i < gwas->dim(); ++i) {
+        Grad[i] = 0;
+        for (int j = 0; j < gwas->dim(); ++j){
+            H[i][j] = 0;
+        }
+    }
     double y_est;
     size_t client_idx = 0, data_idx = 0;
     for (size_t i = 0; i < n; i++) {

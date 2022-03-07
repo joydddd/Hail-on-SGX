@@ -1,12 +1,12 @@
 {
-    "compute_server_bind_port": 6700,
+    "compute_server_bind_port": 6705,
     "covariants": ["1", "isFemale"],
     "institutions": ["client1"],
     "y_val_name": "PurpleHair",
     "enclave_path": "../enclave/gwasenc.signed",
     "register_server_info": {
         "hostname": "sgx.eecs.umich.edu",
-        "port": 6499
+        "port": 6400
     }
 }
 // You can add "flag": "simulate" or "flag": "debug" to the config to run the enclave in simulation/debugging mode!

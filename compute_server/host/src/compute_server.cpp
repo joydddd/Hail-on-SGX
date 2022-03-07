@@ -309,13 +309,13 @@ bool ComputeServer::handle_message(int connFD, const std::string& name, ComputeS
 int ComputeServer::send_msg(const std::string& name, const int mtype, const std::string& msg, int connFD) {
     std::string message = std::to_string(global_id) + " " + std::to_string(mtype) + " ";
     message = std::to_string(message.length() + msg.length()) + "\n" + message + msg;
-    return send_message(institutions[name]->hostname.c_str(), institutions[name]->port, message.c_str(), connFD);
+    return send_message(institutions[name]->hostname.c_str(), institutions[name]->port, message.c_str(), message.length(), connFD);
 }
 
 int ComputeServer::send_msg(const std::string& hostname, const int port, const int mtype, const std::string& msg, int connFD) {
     std::string message = std::to_string(global_id) + " " + std::to_string(mtype) + " ";
     message = std::to_string(message.length() + msg.length()) + "\n" + message + msg;
-    return send_message(hostname.c_str(), port, message.c_str(), connFD);
+    return send_message(hostname.c_str(), port, message.c_str(), message.length(), connFD);
 }
 
 void ComputeServer::check_in(std::string name) {

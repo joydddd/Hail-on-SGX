@@ -1,4 +1,4 @@
 {
-    "register_server_bind_port": 6499,
+    "register_server_bind_port": 6400,
     "compute_server_count": 1
 }

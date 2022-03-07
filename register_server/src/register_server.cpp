@@ -202,5 +202,5 @@ bool RegisterServer::handle_message(int connFD, RegisterServerMessageType mtype,
 int RegisterServer::send_msg(const std::string& hostname, const int port, int mtype, const std::string& msg, int connFD) {
     std::string message = "-1rs " + std::to_string(mtype) + " ";
     message = std::to_string(message.length() + msg.length()) + "\n" + message + msg;
-    return send_message(hostname.c_str(), port, message.c_str(), connFD);
+    return send_message(hostname.c_str(), port, message.c_str(), message.length(), connFD);
 }

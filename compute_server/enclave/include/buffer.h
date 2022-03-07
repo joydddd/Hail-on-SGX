@@ -4,6 +4,7 @@
 #include "enc_gwas.h"
 #include "crypto.h"
 #include "batch.h"
+#include "logistic_regression.h"
 #include <fstream>
 
 #ifdef NON_OE
@@ -47,7 +48,7 @@ class Buffer {
     void decrypt_line(char* plaintxt, size_t* plaintxt_length, const std::vector<ClientInfo>& client_info_list, const int thread_id);
 
 public:
-    Buffer(size_t _row_size, Row_T row_type, int num_clients, int thread_id);
+    Buffer(Log_gwas* _gwas, size_t _row_size, Row_T row_type, int num_clients, int thread_id);
     ~Buffer();
     void finish();
     void clean_up();
