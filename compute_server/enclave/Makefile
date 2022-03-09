@@ -55,11 +55,11 @@ pre:
 
 ${BUILDDIR}/%.o: ${SRCDIR}/%.cpp
 	@mkdir -p ${BUILDDIR}
-	$(CXX) -c $(CXXFLAGS) $(INCLUDES) -I. -std=c++11 -o $@ $<
+	$(CXX) -c $(CXXFLAGS) $(INCLUDES) -I. -std=c++14 -o $@ $<
 
 $(BUILDDIR)/%_debug.o: ${SRCDIR}/%.cpp
 	@mkdir -p ${BUILDDIR}
-	$(CXX) -g -c $(CXXFLAGS) $(INCLUDES) -I. -std=c++11 -o $@ $<
+	$(CXX) -g -c $(CXXFLAGS) $(INCLUDES) -I. -std=c++14 -o $@ $<
 
 build: pre $(OBJECTS)
 	@ echo "Debug Mode Off"

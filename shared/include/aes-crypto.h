@@ -16,9 +16,9 @@ class AESCrypto {
     public:
         AESCrypto();
 
-        std::string encrypt_line(const CryptoPP::byte* line, int line_size);
+        std::string encrypt_line(const byte* line, int line_size);
 
-        std::string encode(const CryptoPP::byte* data, int data_size);
+        std::string encode(const byte* data, int data_size);
 
         std::string decode(const std::string& encoded_data);
 
