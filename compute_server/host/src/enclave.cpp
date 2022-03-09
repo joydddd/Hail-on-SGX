@@ -180,7 +180,7 @@ int start_enclave() {
 
         auto stop = std::chrono::high_resolution_clock::now();
         cout << "Logistic regression finished!" << endl;
-        auto duration = duration_cast<std::chrono::microseconds>(stop - start);
+        auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
         cout << "Enclave time total: " << duration.count() << endl;
         ComputeServer::print_timings();
     } catch (ERROR_t& err) {
@@ -220,7 +220,7 @@ int start_enclave() {
         // DEBUG: total execution time
         auto stop = std::chrono::high_resolution_clock::now();
         cout << "Logistic regression finished!" << endl;
-        auto duration = duration_cast<std::chrono::microseconds>(stop - start);
+        auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
         cout << "Enclave time total: " << duration.count() << endl;
 
         ComputeServer::print_timings();

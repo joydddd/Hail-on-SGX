@@ -9,7 +9,7 @@ AESCrypto::AESCrypto() {
     encryptor.SetKeyWithIV(key, key.size(), iv);
 }
 
-std::string AESCrypto::encrypt_line(const byte* line, int line_size) {
+std::string AESCrypto::encrypt_line(const CryptoPP::byte* line, int line_size) {
     std::string cipher;
     // class has implicit garbage collection - no need to free this memory.
     CryptoPP::StringSource ss(line, line_size, true /*pumpAll*/, 
@@ -17,10 +17,10 @@ std::string AESCrypto::encrypt_line(const byte* line, int line_size) {
                         new CryptoPP::StringSink(cipher)
                     ) // StreamTransformationFilter
                 );
-    return encode((const byte*)&cipher[0], cipher.size());
+    return encode((const CryptoPP::byte*)&cipher[0], cipher.size());
 }
 
-std::string AESCrypto::encode(const byte* data, int data_size) {
+std::string AESCrypto::encode(const CryptoPP::byte* data, int data_size) {
     CryptoPP::Base64Encoder encoder;
     std::string encoded;
     encoder.Attach(new CryptoPP::StringSink(encoded));
@@ -36,7 +36,7 @@ std::string AESCrypto::decode(const std::string& encoded_line) {
     std::string decoded;
     decoder.Attach(new CryptoPP::StringSink(decoded));
 
-    decoder.Put((const byte*)&encoded_line[0], encoded_line.size());
+    decoder.Put((const CryptoPP::byte*)&encoded_line[0], encoded_line.size());
     decoder.MessageEnd();
 
     return decoded;
@@ -56,7 +56,7 @@ std::string AESCrypto::get_key_and_iv(CryptoPP::RSAES<CryptoPP::OAEP<CryptoPP::S
             new CryptoPP::StringSink(enc_iv)
         )
     );
-    return encode((const byte*)enc_key.data(), enc_key.size()) + '\t' + encode((const byte*)enc_iv.data(), enc_iv.size());
+    return encode((const CryptoPP::byte*)enc_key.data(), enc_key.size()) + '\t' + encode((const CryptoPP::byte*)enc_iv.data(), enc_iv.size());
 }
 
 // std::string AESCrypto::rsa_encrypt(std::string& input, CryptoPP::RSAES<CryptoPP::OAEP<CryptoPP::SHA256> >::Encryptor& rsa_encryptor) {

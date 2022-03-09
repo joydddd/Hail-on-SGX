@@ -230,7 +230,7 @@ int main(int argc, const char* argv[]) {
         result = log_regression(enclave);
         // DEBUG: total execution time
         auto stop = std::chrono::high_resolution_clock::now();
-        auto duration = duration_cast<std::chrono::microseconds>(stop - start);
+        auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
         cout << "Enclave time total: " << duration.count() << endl;
         if (result != OE_OK) {
             fprintf(stderr,
