@@ -60,13 +60,21 @@ class Row {
 
 
 
-inline size_t split_tab(string &line, vector<string> &parts) {
+inline size_t split_tab(const string &line, vector<string> &parts) {
     parts.clear();
-    string part;
-    stringstream ss(line);
-    while (getline(ss, part, '\t')) {
-        parts.push_back(part);
+
+    std::string part;
+    for (char ch : line) {
+        if (ch != '\t') {
+            part += ch;
+        } 
+        else {
+            parts.push_back(part);
+            part.clear();
+        }
     }
+    if (part.length()) parts.push_back(part);
+
     return parts.size();
 }
 

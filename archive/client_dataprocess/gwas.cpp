@@ -44,16 +44,6 @@ double read_entry_double(string s){
     return xx;
 }
 
-int split_tab(string &line, vector<string> &parts){
-    parts.clear();
-    string part;
-    stringstream ss(line);
-    while(getline(ss, part, '\t')){
-        parts.push_back(part);
-    }
-    return (int)parts.size();
-}
-
 void split_allele( string &line, vector<string> &parts, string &loci, string &allele){
     string part;
     stringstream ss(line);

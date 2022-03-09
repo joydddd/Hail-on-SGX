@@ -38,6 +38,7 @@ CFLAGS+= -I ../../shared/include -I .. -I include -I .
 CXXFLAGS+= -I ../../shared/include -I .. -I include -I .
 CXX_NONENC_FLAGS+= -I ../../shared/include -I .. -I include -I .
 LDFLAGS+= -I ../../shared/include -I .. -I include -I .
+CRYPTFLAG := -lcryptopp -lmbedcrypto -lmbedtls
 
 
 all:
