@@ -10,17 +10,15 @@
 #include "gwas.h"
 /* provide Alleles & Loci */
 
-using namespace std;
-
 #define NA_uint8 0x3
 #define NA_uint UINT_MAX
 #define uint8_OFFSET 0
 
 template <typename T>
 inline bool is_NA(T a) {
-    if (isnan(a)) return true;
-    if (is_same<T, uint8_t>::value) return (a == NA_uint8);
-    if (is_same<T, unsigned int>::value) return (a == NA_uint);
+    if (std::isnan(a)) return true;
+    if (std::is_same<T, uint8_t>::value) return (a == NA_uint8);
+    if (std::is_same<T, unsigned int>::value) return (a == NA_uint);
     return true;
 }
 
@@ -31,8 +29,11 @@ class Row {
      Loci loci;
      Alleles alleles;
      size_t n;
-     vector<uint8_t *> data;
-     vector<size_t> length;
+     std::vector<uint8_t *> data;
+     std::vector<size_t> length;
+     // Reuse string and vector for parsing, reduce allocations!
+     std::string part;
+     std::vector<std::string> parts;
 
     public:
      /* return metadata */
@@ -60,18 +61,24 @@ class Row {
 
 
 
-inline size_t split_tab(const string &line, vector<string> &parts) {
+inline size_t split_delim(const char* line, std::string& part, std::vector<std::string> &parts, char delim='\t', int delim_to_parse=-1) {
     parts.clear();
+    part.clear();
 
-    std::string part;
-    for (char ch : line) {
-        if (ch != '\t') {
-            part += ch;
+    int num_delim = 0;
+    int idx = 0;
+    while (line[idx] != '\0') {
+        if (line[idx] != '\t') {
+            part += line[idx];
         } 
         else {
             parts.push_back(part);
+            if (++num_delim == delim_to_parse) {
+                return parts.size();
+            }
             part.clear();
         }
+        idx++;
     }
     if (part.length()) parts.push_back(part);
 

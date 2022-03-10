@@ -11,20 +11,23 @@
 /* for logistic regression */
 
 class Log_var {
-    vector<double> data;
+    std::vector<double> data;
     size_t n;
-    string name_str;
+    std::string name_str;
+    // Reuse strings and vectors, reduce dynamic allocations
+    std::string part;
+    std::vector<std::string> parts;
     friend class Log_row;
     friend class Log_gwas;
 
    public:
     Log_var() : n(0), name_str("NA") {}
-    Log_var(istream &is) { read(is); }
-    void read(istream &is);
+    Log_var(std::istream &is) { read(is); }
+    void read(std::istream &is);
     Log_var(size_t size, int x = 1) : data(size, x), n(size), name_str("1") {}
     size_t size() { return n; }
     void combine(Log_var &other);
-    string name() { return name_str; }
+    std::string name() { return name_str; }
     Log_var &operator=(Log_var &rhs) {
         if (this == &rhs) return *this;
         data = rhs.data;
@@ -35,8 +38,8 @@ class Log_var {
 };
 
 class Log_gwas {
-    vector<Log_var> covariants;
-    string name;
+    std::vector<Log_var> covariants;
+    std::string name;
     Log_var y;
     size_t m;  // dimention
     size_t n;  // same size
@@ -70,15 +73,15 @@ class Log_row : public Row {
     const Log_gwas *gwas;
 
     /* model data */
-    vector<double> b;
+    std::vector<double> b;
     // vector<double> change;
-    vector<double> old_beta;
-    vector<double> beta_delta;
+    std::vector<double> old_beta;
+    std::vector<double> beta_delta;
     SqrMatrix H;
     // SqrMatrix sub;
     // SqrMatrix cof;
     // SqrMatrix t;
-    vector<double> Grad;
+    std::vector<double> Grad;
     double standard_error;
     bool fitted = false;
     void update_beta();
@@ -98,7 +101,7 @@ class Log_row : public Row {
     bool fit(std::vector<double>& change, std::vector<double>& old_beta, size_t max_iteration = 25, double sig = 1e-6);
 
     /* output results */
-    vector<double> beta();
+    double output_first_beta_element();
     double t_stat();
 };
 

@@ -16,7 +16,7 @@
 #define ATTEMPT_TIMEOUT 500  // in milliseconds
 
 #include "gwas_u.h"
-using namespace std;
+;
 const vector<vector<string>> covFiles = {
     {"../../archive/samples/1kg-logistic-regression/isFemale.tsv"}};
 const vector<string> yFiles = {

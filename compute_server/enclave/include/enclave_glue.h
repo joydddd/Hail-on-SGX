@@ -7,8 +7,6 @@
 #include "gwas.h"
 #include "../../server_type.h"
 
-using namespace std;
-
 /* ECALL */
 void setup_enclave(const int num_threads);
 void log_regression(const int thread_id);

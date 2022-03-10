@@ -8,7 +8,7 @@
 #include <iostream>
 #include "../gwas.h"
 
-using namespace std;
+;
 
 #define NA -1
 

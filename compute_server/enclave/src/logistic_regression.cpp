@@ -3,13 +3,12 @@
 #include <limits>
 
 #include "logistic_regression.h"
-using namespace std;
 
-double read_entry_int(string &entry) {
+double read_entry_int(std::string &entry) {
     double ans;
     try {
-        ans = stoi(entry);
-    } catch (invalid_argument &error) {
+        ans = std::stoi(entry);
+    } catch (std::invalid_argument &error) {
         if (entry == "true" || entry == "True") {
             ans = 1;
         } else if (entry == "false" || entry == "False") {
@@ -23,21 +22,21 @@ double read_entry_int(string &entry) {
     return ans;
 }
 
-double max(vector<double> &vec) {
-    double max = -numeric_limits<double>::infinity();
+double max(std::vector<double>& vec) {
+    double max = -std::numeric_limits<double>::infinity();
     for (auto x : vec) {
         if (x >= max) max = x;
     }
     return max;
 }
 
-bool read_entry_bool(string &entry) {
+bool read_entry_bool(std::string& entry) {
     bool ans;
     try {
         int ans_int = stoi(entry);
         if (ans_int == 0) ans = false;
         if (ans_int == 1) ans = true;
-    } catch (invalid_argument &error) {
+    } catch (std::invalid_argument &error) {
         if (entry == "true" || entry == "True") {
             ans = true;
         } else if (entry == "false" || entry == "False") {
@@ -57,15 +56,14 @@ void Log_gwas::print() const {
 }
 #endif
 
-void Log_var::read(istream &is) {
-    string line;
-    vector<string> parts;
+void Log_var::read(std::istream &is) {
+    std::string line;
     getline(is, line);
-    split_tab(line, parts);
+    split_delim(line.c_str(), part, parts);
     if (parts.size() != 2) throw ReadtsvERROR("invalid line " + line);
     name_str = line[1];
     while (getline(is, line)) {
-        split_tab(line, parts);
+        split_delim(line.c_str(), part, parts);
         if (parts.size() != 2) throw ReadtsvERROR("invalid line " + line);
         data.push_back((int)read_entry_bool(parts[1]));
     }
@@ -136,10 +134,10 @@ bool Log_row::fit(std::vector<double>& change, std::vector<double>& old_beta, si
 }
 
 /* output results*/
-vector<double> Log_row::beta() {
+double Log_row::output_first_beta_element() {
     if (!fitted)
         for (auto &bn : b) bn = nan("");
-    return b;
+    return b.front();
 }
 
 double Log_row::t_stat() {

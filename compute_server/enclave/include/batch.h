@@ -44,7 +44,7 @@ class Batch {
     size_t *plaintxt_size() { return &txt_size; }
     void reset();
     Row* get_row(Buffer* buffer);  // return nullptr is reached ead of batch
-    void write(const string &);
+    void write(const std::string &);
 
     size_t get_out_tail();
 };

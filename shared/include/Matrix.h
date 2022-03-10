@@ -1,7 +1,7 @@
 #ifndef MATRIX_H
 #define MATRIX_H
 
-using namespace std;
+;
 #include <vector>
 #include <string>
 
@@ -13,17 +13,17 @@ using namespace std;
 
 class MathError{
     public:
-    string msg;
-    MathError(string _msg):msg(_msg){}
+    std::string msg;
+    MathError(std::string _msg):msg(_msg){}
 };
 
 class SqrMatrix{
     private:
-    vector<vector<double>> m;
+    std::vector<std::vector<double>> m;
     size_t n;
     public: 
     SqrMatrix():n(0){}
-    SqrMatrix(size_t s, int opt):m(s, vector<double>(s, 0)), n(s) {
+    SqrMatrix(size_t s, int opt):m(s, std::vector<double>(s, 0)), n(s) {
         if (opt) {
             det = new SqrMatrix(s, 0);
         }
@@ -40,7 +40,7 @@ class SqrMatrix{
         // if (cof) delete cof;
         // if (t) delete t;
     }
-    SqrMatrix(vector<vector<double>> &vec):m(vec), n(vec.size()){
+    SqrMatrix(std::vector<std::vector<double>> &vec):m(vec), n(vec.size()){
         if (n > 0 && m[0].size() != n)
             throw MathError("SqrMatrix: not a square matrix");
     }
@@ -52,7 +52,7 @@ class SqrMatrix{
     SqrMatrix(SqrMatrix&&) = default;
     SqrMatrix& operator=(const SqrMatrix&) = default;
     SqrMatrix& operator=(SqrMatrix&) = default;
-    vector<double>& operator[](size_t index){return m[index];}
+    std::vector<double>& operator[](size_t index){return m[index];}
     double at(size_t row, size_t col) const {return m[row][col];}
     size_t size() const {return n;}
     bool is_empty() { return n == 0; }
@@ -93,7 +93,7 @@ class SqrMatrix{
             }
         }
     }
-    void calculate_beta_delta(const vector<double>& mult, vector<double>& beta_delta) const {
+    void calculate_beta_delta(const std::vector<double>& mult, std::vector<double>& beta_delta) const {
         if (mult.size() != n) throw MathError("Matrix Vector dim mismatch");
         for (size_t i = 0; i < n; i++){
             beta_delta[i] = 0;
@@ -215,8 +215,8 @@ class SqrMatrix{
     
     void print() {
         for(auto& row:m){
-            for (auto& elt : row) cout << elt << " ";
-            cout << endl;
+            for (auto& elt : row) std::cout << elt << " ";
+            std::cout << std::endl;
         }
     }
 };

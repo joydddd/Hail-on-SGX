@@ -12,12 +12,13 @@ void Row::reset() {
 }
 
 size_t Row::read(const char line[]) {
-    stringstream ss(line);
-    string loci_str, alleles_str;
+    if (split_delim(line, part, parts, 2) != 2) {
+        throw ENC_ERROR("Invalid row parse\n");
+    }
+    const std::string& loci_str = parts.front();
+    const std::string& alleles_str = parts.back();
     try {
-        getline(ss, loci_str, '\t');
         loci = Loci(loci_str);
-        getline(ss, alleles_str, '\t');
         alleles.read(alleles_str);
     } catch (ReadtsvERROR &error) {
         std::cout << line << std::endl << std::flush;

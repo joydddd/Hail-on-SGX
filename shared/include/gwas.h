@@ -5,10 +5,10 @@
 #include <sstream>
 #include <string>
 #include "buffer_size.h"
-
 #include "gwas_error.h"
+#include "parser.h"
 
-using namespace std;
+;
 
 #define LOCI_X 23
 
@@ -20,8 +20,12 @@ class Loci {
     int chrom;
     int loc;
     Loci():chrom(0), loc(0){}
-    Loci(const string &str);
-    friend ostream &operator<<(ostream &os, const Loci &loci) {
+    Loci(const std::string &str);
+    // Reuse dynamic memory!
+    std::string part;
+    std::vector<std::string> parts;
+
+    friend std::ostream &operator<<(std::ostream &os, const Loci &loci) {
         if (loci.chrom == LOCI_X)
             os << "X";
         else
@@ -41,7 +45,7 @@ class Loci {
     friend bool operator>(const Loci &a, const Loci &b) {
         return !(a < b || a == b);
     }
-    string str();
+    std::string str();
 };
 
 const Loci Loci_MAX("24:0");
@@ -50,9 +54,9 @@ class Alleles {
    public:
     ALLELE a1, a2;
     Alleles() : a1(NaN), a2(NaN) {}
-    bool read(string str);  // return true if a1 <= a2
+    bool read(std::string str);  // return true if a1 <= a2
     void inverse();
-    friend ostream &operator<<(ostream &os, const Alleles &alleles) {
+    friend std::ostream &operator<<(std::ostream &os, const Alleles &alleles) {
         os << "[\"" << (char)alleles.a1 << "\",\"" << (char)alleles.a2 << "\"]";
         return os;
     }
@@ -64,38 +68,38 @@ class Alleles {
         return !(a == b);
     }
 
-    string str(const Loci &loci);
+    std::string str(const Loci &loci);
 };
 
-inline Loci::Loci(const string &str) {
-    stringstream ss(str);
-    string chrom_str, loc_str;
-    getline(ss, chrom_str, ':');
-    getline(ss, loc_str, ':');
+inline Loci::Loci(const std::string &str) {
     try {
-        if (chrom_str == "X")
+        Parser::split(parts, str, ':', 2); 
+        if (parts.size() != 2) {
+            throw std::invalid_argument("Loci parse failed");
+        }
+        if (parts.front() == "X")
             chrom = LOCI_X;
         else
-            chrom = stoi(chrom_str);
-        loc = stoi(loc_str);
-    } catch (invalid_argument &error) {
+            chrom = stoi(parts.front());
+        loc = stoi(parts.back());
+    } catch (std::invalid_argument &error) {
         throw ReadtsvERROR("Unknown Loci: " + str);
     }
 }
 
-inline string loci_to_str(const Loci &loci) {
-    std::string ret;
+inline void loci_to_str(const Loci &loci, std::string& loci_string) {
+    loci_string.clear();
+
     if (loci.chrom == LOCI_X) {
-            ret += "X";
+            loci_string += "X";
     }
     else {
-        ret += std::to_string(loci.chrom);
+        loci_string += std::to_string(loci.chrom);
     }
-    ret += ":" + std::to_string(loci.loc);
-    return ret;
+    loci_string += ":" + std::to_string(loci.loc);
 }
 
-inline bool Alleles::read(string str) {
+inline bool Alleles::read(std::string str) {
     if (str.length() != 9) throw ReadtsvERROR("Unknow alleles type " + str);
     char ma, mi;
     ma = str[2];
@@ -144,14 +148,14 @@ inline void Alleles::inverse() {
     a2 = tmp;
 }
 
-inline string alleles_to_str(const Alleles &alleles) {
-    std::string ret;
-    ret += "[\"";
-    ret.push_back((char)alleles.a1);
-    ret += "\",\"";
-    ret.push_back((char)alleles.a2);
-    ret += + "\"]";
-    return ret;
+inline void alleles_to_str(const Alleles &alleles, std::string& allele_string) {
+    allele_string.clear();
+
+    allele_string += "[\"";
+    allele_string.push_back((char)alleles.a1);
+    allele_string += "\",\"";
+    allele_string.push_back((char)alleles.a2);
+    allele_string += + "\"]";
 }
 
 #endif

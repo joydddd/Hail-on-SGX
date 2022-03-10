@@ -25,11 +25,11 @@ void setup_enclave(const int num_threads) {
     RSACrypto rsa = RSACrypto();
     setrsapubkey(rsa.get_pub_key());
 
-    cout << "RSA Pub Key Set\n";
+    std::cout << "RSA Pub Key Set\n";
 
     getclientnum(&num_clients);
 
-    cout << "enclave running on " << num_clients << " clients" << endl;
+    std::cout << "enclave running on " << num_clients << " clients" << std::endl;
 
     client_info_list.resize(num_clients);
     client_y_size.resize(num_clients);
@@ -68,15 +68,15 @@ void setup_enclave(const int num_threads) {
                                                  thread_aes_data.aes_key,
                                                  AES_KEY_LENGTH * 8);
                 if (ret != 0) {
-                    cout << "Set key failed.\n";
+                    std::cout << "Set key failed.\n";
                     exit(0);
                 }
             }
         }
         delete aes_length;
-        cout << "AES KEY and IV loaded" << endl;
+        std::cout << "AES KEY and IV loaded" << std::endl;
     } catch (ERROR_t& err) {
-        cerr << "ERROR: fail to get AES KEY " << err.msg << endl;
+        std::cerr << "ERROR: fail to get AES KEY " << err.msg << std::endl;
     }
 
     /* set up encrypted size */
@@ -85,7 +85,7 @@ void setup_enclave(const int num_threads) {
         while(!size) {
             get_encrypted_x_size(&size, i);
         }
-        cout << "client " << i << " crypto size: " << size << endl;
+        std::cout << "client " << i << " crypto size: " << size << std::endl;
         client_info_list[i].crypto_size = size;
     }
 
@@ -104,7 +104,7 @@ void setup_enclave(const int num_threads) {
                              (const unsigned char*) y_buffer,
                              y_buffer_size, 
                              (unsigned char*) buffer_decrypt);
-            stringstream y_ss(buffer_decrypt);
+            std::stringstream y_ss(buffer_decrypt);
             Log_var new_y;
             new_y.read(y_ss);
             client_y_size[client] = new_y.size();
@@ -112,19 +112,20 @@ void setup_enclave(const int num_threads) {
             gwas_y.combine(new_y);
         }
         delete[] y_buffer;
-        cout << "Y value loaded" << endl;
+        std::cout << "Y value loaded" << std::endl;
     } 
     catch (ERROR_t& err) {
-        cerr << "ERROR: fail to get correct y values" << err.msg << endl;
+        std::cerr << "ERROR: fail to get correct y values" << err.msg << std::endl;
     }
 
     gwas = new Log_gwas(gwas_y);
     
     char covl[ENCLAVE_READ_BUFFER_SIZE];
     getcovlist(covl);
-    string covlist(covl);
-    vector<string> covariants;
-    split_tab(covlist, covariants);
+    std::string covlist(covl);
+    std::vector<std::string> covariants;
+    std::string covariant;
+    split_delim(covlist.c_str(), covariant, covariants);
     try{
         char* cov_buffer = new char[ENCLAVE_READ_BUFFER_SIZE];
         for (auto& cov : covariants) {
@@ -145,7 +146,7 @@ void setup_enclave(const int num_threads) {
                                 (const unsigned char*) cov_buffer,
                                 cov_buffer_size, 
                                 (unsigned char*) buffer_decrypt);
-                stringstream cov_ss(buffer_decrypt);
+                std::stringstream cov_ss(buffer_decrypt);
                 Log_var new_cov_var;
                 new_cov_var.read(cov_ss);
                 if (new_cov_var.size() != client_y_size[client])
@@ -156,10 +157,10 @@ void setup_enclave(const int num_threads) {
             gwas->add_covariant(cov_var);
         }
         delete[] cov_buffer;
-        cout << "GWAS setup finished" << endl;
+        std::cout << "GWAS setup finished" << std::endl;
     }
     catch (ERROR_t& err) {
-        cerr << "ERROR: fail to get correct covariant values: " << err.msg << endl;
+        std::cerr << "ERROR: fail to get correct covariant values: " << err.msg << std::endl;
     }
 
     int total_row_size = 0;
@@ -167,7 +168,7 @@ void setup_enclave(const int num_threads) {
     for (int thread_id = 0; thread_id < num_threads; ++thread_id) {
         buffer_list[thread_id] = new Buffer(gwas, total_row_size, LOG_t, num_clients, thread_id);
     }
-    std::cout << "Buffer initialized" << endl;
+    std::cout << "Buffer initialized" << std::endl;
 
     std::cout << "Setup finished\n";
     start_thread = true;
@@ -175,6 +176,11 @@ void setup_enclave(const int num_threads) {
 
 void log_regression(const int thread_id) {
     std::string output_string;
+    std::string loci_string;
+    std::string alleles_string;
+    output_string.reserve(50);
+    loci_string.reserve(50);
+    alleles_string.reserve(20);
     // experimental - checking to see if spinning up threads adds a noticable amount of overhead... need +1 TCS in config
     while(!start_thread) {
         // spin until ready to go!
@@ -205,18 +211,20 @@ void log_regression(const int thread_id) {
         try {
             if (!(row = (Log_row*)batch->get_row(buffer))) continue;
         } catch (ERROR_t& err) {
-            cerr << "ERROR: " << err.msg << endl << std::flush;
+            std::cerr << "ERROR: " << err.msg << std::endl << std::flush;
             exit(0);
             continue;
         }
         //stop_timer("get_row()");
         // compute results
-        output_string += loci_to_str(row->getloci()) + "\t" + alleles_to_str(row->getalleles());
+        loci_to_str(row->getloci(), loci_string);
+        alleles_to_str(row->getalleles(), alleles_string);
+        output_string += loci_string + "\t" + alleles_string;
         bool converge;
         //start_timer("converge()");
         try {
             converge = row->fit(change, old_beta);
-            output_string += "\t" + std::to_string(row->beta()[0]) + "\t" + std::to_string(row->t_stat()) + "\t";
+            output_string += "\t" + std::to_string(row->output_first_beta_element()) + "\t" + std::to_string(row->t_stat()) + "\t";
             // wanted to use a ternary, but the compiler doesn't like it?
             if (converge) {
                 output_string += "true";
@@ -228,11 +236,11 @@ void log_regression(const int thread_id) {
         } catch (MathError& err) {
             output_string += "\tNA\tNA\tNA\n";
             // cerr << "MathError while fiting " << ss.str() << ": " << err.msg
-            //      << endl;
-            //ss << "\tNA\tNA\tNA" << endl;
+            //      << std::endl;
+            //ss << "\tNA\tNA\tNA" << std::endl;
         } catch (ERROR_t& err) {
-            cerr << "ERROR " << err.msg << endl << std::flush;
-            //ss << "\tNA\tNA\tNA" << endl;
+            std::cerr << "ERROR " << err.msg << std::endl << std::flush;
+            //ss << "\tNA\tNA\tNA" << std::endl;
             exit(1);
         }
         //stop_timer("converge()");

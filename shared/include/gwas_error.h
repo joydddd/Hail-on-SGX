@@ -2,12 +2,12 @@
 #define GWAS_ERROR_H
 #include <string>
 
-using namespace std;
+;
 
 class ERROR_t {
    public:
-    ERROR_t(string _msg) : msg(_msg) {}
-    string msg;
+    ERROR_t(std::string _msg) : msg(_msg) {}
+    std::string msg;
 };
 
 class ReadtsvERROR : public ERROR_t {

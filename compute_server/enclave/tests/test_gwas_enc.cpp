@@ -1,5 +1,5 @@
 #include "enc_gwas.h"
-using namespace std;
+;
 int main() { 
     try{
     uint8_t testarray[] = {9, 1, 2, 3, 4, 23, 1, 2, 3, '\0'};

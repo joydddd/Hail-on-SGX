@@ -6,9 +6,6 @@
 
 #include "gwas.h"
 
-using namespace std;
-
-
 
 int read_entry_int(string s){
     int xx;
