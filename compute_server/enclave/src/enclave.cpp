@@ -124,8 +124,7 @@ void setup_enclave(const int num_threads) {
     getcovlist(covl);
     std::string covlist(covl);
     std::vector<std::string> covariants;
-    std::string covariant;
-    split_delim(covlist.c_str(), covariant, covariants);
+    split_delim(covlist.c_str(), covariants);
     try{
         char* cov_buffer = new char[ENCLAVE_READ_BUFFER_SIZE];
         for (auto& cov : covariants) {

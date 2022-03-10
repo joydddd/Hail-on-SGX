@@ -28,7 +28,6 @@ void two_bit_decompress(uint8_t* input, uint8_t* decompressed, unsigned int size
 }
 
 void Buffer::decrypt_line(char* plaintxt, size_t* plaintxt_length, const std::vector<ClientInfo>& client_info_list, const int thread_id) {
-    vector<char*> client_begin;
     char* head = crypttxt;
     char* end_of_allele = crypttxt, *end_of_loci = crypttxt;
     while (true) {

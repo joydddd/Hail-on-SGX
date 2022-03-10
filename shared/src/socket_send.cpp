@@ -89,6 +89,7 @@ size_t writefunc(void *ptr, size_t size, size_t nmemb, std::string *s)
   return size*nmemb;
 }
 
+// Find a better solution, but this works for now
 std::string get_hostname_str() {
 	CURL *curl = curl_easy_init();
 	std::string readBuffer;
@@ -98,7 +99,7 @@ std::string get_hostname_str() {
 		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, writefunc);
 		curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
 
-		CURLcode res = curl_easy_perform(curl);
+		curl_easy_perform(curl);
 
 		/* always cleanup */
 		curl_easy_cleanup(curl);

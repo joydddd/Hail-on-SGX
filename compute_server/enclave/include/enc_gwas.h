@@ -31,9 +31,6 @@ class Row {
      size_t n;
      std::vector<uint8_t *> data;
      std::vector<size_t> length;
-     // Reuse string and vector for parsing, reduce allocations!
-     std::string part;
-     std::vector<std::string> parts;
 
     public:
      /* return metadata */
@@ -61,14 +58,15 @@ class Row {
 
 
 
-inline size_t split_delim(const char* line, std::string& part, std::vector<std::string> &parts, char delim='\t', int delim_to_parse=-1) {
-    parts.clear();
-    part.clear();
+inline size_t split_delim(const char* line, std::vector<std::string> &parts, char delim='\t', int delim_to_parse=-1) {
+    //parts.clear();
+    // part.clear();
+    std::string part;
 
     int num_delim = 0;
     int idx = 0;
     while (line[idx] != '\0') {
-        if (line[idx] != '\t') {
+        if (line[idx] != delim) {
             part += line[idx];
         } 
         else {

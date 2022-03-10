@@ -14,9 +14,6 @@ class Log_var {
     std::vector<double> data;
     size_t n;
     std::string name_str;
-    // Reuse strings and vectors, reduce dynamic allocations
-    std::string part;
-    std::vector<std::string> parts;
     friend class Log_row;
     friend class Log_gwas;
 

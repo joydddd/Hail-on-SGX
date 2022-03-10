@@ -5,7 +5,7 @@
 /* For testrun without open enclave ONLY */
 
 #include "gwas.h"
-#include "../../server_type.h"
+#include "server_type.h"
 
 /* ECALL */
 void setup_enclave(const int num_threads);

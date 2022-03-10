@@ -179,12 +179,12 @@ int start_enclave() {
         ComputeServer::clean_up_output();
 
         auto stop = std::chrono::high_resolution_clock::now();
-        std::cout << "Logistic regression finished!" << endl;
+        std::cout << "Logistic regression finished!" << std::endl;
         auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
-        std::cout << "Enclave time total: " << duration.count() << endl;
+        std::cout << "Enclave time total: " << duration.count() << std::endl;
         ComputeServer::print_timings();
     } catch (ERROR_t& err) {
-        std::cerr << "ERROR: " << err.msg << endl << std::flush;
+        std::cerr << "ERROR: " << err.msg << std::endl << std::flush;
     }
 
     ret = 0;
@@ -198,41 +198,41 @@ exit:
 
 #else
 
-// int start_enclave() {
-//     int ret;
+int start_enclave() {
+    int ret;
 
-//     try {
-//         std::cout << "\n\n**RUNNING LOG REGRESSION**\n\n";
+    try {
+        std::cout << "\n\n**RUNNING LOG REGRESSION**\n\n";
 
-//         int num_threads = ComputeServer::get_num_threads();
-//         boost::thread_group thread_group;
-//         for (int thread_id = 0; thread_id < num_threads; ++thread_id) {
-//             std::cout << " thread_id " << thread_id << std::endl;
-//             boost::thread* enclave_thread =
-//                 new boost::thread(log_regression, thread_id);
-//             thread_group.add_thread(enclave_thread);
-//         }
+        int num_threads = ComputeServer::get_num_threads();
+        boost::thread_group thread_group;
+        for (int thread_id = 0; thread_id < num_threads; ++thread_id) {
+            std::cout << " thread_id " << thread_id << std::endl;
+            boost::thread* enclave_thread =
+                new boost::thread(log_regression, thread_id);
+            thread_group.add_thread(enclave_thread);
+        }
 
-//         setup_enclave(num_threads);
+        setup_enclave(num_threads);
 
-//         auto start = std::chrono::high_resolution_clock::now();
-//         thread_group.join_all();
-//         // DEBUG: total execution time
-//         auto stop = std::chrono::high_resolution_clock::now();
-//         std::cout << "Logistic regression finished!" << endl;
-//         auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
-//         std::cout << "Enclave time total: " << duration.count() << endl;
+        auto start = std::chrono::high_resolution_clock::now();
+        thread_group.join_all();
+        // DEBUG: total execution time
+        auto stop = std::chrono::high_resolution_clock::now();
+        std::cout << "Logistic regression finished!" << std::endl;
+        auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
+        std::cout << "Enclave time total: " << duration.count() << std::endl;
 
-//         ComputeServer::print_timings();
-//     } catch (ERROR_t& err) {
-//         std::cerr << "ERROR: " << err.msg << endl << std::flush;
-//     }
+        ComputeServer::print_timings();
+    } catch (ERROR_t& err) {
+        std::cerr << "ERROR: " << err.msg << std::endl << std::flush;
+    }
 
-//     ret = 0;
+    ret = 0;
 
-// exit:
+exit:
 
-//     return ret;
-// }
+    return ret;
+}
 
 #endif

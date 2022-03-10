@@ -35,7 +35,7 @@ Row* Batch::get_row(Buffer* buffer) {
     return row;
 }
 
-void Batch::write(const string& output) {
+void Batch::write(const std::string& output) {
     strcpy(outtxt + out_tail, output.c_str());
     out_tail += output.size();
 }

@@ -6,9 +6,8 @@
 #include <string>
 #include "buffer_size.h"
 #include "gwas_error.h"
-#include "parser.h"
+//#include "parser.h"
 
-;
 
 #define LOCI_X 23
 
@@ -22,8 +21,8 @@ class Loci {
     Loci():chrom(0), loc(0){}
     Loci(const std::string &str);
     // Reuse dynamic memory!
-    std::string part;
-    std::vector<std::string> parts;
+    std::string chrom_str;
+    std::string loc_str;
 
     friend std::ostream &operator<<(std::ostream &os, const Loci &loci) {
         if (loci.chrom == LOCI_X)
@@ -73,15 +72,21 @@ class Alleles {
 
 inline Loci::Loci(const std::string &str) {
     try {
-        Parser::split(parts, str, ':', 2); 
-        if (parts.size() != 2) {
-            throw std::invalid_argument("Loci parse failed");
+        chrom_str.clear();
+        loc_str.clear();
+        bool chrom = true;
+        for (char c : str) {
+            if (c == ':') {
+                chrom = false;
+                continue;
+            }
+            if (chrom) {
+                chrom_str.push_back(c);
+            } else {
+                loc_str.push_back(c);
+            }
         }
-        if (parts.front() == "X")
-            chrom = LOCI_X;
-        else
-            chrom = stoi(parts.front());
-        loc = stoi(parts.back());
+    //std::cout << chrom_str << " " << loc_str << std::endl;
     } catch (std::invalid_argument &error) {
         throw ReadtsvERROR("Unknown Loci: " + str);
     }

@@ -57,13 +57,15 @@ void Log_gwas::print() const {
 #endif
 
 void Log_var::read(std::istream &is) {
+    std::vector<std::string> parts;
     std::string line;
     getline(is, line);
-    split_delim(line.c_str(), part, parts);
+    split_delim(line.c_str(), parts);
     if (parts.size() != 2) throw ReadtsvERROR("invalid line " + line);
     name_str = line[1];
     while (getline(is, line)) {
-        split_delim(line.c_str(), part, parts);
+        parts.clear();
+        split_delim(line.c_str(), parts);
         if (parts.size() != 2) throw ReadtsvERROR("invalid line " + line);
         data.push_back((int)read_entry_bool(parts[1]));
     }
