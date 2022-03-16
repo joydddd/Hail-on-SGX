@@ -103,7 +103,7 @@ debugtests: $(TESTS)
 
 debug: pre $(DEBUGOBJECTS)
 	cd ../../shared && $(MAKE) && cd ../compute_server/host
-	$(CXX) -g -o $(EXECUTABLE)_debug $(BUILDDIR)/$(PROJECTNAME)_u.o $(DEBUGOBJECTS) $(LDFLAGS) ${CRYPTFLAG}
+	$(CXX) -g -o $(EXECUTABLE)_debug $(BUILDDIR)/$(PROJECTNAME)_u.o $(DEBUGOBJECTS) $(LDFLAGS) ${CRYPTFLAG} ${CURLFLAG}
 
 debugrun:
 	./$(EXECUTABLE)_debug $(CONFIG)
@@ -112,7 +112,7 @@ clean:
 	rm -rf ${BUILDDIR}
 	rm -f $(PROJECTNAME)host $(PROJECTNAME)host.o $(PROJECTNAME)_u.o $(PROJECTNAME)_u.c $(PROJECTNAME)_u.h $(PROJECTNAME)_args.h $(PROJECTNAME).signed
 	rm -f *.o $(TESTS) *.out *_debug test_*
-	rm *_nonoe
+	rm -f *_nonoe
 
 # Generic rules for compiling a source file to an non oe object file
 ${BUILDDIR}/%_nonoe.o: ${SRCDIR}/%.cpp

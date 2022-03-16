@@ -66,5 +66,7 @@ enclave {
             enum Row_T type, 
             [in] char buffer[ENCLAVE_OUTPUT_BUFFER_SIZE],
             const int thread_id);
+        
+        void log_regression_finish();
     };
 };

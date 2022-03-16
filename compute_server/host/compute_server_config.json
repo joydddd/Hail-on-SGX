@@ -3,9 +3,9 @@
     "covariants": ["1", "isFemale"],
     "institutions": ["client1"],
     "y_val_name": "PurpleHair",
-    "enclave_path": "../enclave/gwasenc.signed",
+    "enclave_path": "../enclave/gwasenc_debug",
     "register_server_info": {
-        "hostname": "sgx.eecs.umich.edu",
+        "hostname": "localhost",
         "port": 6499
     }
 }

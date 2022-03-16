@@ -128,6 +128,10 @@ void writebatch(Row_T type, char buffer[ENCLAVE_OUTPUT_BUFFER_SIZE], const int t
     ComputeServer::write_allele_data(buffer, thread_id);
 }
 
+void log_regression_finish(){
+    std::cout << "Log regression finish func" << std::endl;
+}
+
 bool check_simulate_opt(int* argc, const char* argv[]) {
     for (int i = 0; i < *argc; i++) {
         if (strcmp(argv[i], "--simulate") == 0) {
@@ -184,22 +188,22 @@ int start_enclave() {
     }
 
     try {
-        std::cout << "\n\n**RUNNING LOG REGRESSION**\n\n";
-
-        // int num_threads = ComputeServer::get_num_threads();
-        int num_threads = 1;
-        boost::thread_group thread_group;
-        for (int thread_id = 0; thread_id < num_threads; ++thread_id) {
-            boost::thread* enclave_thread = new boost::thread(log_regression, enclave, thread_id);
-            thread_group.add_thread(enclave_thread);
-        }
-
+        std::cout << "\n\n***SETUP ENCLAVE****\n\n" << std::endl;
+        int num_threads = ComputeServer::get_num_threads();
         result = setup_enclave(enclave, num_threads);
         if (result != OE_OK) {
             fprintf(stderr,
                     "calling into enclave_gwas failed: result=%u (%s)\n",
                     result, oe_result_str(result));
             goto exit;
+        }
+        std::cout << "\n\n**RUNNING LOG REGRESSION**\n\n";
+
+
+        boost::thread_group thread_group;
+        for (int thread_id = 0; thread_id < num_threads; ++thread_id) {
+            boost::thread* enclave_thread = new boost::thread(log_regression, enclave, thread_id);
+            thread_group.add_thread(enclave_thread);
         }
 
         auto start = std::chrono::high_resolution_clock::now();

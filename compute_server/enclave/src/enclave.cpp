@@ -57,6 +57,7 @@ void setup_enclave(const int num_threads) {
                 while (!rt) {
                     getaes(&rt, client, thread_id, enc_aes_key, enc_aes_iv);
                 }
+                cout << "AES set key success\n" << endl;
                 AESData& thread_aes_data = client_info_list[client].aes_list[thread_id];
                 rsa.decrypt(enc_aes_key, 256,
                             (uint8_t*)&thread_aes_data.aes_key, aes_length);
@@ -237,10 +238,10 @@ void log_regression(const int thread_id) {
         //stop_timer("converge()");
         // DEBUG: tmp output to file
         //start_timer("batch_write()");
-        //out_st << ss.str();
+        std::cout << output_string << std::endl;
         batch->write(output_string);
         output_string.clear();
         //stop_timer("batch_write()");
     }
-
+    log_regression_finish();
 }

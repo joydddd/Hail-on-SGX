@@ -30,7 +30,8 @@ ComputeServer::~ComputeServer() {
 }
 
 void ComputeServer::init(const std::string& config_file) {
-    num_threads = boost::thread::hardware_concurrency();
+    // num_threads = boost::thread::hardware_concurrency();
+    num_threads = 1;
 
     std::ifstream compute_config_file(config_file);
     compute_config_file >> compute_config;

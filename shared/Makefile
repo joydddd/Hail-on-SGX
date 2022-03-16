@@ -29,7 +29,7 @@ ifeq ($(detected_OS),Darwin)  # Important to not have a space after the comma
 	LIBTHREAD = -lboost_thread-mt
 	LIBCHRONO = -lboost_chrono-mt
 else
-	LIBTHREAD = -lboost_thread
+	LIBTHREAD = -lboost_thread -lboost_system
 	LIBCHRONO = -lboost_chrono
 endif
 

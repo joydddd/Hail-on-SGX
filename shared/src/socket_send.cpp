@@ -92,8 +92,9 @@ size_t writefunc(void *ptr, size_t size, size_t nmemb, std::string *s)
 std::string get_hostname_str() {
 	CURL *curl = curl_easy_init();
 	std::string readBuffer;
+    return "127.0.0.1";
 
-	if (curl) {
+    if (curl) {
 		curl_easy_setopt(curl, CURLOPT_URL, "https://ipv4.icanhazip.com");
 		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, writefunc);
 		curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);

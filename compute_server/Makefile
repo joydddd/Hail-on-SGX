@@ -17,7 +17,7 @@ debug:
 	$(MAKE) -C enclave debug
 	$(MAKE) -C host debug
 
-debugrun: debug
+debugrun:
 	$(MAKE) -C host debugrun
 
 tests:
