@@ -4,6 +4,7 @@ include ../config.mk
 
 SRCDIR := src
 BUILDDIR := build
+SHAREDBUILDDIR := ../../shared/build
 TESTDIR := tests
 KEYDIR := keys
 
@@ -33,11 +34,10 @@ CXX_NONENC_FLAGS = -std=c++14 -pedantic
 
 
 BOOST_ROOT = /usr/local/lib/boost_1_76_0/
-# CXXFLAGS+= -I $(BOOST_ROOT)
-CFLAGS+= -I ../../shared/include -I .. -I include -I .
-CXXFLAGS+= -I ../../shared/include -I .. -I include -I .
+CXXFLAGS+= -I $(BOOST_ROOT)
+CXXFLAGS+= -I ../../shared/include/ -I .. -I include -I .
 CXX_NONENC_FLAGS+= -I ../../shared/include -I .. -I include -I .
-LDFLAGS+= -I ../../shared/include -I .. -I include -I .
+CRYPTFLAG := -lmbedcrypto -lmbedtls
 
 
 all:
@@ -54,11 +54,11 @@ pre:
 
 ${BUILDDIR}/%.o: ${SRCDIR}/%.cpp
 	@mkdir -p ${BUILDDIR}
-	$(CXX) -c $(CXXFLAGS) $(INCLUDES) -I. -std=c++11 -o $@ $<
+	$(CXX) -c $(CXXFLAGS) $(INCLUDES) -I. -std=c++14 -o $@ $<
 
 $(BUILDDIR)/%_debug.o: ${SRCDIR}/%.cpp
 	@mkdir -p ${BUILDDIR}
-	$(CXX) -g -c $(CXXFLAGS) $(INCLUDES) -I. -std=c++11 -o $@ $<
+	$(CXX) -g -c $(CXXFLAGS) $(INCLUDES) -I. -std=c++14 -o $@ $<
 
 build: pre $(OBJECTS)
 	@ echo "Debug Mode Off"

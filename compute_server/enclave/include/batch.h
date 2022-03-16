@@ -32,7 +32,7 @@ class Batch {
     size_t row_size;
 
    public:
-    Batch(size_t _row_size, Row_T row_type);
+    Batch(size_t _row_size, Row_T row_type, Log_gwas* _gwas);
     ~Batch() { delete row; }
 
     /* status */
@@ -44,7 +44,7 @@ class Batch {
     size_t *plaintxt_size() { return &txt_size; }
     void reset();
     Row* get_row(Buffer* buffer);  // return nullptr is reached ead of batch
-    void write(const string &);
+    void write(const std::string &);
 
     size_t get_out_tail();
 };

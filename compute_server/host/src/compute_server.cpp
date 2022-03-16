@@ -112,7 +112,7 @@ void ComputeServer::run() {
     // bind to our given port, or randomly get one if port = 0
 	if (bind(sockfd, (struct sockaddr*) &addr, addrSize) < 0) {
         guarded_cout("bind failure: " + std::to_string(errno), cout_lock);
-    } 
+    }
 
     // update our member variable to the port we just assigned
     if (getsockname(sockfd, (struct sockaddr*) &addr, &addrSize) < 0) {
@@ -310,13 +310,13 @@ bool ComputeServer::handle_message(int connFD, const std::string& name, ComputeS
 int ComputeServer::send_msg(const std::string& name, const int mtype, const std::string& msg, int connFD) {
     std::string message = std::to_string(global_id) + " " + std::to_string(mtype) + " ";
     message = std::to_string(message.length() + msg.length()) + "\n" + message + msg;
-    return send_message(institutions[name]->hostname.c_str(), institutions[name]->port, message.c_str(), connFD);
+    return send_message(institutions[name]->hostname.c_str(), institutions[name]->port, message.c_str(), message.length(), connFD);
 }
 
 int ComputeServer::send_msg(const std::string& hostname, const int port, const int mtype, const std::string& msg, int connFD) {
     std::string message = std::to_string(global_id) + " " + std::to_string(mtype) + " ";
     message = std::to_string(message.length() + msg.length()) + "\n" + message + msg;
-    return send_message(hostname.c_str(), port, message.c_str(), connFD);
+    return send_message(hostname.c_str(), port, message.c_str(), message.length(), connFD);
 }
 
 void ComputeServer::check_in(std::string name) {
@@ -385,7 +385,7 @@ void ComputeServer::allele_matcher() {
                     allele_queue_list[thread_id].enqueue(EOFSeperator);
                 }
                 auto stop = std::chrono::high_resolution_clock::now();
-                auto duration = duration_cast<std::chrono::microseconds>(stop - start);
+                auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
                 guarded_cout("Matcher time total: " + std::to_string(duration.count()), cout_lock);
                 return;
             }
@@ -532,7 +532,7 @@ void ComputeServer::finish_setup() {
 }
 
 void ComputeServer::start_timer(const std::string& func_name) {
-    get_instance()->enclave_clocks[func_name] = std::chrono::high_resolution_clock::now();
+    //get_instance()->enclave_clocks[func_name] = std::chrono::high_resolution_clock::now();
 }
 
 void ComputeServer::stop_timer(const std::string& func_name) {
@@ -540,7 +540,7 @@ void ComputeServer::stop_timer(const std::string& func_name) {
     if (!inst->enclave_total_times.count(func_name)) {
         inst->enclave_total_times[func_name] = 0;
     }
-    inst->enclave_total_times[func_name] += duration_cast<std::chrono::microseconds>(std::chrono::high_resolution_clock::now() - inst->enclave_clocks[func_name]).count();
+    //inst->enclave_total_times[func_name] += std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::high_resolution_clock::now() - inst->enclave_clocks[func_name]).count();
 }
 
 void ComputeServer::print_timings() {

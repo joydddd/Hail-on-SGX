@@ -3,13 +3,12 @@
 #include <limits>
 
 #include "logistic_regression.h"
-using namespace std;
 
-double read_entry_int(string &entry) {
+double read_entry_int(std::string &entry) {
     double ans;
     try {
-        ans = stoi(entry);
-    } catch (invalid_argument &error) {
+        ans = std::stoi(entry);
+    } catch (std::invalid_argument &error) {
         if (entry == "true" || entry == "True") {
             ans = 1;
         } else if (entry == "false" || entry == "False") {
@@ -23,21 +22,21 @@ double read_entry_int(string &entry) {
     return ans;
 }
 
-double max(vector<double> &vec) {
-    double max = -numeric_limits<double>::infinity();
+double max(std::vector<double>& vec) {
+    double max = -std::numeric_limits<double>::infinity();
     for (auto x : vec) {
         if (x >= max) max = x;
     }
     return max;
 }
 
-bool read_entry_bool(string &entry) {
+bool read_entry_bool(std::string& entry) {
     bool ans;
     try {
         int ans_int = stoi(entry);
         if (ans_int == 0) ans = false;
         if (ans_int == 1) ans = true;
-    } catch (invalid_argument &error) {
+    } catch (std::invalid_argument &error) {
         if (entry == "true" || entry == "True") {
             ans = true;
         } else if (entry == "false" || entry == "False") {
@@ -57,15 +56,16 @@ void Log_gwas::print() const {
 }
 #endif
 
-void Log_var::read(istream &is) {
-    string line;
-    vector<string> parts;
+void Log_var::read(std::istream &is) {
+    std::vector<std::string> parts;
+    std::string line;
     getline(is, line);
-    split_tab(line, parts);
+    split_delim(line.c_str(), parts);
     if (parts.size() != 2) throw ReadtsvERROR("invalid line " + line);
     name_str = line[1];
     while (getline(is, line)) {
-        split_tab(line, parts);
+        parts.clear();
+        split_delim(line.c_str(), parts);
         if (parts.size() != 2) throw ReadtsvERROR("invalid line " + line);
         data.push_back((int)read_entry_bool(parts[1]));
     }
@@ -87,22 +87,33 @@ void Log_var::combine(Log_var &other) {
 //////////              Log_row             /////////////////
 /////////////////////////////////////////////////////////////
 
-/* fitting */
-bool Log_row::fit(const Log_gwas* _gwas, size_t max_it, double sig) {
-    gwas = _gwas;
-    /* intialize beta to 0*/
-    //start_timer("init()");
-    init();
-    //stop_timer("init()");
+Log_row::Log_row(size_t size, Log_gwas* _gwas) : Row(size), gwas(_gwas) {
+    // change.resize(gwas->dim());
+    // old_beta.resize(gwas->dim());
+    beta_delta.resize(gwas->dim());
+    H = SqrMatrix(gwas->dim(), 2);
+    // sub = SqrMatrix(gwas->dim() - 1, false);
+    // cof = SqrMatrix(gwas->dim(), false);
+    // t = SqrMatrix(gwas->dim(), false);
+    Grad.resize(gwas->dim());
+    //  = vector<double>(gwas->dim(), 0);
+}
 
-    //start_timer("change_vector_init");
-    vector<double> change(gwas->dim(), 1);
-    //stop_timer("change_vector_init");
+/* fitting */
+bool Log_row::fit(std::vector<double>& change, std::vector<double>& old_beta, size_t max_it, double sig) {
+    /* intialize beta to 0*/
+    init();
+
+    for (int i = 0; i < gwas->dim(); ++i) {
+        change[i] = 1;
+    }
     size_t it_count = 0;
 
     //start_timer("while_loop");
     while (it_count < max_it && max(change) > sig) {
-        vector<double> old_beta = b;
+        for (int i = 0; i < gwas->dim(); ++i) {
+            old_beta[i] = b[i];
+        }
         update_beta();
         for (size_t j = 0; j < gwas->dim(); j++) {
             change[j] = abs(b[j] - old_beta[j]);
@@ -115,7 +126,8 @@ bool Log_row::fit(const Log_gwas* _gwas, size_t max_it, double sig) {
     else {
         fitted = true;
         //start_timer("calculate_standard_error");
-        standard_error = sqrt(H.INV()[0][0]);
+        H.INV();
+        standard_error = sqrt((*H.t)[0][0]);
         //stop_timer("calculate_standard_error");
         // DEBUG:
         // cout << loci << "\t" << alleles << "\t" << it_count << endl;
@@ -124,10 +136,10 @@ bool Log_row::fit(const Log_gwas* _gwas, size_t max_it, double sig) {
 }
 
 /* output results*/
-vector<double> Log_row::beta() {
+double Log_row::output_first_beta_element() {
     if (!fitted)
         for (auto &bn : b) bn = nan("");
-    return b;
+    return b.front();
 }
 
 double Log_row::t_stat() {
@@ -138,7 +150,9 @@ double Log_row::t_stat() {
 /* fitting helper functions */
 
 void Log_row::update_beta() {
-    vector<double> beta_delta = H.INV() * Grad;
+    // calculate_beta
+    H.INV();
+    H.t->calculate_beta_delta(Grad, beta_delta);
     for (size_t j = 0; j < gwas->dim(); j++) {
         b[j] += beta_delta[j];
     }
@@ -147,13 +161,22 @@ void Log_row::update_beta() {
 
 void Log_row::init() {
     if (gwas->size() != n) throw CombineERROR("row length mismatch");
-    b = vector<double>(gwas->dim(), 0);
+    if (!b.size()) {
+        b.resize(n);
+    }
+    for (int i = 0; i < n; ++i) {
+        b[i] = 0;
+    }
     update_estimate();
 }
 
 void Log_row::update_estimate() {
-    H = SqrMatrix(gwas->dim());
-    Grad = vector<double>(gwas->dim(), 0);
+    for (int i = 0; i < gwas->dim(); ++i) {
+        Grad[i] = 0;
+        for (int j = 0; j < gwas->dim(); ++j){
+            H[i][j] = 0;
+        }
+    }
     double y_est;
     size_t client_idx = 0, data_idx = 0;
     for (size_t i = 0; i < n; i++) {

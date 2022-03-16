@@ -53,9 +53,9 @@ int get_port_number(int sockfd) {
 	return ntohs(addr.sin_port);
  }
 
-int send_message(const char *hostname, int port, const char *message, int sock) {
-	if (strlen(message) > MAX_MESSAGE_SIZE) {
-		throw std::runtime_error("Message exceeds maximum length: " + std::to_string(strlen(message)) + "\t" + message);
+int send_message(const char *hostname, int port, const char *message, const int message_length, int sock) {
+	if (message_length > MAX_MESSAGE_SIZE) {
+		throw std::runtime_error("Message exceeds maximum length: " + std::to_string(message_length) + "\t" + message);
 		return -1;
 	}
     int sockfd = sock == -1 ? socket(AF_INET, SOCK_STREAM, 0) : sock;
@@ -75,7 +75,7 @@ int send_message(const char *hostname, int port, const char *message, int sock) 
 	}
 
 	// (4) Send message to remote server
-	if (send(sockfd, message, strlen(message), 0) == -1) {
+	if (send(sockfd, message, message_length, 0) == -1) {
 		perror("Error sending on stream socket");
 		return -1;
 	}
@@ -89,6 +89,7 @@ size_t writefunc(void *ptr, size_t size, size_t nmemb, std::string *s)
   return size*nmemb;
 }
 
+// Find a better solution, but this works for now
 std::string get_hostname_str() {
 	CURL *curl = curl_easy_init();
 	std::string readBuffer;
@@ -99,7 +100,7 @@ std::string get_hostname_str() {
 		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, writefunc);
 		curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
 
-		CURLcode res = curl_easy_perform(curl);
+		curl_easy_perform(curl);
 
 		/* always cleanup */
 		curl_easy_cleanup(curl);

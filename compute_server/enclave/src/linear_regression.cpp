@@ -2,7 +2,7 @@
 
 // // #include <boost/math/distributions/students_t.hpp>
 // #include <cmath>
-// using namespace std;
+// ;
 // // using namespace boost::math;
 
 

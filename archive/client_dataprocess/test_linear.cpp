@@ -1,7 +1,7 @@
 #include "gwas.h"
 #include <iostream>
 
-using namespace std;
+;
 
 #define Y_FILE "../samples/1kg-linear-regression/Caffeine_2.tsv"
 #define SNP_FILE "../samples/1kg-linear-regression/alleles_2.tsv"

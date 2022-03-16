@@ -28,7 +28,7 @@ void Parser::split(std::vector<std::string>& split_strings, const std::string& s
         else {
             ++i;
             split_strings.push_back(split_string);
-            split_string = "";
+            split_string.clear();
         }
     }
     if (split_string.length()) split_strings.push_back(split_string);

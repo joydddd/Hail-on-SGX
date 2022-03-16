@@ -28,23 +28,7 @@
 #endif
 
 
-using namespace std;
-// const vector<vector<string>> covFiles = {
-//     {"../../samples/1kg-logistic-regression/isFemale1.tsv",
-//      "../../samples/1kg-logistic-regression/isFemale2.tsv"}};
-// const vector<string> yFiles = {
-//     "../../samples/1kg-logistic-regression/PurpleHair1.tsv",
-//     "../../samples/1kg-logistic-regression/PurpleHair2.tsv"};
-// const vector<string> allelesFiles = {
-//     "../../samples/1kg-logistic-regression/alleles1.tsv",
-//     "../../samples/1kg-logistic-regression/alleles2.tsv"};
-// const vector<string> clientNames = {"Client1", "Client2"};
-// const vector<int> client_size = {100, 150};
-
-// const vector<string> covNames = {"1", "isFemale"};
-
-// map<string, int> client_map;
-// map<string, int> cov_map;
+;
 // index -1 is reserved for intercept
 
 
@@ -211,12 +195,12 @@ int start_enclave() {
         ComputeServer::clean_up_output();
 
         auto stop = std::chrono::high_resolution_clock::now();
-        cout << "Logistic regression finished!" << endl;
-        auto duration = duration_cast<std::chrono::microseconds>(stop - start);
-        cout << "Enclave time total: " << duration.count() << endl;
+        std::cout << "Logistic regression finished!" << std::endl;
+        auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
+        std::cout << "Enclave time total: " << duration.count() << std::endl;
         ComputeServer::print_timings();
     } catch (ERROR_t& err) {
-        cerr << "ERROR: " << err.msg << endl << std::flush;
+        std::cerr << "ERROR: " << err.msg << std::endl << std::flush;
     }
 
     ret = 0;
@@ -251,13 +235,13 @@ int start_enclave() {
         thread_group.join_all();
         // DEBUG: total execution time
         auto stop = std::chrono::high_resolution_clock::now();
-        cout << "Logistic regression finished!" << endl;
-        auto duration = duration_cast<std::chrono::microseconds>(stop - start);
-        cout << "Enclave time total: " << duration.count() << endl;
+        std::cout << "Logistic regression finished!" << std::endl;
+        auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
+        std::cout << "Enclave time total: " << duration.count() << std::endl;
 
         ComputeServer::print_timings();
     } catch (ERROR_t& err) {
-        cerr << "ERROR: " << err.msg << endl << std::flush;
+        std::cerr << "ERROR: " << err.msg << std::endl << std::flush;
     }
 
     ret = 0;

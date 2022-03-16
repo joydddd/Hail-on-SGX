@@ -12,6 +12,7 @@ SOURCES = $(shell find $(SRCDIR) -type f -name *.cpp)
 OBJECTS := $(patsubst $(SRCDIR)/%,$(BUILDDIR)/%,$(SOURCES:.$(SRCEXT)=.o))
 CFLAGS := -g -Wall -std=c++14 -pthread
 INC := -I ../shared -I include
+CRYPTFLAG := -lcryptopp
 
 # list of test drivers (with main()) for development
 TESTSOURCES := $(wildcard $(TESTDIR)/*test*.$(SRCEXT))
@@ -43,7 +44,7 @@ ${BUILDDIR}/%.o: ${SRCDIR}/%.${SRCEXT}
 # Compile the pager and tag this compilation
 shared: ${OBJECTS}
 	@mkdir -p ${BUILDDIR}
-	$(CC) -c $(CFLAGS) $(OBJECTS)
+	$(CC) -c $(CFLAGS) $(OBJECTS) ${CRYPTFLAG}
 
 clean:
 	@echo "Cleaning..."

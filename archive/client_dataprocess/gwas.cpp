@@ -6,9 +6,6 @@
 
 #include "gwas.h"
 
-using namespace std;
-
-
 
 int read_entry_int(string s){
     int xx;
@@ -42,16 +39,6 @@ double read_entry_double(string s){
             throw ReadtsvERROR("invalid entry: " + s);
     }
     return xx;
-}
-
-int split_tab(string &line, vector<string> &parts){
-    parts.clear();
-    string part;
-    stringstream ss(line);
-    while(getline(ss, part, '\t')){
-        parts.push_back(part);
-    }
-    return (int)parts.size();
 }
 
 void split_allele( string &line, vector<string> &parts, string &loci, string &allele){

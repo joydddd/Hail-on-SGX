@@ -20,7 +20,7 @@ const vector<int> host_size = {100, 150};
 
 const vector<string> covNames = {"1", "isFemale"};
 
-using namespace std;
+;
 
 map<string, int> host_map;
 map<string, int> cov_map;

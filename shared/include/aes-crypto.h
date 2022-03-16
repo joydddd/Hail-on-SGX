@@ -1,3 +1,6 @@
+#ifndef _AES_CRYPTO_H_
+#define _AES_CRYPTO_H_
+
 #include <cryptopp/cryptlib.h>
 #include <cryptopp/rijndael.h>
 #include <cryptopp/modes.h>
@@ -8,9 +11,6 @@
 
 #include <iostream>
 #include <string>
-
-#ifndef _AES_CRYPTO_H_
-#define _AES_CRYPTO_H_
 
 class AESCrypto {
     public:

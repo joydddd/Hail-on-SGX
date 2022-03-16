@@ -60,7 +60,7 @@ int make_client_sockaddr(struct sockaddr_in *addr, const char *hostname, int por
  * Returns:
  *		0 on success, -1 on failure.
  */
-int send_message(const char *hostname, int port, const char *message, int sock = -1);
+int send_message(const char *hostname, int port, const char *message, const int message_length, int sock = -1);
 
 std::string get_hostname_str();
 
