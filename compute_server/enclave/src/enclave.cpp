@@ -238,7 +238,7 @@ void log_regression(const int thread_id) {
         //stop_timer("converge()");
         // DEBUG: tmp output to file
         //start_timer("batch_write()");
-        std::cout << output_string << std::endl;
+        // std::cout << output_string << std::endl;
         batch->write(output_string);
         output_string.clear();
         //stop_timer("batch_write()");
