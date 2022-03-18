@@ -20,7 +20,7 @@ void Batch::reset() {
     out_tail = 0;
 }
 
-Row* Batch::get_row(Buffer* buffer) {
+Row* Batch::get_row(Buffer* buffer, std::vector<std::string>& parts) {
     if (head >= txt_size) {
         st = Finished;
         buffer->finish();
@@ -28,7 +28,7 @@ Row* Batch::get_row(Buffer* buffer) {
     }
     st = Working;
     row->reset();
-    head += row->read(plaintxt + head);
+    head += row->read(plaintxt + head, parts);
 #ifdef DEBUG
     // row->print();
 #endif

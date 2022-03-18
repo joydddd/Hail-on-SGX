@@ -88,15 +88,12 @@ void Log_var::combine(Log_var &other) {
 /////////////////////////////////////////////////////////////
 
 Log_row::Log_row(size_t size, Log_gwas* _gwas) : Row(size), gwas(_gwas) {
-    // change.resize(gwas->dim());
-    // old_beta.resize(gwas->dim());
     beta_delta.resize(gwas->dim());
+    // 2 is a magic number that helps with SqrMatrix construction, "highest level matrix"
     H = SqrMatrix(gwas->dim(), 2);
-    // sub = SqrMatrix(gwas->dim() - 1, false);
-    // cof = SqrMatrix(gwas->dim(), false);
-    // t = SqrMatrix(gwas->dim(), false);
     Grad.resize(gwas->dim());
-    //  = vector<double>(gwas->dim(), 0);
+    //b.resize(gwas->dim(), 0);
+    // std::cout << b.size() << std::endl;
 }
 
 /* fitting */

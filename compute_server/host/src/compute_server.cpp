@@ -531,7 +531,7 @@ void ComputeServer::finish_setup() {
 }
 
 void ComputeServer::start_timer(const std::string& func_name) {
-    //get_instance()->enclave_clocks[func_name] = std::chrono::high_resolution_clock::now();
+    get_instance()->enclave_clocks[func_name] = std::chrono::high_resolution_clock::now();
 }
 
 void ComputeServer::stop_timer(const std::string& func_name) {
@@ -539,7 +539,7 @@ void ComputeServer::stop_timer(const std::string& func_name) {
     if (!inst->enclave_total_times.count(func_name)) {
         inst->enclave_total_times[func_name] = 0;
     }
-    //inst->enclave_total_times[func_name] += std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::high_resolution_clock::now() - inst->enclave_clocks[func_name]).count();
+    inst->enclave_total_times[func_name] += std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::high_resolution_clock::now() - inst->enclave_clocks[func_name]).count();
 }
 
 void ComputeServer::print_timings() {
