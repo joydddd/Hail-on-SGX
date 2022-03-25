@@ -24,7 +24,7 @@ NONOEOBJECTS = $(patsubst $(SRCDIR)/%,$(BUILDDIR)/%,$(SOURCES:.cpp=_nonoe.o))
 NONOEOBJECTS += $(shell find $(SHAREDBUILDDIR) -type f -name *.o)
 CXX_NONENC_FLAGS = -std=c++14 -pedantic
 INC := -I ../../shared/include -I .. -pthread -I include -I .
-CRYPTFLAG := -lcryptopp -lmbedcrypto -lmbedtls
+CRYPTFLAG := -lcryptopp
 CURLFLAG := -lcurl
 
 ######################################
