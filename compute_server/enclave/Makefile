@@ -37,7 +37,6 @@ BOOST_ROOT = /usr/local/lib/boost_1_76_0/
 CXXFLAGS+= -I $(BOOST_ROOT)
 CXXFLAGS+= -I ../../shared/include/ -I .. -I include -I .
 CXX_NONENC_FLAGS+= -I ../../shared/include -I .. -I include -I .
-CRYPTFLAG := -lmbedcrypto -lmbedtls
 
 
 all:
