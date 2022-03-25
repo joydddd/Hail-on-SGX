@@ -227,7 +227,6 @@ void Client::handle_message(int connFD, const unsigned int global_id, const Clie
             
             if(++y_and_cov_count == aes_encryptor_list.size()) {
                 fill_queue();
-                filled = true;
             }
 
             break;
@@ -238,11 +237,9 @@ void Client::handle_message(int connFD, const unsigned int global_id, const Clie
             while(!filled) {}
             auto start = std::chrono::high_resolution_clock::now();
             response_mtype = DATA;
-            
             ConnectionInfo info = compute_server_info[global_id];
             std::queue<std::string>& allele_queue = allele_queue_list[global_id];
             int blocks_sent = 0;
-
             while(!allele_queue.empty()) {
                 std::string block = std::to_string(blocks_sent++) + "\t";
                 while(!allele_queue.empty()) {
@@ -313,6 +310,7 @@ void Client::fill_queue() {
         int compute_server_hash = Parser::parse_allele_line(line, vals, compressed_vals, aes_encryptor_list);
         allele_queue_list[compute_server_hash].push(line);
     }
+    filled = true;
 }
 
 void Client::data_sender(int connFD) {
