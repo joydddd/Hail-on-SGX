@@ -234,32 +234,38 @@ void Client::handle_message(int connFD, const unsigned int global_id, const Clie
         case DATA_REQUEST:
         {   
             // Wait until all data is ready to go!
-            while(!filled) {}
+            while (!filled) {}
+
             auto start = std::chrono::high_resolution_clock::now();
             response_mtype = DATA;
+
             ConnectionInfo info = compute_server_info[global_id];
-            std::queue<std::string>& allele_queue = allele_queue_list[global_id];
+            moodycamel::ReaderWriterQueue<std::string>& allele_queue = allele_queue_list[global_id];
+
             int blocks_sent = 0;
-            while(!allele_queue.empty()) {
-                std::string block = std::to_string(blocks_sent++) + "\t";
-                while(!allele_queue.empty()) {
-                    std::string line = allele_queue.front();
-                    
-                    // If adding this line would cause us to exceed the max message size
-                    // we are done with this batch of lines! Assume largest header possible is 30.
-                    if ((block.length() + line.length() + 30) >= MAX_MESSAGE_SIZE) {
-                        break;
-                    }
-                    block += line + "\t";
-                    allele_queue.pop();
+            std::string block = std::to_string(blocks_sent++) + "\t";
+            std::string line;
+
+            while (allele_queue.try_dequeue(line)) {
+                if ((block.length() + line.length() + 30) >= MAX_MESSAGE_SIZE) {
+                    // Remove trailing '\t'
+                    block.pop_back();
+                    send_msg(info.hostname, info.port, response_mtype, block, connFD);
+
+                    // Reset block
+                    block = std::to_string(blocks_sent++) + "\t";
                 }
+                block += line + "\t";
+            }
+            // Send the leftover lines, 10 is an arbitary cut off. I assume most lines will be at least a few hundred characters
+            // and we won't be sending more than 10^10 blocks
+            if (block.length() > 10) {
                 // Remove trailing '\t'
                 block.pop_back();
-
                 send_msg(info.hostname, info.port, response_mtype, block, connFD);
             }
             // If get_block failed we have reached the end of the file, send an EOF.
-            std::string block = std::to_string(blocks_sent) + "\t" + EOFSeperator + "\t" + EOFSeperator + "\t" + EOFSeperator;
+            block = std::to_string(blocks_sent) + "\t" + EOFSeperator + "\t" + EOFSeperator + "\t" + EOFSeperator;
             send_msg(global_id, DATA, block, connFD);
             sent_all_data = true;
             
@@ -308,7 +314,7 @@ void Client::fill_queue() {
                                     + (num_patients % TWO_BIT_INT_ARR_SIZE ? 1 : 0));
         }
         int compute_server_hash = Parser::parse_allele_line(line, vals, compressed_vals, aes_encryptor_list);
-        allele_queue_list[compute_server_hash].push(line);
+        allele_queue_list[compute_server_hash].enqueue(line);
     }
     filled = true;
 }
