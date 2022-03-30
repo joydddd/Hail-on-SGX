@@ -18,3 +18,8 @@ sudo apt-get install libboost-all-dev -y
 sudo apt-get install clang-10 libssl-dev gdb libsgx-enclave-common libsgx-quote-ex libprotobuf17 libsgx-dcap-ql libsgx-dcap-ql-dev az-dcap-client open-enclave -y
 
 source /opt/openenclave/share/openenclave/openenclaverc
+
+cd compute_server
+
+make clean; make
+make clean; make

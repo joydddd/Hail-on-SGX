@@ -23,9 +23,13 @@ static volatile bool start_thread = false;
 
 void setup_enclave(const int num_threads) {
     RSACrypto rsa = RSACrypto();
+    if (!rsa.m_initialized) {
+        std::cerr << "ERROR: failed to initialized RSA key" << std::endl;
+        exit(1); 
+    }
     setrsapubkey(rsa.get_pub_key());
 
-    std::cout << "RSA Pub Key Set\n";
+    std::cout << "RSA Pub Key Set" << std::endl;
 
     getclientnum(&num_clients);
 
