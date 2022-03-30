@@ -1,7 +1,7 @@
 {
     "compute_server_bind_port": 6705,
     "covariants": ["1", "isFemale"],
-    "institutions": ["client1", "client2", "client3"],
+    "institutions": ["client1"],
     "y_val_name": "PurpleHair",
     "enclave_path": "../enclave/gwasenc.signed",
     "register_server_info": {
