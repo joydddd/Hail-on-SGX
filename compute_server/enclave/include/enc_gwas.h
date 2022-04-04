@@ -32,6 +32,9 @@ class Row {
      std::vector<uint8_t *> data;
      std::vector<size_t> length;
 
+     std::string loci_str;
+     std::string alleles_str;
+
     public:
      /* return metadata */
      Loci getloci() { return loci; }
@@ -41,7 +44,7 @@ class Row {
 
      /* setup */
      Row(size_t size);
-     size_t read(const char line[], std::vector<std::string>& parts); // return the size of line consumed
+     size_t read(const char line[]); // return the size of line consumed
      void combine(Row *other);
      void append_invalid_elts(size_t size);
      void reset();
@@ -59,8 +62,6 @@ class Row {
 
 
 inline size_t split_delim(const char* line, std::vector<std::string> &parts, char delim='\t', int delim_to_parse=-1) {
-    //parts.clear();
-    // part.clear();
     std::string part;
 
     int num_delim = 0;
