@@ -41,7 +41,7 @@ class Row {
 
      /* setup */
      Row(size_t size);
-     size_t read(const char line[]); // return the size of line consumed
+     size_t read(const char line[], std::vector<std::string>& parts); // return the size of line consumed
      void combine(Row *other);
      void append_invalid_elts(size_t size);
      void reset();

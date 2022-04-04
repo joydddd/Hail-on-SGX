@@ -23,9 +23,13 @@ static volatile bool start_thread = false;
 
 void setup_enclave(const int num_threads) {
     RSACrypto rsa = RSACrypto();
+    if (!rsa.m_initialized) {
+        std::cerr << "ERROR: failed to initialized RSA key" << std::endl;
+        exit(1); 
+    }
     setrsapubkey(rsa.get_pub_key());
 
-    std::cout << "RSA Pub Key Set\n";
+    std::cout << "RSA Pub Key Set" << std::endl;
 
     getclientnum(&num_clients);
 
@@ -175,9 +179,11 @@ void setup_enclave(const int num_threads) {
 }
 
 void log_regression(const int thread_id) {
+    std::vector<std::string> parts;
     std::string output_string;
     std::string loci_string;
     std::string alleles_string;
+    parts.reserve(20);
     output_string.reserve(50);
     loci_string.reserve(50);
     alleles_string.reserve(20);
@@ -190,6 +196,7 @@ void log_regression(const int thread_id) {
     
     Buffer* buffer = buffer_list[thread_id];
     Batch* batch = nullptr;
+    Log_row* row;
 
     
     // DEBUG: tmp output file
@@ -206,10 +213,10 @@ void log_regression(const int thread_id) {
         }
         //stop_timer("get_batch()");
         // get the next row from input buffer
-        Log_row* row;
+        
         //start_timer("get_row()");
         try {
-            if (!(row = (Log_row*)batch->get_row(buffer))) continue;
+            if (!(row = (Log_row*)batch->get_row(buffer, parts))) continue;
         } catch (ERROR_t& err) {
             std::cerr << "ERROR: " << err.msg << std::endl << std::flush;
             exit(0);
@@ -220,7 +227,7 @@ void log_regression(const int thread_id) {
         loci_to_str(row->getloci(), loci_string);
         alleles_to_str(row->getalleles(), alleles_string);
         output_string += loci_string + "\t" + alleles_string;
-        bool converge;
+        bool converge = true;
         //start_timer("converge()");
         try {
             converge = row->fit(change, old_beta);
@@ -232,7 +239,6 @@ void log_regression(const int thread_id) {
                  output_string += "false";
             }
             output_string += "\n";
-            // cout << ss.str();
         } catch (MathError& err) {
             output_string += "\tNA\tNA\tNA\n";
             // cerr << "MathError while fiting " << ss.str() << ": " << err.msg

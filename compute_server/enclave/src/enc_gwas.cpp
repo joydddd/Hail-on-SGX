@@ -11,8 +11,8 @@ void Row::reset() {
     alleles = Alleles();
 }
 
-size_t Row::read(const char line[]) {
-    std::vector<std::string> parts;
+size_t Row::read(const char line[], std::vector<std::string>& parts) {
+    parts.clear();
     if (split_delim(line, parts, '\t', 2) != 2) {
         throw ENC_ERROR("Invalid row parse with " + std::to_string(parts.size()) + " args\n");
     }

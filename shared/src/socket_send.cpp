@@ -60,18 +60,19 @@ int send_message(const char *hostname, int port, const char *message, const int 
 	}
     int sockfd = sock == -1 ? socket(AF_INET, SOCK_STREAM, 0) : sock;
 
-	// (2) Create a sockaddr_in to specify remote host and port
-	struct sockaddr_in addr;
-	if (make_client_sockaddr(&addr, hostname, port) == -1) {
-		return -1;
-	}
-
 	// (3) Connect to remote server
 	if (sock == -1) {
-		if (connect(sockfd, (sockaddr *) &addr, sizeof(addr)) == -1) {
+		// (2) Create a sockaddr_in to specify remote host and port
+		struct sockaddr_in* addr = (sockaddr_in*)malloc(sizeof(sockaddr_in));
+		if (make_client_sockaddr(addr, hostname, port) == -1) {
+			return -1;
+		}
+
+		if (connect(sockfd, (sockaddr *) addr, sizeof(sockaddr_in)) == -1) {
 			perror("Error connecting stream socket");
 			return -1;
 		}
+		free(addr);
 	}
 
 	// (4) Send message to remote server
@@ -79,6 +80,7 @@ int send_message(const char *hostname, int port, const char *message, const int 
 		perror("Error sending on stream socket");
 		return -1;
 	}
+	
 
 	return sockfd;
 }

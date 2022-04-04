@@ -75,9 +75,6 @@ class Log_row : public Row {
     std::vector<double> old_beta;
     std::vector<double> beta_delta;
     SqrMatrix H;
-    // SqrMatrix sub;
-    // SqrMatrix cof;
-    // SqrMatrix t;
     std::vector<double> Grad;
     double standard_error;
     bool fitted = false;
@@ -95,7 +92,7 @@ class Log_row : public Row {
 
     /* fitting */
     // return true if converge, return false if explode
-    bool fit(std::vector<double>& change, std::vector<double>& old_beta, size_t max_iteration = 25, double sig = 1e-6);
+    bool fit(std::vector<double>& change, std::vector<double>& old_beta, size_t max_iteration = 20, double sig = 1e-6);
 
     /* output results */
     double output_first_beta_element();
