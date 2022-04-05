@@ -43,7 +43,7 @@ class Batch {
     const char *output_buffer() { return outtxt; }
     size_t *plaintxt_size() { return &txt_size; }
     void reset();
-    Row* get_row(Buffer* buffer, std::vector<std::string>& parts);  // return nullptr is reached ead of batch
+    Row* get_row(Buffer* buffer);  // return nullptr is reached ead of batch
     void write(const std::string &);
 
     size_t get_out_tail();

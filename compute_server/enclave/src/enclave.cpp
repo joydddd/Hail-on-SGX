@@ -179,11 +179,9 @@ void setup_enclave(const int num_threads) {
 }
 
 void log_regression(const int thread_id) {
-    std::vector<std::string> parts;
     std::string output_string;
     std::string loci_string;
     std::string alleles_string;
-    parts.reserve(20);
     output_string.reserve(50);
     loci_string.reserve(50);
     alleles_string.reserve(20);
@@ -216,7 +214,7 @@ void log_regression(const int thread_id) {
         
         //start_timer("get_row()");
         try {
-            if (!(row = (Log_row*)batch->get_row(buffer, parts))) continue;
+            if (!(row = (Log_row*)batch->get_row(buffer))) continue;
         } catch (ERROR_t& err) {
             std::cerr << "ERROR: " << err.msg << std::endl << std::flush;
             exit(0);

@@ -11,13 +11,23 @@ void Row::reset() {
     alleles = Alleles();
 }
 
-size_t Row::read(const char line[], std::vector<std::string>& parts) {
-    parts.clear();
-    if (split_delim(line, parts, '\t', 2) != 2) {
-        throw ENC_ERROR("Invalid row parse with " + std::to_string(parts.size()) + " args\n");
+size_t Row::read(const char line[]) {
+    loci_str.clear();
+    alleles_str.clear();
+    int tabs_found = 0;
+    int idx = 0;
+    while(tabs_found < 2) {
+        char curr_char = line[idx++];
+        if (curr_char == '\t') {
+            tabs_found++;
+            continue;
+        }
+        if (tabs_found == 0) {
+            loci_str.push_back(curr_char);
+        } else {
+            alleles_str.push_back(curr_char);
+        }
     }
-    const std::string& loci_str = parts.front();
-    const std::string& alleles_str = parts.back();
     try {
         loci = Loci(loci_str);
         if (loci.chrom_str == "X")
