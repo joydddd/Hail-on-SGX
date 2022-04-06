@@ -167,7 +167,23 @@ int start_enclave() {
             thread_group.add_thread(enclave_thread);
         }
 
-        result = setup_enclave(enclave, num_threads);
+        result = setup_enclave_encryption(enclave, num_threads);
+        if (result != OE_OK) {
+            fprintf(stderr,
+                    "calling into enclave_gwas failed: result=%u (%s)\n",
+                    result, oe_result_str(result));
+            goto exit;
+        }
+        
+        // Allow for data to be encrypted beforehand
+        for (int client_id = 0; client_id < getclientnum(); ++client_id) {
+            char tmp[ENCLAVE_READ_BUFFER_SIZE];
+            while(!gety(client_id, tmp)) {}
+        }
+
+        auto start = std::chrono::high_resolution_clock::now();
+
+        result = setup_enclave_phenotypes(enclave, num_threads);
         if (result != OE_OK) {
             fprintf(stderr,
                     "calling into enclave_gwas failed: result=%u (%s)\n",
@@ -175,7 +191,7 @@ int start_enclave() {
             goto exit;
         }
 
-        auto start = std::chrono::high_resolution_clock::now();
+        
         thread_group.join_all();
         ComputeServer::clean_up_output();
 

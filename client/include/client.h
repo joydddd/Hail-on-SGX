@@ -23,6 +23,7 @@
 #include "output.h"
 #include "aes-crypto.h"
 #include "json.hpp"
+#include "phenotype.h"
 
 #ifndef _CLIENT_H_
 #define _CLIENT_H_
@@ -50,6 +51,7 @@ class Client {
     std::ifstream xval;
 
     std::vector<std::vector<AESCrypto> > aes_encryptor_list;
+    std::vector<std::vector<Phenotype> > phenotypes_list;
     std::vector<ConnectionInfo> compute_server_info;
     //std::vector<std::queue<std::string> > allele_queue_list;
     std::vector<moodycamel::ReaderWriterQueue<std::string>> allele_queue_list;
@@ -79,7 +81,7 @@ class Client {
 
     void data_sender(int connFD);
 
-    void send_tsv_file(unsigned int global_id, const std::string& filename, ComputeServerMessageType mtype);
+    void prepare_tsv_file(unsigned int global_id, const std::string& filename, ComputeServerMessageType mtype);
 
 };
 

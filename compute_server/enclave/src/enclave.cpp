@@ -21,7 +21,7 @@ static int num_clients;
 static Log_gwas* gwas;
 static volatile bool start_thread = false;
 
-void setup_enclave(const int num_threads) {
+void setup_enclave_encryption(const int num_threads) {
     RSACrypto rsa = RSACrypto();
     if (!rsa.m_initialized) {
         std::cerr << "ERROR: failed to initialized RSA key" << std::endl;
@@ -82,17 +82,9 @@ void setup_enclave(const int num_threads) {
     } catch (ERROR_t& err) {
         std::cerr << "ERROR: fail to get AES KEY " << err.msg << std::endl;
     }
+}
 
-    /* set up encrypted size */
-    for (int i = 0; i < num_clients; i++){
-        int size = 0;
-        while(!size) {
-            get_encrypted_x_size(&size, i);
-        }
-        std::cout << "client " << i << " crypto size: " << size << std::endl;
-        client_info_list[i].crypto_size = size;
-    }
-
+void setup_enclave_phenotypes(const int num_threads) {
     char* buffer_decrypt = new char[ENCLAVE_READ_BUFFER_SIZE];
     char* y_buffer = new char[ENCLAVE_READ_BUFFER_SIZE];
     Log_var gwas_y;
@@ -172,6 +164,16 @@ void setup_enclave(const int num_threads) {
         buffer_list[thread_id] = new Buffer(gwas, total_row_size, LOG_t, num_clients, thread_id);
     }
     std::cout << "Buffer initialized" << std::endl;
+
+    /* set up encrypted size */
+    for (int i = 0; i < num_clients; i++){
+        int size = 0;
+        while(!size) {
+            get_encrypted_x_size(&size, i);
+        }
+        std::cout << "client " << i << " crypto size: " << size << std::endl;
+        client_info_list[i].crypto_size = size;
+    }
 
     std::cout << "Setup finished\n";
     start_thread = true;

@@ -250,13 +250,6 @@ bool ComputeServer::handle_message(int connFD, const std::string& name, ComputeS
         case Y_VAL:
         {
             institutions[name]->set_y_data(msg);
-            // If we are not using covariants OR if the only covariant we are using is "1", we should start asking for data!
-            if (expected_covariants.size() == 0 || (expected_covariants.size() == 1 && expected_covariants.count("1"))) {
-                institutions[name]->request_conn = send_msg(name, DATA_REQUEST, std::to_string(MIN_BLOCK_COUNT), institutions[name]->request_conn);
-                // start listener thread for data!
-                boost::thread data_listener_thread(&ComputeServer::data_listener, this, institutions[name]->request_conn);
-                data_listener_thread.detach();
-            }
             break;
         }
         case COVARIANT:
@@ -269,14 +262,6 @@ bool ComputeServer::handle_message(int connFD, const std::string& name, ComputeS
                 throw std::runtime_error("Unexpected covariant recieved.");
             }
             institutions[name]->set_covariant_data(covariant_name, name_data_split.back());
-
-            // once we have all the covariants, request data
-            if (expected_covariants.size() == institutions[name]->get_covariant_size()) {
-                institutions[name]->request_conn = send_msg(name, DATA_REQUEST, std::to_string(MIN_BLOCK_COUNT), institutions[name]->request_conn);
-                // start listener thread for data!
-                boost::thread data_listener_thread(&ComputeServer::data_listener, this, institutions[name]->request_conn);
-                data_listener_thread.detach();
-            }
             break;
         }
         case EOF_DATA:
@@ -318,7 +303,7 @@ int ComputeServer::send_msg(const std::string& hostname, const int port, const i
     return send_message(hostname.c_str(), port, message.c_str(), message.length(), connFD);
 }
 
-void ComputeServer::check_in(std::string name) {
+void ComputeServer::check_in(const std::string& name) {
     std::lock_guard<std::mutex> raii(expected_lock);
     // for (std::string inst : expected_institutions)
     if (!expected_institutions.count(name)) {
@@ -331,6 +316,12 @@ void ComputeServer::check_in(std::string name) {
         for (const auto& it : institutions) {
             send_msg(it.first, Y_AND_COV, covariant_list + y_val_name);
         }
+
+        institutions[name]->request_conn = send_msg(name, DATA_REQUEST, std::to_string(MIN_BLOCK_COUNT), institutions[name]->request_conn);
+        // start listener thread for data!
+        boost::thread data_listener_thread(&ComputeServer::data_listener, this, institutions[name]->request_conn);
+        data_listener_thread.detach();
+
         // Now that all institutions are registered, start up the allele matching thread.
         boost::thread msg_thread(&ComputeServer::allele_matcher, this);
         msg_thread.detach();

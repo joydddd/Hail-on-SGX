@@ -84,7 +84,7 @@ class ComputeServer {
     // start a thread that will handle a message and exit properly if it finds an error
     bool start_thread(int connFD);
 
-    void check_in(std::string name);
+    void check_in(const std::string& name);
 
     void data_requester();
 
