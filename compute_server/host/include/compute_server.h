@@ -134,7 +134,7 @@ class ComputeServer {
     
     static int get_encypted_allele_size(const int institution_num);
 
-    static int get_allele_data(std::string& batch_data, const int thread_id);
+    static int get_allele_data(char* batch_data, const int thread_id);
 
     static void write_allele_data(char* output_data, const int thread_id);
 

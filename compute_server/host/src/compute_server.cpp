@@ -612,14 +612,15 @@ int ComputeServer::get_encypted_allele_size(const int institution_num) {
     return get_instance()->institutions[institution_name]->get_allele_data_size();
 }
 
-int ComputeServer::get_allele_data(std::string& batch_data, const int thread_id) {
+int ComputeServer::get_allele_data(char* batch_data, const int thread_id) {
+    std::string batch_data_str;
     std::string tmp;
     // Currently the enclave expects the ~EOF~ to be by itself (not in a batch).
     // This is not very clean code, but searching for ~EOF~ in the enclave is slow!
     if (get_instance()->eof_read_list[thread_id]) {
         // Set this back to false so that later function calls return 0!
         get_instance()->eof_read_list[thread_id] = false;
-        batch_data = EOFSeperator;
+        strcpy(batch_data, EOFSeperator);
         return 1;
     }
 
@@ -631,8 +632,9 @@ int ComputeServer::get_allele_data(std::string& batch_data, const int thread_id)
             break;
         }
         num_lines++;
-        batch_data.append(tmp);
+        batch_data_str.append(tmp);
     }
+    strcpy(batch_data, batch_data_str.c_str());
     return num_lines;
 }
 

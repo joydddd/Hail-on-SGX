@@ -96,7 +96,8 @@ int get_encrypted_x_size(const int client_num) {
 
 int getbatch(char batch[ENCLAVE_READ_BUFFER_SIZE], const int thread_id) {
     // TODO: maybe change this so we read in a diff number for each 
-    std::string batch_data; 
+    // std::string batch_data; 
+    char batch_data[ENCLAVE_READ_BUFFER_SIZE];
     int num_lines = ComputeServer::get_allele_data(batch_data, thread_id);
     if (num_lines) {
         std::strcpy(batch, &batch_data[0]);
