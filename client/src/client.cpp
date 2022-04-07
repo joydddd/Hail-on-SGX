@@ -161,6 +161,7 @@ void Client::handle_message(int connFD, const unsigned int global_id, const Clie
             int aes_idx = 0;
             const int num_compute_servers = parsed_compute_info.size();
             aes_encryptor_list = std::vector<std::vector<AESCrypto> >(num_compute_servers);
+            phenotypes_list.resize(num_compute_servers);
             allele_queue_list.resize(num_compute_servers);
             for (int _ = 0; _ < num_compute_servers; ++_) {
                 allele_queue_list.reserve(1000);
@@ -216,12 +217,12 @@ void Client::handle_message(int connFD, const unsigned int global_id, const Clie
             std::string y_val = covariants.back();
             covariants.pop_back();
 
-            send_tsv_file(global_id, y_val, Y_VAL);
+            prepare_tsv_file(global_id, y_val, Y_VAL);
             // send the data in each TSV file over to the server
             for (std::string covariant : covariants) {
                 // Ignore requests for "1", this is handled within the enclave
                 if (covariant != "1") {
-                    send_tsv_file(global_id, covariant, COVARIANT);
+                    prepare_tsv_file(global_id, covariant, COVARIANT);
                 }
             }
             
@@ -238,6 +239,13 @@ void Client::handle_message(int connFD, const unsigned int global_id, const Clie
             while (!filled) {}
 
             auto start = std::chrono::high_resolution_clock::now();
+
+            // First we should send all of the phenotype data
+            std::vector<Phenotype>& phenotypes = phenotypes_list[global_id];
+            for (const Phenotype& ptype : phenotypes) {
+                send_msg(global_id, ptype.mtype, ptype.message);
+            }
+
             response_mtype = DATA;
             ConnectionInfo info = compute_server_info[global_id];
             moodycamel::ReaderWriterQueue<std::string>& allele_queue = allele_queue_list[global_id];
@@ -324,7 +332,7 @@ void Client::data_sender(int connFD) {
     while(start_thread(connFD)) {}
 }
 
-void Client::send_tsv_file(unsigned int global_id, const std::string& filename, ComputeServerMessageType mtype) {
+void Client::prepare_tsv_file(unsigned int global_id, const std::string& filename, ComputeServerMessageType mtype) {
     std::ifstream tsv_file(filename + ".tsv");
     std::string data;
     // TODO: fix this code once Joy's enclave can handle a different format
@@ -346,5 +354,9 @@ void Client::send_tsv_file(unsigned int global_id, const std::string& filename, 
     if (mtype == COVARIANT) {
         data = filename + " " + data;
     }
-    send_msg(global_id, mtype, data);
+    Phenotype ptype;
+    ptype.message = data;
+    ptype.mtype = mtype;
+    phenotypes_list[global_id].push_back(ptype);
+    //send_msg(global_id, mtype, data);
 }

@@ -99,7 +99,8 @@ int get_encrypted_x_size(const int client_num) {
 
 int getbatch(char batch[ENCLAVE_READ_BUFFER_SIZE], const int thread_id) {
     // TODO: maybe change this so we read in a diff number for each 
-    std::string batch_data; 
+    // std::string batch_data; 
+    char batch_data[ENCLAVE_READ_BUFFER_SIZE];
     int num_lines = ComputeServer::get_allele_data(batch_data, thread_id);
     if (num_lines) {
         std::strcpy(batch, &batch_data[0]);
@@ -174,23 +175,37 @@ int start_enclave() {
     try {
         std::cout << "\n\n***SETUP ENCLAVE****\n\n" << std::endl;
         int num_threads = ComputeServer::get_num_threads();
-        result = setup_enclave(enclave, num_threads);
-        if (result != OE_OK) {
-            fprintf(stderr,
-                    "calling into enclave_gwas failed: result=%u (%s)\n",
-                    result, oe_result_str(result));
-            goto exit;
-        }
-        std::cout << "\n\n**RUNNING LOG REGRESSION**\n\n";
-
-
         boost::thread_group thread_group;
         for (int thread_id = 0; thread_id < num_threads; ++thread_id) {
             boost::thread* enclave_thread = new boost::thread(log_regression, enclave, thread_id);
             thread_group.add_thread(enclave_thread);
         }
 
+        result = setup_enclave_encryption(enclave, num_threads);
+        if (result != OE_OK) {
+            fprintf(stderr,
+                    "calling into enclave_gwas failed: result=%u (%s)\n",
+                    result, oe_result_str(result));
+            goto exit;
+        }
+        
+        // Allow for data to be encrypted beforehand
+        for (int client_id = 0; client_id < getclientnum(); ++client_id) {
+            char tmp[ENCLAVE_READ_BUFFER_SIZE];
+            while(!gety(client_id, tmp)) {}
+        }
+
         auto start = std::chrono::high_resolution_clock::now();
+
+        result = setup_enclave_phenotypes(enclave, num_threads);
+        if (result != OE_OK) {
+            fprintf(stderr,
+                    "calling into enclave_gwas failed: result=%u (%s)\n",
+                    result, oe_result_str(result));
+            goto exit;
+        }
+
+        
         thread_group.join_all();
         ComputeServer::clean_up_output();
 

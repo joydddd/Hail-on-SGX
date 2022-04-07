@@ -251,13 +251,6 @@ bool ComputeServer::handle_message(int connFD, const std::string& name, ComputeS
         case Y_VAL:
         {
             institutions[name]->set_y_data(msg);
-            // If we are not using covariants OR if the only covariant we are using is "1", we should start asking for data!
-            if (expected_covariants.size() == 0 || (expected_covariants.size() == 1 && expected_covariants.count("1"))) {
-                institutions[name]->request_conn = send_msg(name, DATA_REQUEST, std::to_string(MIN_BLOCK_COUNT), institutions[name]->request_conn);
-                // start listener thread for data!
-                boost::thread data_listener_thread(&ComputeServer::data_listener, this, institutions[name]->request_conn);
-                data_listener_thread.detach();
-            }
             break;
         }
         case COVARIANT:
@@ -270,14 +263,6 @@ bool ComputeServer::handle_message(int connFD, const std::string& name, ComputeS
                 throw std::runtime_error("Unexpected covariant recieved.");
             }
             institutions[name]->set_covariant_data(covariant_name, name_data_split.back());
-
-            // once we have all the covariants, request data
-            if (expected_covariants.size() == institutions[name]->get_covariant_size()) {
-                institutions[name]->request_conn = send_msg(name, DATA_REQUEST, std::to_string(MIN_BLOCK_COUNT), institutions[name]->request_conn);
-                // start listener thread for data!
-                boost::thread data_listener_thread(&ComputeServer::data_listener, this, institutions[name]->request_conn);
-                data_listener_thread.detach();
-            }
             break;
         }
         case EOF_DATA:
@@ -319,7 +304,7 @@ int ComputeServer::send_msg(const std::string& hostname, const int port, const i
     return send_message(hostname.c_str(), port, message.c_str(), message.length(), connFD);
 }
 
-void ComputeServer::check_in(std::string name) {
+void ComputeServer::check_in(const std::string& name) {
     std::lock_guard<std::mutex> raii(expected_lock);
     // for (std::string inst : expected_institutions)
     if (!expected_institutions.count(name)) {
@@ -332,6 +317,12 @@ void ComputeServer::check_in(std::string name) {
         for (const auto& it : institutions) {
             send_msg(it.first, Y_AND_COV, covariant_list + y_val_name);
         }
+
+        institutions[name]->request_conn = send_msg(name, DATA_REQUEST, std::to_string(MIN_BLOCK_COUNT), institutions[name]->request_conn);
+        // start listener thread for data!
+        boost::thread data_listener_thread(&ComputeServer::data_listener, this, institutions[name]->request_conn);
+        data_listener_thread.detach();
+
         // Now that all institutions are registered, start up the allele matching thread.
         boost::thread msg_thread(&ComputeServer::allele_matcher, this);
         msg_thread.detach();
@@ -613,14 +604,15 @@ int ComputeServer::get_encypted_allele_size(const int institution_num) {
     return get_instance()->institutions[institution_name]->get_allele_data_size();
 }
 
-int ComputeServer::get_allele_data(std::string& batch_data, const int thread_id) {
+int ComputeServer::get_allele_data(char* batch_data, const int thread_id) {
+    std::string batch_data_str;
     std::string tmp;
     // Currently the enclave expects the ~EOF~ to be by itself (not in a batch).
     // This is not very clean code, but searching for ~EOF~ in the enclave is slow!
     if (get_instance()->eof_read_list[thread_id]) {
         // Set this back to false so that later function calls return 0!
         get_instance()->eof_read_list[thread_id] = false;
-        batch_data = EOFSeperator;
+        strcpy(batch_data, EOFSeperator);
         return 1;
     }
 
@@ -632,8 +624,9 @@ int ComputeServer::get_allele_data(std::string& batch_data, const int thread_id)
             break;
         }
         num_lines++;
-        batch_data.append(tmp);
+        batch_data_str.append(tmp);
     }
+    strcpy(batch_data, batch_data_str.c_str());
     return num_lines;
 }
 

@@ -84,7 +84,7 @@ class ComputeServer {
     // start a thread that will handle a message and exit properly if it finds an error
     bool start_thread(int connFD);
 
-    void check_in(std::string name);
+    void check_in(const std::string& name);
 
     void data_requester();
 
@@ -134,7 +134,7 @@ class ComputeServer {
     
     static int get_encypted_allele_size(const int institution_num);
 
-    static int get_allele_data(std::string& batch_data, const int thread_id);
+    static int get_allele_data(char* batch_data, const int thread_id);
 
     static void write_allele_data(char* output_data, const int thread_id);
 
