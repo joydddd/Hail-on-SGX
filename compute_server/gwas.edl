@@ -21,6 +21,8 @@ enclave {
 
         void setrsapubkey([in] uint8_t enc_rsa_pub_key[RSA_PUB_KEY_SIZE]);
 
+        void setmaxbatchlines(int lines);
+
         /* get enclave setup data */
         // return number of clients
         int getclientnum();

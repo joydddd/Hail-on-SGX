@@ -407,18 +407,7 @@ void ComputeServer::allele_matcher() {
             // For the first line we want to calculate the max number of lines per batch
             if (first) {
                 start = std::chrono::high_resolution_clock::now();
-
                 first = false;
-
-                // 128 MB divided by four, divided by the number of threads, divided by size of an allele line
-                max_batch_lines = (ENCLAVE_READ_BUFFER_SIZE / num_threads) / allele_line.length();
-                // Ideally we will not use more than a quarter the encalve for performance reasons, 
-                // but if that is not possible just go one line at a time
-                max_batch_lines = std::max(max_batch_lines, 1);
-
-                max_batch_lines = 1;
-
-                guarded_cout("Max batch lines: " + std::to_string(max_batch_lines), cout_lock);
             }
             
             // thread-safe enqueue
@@ -540,6 +529,11 @@ void ComputeServer::print_timings() {
     }
 }
 
+void ComputeServer::set_max_batch_lines(unsigned int lines) {
+    get_instance()->max_batch_lines = lines;
+    //get_instance()->max_batch_lines = 4;
+}
+
 uint8_t* ComputeServer::get_rsa_pub_key() {
     return get_instance()->rsa_public_key;
 }
@@ -623,9 +617,11 @@ int ComputeServer::get_allele_data(char* batch_data, const int thread_id) {
             break;
         }
         num_lines++;
-        batch_data_str.append(tmp);
+        batch_data_str += tmp;
     }
-    strcpy(batch_data, batch_data_str.c_str());
+    memcpy(batch_data, &batch_data_str[0], batch_data_str.length());
+    // strcpy(batch_data, &batch_data_str[0]);
+    batch_data[batch_data_str.length()] = '\0';
     return num_lines;
 }
 

@@ -116,6 +116,8 @@ class ComputeServer {
 
     static void finish_setup();
 
+    static void set_max_batch_lines(unsigned int lines);
+
     static uint8_t* get_rsa_pub_key();
     
     static int get_num_threads();

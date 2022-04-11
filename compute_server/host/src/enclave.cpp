@@ -36,6 +36,10 @@ void setrsapubkey(uint8_t enc_rsa_pub_key[RSA_PUB_KEY_SIZE]) {
     ComputeServer::finish_setup();
 }
 
+void setmaxbatchlines(int lines) {
+    ComputeServer::set_max_batch_lines(lines);
+}
+
 void start_timer(const char func_name[ENCLAVE_READ_BUFFER_SIZE]) {
     ComputeServer::start_timer(func_name);
 }
@@ -97,11 +101,12 @@ int get_encrypted_x_size(const int client_num) {
 int getbatch(char batch[ENCLAVE_READ_BUFFER_SIZE], const int thread_id) {
     // TODO: maybe change this so we read in a diff number for each 
     // std::string batch_data; 
-    char batch_data[ENCLAVE_READ_BUFFER_SIZE];
-    int num_lines = ComputeServer::get_allele_data(batch_data, thread_id);
-    if (num_lines) {
-        std::strcpy(batch, &batch_data[0]);
-    }
+    //char batch_data[ENCLAVE_READ_BUFFER_SIZE];
+    int num_lines = ComputeServer::get_allele_data(batch, thread_id);
+    // if (num_lines) {
+    //     std::strcpy(batch, &batch_data[0]);
+    // }
+    //std::cout << batch << std::endl;
 
     return num_lines;
 }

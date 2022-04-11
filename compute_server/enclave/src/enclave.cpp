@@ -166,14 +166,25 @@ void setup_enclave_phenotypes(const int num_threads) {
     std::cout << "Buffer initialized" << std::endl;
 
     /* set up encrypted size */
-    for (int i = 0; i < num_clients; i++){
+    int total_crypto_size = 0;
+    for (int i = 0; i < num_clients; i++) {
         int size = 0;
         while(!size) {
             get_encrypted_x_size(&size, i);
         }
         std::cout << "client " << i << " crypto size: " << size << std::endl;
         client_info_list[i].crypto_size = size;
+        total_crypto_size += size;
     }
+    // Add padding for Loci + Allele
+    total_crypto_size += 25 + (num_clients * 2);
+
+    int max_batch_lines = ENCLAVE_READ_BUFFER_SIZE / total_crypto_size;
+    if (!max_batch_lines) {
+        std::cerr << "Data is too long to fit into enclave read buffer" << std::endl;
+        exit(1);
+    }
+    setmaxbatchlines(max_batch_lines);
 
     std::cout << "Setup finished\n";
     start_thread = true;
@@ -206,7 +217,6 @@ void log_regression(const int thread_id) {
         //start_timer("get_batch()");
         if (!batch || batch->st != Batch::Working) batch = buffer->launch(client_info_list, thread_id);
         if (!batch) {
-            //buffer->finish();
             buffer->clean_up();
             break;
         }
@@ -219,7 +229,6 @@ void log_regression(const int thread_id) {
         } catch (ERROR_t& err) {
             std::cerr << "ERROR: " << err.msg << std::endl << std::flush;
             exit(0);
-            continue;
         }
         //stop_timer("get_row()");
         // compute results

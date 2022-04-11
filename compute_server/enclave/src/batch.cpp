@@ -6,6 +6,7 @@ Batch::Batch(size_t _row_size, Row_T row_type, Log_gwas* _gwas)
     switch (type) {
         case LOG_t:
             row = new Log_row(row_size, _gwas);
+            plaintxt = new char[ENCLAVE_READ_BUFFER_SIZE * 5];
             break;
         default:
             row = new Row(row_size);

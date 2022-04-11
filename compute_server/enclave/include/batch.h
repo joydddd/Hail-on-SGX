@@ -16,7 +16,7 @@ class Buffer;
 class Batch {
     /* data members */
     // char crypto[ENCLAVE_READ_BUFFER_SIZE]; // decrypt is handled by Buffer
-    char plaintxt[ENCLAVE_READ_BUFFER_SIZE];
+    char* plaintxt;
     size_t txt_size;
     Row_T type;
     char outtxt[ENCLAVE_OUTPUT_BUFFER_SIZE];
@@ -33,7 +33,10 @@ class Batch {
 
    public:
     Batch(size_t _row_size, Row_T row_type, Log_gwas* _gwas);
-    ~Batch() { delete row; }
+    ~Batch() { 
+        delete row; 
+        delete plaintxt;
+    }
 
     /* status */
     enum Status { Empty, Working, Finished };

@@ -27,81 +27,86 @@ void two_bit_decompress(uint8_t* input, uint8_t* decompressed, unsigned int size
     }
 }
 
-void Buffer::decrypt_line(char* plaintxt, size_t* plaintxt_length, const std::vector<ClientInfo>& client_info_list, const int thread_id) {
-    char* head = crypttxt;
-    char* end_of_allele = crypttxt, *end_of_loci = crypttxt;
-    while (true) {
-        if (*head == '\t') {
-            if (end_of_allele != crypttxt) {
-                end_of_loci = head;
-                break;
-            } else {
-                end_of_allele = head;
-            }
-        }
-        head++;
-    }
-    /* copy allele & loci to plaintxt */
+void Buffer::decrypt_line(char* plaintxt, size_t* plaintxt_length, unsigned int num_lines, const std::vector<ClientInfo>& client_info_list, const int thread_id) {
+    std::cout << "1" << std::endl;
+    char* crypt_head = crypttxt; 
+    char *crypt_start, *end_of_allele, *end_of_loci;
     char* plaintxt_head = plaintxt;
-    strncpy(plaintxt, crypttxt, end_of_loci - crypttxt + 1);
-    plaintxt_head += end_of_loci - crypttxt + 1;
-
-    char* tab_pos = end_of_loci;
-    client_count = 0;
-    /* get client list */
-    head++;
-    while (true) {
-        if(*head == '\t'){
-            *head = '\0';
-            int client = atoi(tab_pos + 1);
-            client_list[client_count++] = client;
-            // cout << "head = " << head - crypt
-            //      << " tab_pos = " << tab_pos - crypt << endl;
-            // cout << "client: " << client << endl;
-            *head = '\t';
-            tab_pos = head;
-        }
-        if (*head == ' ') {
-            *head = '\0';
-            int client = atoi(tab_pos + 1);
-            client_list[client_count++] = client;
-            // cout << "head = " << head - crypt
-            //      << " tab_pos = " << tab_pos - crypt << endl;
-            // cout << "client: " << client << endl;
-            *head = ' ';
-            head++;
-            break;
-        }
-        head++;
-    }
-
-    /* decrypt data */
-    for (size_t i = 0; i < client_count; i++){
-        client_crypto_map[client_list[i]] = head;
-        head += client_info_list[client_list[i]].crypto_size;
-    }
-    bool client_found;
-    for (int client = 0; client < client_info_list.size(); client++) {
-        client_found = false;
-        for (int list_id = 0; list_id < client_count; ++list_id) {
-            if (client_list[list_id] == client) {
-                aes_decrypt_client((const unsigned char*)client_crypto_map[list_id],
-                                (unsigned char*)plain_txt_compressed,
-                                client_info_list[client], thread_id);
-                two_bit_decompress(plain_txt_compressed, (uint8_t*)plaintxt_head, client_info_list[client].size);
-                client_found = true;
+    for (int line = 0; line < num_lines; ++line) {
+        crypt_start = crypt_head;
+        end_of_allele = crypt_head;
+        end_of_loci = crypt_head;
+        while (true) {
+            if (*crypt_head == '\t') {
+                if (end_of_allele != crypt_start) {
+                    end_of_loci = crypt_head;
+                    break;
+                } else {
+                    end_of_allele = crypt_head;
+                }
             }
+            crypt_head++;
         }
-        if (!client_found) {
-            // this client does have target allele
-            for (int j = 0; j < client_info_list[client].size; j++) {
-                *(plaintxt_head + j) = NA_uint8;
+        /* copy allele & loci to plaintxt */
+        strncpy(plaintxt_head, crypt_start, end_of_loci - crypt_start + 1);
+        plaintxt_head += end_of_loci - crypt_start + 1;
+
+        char* tab_pos = end_of_loci;
+        client_count = 0;
+        /* get client list */
+        crypt_head++;
+        while (true) {
+            if(*crypt_head == '\t'){
+                *crypt_head = '\0';
+                int client = atoi(tab_pos + 1);
+                client_list[client_count++] = client;
+                // cout << "head = " << head - crypt
+                //      << " tab_pos = " << tab_pos - crypt << endl;
+                // cout << "client: " << client << endl;
+                *crypt_head = '\t';
+                tab_pos = crypt_head;
             }
+            if (*crypt_head == ' ') {
+                *crypt_head = '\0';
+                int client = atoi(tab_pos + 1);
+                client_list[client_count++] = client;
+                // cout << "head = " << head - crypt
+                //      << " tab_pos = " << tab_pos - crypt << endl;
+                // cout << "client: " << client << endl;
+                *crypt_head = ' ';
+                crypt_head++;
+                break;
+            }
+            crypt_head++;
         }
-        plaintxt_head += client_info_list[client].size;
+        /* decrypt data */
+        for (size_t i = 0; i < client_count; i++){
+            client_crypto_map[client_list[i]] = crypt_head;
+            crypt_head += client_info_list[client_list[i]].crypto_size;
+        }
+        bool client_found;
+        for (int client = 0; client < client_info_list.size(); client++) {
+            client_found = false;
+            for (int list_id = 0; list_id < client_count; ++list_id) {
+                if (client_list[list_id] == client) {
+                    aes_decrypt_client((const unsigned char*)client_crypto_map[list_id],
+                                    (unsigned char*)plain_txt_compressed,
+                                    client_info_list[client], thread_id);
+                    two_bit_decompress(plain_txt_compressed, (uint8_t*)plaintxt_head, client_info_list[client].size);
+                    client_found = true;
+                }
+            }
+            if (!client_found) {
+                // this client does have target allele
+                for (int j = 0; j < client_info_list[client].size; j++) {
+                    *(plaintxt_head + j) = NA_uint8;
+                }
+            }
+            plaintxt_head += client_info_list[client].size;
+        }
+        *plaintxt_head = '\n';
+        plaintxt_head++;
     }
-    *plaintxt_head = '\n';
-    plaintxt_head++;
     *plaintxt_head = '\0';
     *plaintxt_length = plaintxt_head - plaintxt;
 }
@@ -142,13 +147,23 @@ void Buffer::finish() {
 }
 
 Batch* Buffer::launch(std::vector<ClientInfo>& client_info_list, const int thread_id) {
-    int rt = 0;
-    while (!rt) {
-        getbatch(&rt, crypttxt, thread_id);
+    int num_lines = 0;
+    // memset(crypttxt, 0, ENCLAVE_READ_BUFFER_SIZE);
+    // memset(free_batch->load_plaintxt(), 0, ENCLAVE_READ_BUFFER_SIZE * 5);
+    // for (int client_id = 0; client_id < client_count; ++client_id) {
+    //     client_list[client_id] = -1;
+    //     client_crypto_map[client_id] = nullptr;
+    // }
+    while (!num_lines) {
+        getbatch(&num_lines, crypttxt, thread_id);
     }
     if (!strcmp(crypttxt, EOFSeperator)) return nullptr;
     if (!free_batch) return nullptr;
-    Batch* new_b = free_batch;
-    decrypt_line(new_b->load_plaintxt(), new_b->plaintxt_size(), client_info_list, thread_id);
-    return new_b;
+    //Batch* new_b = free_batch;
+    *free_batch->plaintxt_size() = 0;
+    // size_t crypt_length = 0;
+    // for (int line = 0; line < num_lines; ++line) {
+    decrypt_line(free_batch->load_plaintxt(), free_batch->plaintxt_size(), num_lines, client_info_list, thread_id);
+    //}
+    return free_batch;
 }

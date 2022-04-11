@@ -86,7 +86,9 @@ inline Loci::Loci(const std::string &str) {
                 loc_str.push_back(c);
             }
         }
-    //std::cout << chrom_str << " " << loc_str << std::endl;
+        if (!chrom_str.length() || !loc_str.length()) {
+            throw ReadtsvERROR("Bad input str: " + str);
+        }
     } catch (std::invalid_argument &error) {
         throw ReadtsvERROR("Unknown Loci: " + str);
     }

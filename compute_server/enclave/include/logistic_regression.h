@@ -24,7 +24,7 @@ class Log_var {
     Log_var(size_t size, int x = 1) : data(size, x), n(size), name_str("1") {}
     size_t size() { return n; }
     void combine(Log_var &other);
-    std::string name() { return name_str; }
+    const std::string& name() { return name_str; }
     Log_var &operator=(Log_var &rhs) {
         if (this == &rhs) return *this;
         data = rhs.data;
