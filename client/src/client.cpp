@@ -129,9 +129,9 @@ bool Client::start_thread(int connFD) {
         std::vector<std::string> parsed_header;
         Parser::split(parsed_header, encrypted_body, ' ', 2);
 
-        // guarded_cout("ID: " + parsed_header[0] + 
-        //              " Msg Type: " + parsed_header[1], cout_lock);
-        // guarded_cout("\nEncrypted body:\n" + parsed_header[2], cout_lock);
+        guarded_cout("ID: " + parsed_header[0] + 
+                     " Msg Type: " + parsed_header[1], cout_lock);
+        guarded_cout("\nEncrypted body:\n" + parsed_header[2], cout_lock);
 
         handle_message(connFD, std::stoi(parsed_header[0]), static_cast<ClientMessageType>(std::stoi(parsed_header[1])), parsed_header[2]);
     }

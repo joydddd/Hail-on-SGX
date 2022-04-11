@@ -315,12 +315,13 @@ void ComputeServer::check_in(const std::string& name) {
         // request y, cov, and data
         for (const auto& it : institutions) {
             send_msg(it.first, Y_AND_COV, covariant_list + y_val_name);
+
+            institutions[it.first]->request_conn = send_msg(it.first, DATA_REQUEST, std::to_string(MIN_BLOCK_COUNT), institutions[it.first]->request_conn);
+            // start listener thread for data!
+            boost::thread data_listener_thread(&ComputeServer::data_listener, this, institutions[it.first]->request_conn);
+            data_listener_thread.detach();
         }
 
-        institutions[name]->request_conn = send_msg(name, DATA_REQUEST, std::to_string(MIN_BLOCK_COUNT), institutions[name]->request_conn);
-        // start listener thread for data!
-        boost::thread data_listener_thread(&ComputeServer::data_listener, this, institutions[name]->request_conn);
-        data_listener_thread.detach();
 
         // Now that all institutions are registered, start up the allele matching thread.
         boost::thread msg_thread(&ComputeServer::allele_matcher, this);

@@ -28,7 +28,6 @@ void two_bit_decompress(uint8_t* input, uint8_t* decompressed, unsigned int size
 }
 
 void Buffer::decrypt_line(char* plaintxt, size_t* plaintxt_length, unsigned int num_lines, const std::vector<ClientInfo>& client_info_list, const int thread_id) {
-    std::cout << "1" << std::endl;
     char* crypt_head = crypttxt; 
     char *crypt_start, *end_of_allele, *end_of_loci;
     char* plaintxt_head = plaintxt;
@@ -148,22 +147,12 @@ void Buffer::finish() {
 
 Batch* Buffer::launch(std::vector<ClientInfo>& client_info_list, const int thread_id) {
     int num_lines = 0;
-    // memset(crypttxt, 0, ENCLAVE_READ_BUFFER_SIZE);
-    // memset(free_batch->load_plaintxt(), 0, ENCLAVE_READ_BUFFER_SIZE * 5);
-    // for (int client_id = 0; client_id < client_count; ++client_id) {
-    //     client_list[client_id] = -1;
-    //     client_crypto_map[client_id] = nullptr;
-    // }
     while (!num_lines) {
         getbatch(&num_lines, crypttxt, thread_id);
     }
     if (!strcmp(crypttxt, EOFSeperator)) return nullptr;
     if (!free_batch) return nullptr;
-    //Batch* new_b = free_batch;
     *free_batch->plaintxt_size() = 0;
-    // size_t crypt_length = 0;
-    // for (int line = 0; line < num_lines; ++line) {
     decrypt_line(free_batch->load_plaintxt(), free_batch->plaintxt_size(), num_lines, client_info_list, thread_id);
-    //}
     return free_batch;
 }
