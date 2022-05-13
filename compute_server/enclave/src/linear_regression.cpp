@@ -1,129 +1,126 @@
-// #include "enc_gwas.h"
+// #include <boost/math/distributions/students_t.hpp>
+#include <math.h>
 
-// // #include <boost/math/distributions/students_t.hpp>
-// #include <cmath>
-// ;
-// // using namespace boost::math;
+#include <limits>
+// using namespace boost::math;
 
+#include "linear_regression.h"
 
-// void XTX_row::read(string &line) {
-//     vector<string> parts;
-//     size_t xx = split_tab(line, parts);
-//     if (xx < 2) throw ReadtsvERROR("Line too short: " + line);
-//     loci = Loci(parts[0]);
-//     alleles.read(parts[1]);
-//     m = (size_t)sqrt((xx - 2) * 2);
-//     if (m * (m + 1) != (xx - 2) * 2)
-//         throw ReadtsvERROR("invalid XTX entry number: " + line);
-//     vector<vector<double>> XTX_vec;
-//     XTX_vec.resize(m);
-//     for (auto &l : XTX_vec) {
-//         l.resize(m);
-//     }
-//     size_t k = 2;
-//     for (size_t i = 0; i < m; i++) {
-//         XTX_vec[i].resize(m);
-//         for (size_t j = i; j < m; j++) {
-//             try {
-//                 XTX_vec[i][j] = stod(parts[k]);
-//             } catch (invalid_argument &error) {
-//                 throw ReadtsvERROR("Invalid XTX entry: " + parts[k]);
-//             }
-//             k++;
-//         }
-//     }
-//     for (size_t i = 0; i < m; i++) {
-//         for (size_t j = 0; j < i; j++) {
-//             XTX_vec[i][j] = XTX_vec[j][i];
-//         }
-//     }
-//     XTX = SqrMatrix(XTX_vec);
-// }
+Lin_row::Lin_row(size_t _size, GWAS* _gwas)
+    : Row(_size), gwas(_gwas), XTX(gwas->dim(), 2), XTX_og(gwas->dim(), 2) {
+    beta.resize(gwas->dim());
+    XTY.resize(gwas->dim());
+    XTY_og.resize(gwas->dim());
+    SSE.resize(gwas->dim());
 
-// void XTX_row::combine(const Row *_other) {
-//     const XTX_row *t = (const XTX_row *)_other;
-//     const XTX_row &other(*t);
-//     if (other.loci != this->loci) throw CombineERROR("locus mismatch");
-//     if (other.alleles != this->alleles) throw CombineERROR("alleles mismatch");
-//     if (other.size() != this->size()) throw CombineERROR("size mismatch");
-//     XTX = this->XTX + other.XTX;
-// }
+    /* calculate XTX_og, XTY_og */
+    for (int i = 0; i < gwas->dim(); i++) {
+        XTY_og[i] = 0;
+        for (int j = 0; j < gwas->dim(); j++) {
+            XTX_og[i][j] = 0;
+        }
+    }
 
-// void XTX_row::beta(vector<double> &beta, XTY_row &xty) {
-//     if (m != xty.size()) throw CombineERROR("size mismatch");
-//     if (alleles != xty.alleles) throw CombineERROR("alleles mismatch");
-//     if (loci != xty.loci) throw CombineERROR("loci mismatch");
-//     beta = INV()* xty.XTY;
-// }
+    for (int i = 0; i < n; ++i){
+        double y = gwas->y.data[i];
+        for (int j = 1; j < gwas->dim(); ++j) {  // starting from second row
+            XTY_og[j] += gwas->covariants[j - 1].data[i] * y;
+            for (int k = 1; k <= j; ++k){
+                XTX_og[j][k] = gwas->covariants[j - 1].data[i] *
+                               gwas->covariants[k - 1].data[i];
+            }
+        }
+    }
 
-// SqrMatrix& XTX_row::INV(){
-//     if (XTX_1.is_empty()) XTX_1 = XTX.INV();
-//     return XTX_1;
-// }
+    for (int j = 0; j < gwas->dim(); j++){
+        for (int k = j + 1; k < gwas->dim(); ++k){
+            XTX_og[j][k] = XTX_og[k][j];
+        }
+    }
+}
 
-// void XTY_row::read(string &str) {
-//     vector<string> parts;
-//     split_tab(str, parts);
-//     if (parts.size() < 2) throw ReadtsvERROR("Line too short: " + str);
-//     m = parts.size() - 2;
-//     loci = Loci(parts[0]);
-//     alleles.read(parts[1]);
-//     XTY.resize(m);
-//     for (size_t i = 0; i < m; i++) {
-//         try {
-//             XTY[i] = stod(parts[i + 2]);
-//         } catch (invalid_argument &error) {
-//             throw ReadtsvERROR("Invalid XTY entry: " + parts[i + 2]);
-//         }
-//     }
-// }
+void Lin_row::init() {
+    for (int i = 0; i < gwas->dim(); i++) {
+        beta[i] = 0;
+        XTY[i] = XTY_og[i];
+        for (int j = 0; j < gwas->dim(); j++) {
+            XTX[i][j] = XTX_og[i][j];
+        }
+    }
+}
 
-// void XTY_row::combine(const Row *_other) {
-//     const XTY_row *t = (const XTY_row *)_other;
-//     const XTY_row &other(*t);
-//     if (other.loci != loci) throw CombineERROR("locus mismatch");
-//     if (other.alleles != alleles) throw CombineERROR("alleles mismatch");
-//     if (other.m != m) throw CombineERROR("XTY size mismatch");
-//     for (size_t i = 0; i < m; i++) {
-//         XTY[i] += other.XTY[i];
-//     }
-// }
+void Lin_row::fit() {
+    /* calculate XTX & XTY*/
+    size_t client_idx = 0, data_idx = 0;
+    for (int i = 0; i < n; ++i) {
+        uint8_t x = data[client_idx][data_idx];
+        double y = gwas->y.data[i];
+        if (!is_NA(x)) {
+            XTY[0] += x * y;
+            for (int j = 0; j < gwas->dim(); ++j) {
+                double x1 = (j == 0) ? x : gwas->covariants[j - 1].data[i];
+                XTX[j][0] += x1 * x;
+            }
+        } else { // adjust the part non valid
+        // TODO: some optimization here: whether to precalculate Xcov * Y and Xocv * Xcov for each patient
+            for (int j = 1; j < gwas->dim(); ++j){
+                XTY[j] -= gwas->covariants[j - 1].data[i] * y;
+                for (int k = 1; k <= j; ++k){
+                    XTX[j][k] -= gwas->covariants[j - 1].data[i] *
+                                 gwas->covariants[k - 1].data[i];
+                }
+            }
+        }
 
-// void SSE_row::read(string &line) {
-//     vector<string> parts;
-//     split_tab(line, parts);
-//     if (parts.size() != 4) throw ReadtsvERROR("Line "+line);
-//     loci = Loci(parts[0]);
-//     alleles.read(parts[1]);
-//     try {
-//         n = stoi(parts[2]);
-//         SSE = stod(parts[3]);
-//     } catch (invalid_argument &error) {
-//         throw ReadtsvERROR("invalid entry " + parts[2] + " " + parts[3]);
-//     }
-// }
+        /* update data index */
+        data_idx++;
+        if (data_idx >= length[client_idx]) {
+            data_idx = 0;
+            client_idx++;
+        }
+    }
 
-// void SSE_row::combine(const Row *_other) {
-//     const SSE_row *t = (const SSE_row *)_other;
-//     const SSE_row &other(*t);
-//     if (other.loci != loci) throw CombineERROR("locus mismatch");
-//     if (other.alleles != alleles) throw CombineERROR("alleles mismatch");
-//     SSE += other.SSE;
-//     n += other.n;
-// }
+    for (int j = 0; j < gwas->dim(); j++) {
+        for (int k = j + 1; k < gwas->dim(); ++k) {
+            XTX[j][k] = XTX[k][j];
+        }
+    }
 
-// double SSE_row::t_stat(SqrMatrix &XTX_1, vector<double> &beta) {
-//     size_t m = beta.size();
-//     SqrMatrix var = XTX_1 * (SSE / (double)(n - m - 1));
-//     double SE = sqrt(var[0][0]);
-//     return beta[0] / SE;
-// }
+    /* beta = (XTX)-1 XTY */
+    XTX.INV();
+    XTX.t->calculate_matrix_times_vec(XTY, beta);
 
-// // double SSE_row::p(SqrMatrix &XTX_1, vector<double> &beta) {
-// //     double t = t_stat(XTX_1, beta);
-// //     double df = n - beta.size() - 1;
-// //     students_t t_dist(df);
-// //     return cdf(t_dist, t) * 2;
-// // }
+    /* calculate standard error */
+    double sse = 0;
+    for (int i = 0; i < n; ++i) {
+        uint8_t x = data[client_idx][data_idx];
+        double y = gwas->y.data[i];
+        if (!is_NA(x)) {
+            double y_est = beta[0] * x;
+            for (int j = 1; j < gwas->dim(); j++){
+                y_est += gwas->covariants[j - 1].data[i] * beta[j];
+            }
+            sse += (y - y_est) * (y - y_est);
+        }
 
+        /* update data index */
+        data_idx++;
+        if (data_idx >= length[client_idx]) {
+            data_idx = 0;
+            client_idx++;
+        }
+    }
 
+    sse = sse / (n - gwas->dim() - 1);
+    for (int j = 0; j < gwas->dim(); ++j){
+        SSE[j] = sqrt(sse*(*XTX.t)[j][j]);
+    } 
+}
+
+double Lin_row::t_stat() { 
+    double t = 0;
+    for (int j = 0; j < gwas->dim(); ++j){
+        t += beta[j] / SSE[j];
+    }
+    return sqrt(t);
+}

@@ -6,7 +6,7 @@
 
 #include "buffer.h"
 #include "crypto.h"
-#include "logistic_regression.h"
+#include "gwas.h"
 
 #ifdef NON_OE
 #include "enclave_glue.h"
@@ -18,7 +18,7 @@ static std::vector<Buffer*> buffer_list;
 static std::vector<ClientInfo> client_info_list;
 static std::vector<int> client_y_size;
 static int num_clients;
-static Log_gwas* gwas;
+static GWAS* gwas;
 static volatile bool start_thread = false;
 
 void setup_enclave_encryption(const int num_threads) {
@@ -87,7 +87,7 @@ void setup_enclave_encryption(const int num_threads) {
 void setup_enclave_phenotypes(const int num_threads) {
     char* buffer_decrypt = new char[ENCLAVE_READ_BUFFER_SIZE];
     char* y_buffer = new char[ENCLAVE_READ_BUFFER_SIZE];
-    Log_var gwas_y;
+    Covar gwas_y;
     try {
         for (int client = 0; client < num_clients; ++client) {
             int y_buffer_size = 0;
@@ -101,7 +101,7 @@ void setup_enclave_phenotypes(const int num_threads) {
                              y_buffer_size, 
                              (unsigned char*) buffer_decrypt);
             std::stringstream y_ss(buffer_decrypt);
-            Log_var new_y;
+            Covar new_y;
             new_y.read(y_ss);
             client_y_size[client] = new_y.size();
             client_info_list[client].size = new_y.size();
@@ -114,7 +114,7 @@ void setup_enclave_phenotypes(const int num_threads) {
         std::cerr << "ERROR: fail to get correct y values" << err.msg << std::endl;
     }
 
-    gwas = new Log_gwas(gwas_y);
+    gwas = new GWAS(gwas_y, LogReg_type);
     
     char covl[ENCLAVE_READ_BUFFER_SIZE];
     getcovlist(covl);
@@ -125,11 +125,11 @@ void setup_enclave_phenotypes(const int num_threads) {
         char* cov_buffer = new char[ENCLAVE_READ_BUFFER_SIZE];
         for (auto& cov : covariants) {
             if (cov == "1") {
-                Log_var intercept(gwas_y.size());
+                Covar intercept(gwas_y.size());
                 gwas->add_covariant(intercept);
                 continue;
             }
-            Log_var cov_var;
+            Covar cov_var;
             for (int client = 0; client < num_clients; ++client) {
                 int cov_buffer_size = 0;
                 while (!cov_buffer_size) {
@@ -142,7 +142,7 @@ void setup_enclave_phenotypes(const int num_threads) {
                                 cov_buffer_size, 
                                 (unsigned char*) buffer_decrypt);
                 std::stringstream cov_ss(buffer_decrypt);
-                Log_var new_cov_var;
+                Covar new_cov_var;
                 new_cov_var.read(cov_ss);
                 if (new_cov_var.size() != client_y_size[client])
                     throw ReadtsvERROR("covariant size mismatch from client: " +
@@ -161,7 +161,8 @@ void setup_enclave_phenotypes(const int num_threads) {
     int total_row_size = 0;
     for (auto size : client_y_size) total_row_size += size;
     for (int thread_id = 0; thread_id < num_threads; ++thread_id) {
-        buffer_list[thread_id] = new Buffer(gwas, total_row_size, LOG_t, num_clients, thread_id);
+        // TODO: set buffer type accordingly
+        buffer_list[thread_id] = new Buffer(gwas, total_row_size, Lin_t, num_clients, thread_id);
     }
     std::cout << "Buffer initialized" << std::endl;
 
@@ -266,4 +267,68 @@ void log_regression(const int thread_id) {
         //stop_timer("batch_write()");
     }
 
+}
+
+void linear_regression(const int thread_id) {
+    std::string output_string;
+    std::string loci_string;
+    std::string alleles_string;
+    output_string.reserve(50);
+    loci_string.reserve(50);
+    alleles_string.reserve(20);
+    // experimental - checking to see if spinning up threads adds a noticable
+    // amount of overhead... need +1 TCS in config
+    while (!start_thread) {
+        // spin until ready to go!
+    }
+
+    Buffer* buffer = buffer_list[thread_id];
+    Batch* batch = nullptr;
+    Lin_row* row;
+
+    // DEBUG: tmp output file
+    // ofstream out_st("enc" + std::to_string(thread_id) + ".out");
+
+    /* process rows */
+    while (true) {
+        // start_timer("get_batch()");
+        if (!batch || batch->st != Batch::Working)
+            batch = buffer->launch(client_info_list, thread_id);
+        if (!batch) {
+            buffer->clean_up();
+            break;
+        }
+
+        try {
+            if (!(row = (Lin_row*)batch->get_row(buffer))) continue;
+        } catch (ERROR_t& err) {
+            std::cerr << "ERROR: " << err.msg << std::endl << std::flush;
+            exit(0);
+        }
+ 
+        //  compute results
+        loci_to_str(row->getloci(), loci_string);
+        alleles_to_str(row->getalleles(), alleles_string);
+        output_string += loci_string + "\t" + alleles_string;
+        try {
+            row->fit();
+            output_string += "\t" +
+                             std::to_string(row->output_first_beta_element()) +
+                             "\t" + std::to_string(row->t_stat()) + "\t";
+            // wanted to use a ternary, but the compiler doesn't like it?
+            output_string += "\n";
+        } catch (MathError& err) {
+            output_string += "\tNA\tNA\tNA\n";
+            // cerr << "MathError while fiting " << ss.str() << ": " << err.msg
+            //      << std::endl;
+            // ss << "\tNA\tNA\tNA" << std::endl;
+        } catch (ERROR_t& err) {
+            std::cerr << "ERROR " << err.msg << std::endl << std::flush;
+            // ss << "\tNA\tNA\tNA" << std::endl;
+            exit(1);
+        }
+        batch->write(output_string);
+        output_string.clear();
+        // stop_timer("batch_write()");
+    }
 }

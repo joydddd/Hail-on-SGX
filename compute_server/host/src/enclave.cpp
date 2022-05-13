@@ -168,7 +168,9 @@ int start_enclave() {
         int num_threads = ComputeServer::get_num_threads();
         boost::thread_group thread_group;
         for (int thread_id = 0; thread_id < num_threads; ++thread_id) {
-            boost::thread* enclave_thread = new boost::thread(log_regression, enclave, thread_id);
+            // TODO: linear_regression
+            boost::thread* enclave_thread = new boost::thread(linear_regression, enclave, thread_id);
+            // boost::thread* enclave_thread = new boost::thread(log_regression, enclave, thread_id);
             thread_group.add_thread(enclave_thread);
         }
 
