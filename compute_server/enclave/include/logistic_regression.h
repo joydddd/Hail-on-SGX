@@ -10,64 +10,8 @@
 #endif
 /* for logistic regression */
 
-class Log_var {
-    std::vector<double> data;
-    size_t n;
-    std::string name_str;
-    friend class Log_row;
-    friend class Log_gwas;
-
-   public:
-    Log_var() : n(0), name_str("NA") {}
-    Log_var(std::istream &is) { read(is); }
-    void read(std::istream &is);
-    Log_var(size_t size, int x = 1) : data(size, x), n(size), name_str("1") {}
-    size_t size() { return n; }
-    void combine(Log_var &other);
-    const std::string& name() { return name_str; }
-    Log_var &operator=(Log_var &rhs) {
-        if (this == &rhs) return *this;
-        data = rhs.data;
-        n = rhs.n;
-        name_str = rhs.name_str;
-        return *this;
-    }
-};
-
-class Log_gwas {
-    std::vector<Log_var> covariants;
-    std::string name;
-    Log_var y;
-    size_t m;  // dimention
-    size_t n;  // same size
-
-   public:
-    Log_gwas() : n(0), m(0) {}
-    Log_gwas(Log_var _y) : n(_y.size()), m(1) { add_y(_y); }
-
-    void add_y(Log_var &_y) {
-        n = _y.size();
-        m = 1;
-        y = _y;
-        name = _y.name() + "_logic_gwas";
-    }
-
-    void add_covariant(Log_var &cov) {
-        if (cov.size() != n) throw CombineERROR("covariant");
-        covariants.push_back(cov);
-        m++;
-    }
-    size_t dim() const { return m; }
-    size_t size() const { return n; }
-    friend class Log_row;
-#ifdef DEBUG
-    void print() const;
-#endif
-
-};  // Gwas class for logic regression
-
 class Log_row : public Row {
-    const Log_gwas *gwas;
+    const GWAS *gwas;
 
     /* model data */
     std::vector<double> b;
@@ -88,7 +32,7 @@ class Log_row : public Row {
 
    public:
     /* setup */
-    Log_row(size_t size, Log_gwas* _gwas);
+    Log_row(size_t size, GWAS* _gwas);
 
     /* fitting */
     // return true if converge, return false if explode

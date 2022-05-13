@@ -1,11 +1,15 @@
 #include "batch.h"
 #include <cstring>
 
-Batch::Batch(size_t _row_size, Row_T row_type, Log_gwas* _gwas)
+Batch::Batch(size_t _row_size, Row_T row_type, GWAS* _gwas)
     : row_size(_row_size), type(row_type) {
     switch (type) {
         case LOG_t:
             row = new Log_row(row_size, _gwas);
+            plaintxt = new char[ENCLAVE_READ_BUFFER_SIZE * 5];
+            break;
+        case Lin_t:
+            row = new Lin_row(row_size, _gwas);
             plaintxt = new char[ENCLAVE_READ_BUFFER_SIZE * 5];
             break;
         default:

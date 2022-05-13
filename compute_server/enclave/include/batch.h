@@ -3,6 +3,7 @@
 
 #include "buffer.h"
 #include "logistic_regression.h"
+#include "linear_regression.h"
 #include "enc_gwas.h"
 
 #ifdef NON_OE
@@ -32,7 +33,7 @@ class Batch {
     size_t row_size;
 
    public:
-    Batch(size_t _row_size, Row_T row_type, Log_gwas* _gwas);
+    Batch(size_t _row_size, Row_T row_type, GWAS* _gwas);
     ~Batch() { 
         delete row; 
         delete plaintxt;

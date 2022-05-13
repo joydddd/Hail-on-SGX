@@ -10,8 +10,7 @@ enclave {
         public void setup_enclave_phenotypes(const int num_threads);
 
         public void log_regression(const int thread_id);
-        // public void linear_regression_beta();
-        // public void linear_regression_t_stat();
+        public void linear_regression(const int thread_id);
     };
 
     untrusted {

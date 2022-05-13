@@ -4,90 +4,11 @@
 
 #include "logistic_regression.h"
 
-double read_entry_int(std::string &entry) {
-    double ans;
-    try {
-        ans = std::stoi(entry);
-    } catch (std::invalid_argument &error) {
-        if (entry == "true" || entry == "True") {
-            ans = 1;
-        } else if (entry == "false" || entry == "False") {
-            ans = 0;
-        } else if (entry == "NA") {
-            ans = nan("");
-        } else {
-            throw ReadtsvERROR("invalid int entry " + entry);
-        }
-    }
-    return ans;
-}
-
-double max(std::vector<double>& vec) {
-    double max = -std::numeric_limits<double>::infinity();
-    for (auto x : vec) {
-        if (x >= max) max = x;
-    }
-    return max;
-}
-
-bool read_entry_bool(std::string& entry) {
-    bool ans;
-    try {
-        int ans_int = stoi(entry);
-        if (ans_int == 0) ans = false;
-        if (ans_int == 1) ans = true;
-    } catch (std::invalid_argument &error) {
-        if (entry == "true" || entry == "True") {
-            ans = true;
-        } else if (entry == "false" || entry == "False") {
-            ans = false;
-        } else {
-            throw ReadtsvERROR("invalid bool entry " + entry);
-        }
-    }
-    return ans;
-}
-
-#ifdef DEBUG
-void Log_gwas::print() const {
-    cout << "y:";
-    for (auto xx : y.data) cout << "\t" << xx;
-    cout << endl;
-}
-#endif
-
-void Log_var::read(std::istream &is) {
-    std::vector<std::string> parts;
-    std::string line;
-    getline(is, line);
-    split_delim(line.c_str(), parts);
-    if (parts.size() != 2) throw ReadtsvERROR("invalid line " + line);
-    name_str = line[1];
-    while (getline(is, line)) {
-        parts.clear();
-        split_delim(line.c_str(), parts);
-        if (parts.size() != 2) throw ReadtsvERROR("invalid line " + line);
-        data.push_back((int)read_entry_bool(parts[1]));
-    }
-    n = data.size();
-}
-
-void Log_var::combine(Log_var &other) {
-    if (name() != other.name() && name() != "NA" && other.name() != "NA")
-        throw CombineERROR("covariant/y name mismatch");
-    n += other.n;
-    data.reserve(n);
-    for (auto x : other.data) {
-        data.push_back(x);
-    }
-    if (name_str == "NA") name_str = other.name_str;
-}
-
 /////////////////////////////////////////////////////////////
 //////////              Log_row             /////////////////
 /////////////////////////////////////////////////////////////
 
-Log_row::Log_row(size_t size, Log_gwas* _gwas) : Row(size), gwas(_gwas) {
+Log_row::Log_row(size_t size, GWAS* _gwas) : Row(size), gwas(_gwas) {
     beta_delta.resize(gwas->dim());
     // 2 is a magic number that helps with SqrMatrix construction, "highest level matrix"
     H = SqrMatrix(gwas->dim(), 2);
