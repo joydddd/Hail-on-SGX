@@ -118,14 +118,10 @@ void Lin_row::fit() {
 
     sse = sse / (n - gwas->dim() - 1);
     for (int j = 0; j < gwas->dim(); ++j){
-        SSE[j] = sqrt(sse*(*XTX.t)[j][j]);
+        SSE[j] = sse*(*XTX.t)[j][j];
     } 
 }
 
-double Lin_row::t_stat() { 
-    double t = 0;
-    for (int j = 0; j < gwas->dim(); ++j){
-        t += beta[j] / SSE[j];
-    }
-    return sqrt(t);
+double Lin_row::t_stat() {
+    return beta[0] / sqrt(SSE[0]);
 }
