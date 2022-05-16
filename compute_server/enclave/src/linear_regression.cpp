@@ -6,6 +6,9 @@
 
 #include "linear_regression.h"
 
+// DEBUG:
+#include <iostream>
+
 Lin_row::Lin_row(size_t _size, GWAS* _gwas)
     : Row(_size), gwas(_gwas), XTX(gwas->dim(), 2), XTX_og(gwas->dim(), 2) {
     beta.resize(gwas->dim());
@@ -26,7 +29,7 @@ Lin_row::Lin_row(size_t _size, GWAS* _gwas)
         for (int j = 1; j < gwas->dim(); ++j) {  // starting from second row
             XTY_og[j] += gwas->covariants[j - 1].data[i] * y;
             for (int k = 1; k <= j; ++k){
-                XTX_og[j][k] = gwas->covariants[j - 1].data[i] *
+                XTX_og[j][k] += gwas->covariants[j - 1].data[i] *
                                gwas->covariants[k - 1].data[i];
             }
         }
@@ -40,6 +43,9 @@ Lin_row::Lin_row(size_t _size, GWAS* _gwas)
 }
 
 void Lin_row::init() {
+}
+
+void Lin_row::fit() {
     for (int i = 0; i < gwas->dim(); i++) {
         beta[i] = 0;
         XTY[i] = XTY_og[i];
@@ -47,9 +53,6 @@ void Lin_row::init() {
             XTX[i][j] = XTX_og[i][j];
         }
     }
-}
-
-void Lin_row::fit() {
     /* calculate XTX & XTY*/
     size_t client_idx = 0, data_idx = 0;
     for (int i = 0; i < n; ++i) {
@@ -92,6 +95,8 @@ void Lin_row::fit() {
 
     /* calculate standard error */
     double sse = 0;
+    client_idx = 0;
+    data_idx = 0;
     for (int i = 0; i < n; ++i) {
         uint8_t x = data[client_idx][data_idx];
         double y = gwas->y.data[i];

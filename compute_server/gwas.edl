@@ -1,7 +1,7 @@
 enclave {
     from "openenclave/edl/syscall.edl" import *;
     from "platform.edl" import *;
-    include "server_type.h"
+    include "../../shared/include/server_type.h"
     include "buffer_size.h"
 
     trusted {

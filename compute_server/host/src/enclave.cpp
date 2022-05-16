@@ -222,31 +222,46 @@ exit:
 
 #else
 
+
 int start_enclave() {
-    int ret;
+    int ret = 1;
 
     try {
         std::cout << "\n\n**RUNNING LOG REGRESSION**\n\n";
 
-        int num_threads = ComputeServer::get_num_threads();
+        // int num_threads = ComputeServer::get_num_threads();
+        // DEBUG
+        int num_threads = 1;
         boost::thread_group thread_group;
         for (int thread_id = 0; thread_id < num_threads; ++thread_id) {
-            std::cout << " thread_id " << thread_id << std::endl;
+            // TODO: linear_regression
             boost::thread* enclave_thread =
-                new boost::thread(log_regression, thread_id);
+                new boost::thread(linear_regression, thread_id);
+            // boost::thread* enclave_thread = new boost::thread(log_regression,
+            // enclave, thread_id);
             thread_group.add_thread(enclave_thread);
         }
 
-        setup_enclave(num_threads);
+        setup_enclave_encryption(num_threads);
+
+        // Allow for data to be encrypted beforehand
+        for (int client_id = 0; client_id < getclientnum(); ++client_id) {
+            char tmp[ENCLAVE_READ_BUFFER_SIZE];
+            while (!gety(client_id, tmp)) {
+            }
+        }
 
         auto start = std::chrono::high_resolution_clock::now();
+
+        setup_enclave_phenotypes(num_threads);
         thread_group.join_all();
-        // DEBUG: total execution time
+        ComputeServer::clean_up_output();
+
         auto stop = std::chrono::high_resolution_clock::now();
         std::cout << "Logistic regression finished!" << std::endl;
-        auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
+        auto duration =
+            std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
         std::cout << "Enclave time total: " << duration.count() << std::endl;
-
         ComputeServer::print_timings();
     } catch (ERROR_t& err) {
         std::cerr << "ERROR: " << err.msg << std::endl << std::flush;
@@ -255,8 +270,8 @@ int start_enclave() {
     ret = 0;
 
 exit:
-
     return ret;
 }
+
 
 #endif
