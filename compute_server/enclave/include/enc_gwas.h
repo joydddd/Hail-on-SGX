@@ -1,5 +1,6 @@
 #ifndef GWAS_ENCLAVE_H
 #define GWAS_ENCLAVE_H
+#include <limits>
 #include <limits.h>
 
 #include <cmath>
