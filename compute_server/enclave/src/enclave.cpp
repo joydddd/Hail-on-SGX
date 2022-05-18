@@ -108,7 +108,7 @@ void setup_enclave_phenotypes(const int num_threads) {
             gwas_y.combine(new_y);
         }
         delete[] y_buffer;
-        std::cout << "Y value loaded" << std::endl;
+        //std::cout << "Y value loaded" << std::endl;
     } 
     catch (ERROR_t& err) {
         std::cerr << "ERROR: fail to get correct y values" << err.msg << std::endl;
@@ -152,7 +152,7 @@ void setup_enclave_phenotypes(const int num_threads) {
             gwas->add_covariant(cov_var);
         }
         delete[] cov_buffer;
-        std::cout << "GWAS setup finished" << std::endl;
+        //std::cout << "GWAS setup finished" << std::endl;
     }
     catch (ERROR_t& err) {
         std::cerr << "ERROR: fail to get correct covariant values: " << err.msg << std::endl;
@@ -163,7 +163,7 @@ void setup_enclave_phenotypes(const int num_threads) {
     for (int thread_id = 0; thread_id < num_threads; ++thread_id) {
         buffer_list[thread_id] = new Buffer(gwas, total_row_size, LOG_t, num_clients, thread_id);
     }
-    std::cout << "Buffer initialized" << std::endl;
+    //std::cout << "Buffer initialized" << std::endl;
 
     /* set up encrypted size */
     int total_crypto_size = 0;
@@ -172,12 +172,12 @@ void setup_enclave_phenotypes(const int num_threads) {
         while(!size) {
             get_encrypted_x_size(&size, i);
         }
-        std::cout << "client " << i << " crypto size: " << size << std::endl;
+        //std::cout << "client " << i << " crypto size: " << size << std::endl;
         client_info_list[i].crypto_size = size;
         total_crypto_size += size;
     }
-    // Add padding for Loci + Allele
-    total_crypto_size += 25 + (num_clients * 2);
+    // Add padding for Loci + Allele and list of clients
+    total_crypto_size += MAX_LOCI_ALLELE_STR_SIZE + (num_clients * 2);
 
     int max_batch_lines = ENCLAVE_READ_BUFFER_SIZE / total_crypto_size;
     if (!max_batch_lines) {
