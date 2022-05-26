@@ -22,7 +22,7 @@ DEBUGOBJECTS := $(patsubst $(SRCDIR)/%,$(BUILDDIR)/%,$(SOURCES:.cpp=_debug.o))
 
 NONOEOBJECTS = $(patsubst $(SRCDIR)/%,$(BUILDDIR)/%,$(SOURCES:.cpp=_nonoe.o))
 NONOEOBJECTS += $(shell find $(SHAREDBUILDDIR) -type f -name *.o)
-CXX_NONENC_FLAGS = -std=c++14 -pedantic
+CXX_NONENC_FLAGS = -std=c++14 -pedantic -lmbedtls -lmbedcrypto -g3
 INC := -I ../../shared/include -I .. -pthread -I include -I .
 CRYPTFLAG := -lcryptopp
 CURLFLAG := -lcurl
@@ -110,7 +110,7 @@ clean:
 	rm -rf ${BUILDDIR}
 	rm -f $(PROJECTNAME)host $(PROJECTNAME)host.o $(PROJECTNAME)_u.o $(PROJECTNAME)_u.c $(PROJECTNAME)_u.h $(PROJECTNAME)_args.h $(PROJECTNAME).signed
 	rm -f *.o $(TESTS) *.out *_debug test_*
-	rm *_nonoe
+	rm -f *_nonoe
 
 # Generic rules for compiling a source file to an non oe object file
 ${BUILDDIR}/%_nonoe.o: ${SRCDIR}/%.cpp

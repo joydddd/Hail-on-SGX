@@ -103,6 +103,16 @@ class SqrMatrix{
         }
     }
 
+    void calculate_matrix_times_vec(const std::vector<double>& mult, std::vector<double>& ans){
+        if (mult.size() != n) throw MathError("Matrix Vector dim mismatch"); 
+        for (size_t i=0; i<n;i++){
+            ans[i] = 0;
+            for (size_t j = 0; j < n; j++) {
+                ans[i] += m[i][j] * mult[j];
+            }
+        }
+    }
+
     #ifdef DEBUG
     friend ostream& operator<<(ostream& os, const SqrMatrix& matrix){
         for (auto &row:matrix.m){

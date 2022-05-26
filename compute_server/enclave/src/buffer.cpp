@@ -110,7 +110,7 @@ void Buffer::decrypt_line(char* plaintxt, size_t* plaintxt_length, unsigned int 
     *plaintxt_length = plaintxt_head - plaintxt;
 }
 
-Buffer::Buffer(Log_gwas* _gwas, size_t _row_size, Row_T row_type, int num_clients, int _thread_id)
+Buffer::Buffer(GWAS* _gwas, size_t _row_size, Row_T row_type, int num_clients, int _thread_id)
     : row_size(_row_size), type(row_type), thread_id(_thread_id) {
     
     free_batch = new Batch(row_size, type, _gwas);

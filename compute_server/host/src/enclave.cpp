@@ -153,6 +153,8 @@ int start_enclave() {
     if (ComputeServer::get_mode() == simulate) flags |= OE_ENCLAVE_FLAG_SIMULATE;
     if (ComputeServer::get_mode() == debug) flags |= OE_ENCLAVE_FLAG_DEBUG;
 
+    EncAnalysis enc_analysis_type = ComputeServer::get_analysis();
+
     // Create the enclave
     result = oe_create_gwas_enclave("../enclave/gwasenc.signed", OE_ENCLAVE_TYPE_AUTO, flags, NULL,
                                     0, &enclave);
@@ -163,12 +165,25 @@ int start_enclave() {
     }
 
     try {
-        std::cout << "\n\n**RUNNING LOG REGRESSION**\n\n";
+        std::cout << "\n\n**RUNNING REGRESSION**\n\n";
 
         int num_threads = ComputeServer::get_num_threads();
         boost::thread_group thread_group;
         for (int thread_id = 0; thread_id < num_threads; ++thread_id) {
-            boost::thread* enclave_thread = new boost::thread(log_regression, enclave, thread_id);
+            boost::thread* enclave_thread;
+            switch (enc_analysis_type) {
+                case EncAnalysis::linear:
+                    enclave_thread = new boost::thread(linear_regression, enclave, thread_id);
+                    break;
+                
+                case EncAnalysis::logistic:
+                    enclave_thread = new boost::thread(log_regression, enclave, thread_id);
+                    break;
+
+                default:
+                    throw std::runtime_error("Unrecognized analysis type given.");
+
+            }
             thread_group.add_thread(enclave_thread);
         }
 
@@ -188,7 +203,7 @@ int start_enclave() {
 
         auto start = std::chrono::high_resolution_clock::now();
 
-        result = setup_enclave_phenotypes(enclave, num_threads);
+        result = setup_enclave_phenotypes(enclave, num_threads, enc_analysis_type);
         if (result != OE_OK) {
             fprintf(stderr,
                     "calling into enclave_gwas failed: result=%u (%s)\n",
@@ -220,31 +235,46 @@ exit:
 
 #else
 
+
 int start_enclave() {
-    int ret;
+    int ret = 1;
 
     try {
         std::cout << "\n\n**RUNNING LOG REGRESSION**\n\n";
 
-        int num_threads = ComputeServer::get_num_threads();
+        // int num_threads = ComputeServer::get_num_threads();
+        // DEBUG
+        int num_threads = 1;
         boost::thread_group thread_group;
         for (int thread_id = 0; thread_id < num_threads; ++thread_id) {
-            std::cout << " thread_id " << thread_id << std::endl;
+            // TODO: linear_regression
             boost::thread* enclave_thread =
-                new boost::thread(log_regression, thread_id);
+                new boost::thread(linear_regression, thread_id);
+            // boost::thread* enclave_thread = new boost::thread(log_regression,
+            // enclave, thread_id);
             thread_group.add_thread(enclave_thread);
         }
 
-        setup_enclave(num_threads);
+        setup_enclave_encryption(num_threads);
+
+        // Allow for data to be encrypted beforehand
+        for (int client_id = 0; client_id < getclientnum(); ++client_id) {
+            char tmp[ENCLAVE_READ_BUFFER_SIZE];
+            while (!gety(client_id, tmp)) {
+            }
+        }
 
         auto start = std::chrono::high_resolution_clock::now();
+
+        setup_enclave_phenotypes(num_threads);
         thread_group.join_all();
-        // DEBUG: total execution time
+        ComputeServer::clean_up_output();
+
         auto stop = std::chrono::high_resolution_clock::now();
         std::cout << "Logistic regression finished!" << std::endl;
-        auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
+        auto duration =
+            std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
         std::cout << "Enclave time total: " << duration.count() << std::endl;
-
         ComputeServer::print_timings();
     } catch (ERROR_t& err) {
         std::cerr << "ERROR: " << err.msg << std::endl << std::flush;
@@ -253,8 +283,8 @@ int start_enclave() {
     ret = 0;
 
 exit:
-
     return ret;
 }
+
 
 #endif

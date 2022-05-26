@@ -6,11 +6,13 @@
 
 #include "gwas.h"
 #include "server_type.h"
+#include <limits>
 
 /* ECALL */
-void setup_enclave(const int num_threads);
+void setup_enclave_encryption(const int num_threads);
+void setup_enclave_phenotypes(const int num_threads, const int analysis_type);
 void log_regression(const int thread_id);
-
+void linear_regression(const int thread_id);
 
 /* OCALLs */
 void start_timer(const char func_name[ENCLAVE_READ_BUFFER_SIZE]);
@@ -18,6 +20,8 @@ void start_timer(const char func_name[ENCLAVE_READ_BUFFER_SIZE]);
 void stop_timer(const char func_name[ENCLAVE_READ_BUFFER_SIZE]);
 
 void setrsapubkey(uint8_t enc_rsa_pub_key[RSA_PUB_KEY_SIZE]);
+
+void setmaxbatchlines(int lines);
 
 void getclientnum(int* _retval);
 

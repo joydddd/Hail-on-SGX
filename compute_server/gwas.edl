@@ -1,17 +1,16 @@
 enclave {
     from "openenclave/edl/syscall.edl" import *;
     from "platform.edl" import *;
-    include "server_type.h"
+    include "../../shared/include/server_type.h"
     include "buffer_size.h"
 
     trusted {
         public void setup_enclave_encryption(const int num_threads);
 
-        public void setup_enclave_phenotypes(const int num_threads);
+        public void setup_enclave_phenotypes(const int num_threads, const int analysis_type);
 
         public void log_regression(const int thread_id);
-        // public void linear_regression_beta();
-        // public void linear_regression_t_stat();
+        public void linear_regression(const int thread_id);
     };
 
     untrusted {

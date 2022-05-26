@@ -30,13 +30,13 @@ CXXFLAGS=$(shell pkg-config oeenclave-$(CXX_COMPILER) --cflags)
 LDFLAGS=$(shell pkg-config oeenclave-$(CXX_COMPILER) --libs)
 INCDIR=$(shell pkg-config oeenclave-$(C_COMPILER) --variable=includedir)
 CRYPTO_LDFLAGS=$(shell pkg-config oeenclave-$(COMPILER) --variable=${OE_CRYPTO_LIB}libs)
-CXX_NONENC_FLAGS = -std=c++14 -pedantic
+CXX_NONENC_FLAGS = -std=c++14 -pedantic -lmbedtls -g
 
 
 BOOST_ROOT = /usr/local/lib/boost_1_76_0/
 CXXFLAGS+= -I $(BOOST_ROOT)
 CXXFLAGS+= -I ../../shared/include/ -I .. -I include -I .
-CXX_NONENC_FLAGS+= -I ../../shared/include -I .. -I include -I .
+CXX_NONENC_FLAGS+= -I ../../shared/include -I .. -I include -I . -I $(BOOST_ROOT)
 
 
 all:
