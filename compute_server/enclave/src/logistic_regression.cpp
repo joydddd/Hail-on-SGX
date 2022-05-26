@@ -79,7 +79,7 @@ void Log_row::update_beta() {
 
 void Log_row::init() {
     if (gwas->size() != n) throw CombineERROR("row length mismatch");
-    if (!b.size()) {
+    if (b.size() != n) {
         b.resize(n);
     }
     for (int i = 0; i < n; ++i) {

@@ -153,6 +153,8 @@ int start_enclave() {
     if (ComputeServer::get_mode() == simulate) flags |= OE_ENCLAVE_FLAG_SIMULATE;
     if (ComputeServer::get_mode() == debug) flags |= OE_ENCLAVE_FLAG_DEBUG;
 
+    EncAnalysis enc_analysis_type = ComputeServer::get_analysis();
+
     // Create the enclave
     result = oe_create_gwas_enclave("../enclave/gwasenc.signed", OE_ENCLAVE_TYPE_AUTO, flags, NULL,
                                     0, &enclave);
@@ -163,14 +165,25 @@ int start_enclave() {
     }
 
     try {
-        std::cout << "\n\n**RUNNING LOG REGRESSION**\n\n";
+        std::cout << "\n\n**RUNNING REGRESSION**\n\n";
 
         int num_threads = ComputeServer::get_num_threads();
         boost::thread_group thread_group;
         for (int thread_id = 0; thread_id < num_threads; ++thread_id) {
-            // TODO: linear_regression
-            boost::thread* enclave_thread = new boost::thread(linear_regression, enclave, thread_id);
-            // boost::thread* enclave_thread = new boost::thread(log_regression, enclave, thread_id);
+            boost::thread* enclave_thread;
+            switch (enc_analysis_type) {
+                case EncAnalysis::linear:
+                    enclave_thread = new boost::thread(linear_regression, enclave, thread_id);
+                    break;
+                
+                case EncAnalysis::logistic:
+                    enclave_thread = new boost::thread(log_regression, enclave, thread_id);
+                    break;
+
+                default:
+                    throw std::runtime_error("Unrecognized analysis type given.");
+
+            }
             thread_group.add_thread(enclave_thread);
         }
 
@@ -190,7 +203,7 @@ int start_enclave() {
 
         auto start = std::chrono::high_resolution_clock::now();
 
-        result = setup_enclave_phenotypes(enclave, num_threads);
+        result = setup_enclave_phenotypes(enclave, num_threads, enc_analysis_type);
         if (result != OE_OK) {
             fprintf(stderr,
                     "calling into enclave_gwas failed: result=%u (%s)\n",

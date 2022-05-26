@@ -10,7 +10,7 @@
 
 /* ECALL */
 void setup_enclave_encryption(const int num_threads);
-void setup_enclave_phenotypes(const int num_threads);
+void setup_enclave_phenotypes(const int num_threads, const int analysis_type);
 void log_regression(const int thread_id);
 void linear_regression(const int thread_id);
 

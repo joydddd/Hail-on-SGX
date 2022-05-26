@@ -65,6 +65,15 @@ void ComputeServer::init(const std::string& config_file) {
         }
     }
 
+    if (!compute_config.count("analysis_type")) {
+        throw std::runtime_error("No analysis type specified, use flag: \"analysis_type\".");
+    }
+    if (compute_config["analysis_type"] == "linear") {
+        enc_analysis = EncAnalysis::linear;
+    } else if (compute_config["analysis_type"] == "logistic") {
+        enc_analysis = EncAnalysis::logistic;
+    }
+
     server_eof = false;
     max_batch_lines = 0;
     global_id = -1;
@@ -499,6 +508,10 @@ ComputeServer* ComputeServer::get_instance(const std::string& config_file) {
 
 EncMode ComputeServer::get_mode() {
     return get_instance()->enc_mode;
+}
+
+EncAnalysis ComputeServer::get_analysis() {
+    return get_instance()->enc_analysis;
 }
 
 void ComputeServer::finish_setup() {

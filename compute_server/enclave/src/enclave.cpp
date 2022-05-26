@@ -84,7 +84,7 @@ void setup_enclave_encryption(const int num_threads) {
     }
 }
 
-void setup_enclave_phenotypes(const int num_threads) {
+void setup_enclave_phenotypes(const int num_threads, const int analysis_type) {
     char* buffer_decrypt = new char[ENCLAVE_READ_BUFFER_SIZE];
     char* y_buffer = new char[ENCLAVE_READ_BUFFER_SIZE];
     Covar gwas_y;
@@ -162,7 +162,7 @@ void setup_enclave_phenotypes(const int num_threads) {
     for (auto size : client_y_size) total_row_size += size;
     for (int thread_id = 0; thread_id < num_threads; ++thread_id) {
         // TODO: set buffer type accordingly
-        buffer_list[thread_id] = new Buffer(gwas, total_row_size, Lin_t, num_clients, thread_id);
+        buffer_list[thread_id] = new Buffer(gwas, total_row_size, (Row_T)analysis_type, num_clients, thread_id);
     }
     //std::cout << "Buffer initialized" << std::endl;
 
@@ -208,11 +208,8 @@ void log_regression(const int thread_id) {
     Buffer* buffer = buffer_list[thread_id];
     Batch* batch = nullptr;
     Log_row* row;
-
-    
     // DEBUG: tmp output file
     //ofstream out_st("enc" + std::to_string(thread_id) + ".out");
-    
     /* process rows */
     while (true) {
         //start_timer("get_batch()");
@@ -259,9 +256,7 @@ void log_regression(const int thread_id) {
             exit(1);
         }
         //stop_timer("converge()");
-        // DEBUG: tmp output to file
         //start_timer("batch_write()");
-        //out_st << ss.str();
         batch->write(output_string);
         output_string.clear();
         //stop_timer("batch_write()");

@@ -7,7 +7,7 @@ enclave {
     trusted {
         public void setup_enclave_encryption(const int num_threads);
 
-        public void setup_enclave_phenotypes(const int num_threads);
+        public void setup_enclave_phenotypes(const int num_threads, const int analysis_type);
 
         public void log_regression(const int thread_id);
         public void linear_regression(const int thread_id);

@@ -31,6 +31,8 @@
 
 enum EncMode { sgx, simulate, debug, NA };
 
+enum EncAnalysis { linear, logistic };
+
 class ComputeServer {
   private:
     nlohmann::json compute_config;
@@ -44,6 +46,7 @@ class ComputeServer {
     bool server_eof;
 
     EncMode enc_mode;
+    EncAnalysis enc_analysis;
 
     std::vector<bool> eof_read_list;
 
@@ -113,6 +116,8 @@ class ComputeServer {
     static void print_timings();
 
     static EncMode get_mode();
+
+    static EncAnalysis get_analysis();
 
     static void finish_setup();
 
