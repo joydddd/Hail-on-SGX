@@ -31,6 +31,8 @@ class RegisterServer {
 
     std::queue<ConnectionInfo> institution_info_queue;
 
+    std::ofstream output_file;
+
     // set up data structures
     void init(const std::string& config_file);
     

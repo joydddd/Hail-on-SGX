@@ -112,11 +112,11 @@ void Buffer::decrypt_line(char* plaintxt, size_t* plaintxt_length, unsigned int 
 
 Buffer::Buffer(GWAS* _gwas, size_t _row_size, Row_T row_type, int num_clients, int _thread_id)
     : row_size(_row_size), type(row_type), thread_id(_thread_id) {
-    
+
     free_batch = new Batch(row_size, type, _gwas);
     client_list = new int[num_clients];
     client_crypto_map = new char* [num_clients];
-
+    output_tail = 0;
 }
 
 Buffer::~Buffer() {
@@ -127,7 +127,7 @@ Buffer::~Buffer() {
 
 void Buffer::output(const char* out, const size_t& length) {
     if (output_tail + length >= ENCLAVE_OUTPUT_BUFFER_SIZE) {
-        writebatch(type, output_buffer, thread_id);
+        writebatch(type, output_buffer, output_tail, thread_id);
         output_tail = 0;
     }
     strcpy(output_buffer + output_tail, out);
@@ -136,7 +136,7 @@ void Buffer::output(const char* out, const size_t& length) {
 
 void Buffer::clean_up() {
     if (output_tail > 0) {
-        writebatch(type, output_buffer, thread_id);
+        writebatch(type, output_buffer, output_tail, thread_id);
     }
 }
 

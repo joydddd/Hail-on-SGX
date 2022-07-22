@@ -18,6 +18,7 @@
 #include "hashing.h"
 
 std::mutex cout_lock;
+boost::condition_variable output_queue_cv;
 
 const int MIN_BLOCK_COUNT = 50;
 
@@ -79,12 +80,10 @@ void ComputeServer::init(const std::string& config_file) {
     global_id = -1;
 
     allele_queue_list.resize(num_threads);
-    output_list.resize(num_threads);
     eof_read_list.resize(num_threads);
 
     for (int id = 0; id < num_threads; ++id) {
         eof_read_list[id] = false;
-        output_list[id].open(OUTPUT_FILE + std::to_string(id) + ".out");
     }
 
     // Also start the enclave thread.
@@ -300,16 +299,30 @@ bool ComputeServer::handle_message(int connFD, const std::string& name, ComputeS
     return true;  
 }
 
-int ComputeServer::send_msg(const std::string& name, const int mtype, const std::string& msg, int connFD) {
-    std::string message = std::to_string(global_id) + " " + std::to_string(mtype) + " ";
-    message = std::to_string(message.length() + msg.length()) + "\n" + message + msg;
-    return send_message(institutions[name]->hostname.c_str(), institutions[name]->port, message.c_str(), message.length(), connFD);
-}
-
 int ComputeServer::send_msg(const std::string& hostname, const int port, const int mtype, const std::string& msg, int connFD) {
     std::string message = std::to_string(global_id) + " " + std::to_string(mtype) + " ";
     message = std::to_string(message.length() + msg.length()) + "\n" + message + msg;
-    return send_message(hostname.c_str(), port, message.c_str(), message.length(), connFD);
+    return send_message(hostname.c_str(), 
+                        port, 
+                        message.c_str(), 
+                        message.length(), 
+                        connFD);
+}
+
+int ComputeServer::send_msg(const std::string& name, const int mtype, const std::string& msg, int connFD) {
+    return send_msg(institutions[name]->hostname, 
+                    institutions[name]->port, 
+                    mtype, 
+                    msg, 
+                    connFD);
+}
+
+int ComputeServer::send_msg_output(const std::string& msg, int connFD) {
+    return send_msg(compute_config["register_server_info"]["hostname"], 
+                    compute_config["register_server_info"]["port"], 
+                    RegisterServerMessageType::OUTPUT,
+                    msg,
+                    connFD);
 }
 
 void ComputeServer::check_in(const std::string& name) {
@@ -335,6 +348,10 @@ void ComputeServer::check_in(const std::string& name) {
         // Now that all institutions are registered, start up the allele matching thread.
         boost::thread msg_thread(&ComputeServer::allele_matcher, this);
         msg_thread.detach();
+
+        // And now start up the thread to send out our results to the register server.
+        boost::thread output_thread(&ComputeServer::output_sender, this);
+        output_thread.detach();
     }
 }
 
@@ -425,6 +442,16 @@ void ComputeServer::allele_matcher() {
         }
     }
 }
+
+void ComputeServer::output_sender() {
+    std::string output_str;
+    while(true) {
+        // output_queue_cv wait(nullptr);
+        if (output_queue.try_dequeue(output_str)) {
+            send_msg_output(output_str);
+        }
+    }
+} 
 
 void ComputeServer::parse_header_compute_server_header(const std::string& header, std::string& msg, 
                                                        std::string& client_name, ComputeServerMessageType& mtype) {
@@ -545,7 +572,6 @@ void ComputeServer::print_timings() {
 
 void ComputeServer::set_max_batch_lines(unsigned int lines) {
     get_instance()->max_batch_lines = lines;
-    //get_instance()->max_batch_lines = 4;
 }
 
 uint8_t* ComputeServer::get_rsa_pub_key() {
@@ -639,13 +665,7 @@ int ComputeServer::get_allele_data(char* batch_data, const int thread_id) {
     return num_lines;
 }
 
-void ComputeServer::write_allele_data(char* output_data, const int thread_id) {
-    get_instance()->output_list[thread_id] << output_data;
-}
-
-void ComputeServer::clean_up_output() {
-    for (std::ofstream& out_file : get_instance()->output_list) {
-        out_file.flush();
-        out_file.close();
-    }
+void ComputeServer::write_allele_data(char* output_data, const int buffer_size, const int thread_id) {
+    get_instance()->output_queue.enqueue(std::string(output_data));
+    //output_queue_cv.notify_one();
 }

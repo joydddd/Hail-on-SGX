@@ -17,6 +17,7 @@
 #include <netdb.h>
 
 std::mutex cout_lock;
+std::mutex output_lock;
 
 RegisterServer::RegisterServer(const std::string& config_file) {
     init(config_file);
@@ -31,6 +32,7 @@ void RegisterServer::init(const std::string& config_file) {
     register_config_file >> register_config;
     port = register_config["register_server_bind_port"];
     compute_server_count = register_config["compute_server_count"];
+    output_file.open(register_config["output_file_name"]);
 }
 
 void RegisterServer::run() {
@@ -115,8 +117,9 @@ bool RegisterServer::start_thread(int connFD) {
         }
         std::string header(header_buffer, header_size);
         unsigned int body_size = std::stoi(header);
-        
+
         char body_buffer[MAX_MESSAGE_SIZE];
+        
         if (body_size != 0) {
             // read in encrypted body
             int rval = recv(connFD, body_buffer, body_size, MSG_WAITALL);
@@ -130,8 +133,7 @@ bool RegisterServer::start_thread(int connFD) {
 
         guarded_cout("ID/Client: " + parsed_header[0] + 
                      " Msg Type: " + parsed_header[1], cout_lock);
-        guarded_cout("\nEncrypted body:\n" + parsed_header[2], cout_lock);
-
+        //guarded_cout("\nEncrypted body:\n" + parsed_header[2], cout_lock);
         handle_message(connFD, static_cast<RegisterServerMessageType>(std::stoi(parsed_header[1])), parsed_header[2]);
     }
     catch (const std::runtime_error e)  {
@@ -144,7 +146,6 @@ bool RegisterServer::start_thread(int connFD) {
 
 bool RegisterServer::handle_message(int connFD, RegisterServerMessageType mtype, std::string& msg) {
     std::string response;
-    //ClientMessageType response_mtype;
 
     switch (mtype) {
         case COMPUTE_REGISTER:
@@ -189,6 +190,16 @@ bool RegisterServer::handle_message(int connFD, RegisterServerMessageType mtype,
                 // If we have already recieved all compute server info, no need to wait!
                 send_msg(institution_info.hostname, institution_info.port, ClientMessageType::COMPUTE_INFO, serialized_server_info);
             }
+            break;
+        }
+        case OUTPUT:
+        {
+            //std::cout << msg << std::endl;// << " " << msg.front() << " " << msg.size() << std::endl;
+            output_lock.lock();
+            output_file << msg;
+            output_file.flush();
+            output_lock.unlock();
+            //std::cout << msg << std::endl;
             break;
         }
         default:

@@ -26,6 +26,7 @@
 #include "aes-crypto.h"
 #include "buffer_size.h"
 #include "readerwriterqueue.h"
+#include "concurrentqueue.h"
 
 #define OUTPUT_FILE "gwasoutput/writeback"
 
@@ -54,7 +55,7 @@ class ComputeServer {
     std::unordered_set<std::string> expected_covariants;
     std::vector<std::string> institution_list;
     std::vector<moodycamel::ReaderWriterQueue<std::string>> allele_queue_list;
-    std::vector<std::ofstream> output_list;
+    moodycamel::ConcurrentQueue<std::string> output_queue;
     std::string covariant_list;
     std::string y_val_name;
     char* encrypted_aes_key;
@@ -83,6 +84,7 @@ class ComputeServer {
     // construct response header, encrypt response body, and send
     int send_msg(const std::string& name, const int mtype, const std::string& msg, int connFD=-1);
     int send_msg(const std::string& hostname, const int port, const int mtype, const std::string& msg, int connFD=-1);
+    int send_msg_output(const std::string& msg, int connFD=-1);
 
     // start a thread that will handle a message and exit properly if it finds an error
     bool start_thread(int connFD);
@@ -94,6 +96,8 @@ class ComputeServer {
     void data_listener(int connFD);
 
     void allele_matcher();
+
+    void output_sender();
 
     void parse_header_compute_server_header(const std::string& header, std::string& msg,
                                             std::string& client_name, ComputeServerMessageType& mtype);
@@ -143,9 +147,7 @@ class ComputeServer {
 
     static int get_allele_data(char* batch_data, const int thread_id);
 
-    static void write_allele_data(char* output_data, const int thread_id);
-
-    static void clean_up_output();
+    static void write_allele_data(char* output_data, const int buffer_size, const int thread_id);
 };
 
 #endif /* _SERVER_H_ */

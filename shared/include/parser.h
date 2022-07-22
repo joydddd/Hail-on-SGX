@@ -5,56 +5,17 @@
 #ifndef _PARSER_H_
 #define _PARSER_H_
 
-#include <vector>
 #include <tuple>
 #include <unordered_map>
 #include <assert.h>
 #include <cctype>
 #include <climits>
-#include <string>
 #include <stdexcept>
 #include <utility>
 
 #include "aes-crypto.h"
 #include "buffer_size.h"
-
-enum ClientMessageType {
-  COMPUTE_INFO,
-  RSA_PUB_KEY,
-  Y_AND_COV,
-  DATA_REQUEST
-};
-
-enum ComputeServerMessageType {
-    GLOBAL_ID, 
-    REGISTER,
-    AES_KEY,
-    COVARIANT,
-    Y_VAL,
-    DATA,
-    EOF_DATA
-};
-
-enum RegisterServerMessageType {
-  COMPUTE_REGISTER,
-  CLIENT_REGISTER
-};
-
-struct ConnectionInfo {
-  std::string hostname;
-  unsigned int port;
-  unsigned int num_threads; // only for compute server
-};
-
-struct DataBlock {
-  std::string locus;
-  std::string data;
-};
-
-struct DataBlockBatch {
-  std::vector<DataBlock*> blocks_batch;
-  int pos;
-};
+#include "communication.h"
 
 class Parser {
   private:

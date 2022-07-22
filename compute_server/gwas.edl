@@ -67,6 +67,7 @@ enclave {
         void writebatch(
             enum Row_T type, 
             [in] char buffer[ENCLAVE_OUTPUT_BUFFER_SIZE],
+            const int buffer_size,
             const int thread_id);
     };
 };

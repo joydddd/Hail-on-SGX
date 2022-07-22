@@ -99,20 +99,12 @@ int get_encrypted_x_size(const int client_num) {
 }
 
 int getbatch(char batch[ENCLAVE_READ_BUFFER_SIZE], const int thread_id) {
-    // TODO: maybe change this so we read in a diff number for each 
-    // std::string batch_data; 
-    //char batch_data[ENCLAVE_READ_BUFFER_SIZE];
     int num_lines = ComputeServer::get_allele_data(batch, thread_id);
-    // if (num_lines) {
-    //     std::strcpy(batch, &batch_data[0]);
-    // }
-    //std::cout << batch << std::endl;
-
     return num_lines;
 }
 
-void writebatch(Row_T type, char buffer[ENCLAVE_OUTPUT_BUFFER_SIZE], const int thread_id) {
-    ComputeServer::write_allele_data(buffer, thread_id);
+void writebatch(Row_T type, char buffer[ENCLAVE_OUTPUT_BUFFER_SIZE], const int buffer_size, const int thread_id) {
+    ComputeServer::write_allele_data(buffer, buffer_size, thread_id);
 }
 
 bool check_simulate_opt(int* argc, const char* argv[]) {
@@ -213,7 +205,6 @@ int start_enclave() {
 
         
         thread_group.join_all();
-        ComputeServer::clean_up_output();
 
         auto stop = std::chrono::high_resolution_clock::now();
         std::cout << "Logistic regression finished!" << std::endl;

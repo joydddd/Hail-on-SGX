@@ -232,12 +232,12 @@ void log_regression(const int thread_id) {
         // compute results
         loci_to_str(row->getloci(), loci_string);
         alleles_to_str(row->getalleles(), alleles_string);
-        output_string += loci_string + "\t" + alleles_string;
+        output_string += loci_string + " " + alleles_string;
         bool converge = true;
         //start_timer("converge()");
         try {
             converge = row->fit(change, old_beta);
-            output_string += "\t" + std::to_string(row->output_first_beta_element()) + "\t" + std::to_string(row->t_stat()) + "\t";
+            output_string += " " + std::to_string(row->output_first_beta_element()) + " " + std::to_string(row->t_stat()) + " ";
             // wanted to use a ternary, but the compiler doesn't like it?
             if (converge) {
                 output_string += "true";
