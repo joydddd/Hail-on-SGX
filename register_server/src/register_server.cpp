@@ -197,9 +197,17 @@ bool RegisterServer::handle_message(int connFD, RegisterServerMessageType mtype,
             //std::cout << msg << std::endl;// << " " << msg.front() << " " << msg.size() << std::endl;
             output_lock.lock();
             output_file << msg;
-            output_file.flush();
             output_lock.unlock();
             //std::cout << msg << std::endl;
+            break;
+        }
+        case EOF_OUTPUT:
+        {
+            std::cout << "Recieved last message: "  << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count() << "\n";
+            output_lock.lock();
+            output_file.flush();
+            output_file.close();
+            output_lock.unlock();
             break;
         }
         default:

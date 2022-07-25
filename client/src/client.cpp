@@ -144,9 +144,6 @@ bool Client::start_thread(int connFD) {
 }
 
 void Client::handle_message(int connFD, const unsigned int global_id, const ClientMessageType mtype, std::string& msg) {
-    // if (sent_all_data) {
-    //     return;
-    // }
 
     std::string response;
     ComputeServerMessageType response_mtype;
@@ -254,6 +251,7 @@ void Client::handle_message(int connFD, const unsigned int global_id, const Clie
             std::string block = std::to_string(blocks_sent++) + "\t";
             std::string line;
 
+            std::cout << "Sending first message: "  << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count() << "\n";
             while (allele_queue.try_dequeue(line)) {
                 if ((block.length() + line.length() + 30) >= MAX_MESSAGE_SIZE) {
                     // Remove trailing '\t'

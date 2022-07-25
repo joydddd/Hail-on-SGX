@@ -18,6 +18,11 @@
 #include "hashing.h"
 
 std::mutex cout_lock;
+
+// This lock does nothing - we really want a "signal" without the complexity of condition variables,
+// but I cannot seem to find this feature in C/C++.
+boost::mutex useless_lock;
+boost::unique_lock<boost::mutex> useless_lock_wrapper(useless_lock);
 boost::condition_variable output_queue_cv;
 
 const int MIN_BLOCK_COUNT = 50;
@@ -320,7 +325,7 @@ int ComputeServer::send_msg(const std::string& name, const int mtype, const std:
 int ComputeServer::send_msg_output(const std::string& msg, int connFD) {
     return send_msg(compute_config["register_server_info"]["hostname"], 
                     compute_config["register_server_info"]["port"], 
-                    RegisterServerMessageType::OUTPUT,
+                    msg != EOFSeperator ? RegisterServerMessageType::OUTPUT : RegisterServerMessageType::EOF_OUTPUT,
                     msg,
                     connFD);
 }
@@ -433,6 +438,7 @@ void ComputeServer::allele_matcher() {
             
             // For the first line we want to calculate the max number of lines per batch
             if (first) {
+                std::cout << "Recieved first message: "  << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count() << "\n";
                 start = std::chrono::high_resolution_clock::now();
                 first = false;
             }
@@ -446,8 +452,9 @@ void ComputeServer::allele_matcher() {
 void ComputeServer::output_sender() {
     std::string output_str;
     while(true) {
-        // output_queue_cv wait(nullptr);
-        if (output_queue.try_dequeue(output_str)) {
+        // This wait -> signal system seriously improves performance as it reduces busy waiting
+        output_queue_cv.wait(useless_lock_wrapper);
+        while (output_queue.try_dequeue(output_str)) {
             send_msg_output(output_str);
         }
     }
@@ -667,5 +674,10 @@ int ComputeServer::get_allele_data(char* batch_data, const int thread_id) {
 
 void ComputeServer::write_allele_data(char* output_data, const int buffer_size, const int thread_id) {
     get_instance()->output_queue.enqueue(std::string(output_data));
-    //output_queue_cv.notify_one();
+    output_queue_cv.notify_one();
+}
+
+void ComputeServer::cleanup_output() {
+    std::cout << "Sending last message: "  << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count() << "\n";
+    get_instance()->send_msg_output(EOFSeperator);
 }

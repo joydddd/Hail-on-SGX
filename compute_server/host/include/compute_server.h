@@ -148,6 +148,8 @@ class ComputeServer {
     static int get_allele_data(char* batch_data, const int thread_id);
 
     static void write_allele_data(char* output_data, const int buffer_size, const int thread_id);
+
+    static void cleanup_output();
 };
 
 #endif /* _SERVER_H_ */

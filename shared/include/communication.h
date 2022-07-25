@@ -24,7 +24,8 @@ enum ComputeServerMessageType {
 enum RegisterServerMessageType {
   COMPUTE_REGISTER,
   CLIENT_REGISTER,
-  OUTPUT
+  OUTPUT,
+  EOF_OUTPUT
 };
 
 struct ConnectionInfo {

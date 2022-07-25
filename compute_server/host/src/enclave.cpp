@@ -210,6 +210,7 @@ int start_enclave() {
         std::cout << "Logistic regression finished!" << std::endl;
         auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
         std::cout << "Enclave time total: " << duration.count() << std::endl;
+        ComputeServer::cleanup_output();
         ComputeServer::print_timings();
     } catch (ERROR_t& err) {
         std::cerr << "ERROR: " << err.msg << std::endl << std::flush;
