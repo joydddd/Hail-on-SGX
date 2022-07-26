@@ -131,10 +131,13 @@ bool RegisterServer::start_thread(int connFD) {
         std::vector<std::string> parsed_header;
         Parser::split(parsed_header, encrypted_body, ' ', 2);
 
-        guarded_cout("ID/Client: " + parsed_header[0] + 
-                     " Msg Type: " + parsed_header[1], cout_lock);
+        RegisterServerMessageType type = static_cast<RegisterServerMessageType>(std::stoi(parsed_header[1]));
+        if (type != RegisterServerMessageType::OUTPUT) {
+            guarded_cout("ID/Client: " + parsed_header[0] + 
+                         " Msg Type: " + parsed_header[1], cout_lock);
+        }
         //guarded_cout("\nEncrypted body:\n" + parsed_header[2], cout_lock);
-        handle_message(connFD, static_cast<RegisterServerMessageType>(std::stoi(parsed_header[1])), parsed_header[2]);
+        handle_message(connFD, type, parsed_header[2]);
     }
     catch (const std::runtime_error e)  {
         guarded_cout("Exception " + std::string(e.what()) + "\n", cout_lock);
@@ -194,11 +197,9 @@ bool RegisterServer::handle_message(int connFD, RegisterServerMessageType mtype,
         }
         case OUTPUT:
         {
-            //std::cout << msg << std::endl;// << " " << msg.front() << " " << msg.size() << std::endl;
             output_lock.lock();
             output_file << msg;
             output_lock.unlock();
-            //std::cout << msg << std::endl;
             break;
         }
         case EOF_OUTPUT:
@@ -206,7 +207,6 @@ bool RegisterServer::handle_message(int connFD, RegisterServerMessageType mtype,
             std::cout << "Recieved last message: "  << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count() << "\n";
             output_lock.lock();
             output_file.flush();
-            output_file.close();
             output_lock.unlock();
             break;
         }
