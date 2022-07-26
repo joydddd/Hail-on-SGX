@@ -19,6 +19,8 @@ static std::vector<ClientInfo> client_info_list;
 static std::vector<int> client_y_size;
 static int num_clients;
 static GWAS* gwas;
+
+std::condition_variable start_thread_cv;
 static volatile bool start_thread = false;
 
 void setup_enclave_encryption(const int num_threads) {
@@ -189,6 +191,7 @@ void setup_enclave_phenotypes(const int num_threads, const int analysis_type) {
 
     std::cout << "Setup finished\n";
     start_thread = true;
+    start_thread_cv.notify_all();
 }
 
 void log_regression(const int thread_id) {
@@ -198,9 +201,12 @@ void log_regression(const int thread_id) {
     output_string.reserve(50);
     loci_string.reserve(50);
     alleles_string.reserve(20);
+
+    std::mutex useless_lock;
+    std::unique_lock<std::mutex> useless_lock_wrapper(useless_lock);
     // experimental - checking to see if spinning up threads adds a noticable amount of overhead... need +1 TCS in config
     while(!start_thread) {
-        // spin until ready to go!
+        start_thread_cv.wait(useless_lock_wrapper);
     }
     std::vector<double> change(gwas->dim());
     std::vector<double> old_beta(gwas->dim());
