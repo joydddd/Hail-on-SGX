@@ -331,7 +331,7 @@ void Client::data_sender(int connFD) {
 }
 
 void Client::prepare_tsv_file(unsigned int global_id, const std::string& filename, ComputeServerMessageType mtype) {
-    std::ifstream tsv_file(filename + ".tsv");
+    std::ifstream tsv_file("client_data/" + filename + ".tsv");
     std::string data;
     // TODO: fix this code once Joy's enclave can handle a different format
     std::string line;
