@@ -1,4 +1,7 @@
 import random
+import scipy.stats
+
+random.seed('0x8BADF00D')
 
 def weighted_random_by_dct(dct):
     rand_val = random.random()
@@ -10,17 +13,32 @@ def weighted_random_by_dct(dct):
     assert False, 'unreachable'
 
 isFemale_odds = {'0': .5, '1': .5}
+age_odds = dict()
 
-age_odds = {}
+age_ranges = [[[18,19], .0288], [[20,24], .067], [[25,34], .142], [[35,44], .16], [[45,54], .134], [[55,59], .048], [[60,64], .038], [[65,74], .065]]#, [[75,84],.044], [[85,100], .015]]
 
-BMI_odds = {}
+for age_range in age_ranges:
+    first_age = age_range[0][0]
+    second_age = age_range[0][1]
+    dist_prob = age_range[1] / (second_age - first_age + 1)
+    for age in range(first_age, second_age + 1):
+        age_odds[age] = dist_prob
+
+age_sum = 0
+for age in age_odds:
+    age_sum += age_odds[age]
+
+for age in age_odds:
+    age_odds[age] = age_odds[age] / age_sum
+
+BMI_shape = [0, 50, 26.6, 4.527]
 
 pancCancer_odds = {'0' : 63/64, '1': 1/64}
 
 CLIENT_COUNT = 250
 
 # Phenotype: Sex
-phenotypes = [['isFemale', isFemale_odds]]
+phenotypes = [['isFemale', isFemale_odds], ['age', age_odds], ['BMI', BMI_shape]]
 
 for phenotype in phenotypes:
     name = phenotype[0]
@@ -28,4 +46,11 @@ for phenotype in phenotypes:
     with open(f'{name}.tsv', 'w') as f:
         f.write(f's\t{name}\n')
         for i in range(CLIENT_COUNT):
-            f.write(f'p {weighted_random_by_dct(odds)}\n')
+            if type(odds) == dict:
+                f.write(f'p {weighted_random_by_dct(odds)}\n')
+            else:
+                lower = odds[0]
+                upper = odds[1]
+                mu = odds[2]
+                sigma = odds[3]
+                f.write(f'p {int(scipy.stats.truncnorm.rvs((lower-mu)/sigma,(upper-mu)/sigma,loc=mu,scale=sigma,size=1)[0])}\n')
