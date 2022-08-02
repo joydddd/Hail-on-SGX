@@ -159,19 +159,16 @@ void GWAS::print() const {
 /////////////////////////////////////////////////////////
 ////////////////   Covar    /////////////////////////////
 /////////////////////////////////////////////////////////
-void Covar::read(std::istream &is) {
+void Covar::read(const char* input) {
     std::vector<std::string> parts;
-    std::string line;
-    getline(is, line);
-    split_delim(line.c_str(), parts);
-    if (parts.size() != 2) throw ReadtsvERROR("invalid line " + line);
-    name_str = line[1];
-    while (getline(is, line)) {
-        parts.clear();
-        split_delim(line.c_str(), parts);
-        if (parts.size() != 2) throw ReadtsvERROR("invalid line " + line);
-        data.push_back((int)read_entry_bool(parts[1]));
+
+    split_delim(input, parts, '\t');
+    
+    name_str = parts[0];
+    for (int i = 1; i < parts.size(); ++i) {
+        data.push_back(std::stoi(parts[i]));
     }
+    
     n = data.size();
 }
 

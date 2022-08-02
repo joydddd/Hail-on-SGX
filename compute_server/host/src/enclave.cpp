@@ -91,6 +91,7 @@ int getcov(const int client_num,
         return false;
     }
     std::memcpy(cov, &cov_data[0], cov_data.length());
+
     return cov_data.length();
 }
 

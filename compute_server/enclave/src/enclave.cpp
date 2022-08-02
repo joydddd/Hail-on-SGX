@@ -3,6 +3,7 @@
 #include <map>
 #include <fstream>
 #include <atomic>
+#include <chrono>
 
 #include "buffer.h"
 #include "crypto.h"
@@ -102,9 +103,7 @@ void setup_enclave_phenotypes(const int num_threads, const int analysis_type) {
                              (const unsigned char*) y_buffer,
                              y_buffer_size, 
                              (unsigned char*) buffer_decrypt);
-            std::stringstream y_ss(buffer_decrypt);
-            Covar new_y;
-            new_y.read(y_ss);
+            Covar new_y(buffer_decrypt);
             client_y_size[client] = new_y.size();
             client_info_list[client].size = new_y.size();
             gwas_y.combine(new_y);
@@ -138,17 +137,18 @@ void setup_enclave_phenotypes(const int num_threads, const int analysis_type) {
                     getcov(&cov_buffer_size, client, cov.c_str(), cov_buffer);
                 }
                 ClientInfo& info = client_info_list[client];
+                std::memset(buffer_decrypt, 0, ENCLAVE_READ_BUFFER_SIZE);
                 aes_decrypt_data(info.aes_list.front().aes_context,
                                 info.aes_list.front().aes_iv,
                                 (const unsigned char*) cov_buffer,
                                 cov_buffer_size, 
                                 (unsigned char*) buffer_decrypt);
-                std::stringstream cov_ss(buffer_decrypt);
-                Covar new_cov_var;
-                new_cov_var.read(cov_ss);
-                if (new_cov_var.size() != client_y_size[client])
+                Covar new_cov_var(buffer_decrypt);
+                if (new_cov_var.size() != client_y_size[client]) {
                     throw ReadtsvERROR("covariant size mismatch from client: " +
-                                    std::to_string(client));
+                                    std::to_string(client) + " with cov: " + new_cov_var.name() + 
+                                    " size expected: " + std::to_string(client_y_size[client]) + " got: " + std::to_string(new_cov_var.size()));
+                }
                 cov_var.combine(new_cov_var);
             }
             gwas->add_covariant(cov_var);
@@ -189,9 +189,9 @@ void setup_enclave_phenotypes(const int num_threads, const int analysis_type) {
     }
     setmaxbatchlines(max_batch_lines);
 
-    std::cout << "Setup finished\n";
     start_thread = true;
     start_thread_cv.notify_all();
+    std::cout << "Starting Enclave: "  << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count() << "\n";
 }
 
 void log_regression(const int thread_id) {

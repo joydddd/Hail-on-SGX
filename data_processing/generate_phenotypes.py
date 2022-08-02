@@ -3,6 +3,8 @@ import scipy.stats
 
 random.seed('0x8BADF00D')
 
+CLIENT_COUNT = 3000
+
 def weighted_random_by_dct(dct):
     rand_val = random.random()
     total = 0
@@ -33,24 +35,26 @@ for age in age_odds:
 
 BMI_shape = [0, 50, 26.6, 4.527]
 
-pancCancer_odds = {'0' : 63/64, '1': 1/64}
+pancCancer_odds = {'0' : 3/4, '1': 1/4}
 
-CLIENT_COUNT = 250
+rand_binary_weighted_odds = {'0': .9, '1': .1}
+
+rand_discrete_weighted_odds = {'1': .3, '2': .3, '3': .3, '4': .05, '5': .05}
 
 # Phenotype: Sex
-phenotypes = [['isFemale', isFemale_odds], ['age', age_odds], ['BMI', BMI_shape]]
+phenotypes = [['isFemale', isFemale_odds], ['age', age_odds], ['BMI', BMI_shape], ['pancCancer', pancCancer_odds], ['rand_binary', rand_binary_weighted_odds], ['rand_discrete', rand_discrete_weighted_odds]]
 
 for phenotype in phenotypes:
     name = phenotype[0]
     odds = phenotype[1]
-    with open(f'{name}.tsv', 'w') as f:
+    with open(f'../client/client_data/{name}.tsv', 'w') as f:
         f.write(f's\t{name}\n')
         for i in range(CLIENT_COUNT):
             if type(odds) == dict:
-                f.write(f'p {weighted_random_by_dct(odds)}\n')
+                f.write(f'p\t{weighted_random_by_dct(odds)}\n')
             else:
                 lower = odds[0]
                 upper = odds[1]
                 mu = odds[2]
                 sigma = odds[3]
-                f.write(f'p {int(scipy.stats.truncnorm.rvs((lower-mu)/sigma,(upper-mu)/sigma,loc=mu,scale=sigma,size=1)[0])}\n')
+                f.write(f'p\t{int(scipy.stats.truncnorm.rvs((lower-mu)/sigma,(upper-mu)/sigma,loc=mu,scale=sigma,size=1)[0])}\n')

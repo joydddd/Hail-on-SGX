@@ -335,15 +335,13 @@ void Client::prepare_tsv_file(unsigned int global_id, const std::string& filenam
     std::string data;
     // TODO: fix this code once Joy's enclave can handle a different format
     std::string line;
-    // // read in first line garbage
-    // getline(tsv_file, line);
 
+    std::vector<std::string> patient_and_data;
     while(getline(tsv_file, line)) {
-        //std::vector<std::string> patient_and_data = Parser::split(line, '\t');
-        //data.append(patient_and_data.back() + " ");
-        data.append(line + '\n');
+        patient_and_data.clear();
+        Parser::split(patient_and_data, line, '\t');
+        data.append(patient_and_data.back() + "\t");
     }
-    // remove extra space at end of list
     data.pop_back();
 
     // Some things are read by all threads (y values, covariants, etc.) and therefore 
@@ -357,4 +355,5 @@ void Client::prepare_tsv_file(unsigned int global_id, const std::string& filenam
     ptype.mtype = mtype;
     phenotypes_list[global_id].push_back(ptype);
     //send_msg(global_id, mtype, data);
+    tsv_file.close();
 }

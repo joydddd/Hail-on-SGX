@@ -64,6 +64,7 @@ ${BUILDDIR}/%.o: ${SRCDIR}/%.cpp
 	${CXX} ${CXXFLAGS} -c -o $@ $<
 
 build: pre $(OBJECTS)
+	cp ../../shared/include/buffer_size.h ../enclave/buffer_size.h
 	cd ../../shared && $(MAKE) && cd ../compute_server/host
 	$(CXX) -o $(EXECUTABLE) $(BUILDDIR)/$(PROJECTNAME)_u.o $(OBJECTS) $(LDFLAGS) ${CRYPTFLAG} ${CURLFLAG}
 

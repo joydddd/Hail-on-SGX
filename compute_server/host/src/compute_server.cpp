@@ -165,7 +165,6 @@ bool ComputeServer::start_thread(int connFD) {
             int rval = recv(connFD, header_buffer + header_size, 1, MSG_WAITALL);
             if (rval == -1) {
                 return false;
-                //throw std::runtime_error("Error reading stream message");
             }
             // Stop if we received a deliminating character
             if (header_buffer[header_size] == '\n') {

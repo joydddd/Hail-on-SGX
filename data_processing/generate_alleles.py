@@ -1,9 +1,15 @@
 import random
+import numpy as np
 
 random.seed('0x8BADF00D')
 
-ALLELE_COUNT = 10000
-CLIENT_COUNT = 250
+rand_size = 100003
+
+rands = np.random.random(rand_size)
+index = 0
+
+ALLELE_COUNT = 1
+CLIENT_COUNT = 3000
 
 def weighted_random_by_dct(dct):
     rand_val = random.random()
@@ -13,6 +19,17 @@ def weighted_random_by_dct(dct):
         if rand_val <= total:
             return k
     assert False, 'unreachable'
+
+def get_random_allele(rand_val):
+    #rand_val = random.random()
+    if rand_val <= 0.4743076415612974:
+        return '0'
+    elif rand_val <= 0.7303159978009895:
+        return '1'
+    elif rand_val <= 0.9497530511269928:
+        return '2'
+    else:
+        return 'NA'
 
 genotypes = {"0": 0, "1": 0, "2": 0, "NA": 0}
 locuses = []
@@ -48,7 +65,7 @@ for key in alleles:
 
 scale_up_factor =  (ALLELE_COUNT // num_alleles) + 1
 
-with open('generated_alleles.tsv', 'w') as f:
+with open('../client/client_data/generated_alleles.tsv', 'w') as f:
     top_line = ""
     for i in range(CLIENT_COUNT):
         top_line += f'HG{i} '
@@ -64,14 +81,14 @@ with open('generated_alleles.tsv', 'w') as f:
                     nums.add(random_num)
                     break
         sorted_nums = sorted(nums)
+
         for s_num in sorted_nums:
             random_allele = weighted_random_by_dct(alleles)
             genotype_data = ""
-            for _ in range(CLIENT_COUNT):
-                genotype_data += weighted_random_by_dct(genotypes) + '\t'
+            for i in range(CLIENT_COUNT):
+                genotype_data += get_random_allele(rands[index % rand_size]) + '\t'
+                index += 1
             f.write(f'{locus_split[0]}:{str(s_num)}\t{random_allele}\t{genotype_data[:-1]}\n')
-            #locus_split[0] + ':' + str(s_num) + '\t' '\n')
-    
     
     # diff = num - last_num
     # last_num = num

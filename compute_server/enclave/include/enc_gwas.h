@@ -102,8 +102,8 @@ class Covar {
 
    public:
     Covar() : n(0), name_str("NA") {}
-    Covar(std::istream &is) { read(is); }
-    void read(std::istream &is);
+    Covar(const char* input) { read(input); }
+    void read(const char* input);
     Covar(size_t size, int x = 1) : data(size, x), n(size), name_str("1") {}
     size_t size() { return n; }
     void combine(Covar &other);

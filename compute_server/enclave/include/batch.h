@@ -16,7 +16,6 @@ class Buffer;
 
 class Batch {
     /* data members */
-    // char crypto[ENCLAVE_READ_BUFFER_SIZE]; // decrypt is handled by Buffer
     char* plaintxt;
     size_t txt_size;
     Row_T type;

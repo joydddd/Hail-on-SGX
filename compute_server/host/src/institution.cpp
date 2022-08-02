@@ -50,6 +50,9 @@ void Institution::set_covariant_data(const std::string& covariant_name, const st
     if (covariant_data.count(covariant_name)) {
         throw std::runtime_error("Duplicate covariant recieved.");
     }
+    if (data.length() >= ENCLAVE_READ_BUFFER_SIZE) {
+        throw std::runtime_error("Covariant too large for enclave: " + std::to_string(data.length()));
+    }
     covariant_data[covariant_name] = decoder.decode(data);
 }
 
