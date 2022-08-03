@@ -214,8 +214,6 @@ void log_regression(const int thread_id) {
     Buffer* buffer = buffer_list[thread_id];
     Batch* batch = nullptr;
     Log_row* row;
-    // DEBUG: tmp output file
-    //ofstream out_st("enc" + std::to_string(thread_id) + ".out");
     /* process rows */
     while (true) {
         //start_timer("get_batch()");

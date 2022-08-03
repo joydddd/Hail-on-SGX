@@ -44,6 +44,8 @@ all:
 	$(MAKE) keys
 	$(MAKE) sign
 pre:
+	@ echo "Copying buffer sizes from shared directory"
+	cp ../../shared/include/buffer_size.h ./buffer_size.h
 	@ echo "Modifying enclave config"
 	python settcs.py
 	@ echo "Compilers used: $(CC), $(CXX)"
