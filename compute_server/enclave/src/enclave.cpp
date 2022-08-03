@@ -216,29 +216,29 @@ void log_regression(const int thread_id) {
     Log_row* row;
     /* process rows */
     while (true) {
-        //start_timer("get_batch()");
+        start_timer("get_batch()");
         if (!batch || batch->st != Batch::Working) batch = buffer->launch(client_info_list, thread_id);
         if (!batch) {
             buffer->clean_up();
             break;
         }
-        //stop_timer("get_batch()");
+        stop_timer("get_batch()");
         // get the next row from input buffer
         
-        //start_timer("get_row()");
+        start_timer("get_row()");
         try {
             if (!(row = (Log_row*)batch->get_row(buffer))) continue;
         } catch (ERROR_t& err) {
             std::cerr << "ERROR: " << err.msg << std::endl << std::flush;
             exit(0);
         }
-        //stop_timer("get_row()");
+        stop_timer("get_row()");
         // compute results
         loci_to_str(row->getloci(), loci_string);
         alleles_to_str(row->getalleles(), alleles_string);
         output_string += loci_string + " " + alleles_string;
         bool converge = true;
-        //start_timer("converge()");
+        start_timer("converge()");
         try {
             converge = row->fit(change, old_beta);
             output_string += " " + std::to_string(row->output_first_beta_element()) + " " + std::to_string(row->t_stat()) + " ";
@@ -259,11 +259,11 @@ void log_regression(const int thread_id) {
             //ss << "\tNA\tNA\tNA" << std::endl;
             exit(1);
         }
-        //stop_timer("converge()");
-        //start_timer("batch_write()");
+        stop_timer("converge()");
+        start_timer("batch_write()");
         batch->write(output_string);
         output_string.clear();
-        //stop_timer("batch_write()");
+        stop_timer("batch_write()");
     }
 
 }

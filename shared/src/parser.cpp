@@ -120,8 +120,8 @@ int Parser::parse_allele_line(std::string& line, std::vector<uint8_t>& vals, std
                 throw std::runtime_error("Invalid alleles file!");
         }
     }
-    two_bit_compress(&vals[0], &compressed_vals[0], vals.size());
-    line = locus_and_allele + encryptor.encrypt_line((byte *)&compressed_vals[0], compressed_vals.size()) + "\n";
+    //two_bit_compress(&vals[0], &compressed_vals[0], vals.size());
+    line = locus_and_allele + encryptor.encrypt_line((byte *)&vals[0], vals.size()) + "\n";
 
     return compute_server_hash;
 }
