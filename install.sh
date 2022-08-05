@@ -23,3 +23,7 @@ cd compute_server
 
 make clean; make
 make clean; make
+
+sudo apt install python3-pip -y
+pip3 install numpy
+pip3 install scipy
