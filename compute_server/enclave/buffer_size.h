@@ -7,7 +7,7 @@ The Makefile will copy that header to another location for the build process.
 */
 
 #define ENCLAVE_OUTPUT_BUFFER 30  // in KB
-#define ENCLAVE_READ_BUFFER 50    // in KB
+#define ENCLAVE_READ_BUFFER 60    // in KB
 #define MAX_CLIENTNAME_LENGTH 30
 #define BUFFER_UPDATE_INTERVAL 10  // in milliseconds
 #define AES_KEY_LENGTH 16 // 128 bit enc
