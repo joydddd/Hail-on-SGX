@@ -370,7 +370,7 @@ void ComputeServer::data_listener(int connFD) {
 }
 
 void ComputeServer::allele_matcher() {
-    auto start = std::chrono::high_resolution_clock::now();
+    //auto start = std::chrono::high_resolution_clock::now();
 
     bool first = true;
     while(true) {
@@ -407,12 +407,13 @@ void ComputeServer::allele_matcher() {
             // if we did not find a min locus, all data has been recieved and we have processed all of it.
             // enqueue EOF for all enclave threads then shut down the matcher, its work is done.
             if (min_locus == "~") {
+                std::cout << "Recieved last message: "  << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count() << "\n";
                 for(int thread_id = 0; thread_id < num_threads; ++thread_id) {
                     allele_queue_list[thread_id].enqueue(EOFSeperator);
                 }
-                auto stop = std::chrono::high_resolution_clock::now();
-                auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
-                guarded_cout("Matcher time total: " + std::to_string(duration.count()), cout_lock);
+                // auto stop = std::chrono::high_resolution_clock::now();
+                // auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
+                // guarded_cout("Matcher time total: " + std::to_string(duration.count()), cout_lock);
                 return;
             }
 
@@ -443,7 +444,7 @@ void ComputeServer::allele_matcher() {
             // For the first line we want to calculate the max number of lines per batch
             if (first) {
                 std::cout << "Recieved first message: "  << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count() << "\n";
-                start = std::chrono::high_resolution_clock::now();
+                // start = std::chrono::high_resolution_clock::now();
                 first = false;
             }
             
