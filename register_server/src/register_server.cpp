@@ -33,6 +33,8 @@ void RegisterServer::init(const std::string& config_file) {
     port = register_config["register_server_bind_port"];
     compute_server_count = register_config["compute_server_count"];
     output_file.open(register_config["output_file_name"]);
+
+    eof_messages_recieved = 0;
 }
 
 void RegisterServer::run() {
@@ -103,7 +105,9 @@ bool RegisterServer::start_thread(int connFD) {
             // Receive exactly one byte
             int rval = recv(connFD, header_buffer + header_size, 1, MSG_WAITALL);
             if (rval == -1) {
-                throw std::runtime_error("Error reading stream message");
+                throw std::runtime_error("Socket recv failed\n");
+            } else if (rval == 0) {
+                return false;
             }
             // Stop if we received a deliminating character
             if (header_buffer[header_size] == '\n') {
@@ -208,6 +212,14 @@ bool RegisterServer::handle_message(int connFD, RegisterServerMessageType mtype,
             output_lock.lock();
             output_file.flush();
             output_lock.unlock();
+
+            if (++eof_messages_recieved == compute_server_count) {
+                output_lock.lock();
+                output_file.close();
+                output_lock.unlock();
+                // All files recieved, we can exit now
+                exit(0);
+            }
             break;
         }
         default:

@@ -102,7 +102,9 @@ bool Client::start_thread(int connFD) {
             // Receive exactly one byte
             int rval = recv(connFD, header_buffer + header_size, 1, MSG_WAITALL);
             if (rval == -1) {
-                throw std::runtime_error("Error reading stream message");
+                throw std::runtime_error("Socket recv failed\n");
+            } else if (rval == 0) {
+                return false;
             }
             // Stop if we received a deliminating character
             if (header_buffer[header_size] == '\n') {
@@ -278,6 +280,9 @@ void Client::handle_message(int connFD, const unsigned int global_id, const Clie
             auto stop = std::chrono::high_resolution_clock::now();
             auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
             std::cout << "Data send time total: " << duration.count() << std::endl;
+
+            // Client has served its purpose! Exit the program
+            exit(0);
             break;
         }
         default:

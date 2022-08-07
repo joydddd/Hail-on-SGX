@@ -25,6 +25,8 @@ boost::mutex useless_lock;
 boost::unique_lock<boost::mutex> useless_lock_wrapper(useless_lock);
 boost::condition_variable output_queue_cv;
 
+bool terminating = false;
+
 const int MIN_BLOCK_COUNT = 50;
 
 ComputeServer::ComputeServer(const std::string& config_file) {
@@ -164,6 +166,8 @@ bool ComputeServer::start_thread(int connFD) {
             // Receive exactly one byte
             int rval = recv(connFD, header_buffer + header_size, 1, MSG_WAITALL);
             if (rval == -1) {
+                throw std::runtime_error("Socket recv failed\n");
+            } else if (rval == 0) {
                 return false;
             }
             // Stop if we received a deliminating character
@@ -174,6 +178,7 @@ bool ComputeServer::start_thread(int connFD) {
             header_size++;
         }
         if (!found_delim) {
+            std::cout << "header buffer: " << header_buffer << std::endl;
             throw std::runtime_error("Didn't read in a null terminating char");
         }
         std::string header(header_buffer, header_size);
@@ -450,7 +455,7 @@ void ComputeServer::allele_matcher() {
 
 void ComputeServer::output_sender() {
     std::string output_str;
-    while(true) {
+    while(!terminating) {
         // This wait -> signal system seriously improves performance as it reduces busy waiting
         output_queue_cv.wait(useless_lock_wrapper);
         while (output_queue.try_dequeue(output_str)) {
@@ -679,4 +684,10 @@ void ComputeServer::write_allele_data(char* output_data, const int buffer_size, 
 void ComputeServer::cleanup_output() {
     std::cout << "Sending last message: "  << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count() << "\n";
     get_instance()->send_msg_output(EOFSeperator);
+    // We are now finished, so we can exit the program. This boolean/signal are really just to avoid an error
+    // upon exiting of the program, which doesn't really matter but I thought it might confuse people otherwise
+    // to see an error message when the program successfully terminates!
+    terminating = true;
+    output_queue_cv.notify_all();
+    exit(0);
 }
