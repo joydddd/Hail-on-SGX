@@ -1,6 +1,7 @@
 #include "client.h"
 #include <boost/thread.hpp>
 #include <chrono>
+#include <thread>
 
 std::mutex cout_lock;
 
@@ -11,6 +12,8 @@ Client::Client(const std::string& config_file) {
 Client::~Client() {}
 
 void Client::init(const std::string& config_file) {
+    std::this_thread::sleep_for(std::chrono::milliseconds(2000));
+
     std::ifstream client_config_file(config_file);
     client_config_file >> client_config;
 
@@ -280,7 +283,10 @@ void Client::handle_message(int connFD, const unsigned int global_id, const Clie
             auto stop = std::chrono::high_resolution_clock::now();
             auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
             std::cout << "Data send time total: " << duration.count() << std::endl;
-
+            break;
+        }
+        case END_PROGRAM:
+        {
             // Client has served its purpose! Exit the program
             exit(0);
             break;

@@ -8,7 +8,8 @@ enum ClientMessageType {
   COMPUTE_INFO,
   RSA_PUB_KEY,
   Y_AND_COV,
-  DATA_REQUEST
+  DATA_REQUEST,
+  END_PROGRAM
 };
 
 enum ComputeServerMessageType {

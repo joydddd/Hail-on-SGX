@@ -174,10 +174,8 @@ bool RegisterServer::handle_message(int connFD, RegisterServerMessageType mtype,
                 // Remove trailing '\t'
                 serialized_server_info.pop_back();
 
-                // Send the compute server info to all waiting clients
-                while(!institution_info_queue.empty()) {
-                    ConnectionInfo institution_info = institution_info_queue.front();
-                    institution_info_queue.pop();
+                // Send the compute server info to all waiting clients{
+                for (ConnectionInfo institution_info : institution_info_list) {
                     send_msg(institution_info.hostname, institution_info.port, ClientMessageType::COMPUTE_INFO, serialized_server_info);
                 }
             }
@@ -192,7 +190,7 @@ bool RegisterServer::handle_message(int connFD, RegisterServerMessageType mtype,
             std::lock_guard<std::mutex> raii(compute_lock);
             // If we don't have all compute server info, add to waiting queue
             if (compute_server_info.size() != compute_server_count) {
-                institution_info_queue.push(institution_info);
+                institution_info_list.push_back(institution_info);
             } else {
                 // If we have already recieved all compute server info, no need to wait!
                 send_msg(institution_info.hostname, institution_info.port, ClientMessageType::COMPUTE_INFO, serialized_server_info);
@@ -217,6 +215,9 @@ bool RegisterServer::handle_message(int connFD, RegisterServerMessageType mtype,
                 output_lock.lock();
                 output_file.close();
                 output_lock.unlock();
+                for (ConnectionInfo institution_info : institution_info_list) {
+                    send_msg(institution_info.hostname, institution_info.port, ClientMessageType::END_PROGRAM, "END_PROGRAM");
+                }
                 // All files recieved, we can exit now
                 exit(0);
             }

@@ -30,7 +30,7 @@ class RegisterServer {
     std::string serialized_server_info;
     std::mutex compute_lock;
 
-    std::queue<ConnectionInfo> institution_info_queue;
+    std::vector<ConnectionInfo> institution_info_list;
 
     std::ofstream output_file;
 
