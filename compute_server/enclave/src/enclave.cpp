@@ -75,7 +75,7 @@ void setup_enclave_encryption(const int num_threads) {
                                                  thread_aes_data.aes_key,
                                                  AES_KEY_LENGTH * 8);
                 if (ret != 0) {
-                    std::cout << "Set key failed.\n";
+                    std::cout << "Set key failed." << std::endl;
                     exit(0);
                 }
             }
@@ -90,7 +90,7 @@ void setup_enclave_encryption(const int num_threads) {
 void setup_enclave_phenotypes(const int num_threads, const int analysis_type) {
     char* buffer_decrypt = new char[ENCLAVE_READ_BUFFER_SIZE];
     char* y_buffer = new char[ENCLAVE_READ_BUFFER_SIZE];
-    Covar gwas_y;
+    Covar* gwas_y = new Covar();
     try {
         for (int client = 0; client < num_clients; ++client) {
             int y_buffer_size = 0;
@@ -103,34 +103,36 @@ void setup_enclave_phenotypes(const int num_threads, const int analysis_type) {
                              (const unsigned char*) y_buffer,
                              y_buffer_size, 
                              (unsigned char*) buffer_decrypt);
-            Covar new_y(buffer_decrypt);
-            client_y_size[client] = new_y.size();
-            client_info_list[client].size = new_y.size();
-            gwas_y.combine(new_y);
+            Covar* new_y = new Covar(buffer_decrypt);
+            client_y_size[client] = new_y->size();
+            client_info_list[client].size = new_y->size();
+            gwas_y->combine(new_y);
+            delete new_y;
         }
         delete[] y_buffer;
-        //std::cout << "Y value loaded" << std::endl;
     } 
     catch (ERROR_t& err) {
         std::cerr << "ERROR: fail to get correct y values" << err.msg << std::endl;
     }
 
     gwas = new GWAS(gwas_y, LogReg_type);
-    
-    char covl[ENCLAVE_READ_BUFFER_SIZE];
+
+    std::cout << "Loaded y" << std::endl;
+
+    char covl[ENCLAVE_SMALL_BUFFER_SIZE];
     getcovlist(covl);
     std::string covlist(covl);
-    std::vector<std::string> covariants;
-    split_delim(covlist.c_str(), covariants);
+    std::vector<std::string> covariant_names;
+    split_delim(covlist.c_str(), covariant_names);
     try{
         char* cov_buffer = new char[ENCLAVE_READ_BUFFER_SIZE];
-        for (auto& cov : covariants) {
+        for (auto& cov : covariant_names) {
             if (cov == "1") {
-                Covar intercept(gwas_y.size());
+                Covar* intercept = new Covar(gwas_y->size());
                 gwas->add_covariant(intercept);
                 continue;
             }
-            Covar cov_var;
+            Covar *cov_var = new Covar();
             for (int client = 0; client < num_clients; ++client) {
                 int cov_buffer_size = 0;
                 while (!cov_buffer_size) {
@@ -143,22 +145,26 @@ void setup_enclave_phenotypes(const int num_threads, const int analysis_type) {
                                 (const unsigned char*) cov_buffer,
                                 cov_buffer_size, 
                                 (unsigned char*) buffer_decrypt);
-                Covar new_cov_var(buffer_decrypt);
-                if (new_cov_var.size() != client_y_size[client]) {
+                Covar *new_cov_var = new Covar(buffer_decrypt, gwas_y->size());
+                if (new_cov_var->size() != client_y_size[client]) {
                     throw ReadtsvERROR("covariant size mismatch from client: " +
-                                    std::to_string(client) + " with cov: " + new_cov_var.name() + 
-                                    " size expected: " + std::to_string(client_y_size[client]) + " got: " + std::to_string(new_cov_var.size()));
+                                    std::to_string(client) + " with cov: " + new_cov_var->name() + 
+                                    " size expected: " + std::to_string(client_y_size[client]) + " got: " + std::to_string(new_cov_var->size()));
                 }
-                cov_var.combine(new_cov_var);
+                cov_var->combine(new_cov_var);
+                delete new_cov_var;
             }
             gwas->add_covariant(cov_var);
         }
         delete[] cov_buffer;
-        //std::cout << "GWAS setup finished" << std::endl;
+        delete[] buffer_decrypt;
     }
     catch (ERROR_t& err) {
         std::cerr << "ERROR: fail to get correct covariant values: " << err.msg << std::endl;
     }
+    catch (const std::exception &e) { 
+        std::cout << "Crash with " << e.what() << std::endl;
+     }
 
     int total_row_size = 0;
     for (auto size : client_y_size) total_row_size += size;
@@ -166,8 +172,6 @@ void setup_enclave_phenotypes(const int num_threads, const int analysis_type) {
         // TODO: set buffer type accordingly
         buffer_list[thread_id] = new Buffer(gwas, total_row_size, (Row_T)analysis_type, num_clients, thread_id);
     }
-    //std::cout << "Buffer initialized" << std::endl;
-
     /* set up encrypted size */
     int total_crypto_size = 0;
     for (int i = 0; i < num_clients; i++) {
@@ -290,25 +294,28 @@ void linear_regression(const int thread_id) {
 
     /* process rows */
     while (true) {
-        // start_timer("get_batch()");
+        //start_timer("get_batch()");
         if (!batch || batch->st != Batch::Working)
             batch = buffer->launch(client_info_list, thread_id);
         if (!batch) {
             buffer->clean_up();
             break;
         }
-
+        //stop_timer("get_batch()");
+        //start_timer("get_row()");
         try {
             if (!(row = (Lin_row*)batch->get_row(buffer))) continue;
         } catch (ERROR_t& err) {
             std::cerr << "ERROR: " << err.msg << std::endl << std::flush;
             exit(0);
         }
+        //stop_timer("get_row()");
  
         //  compute results
         loci_to_str(row->getloci(), loci_string);
         alleles_to_str(row->getalleles(), alleles_string);
         output_string += loci_string + "\t" + alleles_string;
+        //start_timer("converge()");
         try {
             row->fit();
             output_string += "\t" +
@@ -326,8 +333,10 @@ void linear_regression(const int thread_id) {
             // ss << "\tNA\tNA\tNA" << std::endl;
             exit(1);
         }
+        //stop_timer("converge()");
+        //start_timer("batch_write()");
         batch->write(output_string);
         output_string.clear();
-        // stop_timer("batch_write()");
+        //stop_timer("batch_write()");
     }
 }

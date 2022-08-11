@@ -20,3 +20,5 @@ test_logistic
 callgrind*
 *-multiplied.tsv
 .gdbinit
+output*.txt
+compute_server_config-*.json

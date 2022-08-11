@@ -143,7 +143,7 @@ class ComputeServer {
 
     static std::string get_covariant_data(const int institution_num, const std::string& covariant_name);
     
-    static int get_encypted_allele_size(const int institution_num);
+    static int get_encrypted_allele_size(const int institution_num);
 
     static int get_allele_data(char* batch_data, const int thread_id);
 

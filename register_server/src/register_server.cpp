@@ -93,6 +93,7 @@ void RegisterServer::run() {
 }
 
 bool RegisterServer::start_thread(int connFD) {
+    char* body_buffer = new char[MAX_MESSAGE_SIZE]();
     // if we catch any errors we will throw an error to catch and close the connection
     try {
         char header_buffer[128];
@@ -121,8 +122,6 @@ bool RegisterServer::start_thread(int connFD) {
         }
         std::string header(header_buffer, header_size);
         unsigned int body_size = std::stoi(header);
-
-        char body_buffer[MAX_MESSAGE_SIZE];
         
         if (body_size != 0) {
             // read in encrypted body

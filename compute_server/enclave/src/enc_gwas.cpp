@@ -159,12 +159,14 @@ void GWAS::print() const {
 /////////////////////////////////////////////////////////
 ////////////////   Covar    /////////////////////////////
 /////////////////////////////////////////////////////////
-void Covar::read(const char* input) {
+void Covar::read(const char* input, int res_size) {
     std::vector<std::string> parts;
-
+    if (res_size)
+        parts.reserve(res_size + 1);
     split_delim(input, parts, '\t');
     
     name_str = parts[0];
+    data.reserve(parts.size());
     for (int i = 1; i < parts.size(); ++i) {
         data.push_back(std::stoi(parts[i]));
     }
@@ -172,13 +174,13 @@ void Covar::read(const char* input) {
     n = data.size();
 }
 
-void Covar::combine(Covar &other) {
-    if (name() != other.name() && name() != "NA" && other.name() != "NA")
+void Covar::combine(Covar *other) {
+    if (name() != other->name() && name() != "NA" && other->name() != "NA")
         throw CombineERROR("covariant/y name mismatch");
-    n += other.n;
+    n += other->n;
     data.reserve(n);
-    for (auto x : other.data) {
+    for (auto x : other->data) {
         data.push_back(x);
     }
-    if (name_str == "NA") name_str = other.name_str;
+    if (name_str == "NA") name_str = other->name_str;
 }
