@@ -40,11 +40,11 @@ void setmaxbatchlines(int lines) {
     ComputeServer::set_max_batch_lines(lines);
 }
 
-void start_timer(const char func_name[ENCLAVE_READ_BUFFER_SIZE]) {
+void start_timer(const char func_name[MAX_CLIENTNAME_LENGTH]) {
     ComputeServer::start_timer(func_name);
 }
 
-void stop_timer(const char func_name[ENCLAVE_READ_BUFFER_SIZE]) {
+void stop_timer(const char func_name[MAX_CLIENTNAME_LENGTH]) {
     ComputeServer::stop_timer(func_name);
 }
 
@@ -52,7 +52,7 @@ int getclientnum() {
     return ComputeServer::get_num_institutions();
 }
 
-void getcovlist(char covlist[ENCLAVE_READ_BUFFER_SIZE]) {
+void getcovlist(char covlist[ENCLAVE_SMALL_BUFFER_SIZE]) {
     strcpy(covlist, ComputeServer::get_covariants().c_str());
 }
 
@@ -96,7 +96,7 @@ int getcov(const int client_num,
 }
 
 int get_encrypted_x_size(const int client_num) {
-    return ComputeServer::get_encypted_allele_size(client_num);
+    return ComputeServer::get_encrypted_allele_size(client_num);
 }
 
 int getbatch(char batch[ENCLAVE_READ_BUFFER_SIZE], const int thread_id) {
@@ -211,8 +211,8 @@ int start_enclave() {
         std::cout << "Logistic regression finished!" << std::endl;
         auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
         std::cout << "Enclave time total: " << duration.count() << std::endl;
-        ComputeServer::cleanup_output();
         ComputeServer::print_timings();
+        ComputeServer::cleanup_output();
     } catch (ERROR_t& err) {
         std::cerr << "ERROR: " << err.msg << std::endl << std::flush;
     }

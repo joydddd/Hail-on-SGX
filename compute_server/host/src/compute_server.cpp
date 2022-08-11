@@ -155,6 +155,7 @@ void ComputeServer::run() {
 
 bool ComputeServer::start_thread(int connFD) {
     // if we catch any errors we will throw an error to catch and close the connection
+    char* body_buffer = new char[MAX_MESSAGE_SIZE]();
     try {
         char header_buffer[128];
         // receive header, byte by byte until we hit deliminating char
@@ -183,8 +184,7 @@ bool ComputeServer::start_thread(int connFD) {
         }
         std::string header(header_buffer, header_size);
         unsigned int body_size = std::stoi(header);
-        
-        char body_buffer[MAX_MESSAGE_SIZE];
+
         if (body_size != 0) {
             // read in encrypted body
             int rval = recv(connFD, body_buffer, body_size, MSG_WAITALL);
@@ -644,7 +644,7 @@ std::string ComputeServer::get_covariant_data(const int institution_num, const s
     return cov_vals;
 }
 
-int ComputeServer::get_encypted_allele_size(const int institution_num) {
+int ComputeServer::get_encrypted_allele_size(const int institution_num) {
     const std::string institution_name = get_instance()->institution_list[institution_num];
     return get_instance()->institutions[institution_name]->get_allele_data_size();
 }

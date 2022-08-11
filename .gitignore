@@ -24,3 +24,4 @@ output*.txt
 client_config-*.json
 *-*.tsv
 generated*.tsv
+compute_server_config-*.json

@@ -25,12 +25,12 @@ Lin_row::Lin_row(size_t _size, GWAS* _gwas)
     }
 
     for (int i = 0; i < n; ++i){
-        double y = gwas->y.data[i];
+        double y = gwas->y->data[i];
         for (int j = 1; j < gwas->dim(); ++j) {  // starting from second row
-            XTY_og[j] += gwas->covariants[j - 1].data[i] * y;
+            XTY_og[j] += gwas->covariants[j - 1]->data[i] * y;
             for (int k = 1; k <= j; ++k){
-                XTX_og[j][k] += gwas->covariants[j - 1].data[i] *
-                               gwas->covariants[k - 1].data[i];
+                XTX_og[j][k] += gwas->covariants[j - 1]->data[i] *
+                               gwas->covariants[k - 1]->data[i];
             }
         }
     }
@@ -57,20 +57,20 @@ void Lin_row::fit() {
     size_t client_idx = 0, data_idx = 0;
     for (int i = 0; i < n; ++i) {
         uint8_t x = data[client_idx][data_idx];
-        double y = gwas->y.data[i];
+        double y = gwas->y->data[i];
         if (!is_NA(x)) {
             XTY[0] += x * y;
             for (int j = 0; j < gwas->dim(); ++j) {
-                double x1 = (j == 0) ? x : gwas->covariants[j - 1].data[i];
+                double x1 = (j == 0) ? x : gwas->covariants[j - 1]->data[i];
                 XTX[j][0] += x1 * x;
             }
         } else { // adjust the part non valid
         // TODO: some optimization here: whether to precalculate Xcov * Y and Xocv * Xcov for each patient
             for (int j = 1; j < gwas->dim(); ++j){
-                XTY[j] -= gwas->covariants[j - 1].data[i] * y;
+                XTY[j] -= gwas->covariants[j - 1]->data[i] * y;
                 for (int k = 1; k <= j; ++k){
-                    XTX[j][k] -= gwas->covariants[j - 1].data[i] *
-                                 gwas->covariants[k - 1].data[i];
+                    XTX[j][k] -= gwas->covariants[j - 1]->data[i] *
+                                 gwas->covariants[k - 1]->data[i];
                 }
             }
         }
@@ -99,11 +99,11 @@ void Lin_row::fit() {
     data_idx = 0;
     for (int i = 0; i < n; ++i) {
         uint8_t x = data[client_idx][data_idx];
-        double y = gwas->y.data[i];
+        double y = gwas->y->data[i];
         if (!is_NA(x)) {
             double y_est = beta[0] * x;
             for (int j = 1; j < gwas->dim(); j++){
-                y_est += gwas->covariants[j - 1].data[i] * beta[j];
+                y_est += gwas->covariants[j - 1]->data[i] * beta[j];
             }
             sse += (y - y_est) * (y - y_est);
         }

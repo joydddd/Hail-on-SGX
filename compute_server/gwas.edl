@@ -30,7 +30,7 @@ enclave {
         // sepcially, when the covariant is indent 1, covariant name must be "1"
         /* e.g. For model y =  1/(1 + e^(b0x + b1 + b2c1)), 
         there are two covariants and their names are "Cov1" & "1" */
-        void getcovlist([out] char covlist[ENCLAVE_READ_BUFFER_SIZE]);
+        void getcovlist([out] char covlist[ENCLAVE_SMALL_BUFFER_SIZE]);
         
         // copy aes key and iv from host machine to enclave;
         bool getaes(

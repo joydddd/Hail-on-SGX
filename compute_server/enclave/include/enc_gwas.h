@@ -101,20 +101,13 @@ class Covar {
     std::string name_str;
 
    public:
-    Covar() : n(0), name_str("NA") {}
-    Covar(const char* input) { read(input); }
-    void read(const char* input);
+    Covar() : n(0), name_str("NA") { }
+    Covar(const char* input, int res_size = 0) { read(input, res_size); }
+    void read(const char* input, int res_size = 0);
     Covar(size_t size, int x = 1) : data(size, x), n(size), name_str("1") {}
     size_t size() { return n; }
-    void combine(Covar &other);
+    void combine(Covar *other);
     const std::string& name() { return name_str; }
-    Covar &operator=(Covar &rhs) {
-        if (this == &rhs) return *this;
-        data = rhs.data;
-        n = rhs.n;
-        name_str = rhs.name_str;
-        return *this;
-    }
 };
 
 enum RegType_t{ LogReg_type, LinReg_type };
@@ -123,33 +116,33 @@ enum RegType_t{ LogReg_type, LinReg_type };
 /* gwas setup. contains information for covariant and meta data */
 class GWAS {
     std::string name;
-    size_t m;  // dimention
+    size_t m;  // dimension
     size_t n;  // sample size
     RegType_t regtype;
 
    public:
-    std::vector<Covar> covariants;
-    Covar y;
+    std::vector<Covar*> covariants;
+    Covar* y;
     GWAS() : n(0), m(0), regtype(LogReg_type) {}
-    GWAS(Covar _y, RegType_t _regtype) : n(_y.size()), m(1), regtype(_regtype) { add_y(_y); }
+    GWAS(Covar *_y, RegType_t _regtype) : n(_y->size()), m(1), regtype(_regtype) { add_y(_y); }
 
-    void add_y(Covar &_y) {
-        n = _y.size();
+    void add_y(Covar *_y) {
+        n = _y->size();
         m = 1;
         y = _y;
         switch (regtype){
             case LogReg_type:
-                name = _y.name() + "_logic_gwas";
+                name = _y->name() + "_logic_gwas";
                 break;
             case LinReg_type:
-                name = _y.name() + "_linear_gwas";
+                name = _y->name() + "_linear_gwas";
                 break;
         }
 
     }
 
-    void add_covariant(Covar &cov) {
-        if (cov.size() != n) throw CombineERROR("covariant");
+    void add_covariant(Covar *cov) {
+        if (cov->size() != n) throw CombineERROR("covariant");
         covariants.push_back(cov);
         m++;
     }

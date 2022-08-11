@@ -22,7 +22,6 @@ def weighted_random_by_dct(dct):
     assert False, 'unreachable'
 
 def get_random_allele(rand_val):
-    #rand_val = random.random()
     if rand_val <= 0.4743076415612974:
         return '0'
     elif rand_val <= 0.7303159978009895:
@@ -90,8 +89,3 @@ with open(f'../client/client_data/generated_alleles_{CLIENT_COUNT}.tsv', 'w') as
                 genotype_data += get_random_allele(rands[index % rand_size]) + '\t'
                 index += 1
             f.write(f'{locus_split[0]}:{str(s_num)}\t{random_allele}\t{genotype_data[:-1]}\n')
-    
-    # diff = num - last_num
-    # last_num = num
-    # if first:
-    # diff_sum += diff

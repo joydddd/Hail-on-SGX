@@ -102,7 +102,7 @@ void Log_row::update_estimate() {
         if (!is_NA(x)) {
             y_est = b[0] * x;
             for (size_t j = 1; j < gwas->dim(); j++)
-                y_est += gwas->covariants[j - 1].data[i] * b[j];
+                y_est += gwas->covariants[j - 1]->data[i] * b[j];
             y_est = 1 / ((double)1 + exp(-y_est));
 
             update_upperH(y_est, x, i);
@@ -129,17 +129,17 @@ void Log_row::update_upperH(double y_est, uint8_t x, size_t i) {
     double y_est_1_y = y_est * (1 - y_est);
     for (size_t j = 0; j < gwas->dim(); j++) {
         for (size_t k = 0; k <= j; k++) {
-            double x1 = (j == 0) ? x : gwas->covariants[j - 1].data[i];
-            double x2 = (k == 0) ? x : gwas->covariants[k - 1].data[i];
+            double x1 = (j == 0) ? x : gwas->covariants[j - 1]->data[i];
+            double x2 = (k == 0) ? x : gwas->covariants[k - 1]->data[i];
             H[j][k] += x1 * x2 * y_est_1_y;
         }
     }
 }
 
 void Log_row::update_Grad(double y_est, uint8_t x, size_t i) {
-    double y_delta = gwas->y.data[i] - y_est;
+    double y_delta = gwas->y->data[i] - y_est;
     Grad[0] += y_delta * x;
     for (size_t j = 1; j < gwas->dim(); j++) {
-        Grad[j] += y_delta * gwas->covariants[j - 1].data[i];
+        Grad[j] += y_delta * gwas->covariants[j - 1]->data[i];
     }
 }
