@@ -12,7 +12,7 @@ Client::Client(const std::string& config_file) {
 Client::~Client() {}
 
 void Client::init(const std::string& config_file) {
-    std::this_thread::sleep_for(std::chrono::milliseconds(2000));
+    std::this_thread::sleep_for(std::chrono::milliseconds(2500));
 
     std::ifstream client_config_file(config_file);
     client_config_file >> client_config;
@@ -93,6 +93,7 @@ void Client::run() {
 }
 
 bool Client::start_thread(int connFD) {
+    char* body_buffer = new char[MAX_MESSAGE_SIZE]();
     // if we catch any errors we will throw an error to catch and close the connection
     try {
         char header_buffer[128];
@@ -121,8 +122,7 @@ bool Client::start_thread(int connFD) {
         }
         std::string header(header_buffer, header_size);
         unsigned int body_size = std::stoi(header);
-        
-        char body_buffer[MAX_MESSAGE_SIZE];
+
         if (body_size != 0) {
             // read in encrypted body
             int rval = recv(connFD, body_buffer, body_size, MSG_WAITALL);
@@ -212,6 +212,7 @@ void Client::handle_message(int connFD, const unsigned int global_id, const Clie
         }
         case Y_AND_COV:
         {
+            std::cout << "Start y and cov" << std::endl;
             std::vector<std::string> covariants;
             Parser::split(covariants, msg);
             
@@ -227,7 +228,6 @@ void Client::handle_message(int connFD, const unsigned int global_id, const Clie
                     prepare_tsv_file(global_id, covariant, COVARIANT);
                 }
             }
-            
             
             if(++y_and_cov_count == aes_encryptor_list.size()) {
                 fill_queue();

@@ -93,6 +93,7 @@ void RegisterServer::run() {
 }
 
 bool RegisterServer::start_thread(int connFD) {
+    char* body_buffer = new char[MAX_MESSAGE_SIZE]();
     // if we catch any errors we will throw an error to catch and close the connection
     try {
         char header_buffer[128];
@@ -121,8 +122,6 @@ bool RegisterServer::start_thread(int connFD) {
         }
         std::string header(header_buffer, header_size);
         unsigned int body_size = std::stoi(header);
-
-        char body_buffer[MAX_MESSAGE_SIZE];
         
         if (body_size != 0) {
             // read in encrypted body
@@ -189,9 +188,8 @@ bool RegisterServer::handle_message(int connFD, RegisterServerMessageType mtype,
 
             std::lock_guard<std::mutex> raii(compute_lock);
             // If we don't have all compute server info, add to waiting queue
-            if (compute_server_info.size() != compute_server_count) {
-                institution_info_list.push_back(institution_info);
-            } else {
+            institution_info_list.push_back(institution_info);
+            if (compute_server_info.size() == compute_server_count) {
                 // If we have already recieved all compute server info, no need to wait!
                 send_msg(institution_info.hostname, institution_info.port, ClientMessageType::COMPUTE_INFO, serialized_server_info);
             }

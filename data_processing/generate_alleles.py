@@ -1,5 +1,6 @@
 import random
 import numpy as np
+import sys
 
 random.seed('0x8BADF00D')
 
@@ -9,7 +10,7 @@ rands = np.random.random(rand_size)
 index = 0
 
 ALLELE_COUNT = 1
-CLIENT_COUNT = 3000
+CLIENT_COUNT = 100000 if len(sys.argv) != 2 else int(sys.argv[1])
 
 def weighted_random_by_dct(dct):
     rand_val = random.random()
@@ -65,12 +66,12 @@ for key in alleles:
 
 scale_up_factor =  (ALLELE_COUNT // num_alleles) + 1
 
-with open('../client/client_data/generated_alleles.tsv', 'w') as f:
+with open(f'../client/client_data/generated_alleles_{CLIENT_COUNT}.tsv', 'w') as f:
     top_line = ""
     for i in range(CLIENT_COUNT):
         top_line += f'HG{i} '
-    f.write(f'locus\talleles {top_line[:-1]}')
-    for locus in locuses:
+    f.write(f'locus\talleles {top_line[:-1]}\n')
+    for locus in (locuses if len(sys.argv) != 2 else locuses[:1]):
         locus_split = locus.split(':')
         num = int(locus_split[1])
         nums = set()

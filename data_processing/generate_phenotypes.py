@@ -1,9 +1,10 @@
 import random
 import scipy.stats
+import sys
 
 random.seed('0x8BADF00D')
 
-CLIENT_COUNT = 3000
+CLIENT_COUNT = 3000 if len(sys.argv) != 3 else int(sys.argv[1])
 
 def weighted_random_by_dct(dct):
     rand_val = random.random()
@@ -40,6 +41,20 @@ pancCancer_odds = {'0' : 3/4, '1': 1/4}
 rand_binary_weighted_odds = {'0': .9, '1': .1}
 
 rand_discrete_weighted_odds = {'1': .3, '2': .3, '3': .3, '4': .05, '5': .05}
+
+
+if len(sys.argv) == 3:
+    if int(sys.argv[2]) == 0:
+        with open(f'../client/client_data/disease-{CLIENT_COUNT}.tsv', 'w') as f:
+            f.write(f's\tdisease-{CLIENT_COUNT}\n')
+            for i in range(CLIENT_COUNT):
+                f.write(f'p\t{weighted_random_by_dct(isFemale_odds)}\n')
+    for cov in range(int(sys.argv[2])):
+        with open(f'../client/client_data/{cov + 1}-{CLIENT_COUNT}.tsv', 'w') as f:
+            f.write(f's\t{cov+1}-{CLIENT_COUNT}\n')
+            for i in range(CLIENT_COUNT):
+                f.write(f'p\t{weighted_random_by_dct(isFemale_odds)}\n')
+    exit(0)
 
 # Phenotype: Sex
 phenotypes = [['isFemale', isFemale_odds], ['age', age_odds], ['BMI', BMI_shape], ['pancCancer', pancCancer_odds], ['rand_binary', rand_binary_weighted_odds], ['rand_discrete', rand_discrete_weighted_odds]]
