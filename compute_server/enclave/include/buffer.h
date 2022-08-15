@@ -30,8 +30,8 @@ class Buffer {
     size_t output_tail;
 
     /* data member */
-    char crypttxt[ENCLAVE_READ_BUFFER_SIZE];
-    uint8_t plain_txt_compressed[ENCLAVE_READ_BUFFER_SIZE];
+    char* crypttxt;
+    uint8_t* plain_txt_compressed;
     char output_buffer[ENCLAVE_OUTPUT_BUFFER_SIZE];
 
     Batch* free_batch;

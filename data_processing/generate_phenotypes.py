@@ -4,7 +4,7 @@ import sys
 
 random.seed('0x8BADF00D')
 
-CLIENT_COUNT = 3000 if len(sys.argv) != 3 else int(sys.argv[1])
+CLIENT_COUNT = 8456 if len(sys.argv) != 3 else int(sys.argv[1])
 
 def weighted_random_by_dct(dct):
     rand_val = random.random()

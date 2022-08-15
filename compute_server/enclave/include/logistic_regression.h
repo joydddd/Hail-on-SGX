@@ -37,6 +37,7 @@ class Log_row : public Row {
     /* fitting */
     // return true if converge, return false if explode
     bool fit(std::vector<double>& change, std::vector<double>& old_beta, size_t max_iteration = 20, double sig = 1e-6);
+    void fit() {}
 
     /* output results */
     double output_first_beta_element();

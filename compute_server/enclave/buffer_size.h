@@ -7,7 +7,7 @@ The Makefile will copy that header to another location for the build process.
 */
 
 #define ENCLAVE_OUTPUT_BUFFER 30  // in KB
-#define ENCLAVE_READ_BUFFER 4000    // in KB
+#define ENCLAVE_READ_BUFFER 200    // in KB
 #define ENCLAVE_SMALL_BUFFER 10 // in KB
 #define MAX_CLIENTNAME_LENGTH 30
 #define BUFFER_UPDATE_INTERVAL 10  // in milliseconds
@@ -27,6 +27,8 @@ The Makefile will copy that header to another location for the build process.
 #define MAX_LOCI_ALLELE_STR_SIZE 28
 
 #define EOFSeperator "~EOF~" // mark end of dataset
+
+enum EncAnalysis { linear, logistic };
 
 #endif
 

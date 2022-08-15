@@ -59,9 +59,6 @@ void Buffer::decrypt_line(char* plaintxt, size_t* plaintxt_length, unsigned int 
                 *crypt_head = '\0';
                 int client = atoi(tab_pos + 1);
                 client_list[client_count++] = client;
-                // cout << "head = " << head - crypt
-                //      << " tab_pos = " << tab_pos - crypt << endl;
-                // cout << "client: " << client << endl;
                 *crypt_head = '\t';
                 tab_pos = crypt_head;
             }
@@ -69,9 +66,6 @@ void Buffer::decrypt_line(char* plaintxt, size_t* plaintxt_length, unsigned int 
                 *crypt_head = '\0';
                 int client = atoi(tab_pos + 1);
                 client_list[client_count++] = client;
-                // cout << "head = " << head - crypt
-                //      << " tab_pos = " << tab_pos - crypt << endl;
-                // cout << "client: " << client << endl;
                 *crypt_head = ' ';
                 crypt_head++;
                 break;
@@ -89,9 +83,12 @@ void Buffer::decrypt_line(char* plaintxt, size_t* plaintxt_length, unsigned int 
             for (int list_id = 0; list_id < client_count; ++list_id) {
                 if (client_list[list_id] == client) {
                     aes_decrypt_client((const unsigned char*)client_crypto_map[list_id],
-                                    (unsigned char*)plain_txt_compressed,
-                                    client_info_list[client], thread_id);
-                    two_bit_decompress(plain_txt_compressed, (uint8_t*)plaintxt_head, client_info_list[client].size);
+                                       (unsigned char*)plain_txt_compressed,
+                                       client_info_list[client], 
+                                       thread_id);
+                    two_bit_decompress(plain_txt_compressed, 
+                                       (uint8_t*)plaintxt_head, 
+                                       client_info_list[client].size);
                     client_found = true;
                 }
             }
@@ -112,7 +109,8 @@ void Buffer::decrypt_line(char* plaintxt, size_t* plaintxt_length, unsigned int 
 
 Buffer::Buffer(GWAS* _gwas, size_t _row_size, Row_T row_type, int num_clients, int _thread_id)
     : row_size(_row_size), type(row_type), thread_id(_thread_id) {
-
+    crypttxt = new char[ENCLAVE_READ_BUFFER_SIZE];
+    plain_txt_compressed = new uint8_t[ENCLAVE_READ_BUFFER_SIZE];
     free_batch = new Batch(row_size, type, _gwas);
     client_list = new int[num_clients];
     client_crypto_map = new char* [num_clients];

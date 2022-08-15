@@ -212,7 +212,6 @@ void Client::handle_message(int connFD, const unsigned int global_id, const Clie
         }
         case Y_AND_COV:
         {
-            std::cout << "Start y and cov" << std::endl;
             std::vector<std::string> covariants;
             Parser::split(covariants, msg);
             

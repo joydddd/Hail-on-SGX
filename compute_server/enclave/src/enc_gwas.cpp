@@ -12,6 +12,7 @@ void Row::reset() {
 }
 
 size_t Row::read(const char line[]) {
+    static int once = 0;
     loci_str.clear();
     alleles_str.clear();
     int tabs_found = 0;
@@ -30,11 +31,12 @@ size_t Row::read(const char line[]) {
     }
     try {
         loci = Loci(loci_str);
-        if (loci.chrom_str == "X")
+        if (loci.chrom_str == "X") {
             loci.chrom = LOCI_X;
-        else
-            loci.chrom = stoi(loci.chrom_str);
-        loci.loc = stoi(loci.loc_str);
+        } else {
+            loci.chrom = std::stoi(loci.chrom_str);
+        }
+        loci.loc = std::stoi(loci.loc_str);
         alleles.read(alleles_str);
     } catch (ReadtsvERROR &error) {
         std::cout << line << std::endl;
@@ -44,11 +46,16 @@ size_t Row::read(const char line[]) {
                         alleles_str
 #endif
         );
+    } catch (const std::invalid_argument& exception) {
+        std::cout << loci.chrom << " " << loci.loc << " " << std::endl;
+        exit(0);
     }
     for (size_t i = 0; i < n; i++) {
         data[0][i] =
             (uint8_t)line[i + loci_str.size() + alleles_str.size() + 2] - uint8_OFFSET;
         if (data[0][i] > NA_uint8){
+            std::cout << std::string(line) << std::endl;
+            std::cout << i << " " << (int)data[0][i] << " " << n << std::endl;
             throw ReadtsvERROR("Invalid row entry for " + loci_str + "\t" + alleles_str);
         }
     }

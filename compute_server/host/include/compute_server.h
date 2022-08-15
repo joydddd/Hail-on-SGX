@@ -32,8 +32,6 @@
 
 enum EncMode { sgx, simulate, debug, NA };
 
-enum EncAnalysis { linear, logistic };
-
 class ComputeServer {
   private:
     nlohmann::json compute_config;

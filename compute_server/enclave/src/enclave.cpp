@@ -117,13 +117,14 @@ void setup_enclave_phenotypes(const int num_threads, const int analysis_type) {
 
     gwas = new GWAS(gwas_y, LogReg_type);
 
-    std::cout << "Loaded y" << std::endl;
+    std::cout << "Y value loaded" << std::endl;
 
     char covl[ENCLAVE_SMALL_BUFFER_SIZE];
     getcovlist(covl);
     std::string covlist(covl);
     std::vector<std::string> covariant_names;
     split_delim(covlist.c_str(), covariant_names);
+
     try{
         char* cov_buffer = new char[ENCLAVE_READ_BUFFER_SIZE];
         for (auto& cov : covariant_names) {
@@ -158,19 +159,25 @@ void setup_enclave_phenotypes(const int num_threads, const int analysis_type) {
         }
         delete[] cov_buffer;
         delete[] buffer_decrypt;
-    }
-    catch (ERROR_t& err) {
+    } catch (ERROR_t& err) {
         std::cerr << "ERROR: fail to get correct covariant values: " << err.msg << std::endl;
+    } catch (const std::exception &e) { 
+        std::cout << "Crash in cov setup with " << e.what() << std::endl;
     }
-    catch (const std::exception &e) { 
-        std::cout << "Crash with " << e.what() << std::endl;
-     }
+
+    std::cout << "Cov loaded" << std::endl;
+
 
     int total_row_size = 0;
     for (auto size : client_y_size) total_row_size += size;
-    for (int thread_id = 0; thread_id < num_threads; ++thread_id) {
-        // TODO: set buffer type accordingly
-        buffer_list[thread_id] = new Buffer(gwas, total_row_size, (Row_T)analysis_type, num_clients, thread_id);
+
+    try {
+        for (int thread_id = 0; thread_id < num_threads; ++thread_id) {
+            // TODO: set buffer type accordingly
+            buffer_list[thread_id] = new Buffer(gwas, total_row_size, (Row_T)analysis_type, num_clients, thread_id);
+        }
+    } catch (const std::exception &e) { 
+        std::cout << "Crash in buffer malloc with " << e.what() << std::endl;
     }
     /* set up encrypted size */
     int total_crypto_size = 0;
@@ -179,7 +186,6 @@ void setup_enclave_phenotypes(const int num_threads, const int analysis_type) {
         while(!size) {
             get_encrypted_x_size(&size, i);
         }
-        //std::cout << "client " << i << " crypto size: " << size << std::endl;
         client_info_list[i].crypto_size = size;
         total_crypto_size += size;
     }
@@ -195,10 +201,85 @@ void setup_enclave_phenotypes(const int num_threads, const int analysis_type) {
 
     start_thread = true;
     start_thread_cv.notify_all();
-    std::cout << "Starting Enclave: "  << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count() << "\n";
+
+    std::cout << "Setup finished" << std::endl;
 }
 
-void log_regression(const int thread_id) {
+// void log_regression(const int thread_id) {
+//     std::string output_string;
+//     std::string loci_string;
+//     std::string alleles_string;
+//     output_string.reserve(50);
+//     loci_string.reserve(50);
+//     alleles_string.reserve(20);
+
+//     std::mutex useless_lock;
+//     std::unique_lock<std::mutex> useless_lock_wrapper(useless_lock);
+//     // experimental - checking to see if spinning up threads adds a noticable amount of overhead... need +1 TCS in config
+//     while(!start_thread) {
+//         start_thread_cv.wait(useless_lock_wrapper);
+//     }
+//     std::vector<double> change(gwas->dim());
+//     std::vector<double> old_beta(gwas->dim());
+    
+//     Buffer* buffer = buffer_list[thread_id];
+//     Batch* batch = nullptr;
+//     Log_row* row;
+//     /* process rows */
+//     while (true) {
+//         //start_timer("get_batch()");
+//         if (!batch || batch->st != Batch::Working) batch = buffer->launch(client_info_list, thread_id);
+//         if (!batch) {
+//             buffer->clean_up();
+//             break;
+//         }
+//         //stop_timer("get_batch()");
+//         // get the next row from input buffer
+        
+//         //start_timer("get_row()");
+//         try {
+//             if (!(row = (Log_row*)batch->get_row(buffer))) continue;
+//         } catch (ERROR_t& err) {
+//             std::cerr << "ERROR: " << err.msg << std::endl << std::flush;
+//             exit(0);
+//         }
+//         //stop_timer("get_row()");
+//         // compute results
+//         loci_to_str(row->getloci(), loci_string);
+//         alleles_to_str(row->getalleles(), alleles_string);
+//         output_string += loci_string + " " + alleles_string;
+//         bool converge = true;
+//         //start_timer("converge()");
+//         try {
+//             converge = row->fit(change, old_beta);
+//             output_string += " " + std::to_string(row->output_first_beta_element()) + " " + std::to_string(row->t_stat()) + " ";
+//             // wanted to use a ternary, but the compiler doesn't like it?
+//             if (converge) {
+//                 output_string += "true";
+//             } else {
+//                  output_string += "false";
+//             }
+//             output_string += "\n";
+//         } catch (MathError& err) {
+//             output_string += "\tNA\tNA\tNA\n";
+//             // cerr << "MathError while fiting " << ss.str() << ": " << err.msg
+//             //      << std::endl;
+//             //ss << "\tNA\tNA\tNA" << std::endl;
+//         } catch (ERROR_t& err) {
+//             std::cerr << "ERROR " << err.msg << std::endl << std::flush;
+//             //ss << "\tNA\tNA\tNA" << std::endl;
+//             exit(1);
+//         }
+//         //stop_timer("converge()");
+//         //start_timer("batch_write()");
+//         batch->write(output_string);
+//         output_string.clear();
+//         //stop_timer("batch_write()");
+//     }
+
+// }
+
+void regression(const int thread_id, EncAnalysis analysis_type) {
     std::string output_string;
     std::string loci_string;
     std::string alleles_string;
@@ -208,86 +289,17 @@ void log_regression(const int thread_id) {
 
     std::mutex useless_lock;
     std::unique_lock<std::mutex> useless_lock_wrapper(useless_lock);
-    // experimental - checking to see if spinning up threads adds a noticable amount of overhead... need +1 TCS in config
-    while(!start_thread) {
+    // experimental - checking to see if spinning up threads adds a noticable
+    // amount of overhead... need +1 TCS in config
+    while (!start_thread) {
         start_thread_cv.wait(useless_lock_wrapper);
     }
     std::vector<double> change(gwas->dim());
     std::vector<double> old_beta(gwas->dim());
-    
-    Buffer* buffer = buffer_list[thread_id];
-    Batch* batch = nullptr;
-    Log_row* row;
-    /* process rows */
-    while (true) {
-        //start_timer("get_batch()");
-        if (!batch || batch->st != Batch::Working) batch = buffer->launch(client_info_list, thread_id);
-        if (!batch) {
-            buffer->clean_up();
-            break;
-        }
-        //stop_timer("get_batch()");
-        // get the next row from input buffer
-        
-        //start_timer("get_row()");
-        try {
-            if (!(row = (Log_row*)batch->get_row(buffer))) continue;
-        } catch (ERROR_t& err) {
-            std::cerr << "ERROR: " << err.msg << std::endl << std::flush;
-            exit(0);
-        }
-        //stop_timer("get_row()");
-        // compute results
-        loci_to_str(row->getloci(), loci_string);
-        alleles_to_str(row->getalleles(), alleles_string);
-        output_string += loci_string + " " + alleles_string;
-        bool converge = true;
-        //start_timer("converge()");
-        try {
-            converge = row->fit(change, old_beta);
-            output_string += " " + std::to_string(row->output_first_beta_element()) + " " + std::to_string(row->t_stat()) + " ";
-            // wanted to use a ternary, but the compiler doesn't like it?
-            if (converge) {
-                output_string += "true";
-            } else {
-                 output_string += "false";
-            }
-            output_string += "\n";
-        } catch (MathError& err) {
-            output_string += "\tNA\tNA\tNA\n";
-            // cerr << "MathError while fiting " << ss.str() << ": " << err.msg
-            //      << std::endl;
-            //ss << "\tNA\tNA\tNA" << std::endl;
-        } catch (ERROR_t& err) {
-            std::cerr << "ERROR " << err.msg << std::endl << std::flush;
-            //ss << "\tNA\tNA\tNA" << std::endl;
-            exit(1);
-        }
-        //stop_timer("converge()");
-        //start_timer("batch_write()");
-        batch->write(output_string);
-        output_string.clear();
-        //stop_timer("batch_write()");
-    }
-
-}
-
-void linear_regression(const int thread_id) {
-    std::string output_string;
-    std::string loci_string;
-    std::string alleles_string;
-    output_string.reserve(50);
-    loci_string.reserve(50);
-    alleles_string.reserve(20);
-    // experimental - checking to see if spinning up threads adds a noticable
-    // amount of overhead... need +1 TCS in config
-    while (!start_thread) {
-        // spin until ready to go!
-    }
 
     Buffer* buffer = buffer_list[thread_id];
     Batch* batch = nullptr;
-    Lin_row* row;
+    Row* row;
 
     // DEBUG: tmp output file
     // ofstream out_st("enc" + std::to_string(thread_id) + ".out");
@@ -304,24 +316,49 @@ void linear_regression(const int thread_id) {
         //stop_timer("get_batch()");
         //start_timer("get_row()");
         try {
-            if (!(row = (Lin_row*)batch->get_row(buffer))) continue;
+            switch(analysis_type) {
+                case EncAnalysis::linear:
+                    if (!(row = (Lin_row*)batch->get_row(buffer))) continue;
+                    break;
+                case EncAnalysis::logistic:
+                    if (!(row = (Log_row*)batch->get_row(buffer))) continue;
+                    break;
+                default:
+                    throw std::runtime_error("Invalid analysis type");
+            }
+            
         } catch (ERROR_t& err) {
             std::cerr << "ERROR: " << err.msg << std::endl << std::flush;
             exit(0);
+        } catch (const std::exception &e) { 
+            std::cout << "Crash in get_row with " << e.what() << std::endl;
+            exit(0);
         }
         //stop_timer("get_row()");
- 
         //  compute results
         loci_to_str(row->getloci(), loci_string);
         alleles_to_str(row->getalleles(), alleles_string);
         output_string += loci_string + "\t" + alleles_string;
         //start_timer("converge()");
+        bool converge = false;
         try {
-            row->fit();
+            switch (analysis_type) {
+                case EncAnalysis::linear:
+                    row->fit();
+                    break;
+                case EncAnalysis::logistic:
+                    converge = row->fit(change, old_beta);
+                    break;
+            }
             output_string += "\t" +
                              std::to_string(row->output_first_beta_element()) +
                              "\t" + std::to_string(row->t_stat()) + "\t";
             // wanted to use a ternary, but the compiler doesn't like it?
+            if (converge) {
+                output_string += "true";
+            } else if (analysis_type == EncAnalysis::logistic) {
+                 output_string += "false";
+            }
             output_string += "\n";
         } catch (MathError& err) {
             output_string += "\tNA\tNA\tNA\n";

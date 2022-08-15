@@ -163,20 +163,7 @@ int start_enclave() {
         int num_threads = ComputeServer::get_num_threads();
         boost::thread_group thread_group;
         for (int thread_id = 0; thread_id < num_threads; ++thread_id) {
-            boost::thread* enclave_thread;
-            switch (enc_analysis_type) {
-                case EncAnalysis::linear:
-                    enclave_thread = new boost::thread(linear_regression, enclave, thread_id);
-                    break;
-                
-                case EncAnalysis::logistic:
-                    enclave_thread = new boost::thread(log_regression, enclave, thread_id);
-                    break;
-
-                default:
-                    throw std::runtime_error("Unrecognized analysis type given.");
-
-            }
+            boost::thread* enclave_thread = new boost::thread(regression, enclave, thread_id, enc_analysis_type);
             thread_group.add_thread(enclave_thread);
         }
 
@@ -189,11 +176,12 @@ int start_enclave() {
         }
         
         // Allow for data to be encrypted beforehand
+        char* tmp = new char[ENCLAVE_READ_BUFFER_SIZE];
         for (int client_id = 0; client_id < getclientnum(); ++client_id) {
-            char tmp[ENCLAVE_READ_BUFFER_SIZE];
             while(!gety(client_id, tmp)) {}
         }
-
+        delete[] tmp;
+        std::cout << "Starting Enclave: "  << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count() << "\n";
         auto start = std::chrono::high_resolution_clock::now();
 
         result = setup_enclave_phenotypes(enclave, num_threads, enc_analysis_type);

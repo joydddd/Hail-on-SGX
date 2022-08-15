@@ -47,6 +47,10 @@ class Row {
      Loci getloci() { return loci; }
      Alleles getalleles() { return alleles; }
      size_t size() { return n; }
+     virtual void fit() {}
+     virtual bool fit(std::vector<double>& change, std::vector<double>& old_beta, size_t max_iteration = 20, double sig = 1e-6) { return true; }
+     virtual double output_first_beta_element() { return -1; }
+     virtual double t_stat() { return -1; }
 
 
      /* setup */
