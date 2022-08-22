@@ -148,14 +148,17 @@ void ComputeServer::run() {
         int connFD = accept(sockfd, (struct sockaddr*) &addr, &addrSize);
 
         // spin up a new thread to handle this message
-        boost::thread msg_thread(&ComputeServer::start_thread, this, connFD);
+        boost::thread msg_thread(&ComputeServer::start_thread, this, connFD, nullptr);
         msg_thread.detach();
     }
 }
 
-bool ComputeServer::start_thread(int connFD) {
+bool ComputeServer::start_thread(int connFD, char* body_buffer) {
     // if we catch any errors we will throw an error to catch and close the connection
-    char* body_buffer = new char[MAX_MESSAGE_SIZE]();
+    bool buffer_given = body_buffer != nullptr;
+    if (!buffer_given) {
+        body_buffer = new char[MAX_MESSAGE_SIZE]();
+    }
     try {
         char header_buffer[128];
         // receive header, byte by byte until we hit deliminating char
@@ -209,6 +212,9 @@ bool ComputeServer::start_thread(int connFD) {
         guarded_cout("Exception " + std::string(e.what()) + "\n", cout_lock);
         close(connFD);
         return false;
+    }
+    if (!buffer_given) {
+        delete[] body_buffer;
     }
     return true;
 }
@@ -366,7 +372,9 @@ void ComputeServer::check_in(const std::string& name) {
 
 void ComputeServer::data_listener(int connFD) {
     // We need a serial listener for this agreed upon connection!
-    while(start_thread(connFD)) {}
+    char* body_buffer = new char[MAX_MESSAGE_SIZE]();
+    while(start_thread(connFD, body_buffer)) {}
+    delete[] body_buffer;
 }
 
 void ComputeServer::allele_matcher() {
