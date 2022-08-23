@@ -145,6 +145,7 @@ bool Client::start_thread(int connFD) {
         close(connFD);
         return false;
     }
+    delete[] body_buffer;
     return true;
 }
 

@@ -147,6 +147,7 @@ bool RegisterServer::start_thread(int connFD) {
         close(connFD);
         return false;
     }
+    delete[] body_buffer;
     return true;
 }
 
@@ -205,13 +206,11 @@ bool RegisterServer::handle_message(int connFD, RegisterServerMessageType mtype,
         case EOF_OUTPUT:
         {
             std::cout << "Recieved last message: "  << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count() << "\n";
-            output_lock.lock();
-            output_file.flush();
-            output_lock.unlock();
 
             if (++eof_messages_recieved == compute_server_count) {
                 output_lock.lock();
-                output_file.close();
+                output_file.flush();
+                //output_file.close();
                 output_lock.unlock();
                 for (ConnectionInfo institution_info : institution_info_list) {
                     send_msg(institution_info.hostname, institution_info.port, ClientMessageType::END_PROGRAM, "END_PROGRAM");

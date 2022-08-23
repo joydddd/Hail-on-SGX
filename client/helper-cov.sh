@@ -1,4 +1,4 @@
-for cov in {16..16}
+for cov in {1..16}
 do 
     echo Covariants: $cov
     for count in {100000..1500000..100000}
