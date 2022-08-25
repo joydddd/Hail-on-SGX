@@ -4,6 +4,8 @@
 #include <fstream>
 #include <atomic>
 #include <chrono>
+#include <condition_variable>
+#include <string.h>
 
 #include "buffer.h"
 #include "crypto.h"
@@ -140,7 +142,7 @@ void setup_enclave_phenotypes(const int num_threads, const int analysis_type) {
                     getcov(&cov_buffer_size, client, cov.c_str(), cov_buffer);
                 }
                 ClientInfo& info = client_info_list[client];
-                std::memset(buffer_decrypt, 0, ENCLAVE_READ_BUFFER_SIZE);
+                memset(buffer_decrypt, 0, ENCLAVE_READ_BUFFER_SIZE);
                 aes_decrypt_data(info.aes_list.front().aes_context,
                                 info.aes_list.front().aes_iv,
                                 (const unsigned char*) cov_buffer,
@@ -204,80 +206,6 @@ void setup_enclave_phenotypes(const int num_threads, const int analysis_type) {
 
     std::cout << "Setup finished" << std::endl;
 }
-
-// void log_regression(const int thread_id) {
-//     std::string output_string;
-//     std::string loci_string;
-//     std::string alleles_string;
-//     output_string.reserve(50);
-//     loci_string.reserve(50);
-//     alleles_string.reserve(20);
-
-//     std::mutex useless_lock;
-//     std::unique_lock<std::mutex> useless_lock_wrapper(useless_lock);
-//     // experimental - checking to see if spinning up threads adds a noticable amount of overhead... need +1 TCS in config
-//     while(!start_thread) {
-//         start_thread_cv.wait(useless_lock_wrapper);
-//     }
-//     std::vector<double> change(gwas->dim());
-//     std::vector<double> old_beta(gwas->dim());
-    
-//     Buffer* buffer = buffer_list[thread_id];
-//     Batch* batch = nullptr;
-//     Log_row* row;
-//     /* process rows */
-//     while (true) {
-//         //start_timer("get_batch()");
-//         if (!batch || batch->st != Batch::Working) batch = buffer->launch(client_info_list, thread_id);
-//         if (!batch) {
-//             buffer->clean_up();
-//             break;
-//         }
-//         //stop_timer("get_batch()");
-//         // get the next row from input buffer
-        
-//         //start_timer("get_row()");
-//         try {
-//             if (!(row = (Log_row*)batch->get_row(buffer))) continue;
-//         } catch (ERROR_t& err) {
-//             std::cerr << "ERROR: " << err.msg << std::endl << std::flush;
-//             exit(0);
-//         }
-//         //stop_timer("get_row()");
-//         // compute results
-//         loci_to_str(row->getloci(), loci_string);
-//         alleles_to_str(row->getalleles(), alleles_string);
-//         output_string += loci_string + " " + alleles_string;
-//         bool converge = true;
-//         //start_timer("converge()");
-//         try {
-//             converge = row->fit(change, old_beta);
-//             output_string += " " + std::to_string(row->output_first_beta_element()) + " " + std::to_string(row->t_stat()) + " ";
-//             // wanted to use a ternary, but the compiler doesn't like it?
-//             if (converge) {
-//                 output_string += "true";
-//             } else {
-//                  output_string += "false";
-//             }
-//             output_string += "\n";
-//         } catch (MathError& err) {
-//             output_string += "\tNA\tNA\tNA\n";
-//             // cerr << "MathError while fiting " << ss.str() << ": " << err.msg
-//             //      << std::endl;
-//             //ss << "\tNA\tNA\tNA" << std::endl;
-//         } catch (ERROR_t& err) {
-//             std::cerr << "ERROR " << err.msg << std::endl << std::flush;
-//             //ss << "\tNA\tNA\tNA" << std::endl;
-//             exit(1);
-//         }
-//         //stop_timer("converge()");
-//         //start_timer("batch_write()");
-//         batch->write(output_string);
-//         output_string.clear();
-//         //stop_timer("batch_write()");
-//     }
-
-// }
 
 void regression(const int thread_id, EncAnalysis analysis_type) {
     std::string output_string;

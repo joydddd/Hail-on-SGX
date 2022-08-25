@@ -210,7 +210,6 @@ bool RegisterServer::handle_message(int connFD, RegisterServerMessageType mtype,
             if (++eof_messages_recieved == compute_server_count) {
                 output_lock.lock();
                 output_file.flush();
-                //output_file.close();
                 output_lock.unlock();
                 for (ConnectionInfo institution_info : institution_info_list) {
                     send_msg(institution_info.hostname, institution_info.port, ClientMessageType::END_PROGRAM, "END_PROGRAM");

@@ -2,6 +2,7 @@ build/
 bin/
 env/
 data/
+client/client_data/*.tsv
 *.o
 */.DS_Store
 .DS_Store
@@ -12,6 +13,7 @@ gwas_u.*
 gwas_args.h
 gwasenc
 gwashost
+gwas_nonoe
 *.out
 *.log
 test_logistic
@@ -25,3 +27,4 @@ client_config-*.json
 *-*.tsv
 generated*.tsv
 compute_server_config-*.json
+

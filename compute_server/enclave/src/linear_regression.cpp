@@ -1,8 +1,6 @@
-// #include <boost/math/distributions/students_t.hpp>
 #include <math.h>
 
 #include <limits>
-// using namespace boost::math;
 
 #include "linear_regression.h"
 

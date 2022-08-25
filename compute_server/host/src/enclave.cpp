@@ -223,40 +223,34 @@ int start_enclave() {
     try {
         std::cout << "\n\n**RUNNING LOG REGRESSION**\n\n";
 
-        // int num_threads = ComputeServer::get_num_threads();
-        // DEBUG
+        EncAnalysis enc_analysis_type = ComputeServer::get_analysis();
         int num_threads = 1;
         boost::thread_group thread_group;
+
         for (int thread_id = 0; thread_id < num_threads; ++thread_id) {
-            // TODO: linear_regression
-            boost::thread* enclave_thread =
-                new boost::thread(linear_regression, thread_id);
-            // boost::thread* enclave_thread = new boost::thread(log_regression,
-            // enclave, thread_id);
+            boost::thread* enclave_thread = new boost::thread(regression, thread_id, enc_analysis_type);
             thread_group.add_thread(enclave_thread);
         }
 
         setup_enclave_encryption(num_threads);
 
-        // Allow for data to be encrypted beforehand
+        char* tmp = new char[ENCLAVE_READ_BUFFER_SIZE];
         for (int client_id = 0; client_id < getclientnum(); ++client_id) {
-            char tmp[ENCLAVE_READ_BUFFER_SIZE];
-            while (!gety(client_id, tmp)) {
-            }
+            while(!gety(client_id, tmp)) {}
         }
+        delete[] tmp;
 
         auto start = std::chrono::high_resolution_clock::now();
 
-        setup_enclave_phenotypes(num_threads);
+        setup_enclave_phenotypes(num_threads, enc_analysis_type);
         thread_group.join_all();
-        ComputeServer::clean_up_output();
 
         auto stop = std::chrono::high_resolution_clock::now();
         std::cout << "Logistic regression finished!" << std::endl;
-        auto duration =
-            std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
+        auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
         std::cout << "Enclave time total: " << duration.count() << std::endl;
         ComputeServer::print_timings();
+        ComputeServer::cleanup_output();
     } catch (ERROR_t& err) {
         std::cerr << "ERROR: " << err.msg << std::endl << std::flush;
     }

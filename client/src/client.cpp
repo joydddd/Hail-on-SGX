@@ -311,7 +311,6 @@ void Client::send_msg(const unsigned int global_id, const unsigned int mtype, co
 void Client::send_msg(const std::string& hostname, unsigned int port, unsigned int mtype, const std::string& msg, int connFD) {
     std::string message = client_name + " " + std::to_string(mtype) + " ";
     message = std::to_string(message.length() + msg.length()) + "\n" + message + msg;
-    //guarded_cout("MSG LENGTH: " + std::to_string(message.length()), cout_lock);
     send_message(hostname.c_str(), port, message.c_str(), message.length(), connFD);
 }
 
@@ -365,6 +364,5 @@ void Client::prepare_tsv_file(unsigned int global_id, const std::string& filenam
     ptype.message = data;
     ptype.mtype = mtype;
     phenotypes_list[global_id].push_back(ptype);
-    //send_msg(global_id, mtype, data);
     tsv_file.close();
 }
