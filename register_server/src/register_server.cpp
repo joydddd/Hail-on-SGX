@@ -161,10 +161,9 @@ bool RegisterServer::handle_message(int connFD, RegisterServerMessageType mtype,
             // Compare the max thread count of this machine with the others before it
             Parser::parse_connection_info(msg, compute_info);
             // Send the compute server its global ID
-            
+            std::lock_guard<std::mutex> raii(compute_lock);
             send_msg(compute_info.hostname, compute_info.port, ComputeServerMessageType::GLOBAL_ID, std::to_string(compute_server_info.size()));
 
-            std::lock_guard<std::mutex> raii(compute_lock);
             compute_server_info.push_back(msg);
             if (compute_server_info.size() == compute_server_count) {
                 // Create message containing all compute server info
@@ -222,7 +221,7 @@ bool RegisterServer::handle_message(int connFD, RegisterServerMessageType mtype,
         default:
             throw std::runtime_error("Not a valid response type");
     }
-    
+    std::cout << "Closing connection?" << std::endl;
     close(connFD);
     return false;
 }
