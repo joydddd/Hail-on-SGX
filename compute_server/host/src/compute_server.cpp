@@ -497,6 +497,7 @@ void ComputeServer::parse_header_compute_server_header(const std::string& header
         }
         return;
     }
+    std::cout << "Data recieved" << std::endl;
 
     DataBlockBatch* batch = new DataBlockBatch;
     std::string pos_str;
