@@ -371,7 +371,9 @@ void ComputeServer::check_in(const std::string& name) {
 void ComputeServer::data_listener(int connFD) {
     // We need a serial listener for this agreed upon connection!
     char* body_buffer = new char[MAX_MESSAGE_SIZE]();
-    while(start_thread(connFD, body_buffer)) {}
+    while(start_thread(connFD, body_buffer)) {
+        std::cout << "New iteration" << std::endl;
+    }
     delete[] body_buffer;
 }
 
