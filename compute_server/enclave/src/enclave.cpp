@@ -173,6 +173,7 @@ void setup_enclave_phenotypes(const int num_threads, const int analysis_type) {
     int total_row_size = 0;
     for (auto size : client_y_size) total_row_size += size;
 
+    std::cout << "Before buffer list allocation" << std::endl;
     try {
         for (int thread_id = 0; thread_id < num_threads; ++thread_id) {
             // TODO: set buffer type accordingly
@@ -181,6 +182,8 @@ void setup_enclave_phenotypes(const int num_threads, const int analysis_type) {
     } catch (const std::exception &e) { 
         std::cout << "Crash in buffer malloc with " << e.what() << std::endl;
     }
+
+    std::cout << "Before read in encrypted x size" << std::endl;
     /* set up encrypted size */
     int total_crypto_size = 0;
     for (int i = 0; i < num_clients; i++) {

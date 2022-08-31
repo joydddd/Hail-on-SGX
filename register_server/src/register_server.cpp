@@ -221,7 +221,6 @@ bool RegisterServer::handle_message(int connFD, RegisterServerMessageType mtype,
         default:
             throw std::runtime_error("Not a valid response type");
     }
-    std::cout << "Closing connection?" << std::endl;
     close(connFD);
     return false;
 }

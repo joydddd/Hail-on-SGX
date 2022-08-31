@@ -58,31 +58,59 @@ int send_message(const char *hostname, int port, const char *message, const int 
 		throw std::runtime_error("Message exceeds maximum length: " + std::to_string(message_length));
 		return -1;
 	}
-    int sockfd = sock == -1 ? socket(AF_INET, SOCK_STREAM, 0) : sock;
 
 	// (3) Connect to remote server
 	if (sock == -1) {
-		// (2) Create a sockaddr_in to specify remote host and port
-		struct sockaddr_in* addr = (sockaddr_in*)malloc(sizeof(sockaddr_in));
-		if (make_client_sockaddr(addr, hostname, port) == -1) {
-			return -1;
-		}
+		struct addrinfo hints = {}, *addrs;
+		char port_str[16] = {};
 
-		if (connect(sockfd, (sockaddr *) addr, sizeof(sockaddr_in)) == -1) {
-			perror("Error connecting stream socket");
-			return -1;
+		hints.ai_family = AF_INET; 
+		hints.ai_socktype = SOCK_STREAM;
+		hints.ai_protocol = IPPROTO_TCP;
+
+		sprintf(port_str, "%d", port);
+
+		if (getaddrinfo(hostname, port_str, &hints, &addrs) != 0) {
+			throw std::runtime_error("Failed to get addr info");
 		}
-		free(addr);
+		for(struct addrinfo *addr = addrs; addr != NULL; addr = addr->ai_next) {
+			sock = socket(addr->ai_family, addr->ai_socktype, addr->ai_protocol);
+			if (sock == -1)
+				break;
+
+			if (connect(sock, addr->ai_addr, addr->ai_addrlen) == 0)
+				break;
+
+
+			close(sock);
+			sock = -1;
+		}
+		freeaddrinfo(addrs);
+
+		if (sock == -1) {
+			throw std::runtime_error("Failed to connect\n");
+		}
+		// (2) Create a sockaddr_in to specify remote host and port
+		// struct sockaddr_in* addr = (sockaddr_in*)malloc(sizeof(sockaddr_in));
+
+		// if (make_client_sockaddr(addr, hostname, port) == -1) {
+		// 	return -1;
+		// }
+
+		// if (connect(sockfd, (sockaddr *) addr, sizeof(sockaddr_in)) == -1) {
+		// 	perror("Error connecting stream socket");
+		// 	return -1;
+		// }
+		// free(addr);
 	}
 
 	// (4) Send message to remote server
-	if (send(sockfd, message, message_length, 0) == -1) {
+	if (send(sock, message, message_length, 0) == -1) {
 		perror("Error sending on stream socket");
 		return -1;
 	}
-	
 
-	return sockfd;
+	return sock;
 }
 
 size_t writefunc(void *ptr, size_t size, size_t nmemb, std::string *s) 
