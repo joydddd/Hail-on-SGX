@@ -306,13 +306,17 @@ void Client::send_msg(const unsigned int global_id, const unsigned int mtype, co
     std::string message = client_name + " " + std::to_string(mtype) + " ";
     message = std::to_string(message.length() + msg.length()) + "\n" + message + msg;
     ConnectionInfo info = compute_server_info[global_id];
-    send_message(info.hostname.c_str(), info.port, message.c_str(), message.length(), connFD);
+    if (send_message(info.hostname.c_str(), info.port, message.c_str(), message.length(), connFD) == -1) {
+        throw std::runtime_error("Failed to send msg\n");
+    }
 }
 
 void Client::send_msg(const std::string& hostname, unsigned int port, unsigned int mtype, const std::string& msg, int connFD) {
     std::string message = client_name + " " + std::to_string(mtype) + " ";
     message = std::to_string(message.length() + msg.length()) + "\n" + message + msg;
-    send_message(hostname.c_str(), port, message.c_str(), message.length(), connFD);
+    if (send_message(hostname.c_str(), port, message.c_str(), message.length(), connFD) == -1) {
+        throw std::runtime_error("Failed to send msg\n");
+    }
 }
 
 void Client::fill_queue() {

@@ -20,28 +20,6 @@ int make_server_sockaddr(struct sockaddr_in *addr, int port) {
 	return 0;
 }
 
-int make_client_sockaddr(struct sockaddr_in *addr, const char *hostname, int port) {
-	// Step (1): specify socket family.
-	// This is an internet socket.
-	addr->sin_family = AF_INET;
-
-	// Step (2): specify socket address (hostname).
-	// The socket will be a client, so call this unix helper function
-	// to convert a hostname string to a useable `hostent` struct.
-	struct hostent *host = gethostbyname(hostname);
-	if (host == NULL) {
-		fprintf(stderr, "%s: unknown host\n", hostname);
-		return -1;
-	}
-	memcpy(&(addr->sin_addr), host->h_addr, host->h_length);
-
-	// Step (3): Set the port value.
-	// Use htons to convert from local byte order to network byte order.
-	addr->sin_port = htons(port);
-
-	return 0;
-}
-
 int get_port_number(int sockfd) {
  	struct sockaddr_in addr;
 	socklen_t length = sizeof(addr);
@@ -75,12 +53,8 @@ int send_message(const char *hostname, int port, const char *message, const int 
 		}
 		for(struct addrinfo *addr = addrs; addr != NULL; addr = addr->ai_next) {
 			sock = socket(addr->ai_family, addr->ai_socktype, addr->ai_protocol);
-			if (sock == -1)
+			if (sock == -1 || connect(sock, addr->ai_addr, addr->ai_addrlen) == 0)
 				break;
-
-			if (connect(sock, addr->ai_addr, addr->ai_addrlen) == 0)
-				break;
-
 
 			close(sock);
 			sock = -1;
@@ -90,18 +64,6 @@ int send_message(const char *hostname, int port, const char *message, const int 
 		if (sock == -1) {
 			throw std::runtime_error("Failed to connect\n");
 		}
-		// (2) Create a sockaddr_in to specify remote host and port
-		// struct sockaddr_in* addr = (sockaddr_in*)malloc(sizeof(sockaddr_in));
-
-		// if (make_client_sockaddr(addr, hostname, port) == -1) {
-		// 	return -1;
-		// }
-
-		// if (connect(sockfd, (sockaddr *) addr, sizeof(sockaddr_in)) == -1) {
-		// 	perror("Error connecting stream socket");
-		// 	return -1;
-		// }
-		// free(addr);
 	}
 
 	// (4) Send message to remote server

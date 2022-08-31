@@ -197,9 +197,9 @@ bool ComputeServer::start_thread(int connFD, char* body_buffer) {
         }
         std::string body(body_buffer, body_size);
 
-        //guarded_cout("Body: " + body, cout_lock);
-        //guarded_cout("Client: " + parsed_header[0] + 
-        //             " Msg Type: " + parsed_header[1], cout_lock);
+        guarded_cout("Body: " + body, cout_lock);
+        guarded_cout("Client: " + parsed_header[0] + 
+                    " Msg Type: " + parsed_header[1], cout_lock);
         //guarded_cout("\nEncrypted body:\n" + parsed_header[2], cout_lock);
         std::string msg;
         std::string client_name;
