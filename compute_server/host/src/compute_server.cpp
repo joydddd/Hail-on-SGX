@@ -197,12 +197,12 @@ bool ComputeServer::start_thread(int connFD, char* body_buffer) {
         }
         std::string body(body_buffer, body_size);
 
-        guarded_cout(" Msg Type: " + std::to_string(mtype), cout_lock);
-        //guarded_cout("\nEncrypted body:\n" + parsed_header[2], cout_lock);
         std::string msg;
         std::string client_name;
         ComputeServerMessageType mtype;
         parse_header_compute_server_header(body, msg, client_name, mtype);
+
+        guarded_cout(" Msg Type: " + std::to_string(mtype), cout_lock);
 
         handle_message(connFD, client_name, mtype, msg);
     }
