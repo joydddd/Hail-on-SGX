@@ -89,7 +89,7 @@ void Institution::transfer_eligible_blocks() {
         blocks.pop();
 
         if (!encrypted_allele_data_size_set) {
-            std::cout << "Set encrypted allele_data_size" << std::endl;
+            std::cout << "Set encrypted allele_data_size to " << batch->blocks_batch.front()->data.length() << std::endl;
             encrypted_allele_data_size = batch->blocks_batch.front()->data.length();
             encrypted_allele_data_size_set = true;
         }

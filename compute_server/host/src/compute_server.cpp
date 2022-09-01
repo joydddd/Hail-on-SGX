@@ -182,7 +182,6 @@ bool ComputeServer::start_thread(int connFD, char* body_buffer) {
             header_size++;
         }
         if (!found_delim) {
-            std::cout << "header buffer: " << header_buffer << std::endl;
             throw std::runtime_error("Didn't read in a null terminating char");
         }
         std::string header(header_buffer, header_size);
@@ -202,7 +201,7 @@ bool ComputeServer::start_thread(int connFD, char* body_buffer) {
         ComputeServerMessageType mtype;
         parse_header_compute_server_header(body, msg, client_name, mtype);
 
-        guarded_cout(" Msg Type: " + std::to_string(mtype), cout_lock);
+        //guarded_cout(" Msg Type: " + std::to_string(mtype), cout_lock);
 
         handle_message(connFD, client_name, mtype, msg);
     }
@@ -371,9 +370,7 @@ void ComputeServer::check_in(const std::string& name) {
 void ComputeServer::data_listener(int connFD) {
     // We need a serial listener for this agreed upon connection!
     char* body_buffer = new char[MAX_MESSAGE_SIZE]();
-    while(start_thread(connFD, body_buffer)) {
-        std::cout << "New iteration" << std::endl;
-    }
+    while(start_thread(connFD, body_buffer)) {}
     delete[] body_buffer;
 }
 
@@ -497,7 +494,6 @@ void ComputeServer::parse_header_compute_server_header(const std::string& header
         }
         return;
     }
-    std::cout << "Data recieved" << std::endl;
 
     DataBlockBatch* batch = new DataBlockBatch;
     std::string pos_str;
