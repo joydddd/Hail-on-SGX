@@ -43,10 +43,8 @@ class Client {
 
     int num_patients;
     int num_lines_per_block;
-
-    bool sender_running;
-    bool sent_all_data;
-    volatile bool filled;
+  
+    volatile bool work_distributed;
 
     std::ifstream xval;
 
@@ -55,8 +53,10 @@ class Client {
     std::vector<ConnectionInfo> compute_server_info;
     //std::vector<std::queue<std::string> > allele_queue_list;
     std::vector<moodycamel::ReaderWriterQueue<std::string>> allele_queue_list;
+    std::vector<moodycamel::ReaderWriterQueue<std::string>> encryption_queue_list;
     std::vector<int> blocks_sent_list;
     std::atomic<int> y_and_cov_count;
+    std::atomic<int> filled_count;
 
   public:
     Client(const std::string& config_file);
@@ -78,6 +78,8 @@ class Client {
     bool start_thread(int connFD);
 
     void fill_queue();
+
+    void fill_queue_worker(int global_id);
 
     void data_sender(int connFD);
 

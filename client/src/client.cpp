@@ -1,10 +1,12 @@
 #include "client.h"
 #include <boost/thread.hpp>
 #include <chrono>
+#include <condition_variable>
 #include <thread>
 #include <string>
 
 std::mutex cout_lock;
+std::condition_variable start_sender_cv;
 
 Client::Client(const std::string& config_file) {
     init(config_file);
@@ -32,11 +34,10 @@ void Client::init(const std::string& config_file) {
     auto info = client_config["register_server_info"];
     send_msg(info["hostname"], info["port"], RegisterServerMessageType::CLIENT_REGISTER, client_hostname + "\t" + std::to_string(listen_port));
 
+    work_distributed = false;
     num_patients = 0;
-    sender_running = false;
-    sent_all_data = false;
-    filled = false;
     y_and_cov_count = 0;
+    filled_count = 0;
 }
 
 void Client::run() {
@@ -167,6 +168,7 @@ void Client::handle_message(int connFD, const unsigned int global_id, const Clie
             aes_encryptor_list = std::vector<std::vector<AESCrypto> >(num_compute_servers);
             phenotypes_list.resize(num_compute_servers);
             allele_queue_list.resize(num_compute_servers);
+            encryption_queue_list.resize(num_compute_servers);
             for (int _ = 0; _ < num_compute_servers; ++_) {
                 allele_queue_list.reserve(1000);
                 blocks_sent_list.push_back(0);
@@ -238,8 +240,13 @@ void Client::handle_message(int connFD, const unsigned int global_id, const Clie
         }
         case DATA_REQUEST:
         {   
+            std::mutex useless_lock;
+            std::unique_lock<std::mutex> useless_lock_wrapper(useless_lock);
             // Wait until all data is ready to go!
-            while (!filled) {}
+            while (!work_distributed) {
+                // avoid busy waiting
+                start_sender_cv.wait(useless_lock_wrapper);
+            }
 
             auto start = std::chrono::high_resolution_clock::now();
 
@@ -279,7 +286,6 @@ void Client::handle_message(int connFD, const unsigned int global_id, const Clie
             // If get_block failed we have reached the end of the file, send an EOF.
             block = std::to_string(blocks_sent) + "\t" + EOFSeperator + "\t" + EOFSeperator + "\t" + EOFSeperator;
             send_msg(global_id, DATA, block, connFD);
-            sent_all_data = true;
             
             auto stop = std::chrono::high_resolution_clock::now();
             auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
@@ -334,10 +340,38 @@ void Client::fill_queue() {
             compressed_vals.resize((num_patients / TWO_BIT_INT_ARR_SIZE) 
                                     + (num_patients % TWO_BIT_INT_ARR_SIZE ? 1 : 0));
         }
-        int compute_server_hash = Parser::parse_allele_line(line, vals, compressed_vals, aes_encryptor_list);
+        int compute_server_hash = Parser::parse_compute_hash(line, aes_encryptor_list.size());
+        Parser::parse_allele_line(line, compute_server_hash, vals, compressed_vals, aes_encryptor_list);
         allele_queue_list[compute_server_hash].enqueue(line);
     }
-    filled = true;
+    //filled = true;
+    work_distributed = true;
+    start_sender_cv.notify_all();
+    // std::cout << "Work distributed" << std::endl;
+    // for (int id = 0; id < encryption_queue_list.size(); ++id) {
+    //     boost::thread queue_worker(&Client::fill_queue_worker, this, id);
+    //     queue_worker.detach();
+    // }
+}
+
+void Client::fill_queue_worker(int global_id) {
+    std::string line;
+    std::vector<uint8_t> vals;
+    std::vector<uint8_t> compressed_vals;
+    vals.resize(num_patients);
+    // This isn't very clean but I want to check the size of the encrypted/encoded line once
+    compressed_vals.resize((num_patients / TWO_BIT_INT_ARR_SIZE) 
+                           + (num_patients % TWO_BIT_INT_ARR_SIZE ? 1 : 0));
+
+    while(!work_distributed || encryption_queue_list[global_id].size_approx()) {
+        while(encryption_queue_list[global_id].try_dequeue(line)) {
+            Parser::parse_allele_line(line, global_id, vals, compressed_vals, aes_encryptor_list);
+        allele_queue_list[global_id].enqueue(line);
+        }
+    }
+    if (++filled_count == encryption_queue_list.size()) {
+        start_sender_cv.notify_all();
+    }
 }
 
 void Client::data_sender(int connFD) {
@@ -346,7 +380,6 @@ void Client::data_sender(int connFD) {
 }
 
 void Client::prepare_tsv_file(unsigned int global_id, const std::string& filename, ComputeServerMessageType mtype) {
-    std::cout << "before open tsv" << std::endl;
     std::ifstream tsv_file("client_data/" + filename + ".tsv");
     std::string data;
     // TODO: fix this code once Joy's enclave can handle a different format

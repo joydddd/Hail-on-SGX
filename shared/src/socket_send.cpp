@@ -67,10 +67,9 @@ int send_message(const char *hostname, int port, const char *message, const int 
 	}
 
 	// (4) Send message to remote server
-	if (send(sock, message, message_length, 0) == -1) {
-		perror("Error sending on stream socket");
-		return -1;
-	}
+	int send_res = send(sock, message, message_length, 0);
+	if (send_res == -1)
+		throw std::runtime_error("Error sending on stream socket");
 
 	return sock;
 }

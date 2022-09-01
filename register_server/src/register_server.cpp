@@ -199,6 +199,7 @@ bool RegisterServer::handle_message(int connFD, RegisterServerMessageType mtype,
         {
             output_lock.lock();
             output_file << msg;
+            output_file.flush();
             output_lock.unlock();
             break;
         }
