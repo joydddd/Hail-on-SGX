@@ -149,7 +149,7 @@ Batch* Buffer::launch(std::vector<ClientInfo>& client_info_list, const int threa
     while (!num_lines) {
         getbatch(&num_lines, crypttxt, thread_id);
     }
-    std::cout << "End batch" << std::endl;
+    std::cout << "End batch " << crypttxt[0] << std::endl;
     if (!strcmp(crypttxt, EOFSeperator)) return nullptr;
     if (!free_batch) return nullptr;
     *free_batch->plaintxt_size() = 0;
