@@ -47,7 +47,7 @@ size_t Row::read(const char line[]) {
 #endif
         );
     } catch (const std::invalid_argument& exception) {
-        std::cout << loci.chrom << " " << loci.loc << " " << std::endl;
+        std::cout << "Invalid chrom/loc " << loci.chrom << " " << loci.loc << " " << std::endl;
         exit(0);
     }
     for (size_t i = 0; i < n; i++) {
@@ -61,6 +61,9 @@ size_t Row::read(const char line[]) {
     }
     if (line[n + loci_str.size() + alleles_str.size() + 2] != '\n')
         throw ReadtsvERROR("Invalid row terminator");
+    if (n + loci_str.size() + alleles_str.size() + 3 > 2000) {
+        std::cout << "Read: " << n << " " << loci_str.size() << " " << alleles_str.size() << std::endl;
+    }
     return n + loci_str.size() + alleles_str.size() + 3;
 }
 void Row::combine(Row *other) {

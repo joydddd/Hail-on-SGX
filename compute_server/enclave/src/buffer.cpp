@@ -124,8 +124,9 @@ Buffer::~Buffer() {
 }
 
 void Buffer::output(const char* out, const size_t& length) {
-    if (output_tail + length >= ENCLAVE_OUTPUT_BUFFER_SIZE) {
+    if (output_tail + length >= ENCLAVE_READ_BUFFER_SIZE) {
         writebatch(type, output_buffer, output_tail, thread_id);
+        memset(output_buffer, 0, ENCLAVE_READ_BUFFER_SIZE);
         output_tail = 0;
     }
     strcpy(output_buffer + output_tail, out);
@@ -145,11 +146,9 @@ void Buffer::finish() {
 
 Batch* Buffer::launch(std::vector<ClientInfo>& client_info_list, const int thread_id) {
     int num_lines = 0;
-    std::cout << "Before get batch" << std::endl;
     while (!num_lines) {
         getbatch(&num_lines, crypttxt, thread_id);
     }
-    std::cout << "End batch " << crypttxt << std::endl;
     if (!strcmp(crypttxt, EOFSeperator)) return nullptr;
     if (!free_batch) return nullptr;
     *free_batch->plaintxt_size() = 0;

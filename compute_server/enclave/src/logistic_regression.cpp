@@ -8,13 +8,11 @@
 //////////              Log_row             /////////////////
 /////////////////////////////////////////////////////////////
 
-Log_row::Log_row(size_t size, GWAS* _gwas) : Row(size), gwas(_gwas) {
+Log_row::Log_row(size_t _size, GWAS* _gwas) : Row(_size), gwas(_gwas) {
     beta_delta.resize(gwas->dim());
     // 2 is a magic number that helps with SqrMatrix construction, "highest level matrix"
     H = SqrMatrix(gwas->dim(), 2);
     Grad.resize(gwas->dim());
-    //b.resize(gwas->dim(), 0);
-    // std::cout << b.size() << std::endl;
 }
 
 /* fitting */

@@ -15,24 +15,30 @@ Batch::Batch(size_t _row_size, Row_T row_type, GWAS* _gwas)
             break;
     }
     plaintxt = new char[ENCLAVE_READ_BUFFER_SIZE * 4];
+    batch_head = 0;
+    st = Empty;
+    txt_size = 0;
+    out_tail = 0;
+    row->reset();
 }
 
 void Batch::reset() {
-    head = 0;
+    batch_head = 0;
     st = Empty;
     txt_size = 0;
     out_tail = 0;
 }
 
 Row* Batch::get_row(Buffer* buffer) {
-    if (head >= txt_size) {
+    if (batch_head >= txt_size) {
         st = Finished;
         buffer->finish();
         return nullptr;
     }
     st = Working;
     row->reset();
-    head += row->read(plaintxt + head);
+    int res = row->read(plaintxt + batch_head);
+    batch_head = batch_head + res;
 #ifdef DEBUG
     // row->print();
 #endif

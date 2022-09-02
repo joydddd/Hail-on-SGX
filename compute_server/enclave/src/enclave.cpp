@@ -173,7 +173,6 @@ void setup_enclave_phenotypes(const int num_threads, const int analysis_type) {
     int total_row_size = 0;
     for (auto size : client_y_size) total_row_size += size;
 
-    std::cout << "Before buffer list allocation" << std::endl;
     try {
         for (int thread_id = 0; thread_id < num_threads; ++thread_id) {
             // TODO: set buffer type accordingly
@@ -183,7 +182,6 @@ void setup_enclave_phenotypes(const int num_threads, const int analysis_type) {
         std::cout << "Crash in buffer malloc with " << e.what() << std::endl;
     }
 
-    std::cout << "Before read in encrypted x size" << std::endl;
     /* set up encrypted size */
     int total_crypto_size = 0;
     for (int i = 0; i < num_clients; i++) {
@@ -192,11 +190,12 @@ void setup_enclave_phenotypes(const int num_threads, const int analysis_type) {
             get_encrypted_x_size(&size, i);
         }
         client_info_list[i].crypto_size = size;
-        total_crypto_size += size;
+        // Add 1 for the tab delimiter
+        total_crypto_size += size + 1;
     }
-    // Add padding for Loci + Allele and list of clients
-    total_crypto_size += MAX_LOCI_ALLELE_STR_SIZE + (num_clients * 2);
-
+    // Add padding for Loci + Allele and list of clients + 1 for new line at very end of sequence
+    total_crypto_size += MAX_LOCI_ALLELE_STR_SIZE + (num_clients * 2) + 1;
+    
     int max_batch_lines = ENCLAVE_READ_BUFFER_SIZE / total_crypto_size;
     if (!max_batch_lines) {
         std::cerr << "Data is too long to fit into enclave read buffer" << std::endl;

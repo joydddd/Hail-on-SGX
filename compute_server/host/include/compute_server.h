@@ -14,6 +14,7 @@
 #include <queue>
 #include <vector>
 #include <mutex>
+#include <condition_variable>
 #include <unordered_set>
 #include <functional>
 #include <fstream>
@@ -53,7 +54,7 @@ class ComputeServer {
     std::unordered_set<std::string> expected_covariants;
     std::vector<std::string> institution_list;
     std::vector<moodycamel::ReaderWriterQueue<std::string>> allele_queue_list;
-    moodycamel::ConcurrentQueue<std::string> output_queue;
+    std::queue<std::string> output_queue;
     std::string covariant_list;
     std::string y_val_name;
     char* encrypted_aes_key;
@@ -72,6 +73,9 @@ class ComputeServer {
     std::mutex expected_lock;
 
     std::mutex institutions_lock;
+
+    std::mutex output_queue_lock;
+    std::condition_variable output_queue_cv;
 
     // set up Server data structures
     void init(const std::string& config_file);

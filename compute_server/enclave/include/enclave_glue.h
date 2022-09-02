@@ -41,7 +41,7 @@ void get_encrypted_x_size(int* _retval, const int client_num);
 void getbatch(int* _retval, char batch[ENCLAVE_READ_BUFFER_SIZE],
                      const int thread_id);
 
-void writebatch(enum Row_T type, char buffer[ENCLAVE_OUTPUT_BUFFER_SIZE],
+void writebatch(enum Row_T type, char buffer[ENCLAVE_READ_BUFFER_SIZE],
                        const int buffer_size,
                        const int thread_id);
 
