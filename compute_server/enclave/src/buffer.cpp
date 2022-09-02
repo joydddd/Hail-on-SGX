@@ -124,8 +124,9 @@ Buffer::~Buffer() {
 }
 
 void Buffer::output(const char* out, const size_t& length) {
-    if (output_tail + length >= ENCLAVE_OUTPUT_BUFFER_SIZE) {
+    if (output_tail + length >= ENCLAVE_READ_BUFFER_SIZE) {
         writebatch(type, output_buffer, output_tail, thread_id);
+        memset(output_buffer, 0, ENCLAVE_READ_BUFFER_SIZE);
         output_tail = 0;
     }
     strcpy(output_buffer + output_tail, out);

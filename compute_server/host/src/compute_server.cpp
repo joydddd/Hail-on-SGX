@@ -21,9 +21,9 @@ std::mutex cout_lock;
 
 // This lock does nothing - we really want a "signal" without the complexity of condition variables,
 // but I cannot seem to find this feature in C/C++.
-boost::mutex useless_lock;
-boost::unique_lock<boost::mutex> useless_lock_wrapper(useless_lock);
-boost::condition_variable output_queue_cv;
+// boost::mutex useless_lock;
+// boost::unique_lock<boost::mutex> useless_lock_wrapper(useless_lock);
+
 
 bool terminating = false;
 
@@ -38,7 +38,7 @@ ComputeServer::~ComputeServer() {
 }
 
 void ComputeServer::init(const std::string& config_file) {
-    num_threads = boost::thread::hardware_concurrency();
+    num_threads = 1;//boost::thread::hardware_concurrency();
 
     std::ifstream compute_config_file(config_file);
     compute_config_file >> compute_config;
@@ -182,7 +182,6 @@ bool ComputeServer::start_thread(int connFD, char* body_buffer) {
             header_size++;
         }
         if (!found_delim) {
-            std::cout << "header buffer: " << header_buffer << std::endl;
             throw std::runtime_error("Didn't read in a null terminating char");
         }
         std::string header(header_buffer, header_size);
@@ -334,8 +333,8 @@ int ComputeServer::send_msg(const std::string& name, const int mtype, const std:
 
 int ComputeServer::send_msg_output(const std::string& msg, int connFD) {
     return send_msg(compute_config["register_server_info"]["hostname"], 
-                    compute_config["register_server_info"]["port"], 
-                    msg != EOFSeperator ? RegisterServerMessageType::OUTPUT : RegisterServerMessageType::EOF_OUTPUT,
+                    compute_config["register_server_info"]["port"],
+                    strcmp(msg.c_str(), EOFSeperator) == 0 ? RegisterServerMessageType::EOF_OUTPUT : RegisterServerMessageType::OUTPUT,
                     msg,
                     connFD);
 }
@@ -464,13 +463,23 @@ void ComputeServer::allele_matcher() {
 
 void ComputeServer::output_sender() {
     std::string output_str;
-    while(!terminating) {
+    std::unique_lock<std::mutex> lk(get_instance()->output_queue_lock);
+    while(!terminating || output_queue.size()) {
         // This wait -> signal system seriously improves performance as it reduces busy waiting
-        output_queue_cv.wait(useless_lock_wrapper);
-        while (output_queue.try_dequeue(output_str)) {
+        output_queue_cv.wait(lk);
+        while (output_queue.size()) {
+            output_str = output_queue.front();
+            output_queue.pop(); 
+            // There is somehow a race condition where the EOF is enqueued before the rest of the output...
+            // Not sure how this happens but we need to correct it somehow.
+            if (strcmp(output_str.c_str(), EOFSeperator) == 0 && output_queue.size()) {
+                output_queue.push(output_str);
+                continue;
+            }
             send_msg_output(output_str);
         }
     }
+    exit(0);
 } 
 
 void ComputeServer::parse_header_compute_server_header(const std::string& header, std::string& msg, 
@@ -679,24 +688,28 @@ int ComputeServer::get_allele_data(char* batch_data, const int thread_id) {
         num_lines++;
         batch_data_str += tmp;
     }
-    memcpy(batch_data, &batch_data_str[0], batch_data_str.length());
-    // strcpy(batch_data, &batch_data_str[0]);
-    batch_data[batch_data_str.length()] = '\0';
+    if (num_lines) {
+        memset(batch_data, 0, ENCLAVE_READ_BUFFER_SIZE);
+        memcpy(batch_data, &batch_data_str[0], batch_data_str.length());
+        batch_data[batch_data_str.length()] = '\0';
+    }
     return num_lines;
 }
 
 void ComputeServer::write_allele_data(char* output_data, const int buffer_size, const int thread_id) {
-    get_instance()->output_queue.enqueue(std::string(output_data));
-    output_queue_cv.notify_one();
+    if (std::string(output_data) != std::string(output_data, buffer_size)) {
+        std::cout << "Mismatch" << std::endl;
+    }
+    std::unique_lock<std::mutex> lk(get_instance()->output_queue_lock);
+    get_instance()->output_queue.push(std::string(output_data));
+    lk.unlock();
+    get_instance()->output_queue_cv.notify_all();
 }
 
 void ComputeServer::cleanup_output() {
-    std::cout << "Sending last message: "  << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count() << "\n";
-    get_instance()->send_msg_output(EOFSeperator);
-    // We are now finished, so we can exit the program. This boolean/signal are really just to avoid an error
-    // upon exiting of the program, which doesn't really matter but I thought it might confuse people otherwise
-    // to see an error message when the program successfully terminates!
+    std::unique_lock<std::mutex> lk(get_instance()->output_queue_lock);
+    get_instance()->output_queue.push(EOFSeperator);
     terminating = true;
-    output_queue_cv.notify_all();
-    exit(0);
+    lk.unlock();
+    get_instance()->output_queue_cv.notify_all();
 }

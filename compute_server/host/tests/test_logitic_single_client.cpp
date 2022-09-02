@@ -163,7 +163,7 @@ bool getbatch(char batch[ENCLAVE_READ_BUFFER_SIZE]) {
     return true;
 }
 
-void writebatch(Row_T type, char buffer[ENCLAVE_OUTPUT_BUFFER_SIZE]) {
+void writebatch(Row_T type, char buffer[ENCLAVE_READ_BUFFER_SIZE]) {
     static ofstream result_f;
     if (!result_f.is_open()) {
         result_f.open(OUTPUT_FILE);
