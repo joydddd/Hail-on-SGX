@@ -10,7 +10,7 @@
 #ifndef _HELPERS_H_
 #define _HELPERS_H_
 
-const int MAX_MESSAGE_SIZE = 1 << 18;
+const int MAX_MESSAGE_SIZE = 1 << 22;
 
 /**
  * Make a server sockaddr given a port.

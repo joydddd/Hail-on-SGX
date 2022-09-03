@@ -1,12 +1,10 @@
 #include "client.h"
 #include <boost/thread.hpp>
 #include <chrono>
-#include <condition_variable>
 #include <thread>
 #include <string>
 
 std::mutex cout_lock;
-std::condition_variable start_sender_cv;
 
 Client::Client(const std::string& config_file) {
     init(config_file);
@@ -34,8 +32,8 @@ void Client::init(const std::string& config_file) {
     auto info = client_config["register_server_info"];
     send_msg(info["hostname"], info["port"], RegisterServerMessageType::CLIENT_REGISTER, client_hostname + "\t" + std::to_string(listen_port));
 
-    work_distributed = false;
     num_patients = 0;
+    work_distributed = false;
     y_and_cov_count = 0;
     filled_count = 0;
 }
@@ -243,8 +241,7 @@ void Client::handle_message(int connFD, const unsigned int global_id, const Clie
             std::mutex useless_lock;
             std::unique_lock<std::mutex> useless_lock_wrapper(useless_lock);
             // Wait until all data is ready to go!
-            while (!work_distributed) {
-                // avoid busy waiting
+            while (filled_count != allele_queue_list.size()) {
                 start_sender_cv.wait(useless_lock_wrapper);
             }
 
@@ -312,23 +309,38 @@ void Client::send_msg(const unsigned int global_id, const unsigned int mtype, co
     std::string message = client_name + " " + std::to_string(mtype) + " ";
     message = std::to_string(message.length() + msg.length()) + "\n" + message + msg;
     ConnectionInfo info = compute_server_info[global_id];
-    if (send_message(info.hostname.c_str(), info.port, message.c_str(), message.length(), connFD) == -1) {
-        throw std::runtime_error("Failed to send msg\n");
-    }
+    send_message(info.hostname.c_str(), info.port, message.c_str(), message.length(), connFD);
 }
 
 void Client::send_msg(const std::string& hostname, unsigned int port, unsigned int mtype, const std::string& msg, int connFD) {
     std::string message = client_name + " " + std::to_string(mtype) + " ";
     message = std::to_string(message.length() + msg.length()) + "\n" + message + msg;
-    if (send_message(hostname.c_str(), port, message.c_str(), message.length(), connFD) == -1) {
-        throw std::runtime_error("Failed to send msg\n");
+    send_message(hostname.c_str(), port, message.c_str(), message.length(), connFD);
+}
+
+void Client::queue_helper(const int global_id) {
+    std::string line;
+    std::vector<uint8_t> vals;
+    std::vector<uint8_t> compressed_vals;
+    vals.resize(num_patients);
+    compressed_vals.resize((num_patients / TWO_BIT_INT_ARR_SIZE) + (num_patients % TWO_BIT_INT_ARR_SIZE ? 1 : 0));
+    while(!work_distributed || encryption_queue_list[global_id].size_approx()) {
+        while(encryption_queue_list[global_id].try_dequeue(line)) {
+            Parser::parse_allele_line(line, 
+                                      vals, 
+                                      compressed_vals, 
+                                      aes_encryptor_list, 
+                                      global_id);
+            allele_queue_list[global_id].enqueue(line);
+        }
+    }
+    if (++filled_count == allele_queue_list.size()) {
+        start_sender_cv.notify_all();
     }
 }
 
 void Client::fill_queue() {
     std::string line;
-    std::vector<uint8_t> vals;
-    std::vector<uint8_t> compressed_vals;
     while(getline(xval, line)) {
         if (!num_patients) {
             // Subtract 2 for locus->alleles tab and alleles->first value tab
@@ -336,42 +348,15 @@ void Client::fill_queue() {
             Parser::split(patients_split, line, '\t');
             // This isn't very clean but I want to check the size of the encrypted/encoded line once
             num_patients = patients_split.size() - 2;
-            vals.resize(num_patients);
-            compressed_vals.resize((num_patients / TWO_BIT_INT_ARR_SIZE) 
-                                    + (num_patients % TWO_BIT_INT_ARR_SIZE ? 1 : 0));
+            for (int id = 0; id < encryption_queue_list.size(); ++id) {
+                boost::thread helper_thread(&Client::queue_helper, this, id);
+                helper_thread.detach();
+            }
         }
-        int compute_server_hash = Parser::parse_compute_hash(line, aes_encryptor_list.size());
-        Parser::parse_allele_line(line, compute_server_hash, vals, compressed_vals, aes_encryptor_list);
-        allele_queue_list[compute_server_hash].enqueue(line);
+        encryption_queue_list[Parser::parse_hash(line, aes_encryptor_list.size())].enqueue(line);
     }
-    //filled = true;
+    std::cout << "Worked distributed" << std::endl;
     work_distributed = true;
-    start_sender_cv.notify_all();
-    // std::cout << "Work distributed" << std::endl;
-    // for (int id = 0; id < encryption_queue_list.size(); ++id) {
-    //     boost::thread queue_worker(&Client::fill_queue_worker, this, id);
-    //     queue_worker.detach();
-    // }
-}
-
-void Client::fill_queue_worker(int global_id) {
-    std::string line;
-    std::vector<uint8_t> vals;
-    std::vector<uint8_t> compressed_vals;
-    vals.resize(num_patients);
-    // This isn't very clean but I want to check the size of the encrypted/encoded line once
-    compressed_vals.resize((num_patients / TWO_BIT_INT_ARR_SIZE) 
-                           + (num_patients % TWO_BIT_INT_ARR_SIZE ? 1 : 0));
-
-    while(!work_distributed || encryption_queue_list[global_id].size_approx()) {
-        while(encryption_queue_list[global_id].try_dequeue(line)) {
-            Parser::parse_allele_line(line, global_id, vals, compressed_vals, aes_encryptor_list);
-        allele_queue_list[global_id].enqueue(line);
-        }
-    }
-    if (++filled_count == encryption_queue_list.size()) {
-        start_sender_cv.notify_all();
-    }
 }
 
 void Client::data_sender(int connFD) {
@@ -382,7 +367,6 @@ void Client::data_sender(int connFD) {
 void Client::prepare_tsv_file(unsigned int global_id, const std::string& filename, ComputeServerMessageType mtype) {
     std::ifstream tsv_file("client_data/" + filename + ".tsv");
     std::string data;
-    // TODO: fix this code once Joy's enclave can handle a different format
     std::string line;
 
     std::vector<std::string> patient_and_data;

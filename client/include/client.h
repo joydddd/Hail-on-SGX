@@ -11,6 +11,7 @@
 #include <string>
 #include <atomic>
 #include <queue>
+#include <condition_variable>
 #include <boost/thread.hpp>
 #include <sys/types.h>
 #include <sys/socket.h>
@@ -43,7 +44,7 @@ class Client {
 
     int num_patients;
     int num_lines_per_block;
-  
+
     volatile bool work_distributed;
 
     std::ifstream xval;
@@ -57,6 +58,7 @@ class Client {
     std::vector<int> blocks_sent_list;
     std::atomic<int> y_and_cov_count;
     std::atomic<int> filled_count;
+    std::condition_variable start_sender_cv;
 
   public:
     Client(const std::string& config_file);
@@ -77,9 +79,9 @@ class Client {
     // start a thread that will handle a message and exit properly if it finds an error
     bool start_thread(int connFD);
 
-    void fill_queue();
+    void queue_helper(const int global_id);
 
-    void fill_queue_worker(int global_id);
+    void fill_queue();
 
     void data_sender(int connFD);
 

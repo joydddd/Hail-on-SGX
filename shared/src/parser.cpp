@@ -85,21 +85,24 @@ void Parser::parse_data_body(std::vector<DataBlock*>& blocks, const std::string&
     }
 }
 
-int Parser::parse_compute_hash(const std::string& line, const int encryptor_list_size) {
-    // We waste some computation repeating this work, but the bulk is probably in the encryption... right?
-    // Also, this allows for parallelization!
+int Parser::parse_hash(const std::string& line, const int encryptor_list_size) {
     std::vector<std::string> line_split;
     Parser::split(line_split, line, '\t', 2);
     std::string locus_and_allele = line_split[0] + '\t' + line_split[1] + '\t';
     return hash_string(locus_and_allele, encryptor_list_size, false);
 }
 
-void Parser::parse_allele_line(std::string& line, const int compute_server_hash, std::vector<uint8_t>& vals, std::vector<uint8_t>& compressed_vals, std::vector<std::vector<AESCrypto> >& aes_list_list) {
+void Parser::parse_allele_line(std::string& line, 
+                              std::vector<uint8_t>& vals, 
+                              std::vector<uint8_t>& compressed_vals, 
+                              std::vector<std::vector<AESCrypto> >& encryptor_list, 
+                              const int compute_server_hash) {
     std::vector<std::string> line_split;
     Parser::split(line_split, line, '\t', 2);
     std::string locus_and_allele = line_split[0] + '\t' + line_split[1] + '\t';
 
-    std::vector<AESCrypto>& aes_list = aes_list_list[compute_server_hash];
+    // Use the AES encryptor that corresponds to the appropriate thread on the server end
+    std::vector<AESCrypto>& aes_list = encryptor_list[compute_server_hash];
     AESCrypto& encryptor = aes_list[hash_string(locus_and_allele, aes_list.size(), true)];
 
     std::string line_vals = line_split.back();

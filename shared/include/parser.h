@@ -39,10 +39,14 @@ class Parser {
     // parse message body into the relevant arguments we need
     static void parse_data_body(std::vector<DataBlock*>& blocks, const std::string& message_body, AESCrypto& decoder);
 
-    static int parse_compute_hash(const std::string& line, const int encryptor_list_size);
+    static int parse_hash(const std::string& line, const int encryptor_list_size);
 
     // Returns the compute server we should send this allele to
-    static void parse_allele_line(std::string& line, const int compute_server_hash, std::vector<uint8_t>& vals, std::vector<uint8_t>& compressed_vals, std::vector<std::vector<AESCrypto> >& aes_list_list);
+    static void parse_allele_line(std::string& line, 
+                                  std::vector<uint8_t>& vals, 
+                                  std::vector<uint8_t>& compressed_vals, 
+                                  std::vector<std::vector<AESCrypto> >& encryptor_list, 
+                                  const int compute_server_hash);
 
     // split a given string based on the specified delimiter
     static void split(std::vector<std::string>& split_strings, const std::string& str, char delim=' ', int num_splits=-1);
