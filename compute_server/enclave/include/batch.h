@@ -19,11 +19,10 @@ class Batch {
     char* plaintxt;
     size_t txt_size;
     Row_T type;
-    char outtxt[ENCLAVE_OUTPUT_BUFFER_SIZE];
+    char outtxt[ENCLAVE_READ_BUFFER_SIZE];
 
     /* status */
-    size_t head = 0;
-    size_t out_tail = 0;
+    size_t out_tail;
 
     /* working set */
     Row* row;
@@ -32,6 +31,7 @@ class Batch {
     size_t row_size;
 
    public:
+    size_t batch_head;
     Batch(size_t _row_size, Row_T row_type, GWAS* _gwas);
     ~Batch() { 
         delete row; 

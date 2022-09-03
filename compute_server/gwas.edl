@@ -65,7 +65,7 @@ enclave {
         // copy encrypted batch to host machine
         void writebatch(
             enum Row_T type, 
-            [in] char buffer[ENCLAVE_OUTPUT_BUFFER_SIZE],
+            [in] char buffer[ENCLAVE_READ_BUFFER_SIZE],
             const int buffer_size,
             const int thread_id);
     };

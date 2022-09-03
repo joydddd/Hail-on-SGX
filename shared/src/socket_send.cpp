@@ -73,7 +73,7 @@ int send_message(const char *hostname, int port, const char *message, const int 
 		if (getaddrinfo(hostname, port_str, &hints, &addrs) != 0) {
 			throw std::runtime_error("Failed to get addr info");
 		}
-		for(struct addrinfo *addr = addrs; addr != NULL; addr = addr->ai_next) {
+		for (struct addrinfo *addr = addrs; addr != NULL; addr = addr->ai_next) {
 			sock = socket(addr->ai_family, addr->ai_socktype, addr->ai_protocol);
 			if (sock == -1)
 				break;

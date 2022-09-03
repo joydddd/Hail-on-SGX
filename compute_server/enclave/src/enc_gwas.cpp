@@ -47,7 +47,7 @@ size_t Row::read(const char line[]) {
 #endif
         );
     } catch (const std::invalid_argument& exception) {
-        std::cout << loci.chrom << " " << loci.loc << " " << std::endl;
+        std::cout << "Invalid chrom/loc " << loci.chrom << " " << loci.loc << " " << std::endl;
         exit(0);
     }
     for (size_t i = 0; i < n; i++) {

@@ -32,7 +32,7 @@ class Log_row : public Row {
 
    public:
     /* setup */
-    Log_row(size_t size, GWAS* _gwas);
+    Log_row(size_t _size, GWAS* _gwas);
 
     /* fitting */
     // return true if converge, return false if explode
