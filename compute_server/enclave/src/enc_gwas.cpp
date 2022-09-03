@@ -61,9 +61,6 @@ size_t Row::read(const char line[]) {
     }
     if (line[n + loci_str.size() + alleles_str.size() + 2] != '\n')
         throw ReadtsvERROR("Invalid row terminator");
-    if (n + loci_str.size() + alleles_str.size() + 3 > 2000) {
-        std::cout << "Read: " << n << " " << loci_str.size() << " " << alleles_str.size() << std::endl;
-    }
     return n + loci_str.size() + alleles_str.size() + 3;
 }
 void Row::combine(Row *other) {
