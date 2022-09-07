@@ -33,9 +33,10 @@ void Client::init(const std::string& config_file) {
     send_msg(info["hostname"], info["port"], RegisterServerMessageType::CLIENT_REGISTER, client_hostname + "\t" + std::to_string(listen_port));
 
     num_patients = 0;
-    work_distributed = false;
+    work_distributed_count = 0;
     y_and_cov_count = 0;
     filled_count = 0;
+    current_line_num = 0;
 }
 
 void Client::run() {
@@ -167,6 +168,10 @@ void Client::handle_message(int connFD, const unsigned int global_id, const Clie
             phenotypes_list.resize(num_compute_servers);
             allele_queue_list.resize(num_compute_servers);
             encryption_queue_list.resize(num_compute_servers);
+            // Mutexes are not movable apparently :/
+            std::vector<std::mutex> tmp(num_compute_servers);
+            encryption_queue_lock_list.swap(tmp);
+
             for (int _ = 0; _ < num_compute_servers; ++_) {
                 allele_queue_list.reserve(1000);
                 blocks_sent_list.push_back(0);
@@ -318,45 +323,99 @@ void Client::send_msg(const std::string& hostname, unsigned int port, unsigned i
     send_message(hostname.c_str(), port, message.c_str(), message.length(), connFD);
 }
 
-void Client::queue_helper(const int global_id) {
+void Client::queue_helper(const int global_id, const int num_helpers) {
     std::string line;
+    unsigned int line_num;
+    auto start = std::chrono::high_resolution_clock::now();
+    while(true) {
+        xval_file_lock.lock();
+        if (getline(xval, line)) {
+            line_num = current_line_num++;
+            xval_file_lock.unlock();
+            if (global_id == 0 && !num_patients) {
+                // Subtract 2 for locus->alleles tab and alleles->first value tab
+                std::vector<std::string> patients_split;
+                Parser::split(patients_split, line, '\t');
+                // This isn't very clean but I want to check the size of the encrypted/encoded line once
+                num_patients = patients_split.size() - 2;
+                
+            }
+
+            EncryptionBlock *block = new EncryptionBlock();
+            block->line_num = line_num;
+            block->line = line;
+            unsigned int compute_server_hash = Parser::parse_hash(block->line, aes_encryptor_list.size());
+            encryption_queue_lock_list[compute_server_hash].lock(); 
+            encryption_queue_list[compute_server_hash].push(block);
+            encryption_queue_lock_list[compute_server_hash].unlock();
+        } else {
+            work_distributed_count++;
+            queue_cv.notify_all();
+            xval_file_lock.unlock();
+            break;
+        }
+    }
+
+    std::mutex useless_lock;
+    std::unique_lock<std::mutex> useless_lock_wrapper(useless_lock);
+    while(work_distributed_count != num_helpers) {
+        queue_cv.wait(useless_lock_wrapper);
+    }
+    // We no longer need this thread if it is not in the encryption list range
+    if (global_id >= encryption_queue_list.size()) {
+        return;
+    }
+
     std::vector<uint8_t> vals;
     std::vector<uint8_t> compressed_vals;
     vals.resize(num_patients);
     compressed_vals.resize((num_patients / TWO_BIT_INT_ARR_SIZE) + (num_patients % TWO_BIT_INT_ARR_SIZE ? 1 : 0));
-    while(!work_distributed || encryption_queue_list[global_id].size_approx()) {
-        while(encryption_queue_list[global_id].try_dequeue(line)) {
-            Parser::parse_allele_line(line, 
-                                      vals, 
-                                      compressed_vals, 
-                                      aes_encryptor_list, 
-                                      global_id);
-            allele_queue_list[global_id].enqueue(line);
-        }
+    while(encryption_queue_list[global_id].size()) {
+        EncryptionBlock *block = encryption_queue_list[global_id].top();
+        encryption_queue_list[global_id].pop();
+        line = block->line;
+        delete block;
+
+        Parser::parse_allele_line(line, 
+                                  vals, 
+                                  compressed_vals, 
+                                  aes_encryptor_list, 
+                                  global_id);
+        allele_queue_list[global_id].enqueue(line);
     }
     if (++filled_count == allele_queue_list.size()) {
         start_sender_cv.notify_all();
     }
+    auto stop = std::chrono::high_resolution_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
+    if (global_id == 0) {
+        std::cout << "Fill/encryption time total: " << duration.count() << std::endl;
+    }
 }
 
 void Client::fill_queue() {
-    std::string line;
-    while(getline(xval, line)) {
-        if (!num_patients) {
-            // Subtract 2 for locus->alleles tab and alleles->first value tab
-            std::vector<std::string> patients_split;
-            Parser::split(patients_split, line, '\t');
-            // This isn't very clean but I want to check the size of the encrypted/encoded line once
-            num_patients = patients_split.size() - 2;
-            for (int id = 0; id < encryption_queue_list.size(); ++id) {
-                boost::thread helper_thread(&Client::queue_helper, this, id);
-                helper_thread.detach();
-            }
-        }
-        encryption_queue_list[Parser::parse_hash(line, aes_encryptor_list.size())].enqueue(line);
+    const int num_helpers = std::max((unsigned int)boost::thread::hardware_concurrency(), (unsigned int)encryption_queue_list.size());
+    for (int id = 0; id < num_helpers; ++id) {
+        boost::thread helper_thread(&Client::queue_helper, this, id, num_helpers);
+        helper_thread.detach();
     }
-    std::cout << "Worked distributed" << std::endl;
-    work_distributed = true;
+    // std::string line;
+    // while(getline(xval, line)) {
+    //     if (!num_patients) {
+    //         // Subtract 2 for locus->alleles tab and alleles->first value tab
+    //         std::vector<std::string> patients_split;
+    //         Parser::split(patients_split, line, '\t');
+    //         // This isn't very clean but I want to check the size of the encrypted/encoded line once
+    //         num_patients = patients_split.size() - 2;
+            
+    //     }
+    //     encryption_queue_list[Parser::parse_hash(line, aes_encryptor_list.size())].enqueue(line);
+    // }
+    // auto stop = std::chrono::high_resolution_clock::now();
+    // auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
+    // std::cout << "Worked distributed" << std::endl;
+    // std::cout << "Fill time total: " << duration.count() << std::endl;
+    // work_distributed = true;
 }
 
 void Client::data_sender(int connFD) {

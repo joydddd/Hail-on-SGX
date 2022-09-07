@@ -38,7 +38,7 @@ ComputeServer::~ComputeServer() {
 }
 
 void ComputeServer::init(const std::string& config_file) {
-    num_threads = 1;//boost::thread::hardware_concurrency();
+    num_threads = boost::thread::hardware_concurrency();
 
     std::ifstream compute_config_file(config_file);
     compute_config_file >> compute_config;
@@ -236,14 +236,19 @@ bool ComputeServer::handle_message(int connFD, const std::string& name, ComputeS
             if (hostname_and_port.size() != 2) {
                 throw std::runtime_error("Invalid register message: " + msg);
             }
+            bool found = false;
             for (int id = 0; id < institution_list.size(); ++id) {
                 // Look for client id!
                 if (institution_list[id] == name) {
+                    found = true;
                     institutions[name] = new Institution(hostname_and_port[0], 
                                                          std::stoi(hostname_and_port[1]),
                                                          id,
                                                          num_threads);
                 }
+            }
+            if (!found) {
+                throw std::runtime_error("No institution with that name was found");
             }
             response_mtype = RSA_PUB_KEY;
             response = reinterpret_cast<char *>(rsa_public_key);
@@ -475,6 +480,7 @@ void ComputeServer::output_sender() {
             send_msg_output(output_str);
         }
     }
+    guarded_cout("Exiting enclave", cout_lock);
     exit(0);
 } 
 
@@ -589,10 +595,10 @@ void ComputeServer::stop_timer(const std::string& func_name) {
 }
 
 void ComputeServer::print_timings() {
-    ComputeServer* inst = get_instance();
-    for (auto it : inst->enclave_total_times) {
-        guarded_cout(it.first + "\t" + std::to_string(it.second), cout_lock);
-    }
+    // ComputeServer* inst = get_instance();
+    // for (auto it : inst->enclave_total_times) {
+    //     guarded_cout(it.first + "\t" + std::to_string(it.second), cout_lock);
+    // }
 }
 
 void ComputeServer::set_max_batch_lines(unsigned int lines) {
@@ -708,4 +714,5 @@ void ComputeServer::cleanup_output() {
     terminating = true;
     lk.unlock();
     get_instance()->output_queue_cv.notify_all();
+    std::cout << "Sending EOF message: "  << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count() << "\n";
 }

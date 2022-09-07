@@ -32,6 +32,17 @@
 #define REGISTER_MESSAGE "REGISTER"
 #define BLOCK_SIZE 1
 
+struct EncryptionBlock {
+  unsigned int line_num;
+  std::string line;
+};
+
+struct EncryptionBlockGT {
+  inline bool operator()(const EncryptionBlock* a, const EncryptionBlock* b) const {
+    return a->line_num > b->line_num;
+  }
+};
+
 class Client {
   private:
     nlohmann::json client_config;
@@ -45,7 +56,7 @@ class Client {
     int num_patients;
     int num_lines_per_block;
 
-    volatile bool work_distributed;
+    unsigned int current_line_num;
 
     std::ifstream xval;
 
@@ -54,11 +65,15 @@ class Client {
     std::vector<ConnectionInfo> compute_server_info;
     //std::vector<std::queue<std::string> > allele_queue_list;
     std::vector<moodycamel::ReaderWriterQueue<std::string>> allele_queue_list;
-    std::vector<moodycamel::ReaderWriterQueue<std::string>> encryption_queue_list;
+    std::vector<std::priority_queue<EncryptionBlock*, std::vector<EncryptionBlock* >, EncryptionBlockGT > > encryption_queue_list;
+    std::vector<std::mutex> encryption_queue_lock_list;
     std::vector<int> blocks_sent_list;
     std::atomic<int> y_and_cov_count;
     std::atomic<int> filled_count;
+    std::atomic<int> work_distributed_count;
+    std::mutex xval_file_lock;
     std::condition_variable start_sender_cv;
+    std::condition_variable queue_cv;
 
   public:
     Client(const std::string& config_file);
@@ -79,7 +94,7 @@ class Client {
     // start a thread that will handle a message and exit properly if it finds an error
     bool start_thread(int connFD);
 
-    void queue_helper(const int global_id);
+    void queue_helper(const int global_id, const int num_helpers);
 
     void fill_queue();
 

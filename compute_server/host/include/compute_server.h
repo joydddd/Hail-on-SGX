@@ -27,7 +27,6 @@
 #include "aes-crypto.h"
 #include "buffer_size.h"
 #include "readerwriterqueue.h"
-#include "concurrentqueue.h"
 
 #define OUTPUT_FILE "gwasoutput/writeback"
 
