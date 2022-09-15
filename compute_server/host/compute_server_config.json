@@ -1,12 +1,12 @@
 {
-    "compute_server_bind_port": 6709,
-    "covariants": ["1", "isFemale"],
+    "compute_server_bind_port": 6708,
+    "covariants": ["1", "isFemale", "age", "BMI", "rand_binary", "rand_discrete"],
     "institutions": ["client1"],
     "y_val_name": "pancCancer",
     "analysis_type": "logistic",
     "enclave_path": "../enclave/gwasenc.signed",
     "register_server_info": {
-        "hostname": "sgx.eecs.umich.edu",
+        "hostname": "20.66.93.78",
         "port": 6405
     }
 }
