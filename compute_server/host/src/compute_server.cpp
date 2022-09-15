@@ -699,9 +699,6 @@ int ComputeServer::get_allele_data(char* batch_data, const int thread_id) {
 }
 
 void ComputeServer::write_allele_data(char* output_data, const int buffer_size, const int thread_id) {
-    if (std::string(output_data) != std::string(output_data, buffer_size)) {
-        std::cout << "Mismatch" << std::endl;
-    }
     std::unique_lock<std::mutex> lk(get_instance()->output_queue_lock);
     get_instance()->output_queue.push(std::string(output_data));
     lk.unlock();
