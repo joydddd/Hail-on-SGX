@@ -2,7 +2,7 @@
     "compute_server_bind_port": 6708,
     "covariants": ["1", "1-1000", "2-1000", "3-1000", "4-1000", "5-1000"],
     "institutions": ["client1"],
-    "y_val_name": "pancCancer",
+    "y_val_name": "disease-1000",
     "analysis_type": "logistic",
     "enclave_path": "../enclave/gwasenc.signed",
     "register_server_info": {
