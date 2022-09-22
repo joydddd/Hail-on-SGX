@@ -1,12 +1,12 @@
 {
     "compute_server_bind_port": 6708,
-    "covariants": ["1", "isFemale"],
+    "covariants": ["1", "isFemale", "age", "BMI", "rand_binary", "rand_discrete"],
     "institutions": ["client1"],
     "y_val_name": "pancCancer",
     "analysis_type": "linear",
     "enclave_path": "../enclave/gwasenc.signed",
     "register_server_info": {
-        "hostname": "20.66.93.78",
+        "hostname": "20.84.118.255",
         "port": 6405
     }
 }
