@@ -282,7 +282,7 @@ bool ComputeServer::handle_message(int connFD, const std::string& name, ComputeS
             std::string covariant_name = name_data_split.front();
 
             if (!expected_covariants.count(covariant_name)) {
-                throw std::runtime_error("Unexpected covariant recieved.");
+                throw std::runtime_error("Unexpected covariant received.");
             }
             institutions[name]->set_covariant_data(covariant_name, name_data_split.back());
             break;
@@ -397,7 +397,7 @@ void ComputeServer::allele_matcher() {
                 DataBlock* block = inst->get_top_block();
                 // check if the institution has data
                 if (!block) {
-                    // if we've already recieved an <EOF> notice and emptied the blocks pq, skip this block
+                    // if we've already received an <EOF> notice and emptied the blocks pq, skip this block
                     if (inst->all_data_received && !inst->get_blocks_size()) {
                         continue;
                     }
@@ -412,10 +412,10 @@ void ComputeServer::allele_matcher() {
                 }
             }
 
-            // if we did not find a min locus, all data has been recieved and we have processed all of it.
+            // if we did not find a min locus, all data has been received and we have processed all of it.
             // enqueue EOF for all enclave threads then shut down the matcher, its work is done.
             if (min_locus == "~") {
-                std::cout << "Recieved last message: "  << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count() << "\n";
+                std::cout << "received last message: "  << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count() << "\n";
                 for(int thread_id = 0; thread_id < num_threads; ++thread_id) {
                     allele_queue_list[thread_id].enqueue(EOFSeperator);
                 }
@@ -451,7 +451,7 @@ void ComputeServer::allele_matcher() {
             
             // For the first line we want to calculate the max number of lines per batch
             if (first) {
-                std::cout << "Recieved first message: "  << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count() << "\n";
+                std::cout << "received first message: "  << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count() << "\n";
                 // start = std::chrono::high_resolution_clock::now();
                 first = false;
             }

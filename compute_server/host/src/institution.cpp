@@ -48,7 +48,7 @@ void Institution::set_y_data(std::string& y_data) {
 
 void Institution::set_covariant_data(const std::string& covariant_name, const std::string& data) {
     if (covariant_data.count(covariant_name)) {
-        throw std::runtime_error("Duplicate covariant recieved.");
+        throw std::runtime_error("Duplicate covariant received.");
     }
     if (data.length() >= ENCLAVE_READ_BUFFER_SIZE) {
         throw std::runtime_error("Covariant too large for enclave: " + std::to_string(data.length()));

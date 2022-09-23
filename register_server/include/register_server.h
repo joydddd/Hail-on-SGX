@@ -23,7 +23,7 @@ class RegisterServer {
   private:
     unsigned int port;
     unsigned int compute_server_count;
-    unsigned int eof_messages_recieved;
+    unsigned int eof_messages_received;
     nlohmann::json register_config;
 
     std::vector<std::string> compute_server_info;
