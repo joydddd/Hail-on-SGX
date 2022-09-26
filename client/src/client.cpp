@@ -13,7 +13,7 @@ Client::Client(const std::string& config_file) {
 Client::~Client() {}
 
 void Client::init(const std::string& config_file) {
-    std::this_thread::sleep_for(std::chrono::milliseconds(2500));
+    std::this_thread::sleep_for(std::chrono::milliseconds(5000));
 
     std::ifstream client_config_file(config_file);
     client_config_file >> client_config;
@@ -294,7 +294,7 @@ void Client::handle_message(int connFD, const unsigned int global_id, const Clie
             std::cout << "Data send time total: " << duration.count() << std::endl;
             break;
         }
-        case END_PROGRAM:
+        case END_CLIENT:
         {
             // Client has served its purpose! Exit the program
             exit(0);

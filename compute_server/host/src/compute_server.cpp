@@ -297,6 +297,11 @@ bool ComputeServer::handle_message(int connFD, const std::string& name, ComputeS
             // Added optimization to handle this within in the parser... might undo in the future.
             break;
         }
+        case END_COMPUTE:
+        {
+            guarded_cout("Exiting enclave", cout_lock);
+            exit(0);
+        }
         default:
             throw std::runtime_error("Not a valid response type");
     }
@@ -480,8 +485,6 @@ void ComputeServer::output_sender() {
             send_msg_output(output_str);
         }
     }
-    guarded_cout("Exiting enclave", cout_lock);
-    exit(0);
 } 
 
 void ComputeServer::parse_header_compute_server_header(const std::string& header, std::string& msg, 

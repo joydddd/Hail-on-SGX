@@ -9,7 +9,7 @@ enum ClientMessageType {
   RSA_PUB_KEY,
   Y_AND_COV,
   DATA_REQUEST,
-  END_PROGRAM
+  END_CLIENT
 };
 
 enum ComputeServerMessageType {
@@ -19,7 +19,8 @@ enum ComputeServerMessageType {
     COVARIANT,
     Y_VAL,
     DATA,
-    EOF_DATA
+    EOF_DATA,
+    END_COMPUTE
 };
 
 enum RegisterServerMessageType {

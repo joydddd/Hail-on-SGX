@@ -164,6 +164,8 @@ bool RegisterServer::handle_message(int connFD, RegisterServerMessageType mtype,
             std::lock_guard<std::mutex> raii(compute_lock);
             send_msg(compute_info.hostname, compute_info.port, ComputeServerMessageType::GLOBAL_ID, std::to_string(compute_server_info.size()));
 
+            compute_info_list.push_back(compute_info);
+
             compute_server_info.push_back(msg);
             if (compute_server_info.size() == compute_server_count) {
                 // Create message containing all compute server info
@@ -211,10 +213,15 @@ bool RegisterServer::handle_message(int connFD, RegisterServerMessageType mtype,
                 output_lock.lock();
                 output_file.flush();
                 output_lock.unlock();
+                // These aren't necesary for program correctness, but they help with iterative testing!
                 for (ConnectionInfo institution_info : institution_info_list) {
-                    send_msg(institution_info.hostname, institution_info.port, ClientMessageType::END_PROGRAM, "END_PROGRAM");
+                    send_msg(institution_info.hostname, institution_info.port, ClientMessageType::END_CLIENT, "");
                 }
-                // All files recieved, we can exit now
+                for (ConnectionInfo compute_info : compute_info_list) {
+                    send_msg(compute_info.hostname, compute_info.port, ComputeServerMessageType::END_COMPUTE, "");
+                }
+
+                // All files recieved, all shutdown messages sent, we can exit now
                 exit(0);
             }
             break;

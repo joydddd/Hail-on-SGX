@@ -31,6 +31,7 @@ class RegisterServer {
     std::mutex compute_lock;
 
     std::vector<ConnectionInfo> institution_info_list;
+    std::vector<ConnectionInfo> compute_info_list;
 
     std::ofstream output_file;
 
