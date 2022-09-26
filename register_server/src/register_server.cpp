@@ -34,7 +34,7 @@ void RegisterServer::init(const std::string& config_file) {
     compute_server_count = register_config["compute_server_count"];
     output_file.open(register_config["output_file_name"]);
 
-    eof_messages_recieved = 0;
+    eof_messages_received = 0;
 }
 
 void RegisterServer::run() {
@@ -192,7 +192,7 @@ bool RegisterServer::handle_message(int connFD, RegisterServerMessageType mtype,
             // If we don't have all compute server info, add to waiting queue
             institution_info_list.push_back(institution_info);
             if (compute_server_info.size() == compute_server_count) {
-                // If we have already recieved all compute server info, no need to wait!
+                // If we have already received all compute server info, no need to wait!
                 send_msg(institution_info.hostname, institution_info.port, ClientMessageType::COMPUTE_INFO, serialized_server_info);
             }
             break;
@@ -207,12 +207,11 @@ bool RegisterServer::handle_message(int connFD, RegisterServerMessageType mtype,
         }
         case EOF_OUTPUT:
         {
-            std::cout << "Recieved last message: "  << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count() << "\n";
-
-            if (++eof_messages_recieved == compute_server_count) {
+            if (++eof_messages_received == compute_server_count) {
                 output_lock.lock();
                 output_file.flush();
                 output_lock.unlock();
+                std::cout << "Received last message: "  << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count() << "\n";
                 // These aren't necesary for program correctness, but they help with iterative testing!
                 for (ConnectionInfo institution_info : institution_info_list) {
                     send_msg(institution_info.hostname, institution_info.port, ClientMessageType::END_CLIENT, "");
