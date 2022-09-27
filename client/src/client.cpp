@@ -172,9 +172,6 @@ void Client::handle_message(int connFD, const unsigned int global_id, const Clie
             std::vector<std::mutex> tmp(num_compute_servers);
             encryption_queue_lock_list.swap(tmp);
 
-            for (int i = 0; i < num_compute_servers; ++i) {
-                allele_queue_list[i].reserve(1000);
-            }
             for (const std::string& compute_info : parsed_compute_info) {
                 ConnectionInfo info;
                 Parser::parse_connection_info(compute_info, info, true);
