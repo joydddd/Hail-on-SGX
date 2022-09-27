@@ -171,10 +171,13 @@ void Covar::read(const char* input, int res_size) {
     if (res_size)
         parts.reserve(res_size + 1);
     split_delim(input, parts, '\t');
+
+    if (!res_size)
+        res_size = parts.size() - 1;
     
     name_str = parts[0];
-    data.reserve(parts.size());
-    for (int i = 1; i < parts.size(); ++i) {
+    data.reserve(res_size);
+    for (int i = 1; i < res_size + 1; ++i) {
         data.push_back(std::stoi(parts[i]));
     }
     

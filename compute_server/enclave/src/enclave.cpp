@@ -138,11 +138,12 @@ void setup_enclave_phenotypes(const int num_threads, const int analysis_type) {
             Covar *cov_var = new Covar();
             for (int client = 0; client < num_clients; ++client) {
                 int cov_buffer_size = 0;
+                memset(cov_buffer, 0, ENCLAVE_READ_BUFFER_SIZE);
+                memset(buffer_decrypt, 0, ENCLAVE_READ_BUFFER_SIZE);
                 while (!cov_buffer_size) {
                     getcov(&cov_buffer_size, client, cov.c_str(), cov_buffer);
                 }
                 ClientInfo& info = client_info_list[client];
-                memset(buffer_decrypt, 0, ENCLAVE_READ_BUFFER_SIZE);
                 aes_decrypt_data(info.aes_list.front().aes_context,
                                 info.aes_list.front().aes_iv,
                                 (const unsigned char*) cov_buffer,
@@ -216,6 +217,7 @@ void regression(const int thread_id, EncAnalysis analysis_type) {
     output_string.reserve(50);
     loci_string.reserve(50);
     alleles_string.reserve(20);
+    int i = 0;
 
     std::mutex useless_lock;
     std::unique_lock<std::mutex> useless_lock_wrapper(useless_lock);

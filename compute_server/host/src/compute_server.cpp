@@ -476,15 +476,11 @@ void ComputeServer::output_sender() {
         while (output_queue.size()) {
             output_str = output_queue.front();
             output_queue.pop(); 
-            // There is somehow a race condition where the EOF is enqueued before the rest of the output...
-            // Not sure how this happens but we need to correct it somehow.
-            if (strcmp(output_str.c_str(), EOFSeperator) == 0 && output_queue.size()) {
-                output_queue.push(output_str);
-                continue;
-            }
             send_msg_output(output_str);
         }
     }
+    lk.unlock();
+    send_msg_output(EOFSeperator);
 } 
 
 void ComputeServer::parse_header_compute_server_header(const std::string& header, std::string& msg, 
@@ -710,7 +706,7 @@ void ComputeServer::write_allele_data(char* output_data, const int buffer_size, 
 
 void ComputeServer::cleanup_output() {
     std::unique_lock<std::mutex> lk(get_instance()->output_queue_lock);
-    get_instance()->output_queue.push(EOFSeperator);
+    //get_instance()->output_queue.push(EOFSeperator);
     terminating = true;
     lk.unlock();
     get_instance()->output_queue_cv.notify_all();
