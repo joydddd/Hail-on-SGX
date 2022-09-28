@@ -10,7 +10,7 @@ rands = np.random.random(rand_size)
 index = 0
 
 ALLELE_COUNT = 1000000
-CLIENT_COUNT = 10000 if len(sys.argv) != 2 else int(sys.argv[1])
+CLIENT_COUNT = 1000 if len(sys.argv) != 2 else int(sys.argv[1])
 
 def weighted_random_by_dct(dct):
     rand_val = random.random()

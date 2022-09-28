@@ -62,7 +62,7 @@ class Client {
     std::vector<std::vector<AESCrypto> > aes_encryptor_list;
     std::vector<std::vector<Phenotype> > phenotypes_list;
     std::vector<ConnectionInfo> compute_server_info;
-    std::vector<std::queue<std::string> > allele_queue_list;
+    std::vector<std::queue<std::string> *> allele_queue_list;
     std::vector<std::priority_queue<EncryptionBlock*, std::vector<EncryptionBlock* >, EncryptionBlockGT > > encryption_queue_list;
     std::vector<std::mutex> encryption_queue_lock_list;
     std::atomic<int> y_and_cov_count;

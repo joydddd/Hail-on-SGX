@@ -172,6 +172,10 @@ void Client::handle_message(int connFD, const unsigned int global_id, const Clie
             std::vector<std::mutex> tmp(num_compute_servers);
             encryption_queue_lock_list.swap(tmp);
 
+            for (int idx = 0; idx < num_compute_servers; ++idx) {
+                allele_queue_list[idx] = new std::queue<std::string>();
+            } 
+
             for (const std::string& compute_info : parsed_compute_info) {
                 ConnectionInfo info;
                 Parser::parse_connection_info(compute_info, info, true);
@@ -256,20 +260,19 @@ void Client::handle_message(int connFD, const unsigned int global_id, const Clie
 
             response_mtype = DATA;
             ConnectionInfo info = compute_server_info[global_id];
-            std::queue<std::string>& allele_queue = allele_queue_list[global_id];
+            std::queue<std::string> *allele_queue = allele_queue_list[global_id];
 
             int blocks_sent = 0;
             std::string block = std::to_string(blocks_sent++) + "\t";
             std::string line;
 
-            int queue_size = allele_queue.size();
             if (global_id == 0) {
-                std::cout << "Sending first message: "  << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count() << "\n";
+                std::cout << "Sending first message: "  << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count() << std::endl;
             }
 
-            while (!allele_queue.empty()) {
-                line = allele_queue.front();
-                allele_queue.pop();
+            while (!allele_queue->empty()) {
+                line = allele_queue->front();
+                allele_queue->pop();
                 if ((block.length() + line.length() + 30) >= MAX_MESSAGE_SIZE) {
                     // Remove trailing '\t'
                     block.pop_back();
@@ -383,7 +386,7 @@ void Client::queue_helper(const int global_id, const int num_helpers) {
                                   compressed_vals, 
                                   aes_encryptor_list, 
                                   global_id);
-        allele_queue_list[global_id].push(line);
+        allele_queue_list[global_id]->push(line);
     }
     if (++filled_count == allele_queue_list.size()) {
         start_sender_cv.notify_all();
