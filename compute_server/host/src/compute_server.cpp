@@ -472,7 +472,9 @@ void ComputeServer::output_sender() {
     std::unique_lock<std::mutex> lk(get_instance()->output_queue_lock);
     while(!terminating || output_queue.size()) {
         // This wait -> signal system seriously improves performance as it reduces busy waiting
-        output_queue_cv.wait(lk);
+        if (!output_queue.size())
+            output_queue_cv.wait(lk);
+
         while (output_queue.size()) {
             output_str = output_queue.front();
             output_queue.pop(); 
