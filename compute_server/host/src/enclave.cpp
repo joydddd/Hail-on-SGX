@@ -53,6 +53,7 @@ int getclientnum() {
 }
 
 void getcovlist(char covlist[ENCLAVE_SMALL_BUFFER_SIZE]) {
+    std::memset(covlist, 0, ENCLAVE_SMALL_BUFFER_SIZE);
     strcpy(covlist, ComputeServer::get_covariants().c_str());
 }
 
@@ -75,6 +76,7 @@ int gety(const int client_num, char y[ENCLAVE_READ_BUFFER_SIZE]) {
     if (!y_data.length()) {
         return 0;
     }
+    std::memset(y, 0, ENCLAVE_READ_BUFFER_SIZE);
     std::memcpy(y, &y_data[0], y_data.length());
     return y_data.length();
 }
@@ -83,13 +85,15 @@ int getcov(const int client_num,
            const char cov_name[MAX_CLIENTNAME_LENGTH],
            char cov[ENCLAVE_READ_BUFFER_SIZE]) {
     if (strcmp(cov_name, "1") == 0) {
+        std::memset(cov, 0, ENCLAVE_READ_BUFFER_SIZE);
         strcpy(cov, "1");
         return 1;
     }
     std::string cov_data = ComputeServer::get_covariant_data(client_num, cov_name);
     if (!cov_data.length()) {
-        return false;
+        return 0;
     }
+    std::memset(cov, 0, ENCLAVE_READ_BUFFER_SIZE);
     std::memcpy(cov, &cov_data[0], cov_data.length());
 
     return cov_data.length();
@@ -100,8 +104,7 @@ int get_encrypted_x_size(const int client_num) {
 }
 
 int getbatch(char batch[ENCLAVE_READ_BUFFER_SIZE], const int thread_id) {
-    int num_lines = ComputeServer::get_allele_data(batch, thread_id);
-    return num_lines;
+    return ComputeServer::get_allele_data(batch, thread_id);
 }
 
 void writebatch(Row_T type, char buffer[ENCLAVE_READ_BUFFER_SIZE], const int buffer_size, const int thread_id) {

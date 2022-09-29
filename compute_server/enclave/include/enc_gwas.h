@@ -82,7 +82,10 @@ inline size_t split_delim(const char* line, std::vector<std::string> &parts, cha
             part += line[idx];
         } 
         else {
-            parts.push_back(part);
+            // Don't add empty strings?
+            if (part.length()) {
+                parts.push_back(part);
+            }
             if (++num_delim == delim_to_parse) {
                 return parts.size();
             }

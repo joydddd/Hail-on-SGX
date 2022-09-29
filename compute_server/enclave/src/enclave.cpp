@@ -138,7 +138,6 @@ void setup_enclave_phenotypes(const int num_threads, const int analysis_type) {
             Covar *cov_var = new Covar();
             for (int client = 0; client < num_clients; ++client) {
                 int cov_buffer_size = 0;
-                memset(cov_buffer, 0, ENCLAVE_READ_BUFFER_SIZE);
                 memset(buffer_decrypt, 0, ENCLAVE_READ_BUFFER_SIZE);
                 while (!cov_buffer_size) {
                     getcov(&cov_buffer_size, client, cov.c_str(), cov_buffer);
