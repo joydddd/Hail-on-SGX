@@ -1,4 +1,4 @@
-!/bin/bash
+#!/bin/bash
 for _ in {1..3}
 do
     ./gwashost compute_server_config1000log.json
