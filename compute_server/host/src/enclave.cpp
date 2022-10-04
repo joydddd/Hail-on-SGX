@@ -89,14 +89,11 @@ int getcov(const int client_num,
         strcpy(cov, "1");
         return 1;
     }
-    std::cout << "Before get_cov_data" << std::endl;
     std::string cov_data = ComputeServer::get_covariant_data(client_num, cov_name);
     if (!cov_data.length()) {
         return 0;
     }
-    std::cout << "Before memset" << std::endl;
     std::memset(cov, 0, ENCLAVE_READ_BUFFER_SIZE);
-    std::cout << "Before memcpy" << std::endl;
     if (cov_data.length() > ENCLAVE_READ_BUFFER_SIZE) {
         std::cout << "cov data length " << ENCLAVE_READ_BUFFER_SIZE << std::endl;
     }

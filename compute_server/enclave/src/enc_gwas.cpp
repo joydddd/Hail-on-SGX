@@ -170,22 +170,21 @@ void Covar::read(const char* input, int res_size) {
     std::vector<std::string> parts;
     if (res_size)
         parts.reserve(res_size + 1);
-    std::cout << "Before split" << std::endl;
+
     split_delim(input, parts, '\t');
 
     if (!res_size) {
         res_size = parts.size() - 1;
         std::cout << "n size " << res_size << std::endl;
     }
-    
-    std::cout << "Parts length " << parts.size() << std::endl;
+
     name_str = parts[0];
     data.reserve(res_size);
 
     if (parts.size() != res_size + 1) {
         std::cout << "Covar size mismatch" << std::endl;
     }
-    std::cout << "Iterating parts" << std::endl;
+
     for (int i = 1; i < res_size + 1; ++i) {
         data.push_back(std::stoi(parts[i]));
     }
