@@ -3,7 +3,7 @@
     "client_bind_port": 8607,
     "allele_file": "client_data/generated_alleles_1000.tsv",
     "register_server_info": {
-        "hostname": "20.55.109.164",
+        "hostname": "4.236.162.228",
         "port": 6405
     }
 }
