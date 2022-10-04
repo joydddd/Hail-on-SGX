@@ -29,6 +29,7 @@ int Institution::get_blocks_size() {
 }
 
 int Institution::get_covariant_size() {
+    std::lock_guard<std::mutex> raii(covariant_data_lock);
     return covariant_data.size();
 }
 
@@ -42,11 +43,12 @@ void Institution::set_key_and_iv(std::string aes_key, std::string aes_iv, const 
 }
 
 void Institution::set_y_data(std::string& y_data) {
+    std::lock_guard<std::mutex> raii(y_val_data_lock);
     y_val_data = decoder.decode(y_data);
-    //std::memcpy(y_val_data, &decoder.decode(y_data)[0], 2528);
 }
 
 void Institution::set_covariant_data(const std::string& covariant_name, const std::string& data) {
+    std::lock_guard<std::mutex> raii(covariant_data_lock);
     if (covariant_data.count(covariant_name)) {
         throw std::runtime_error("Duplicate covariant received.");
     }
@@ -65,10 +67,12 @@ std::string Institution::get_aes_iv(const int thread_id) {
 }
 
 std::string Institution::get_y_data() {
+    std::lock_guard<std::mutex> raii(y_val_data_lock);
     return y_val_data;
 }
 
 std::string Institution::get_covariant_data(const std::string& covariant_name) {
+    std::lock_guard<std::mutex> raii(covariant_data_lock);
     std::cout << "Before check" << std::endl;
     if (!covariant_data.count(covariant_name)) {
         return "";

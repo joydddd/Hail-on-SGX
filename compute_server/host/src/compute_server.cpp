@@ -656,20 +656,11 @@ std::string ComputeServer::get_y_data(const int institution_num) {
 }
 
 std::string ComputeServer::get_covariant_data(const int institution_num, const std::string& covariant_name) {
-    std::cout << "Num: " << institution_num << " " << covariant_name << " " << get_instance()->institution_list.size() << std::endl;
     const std::string institution_name = get_instance()->institution_list[institution_num];
-    std::cout << "Name: " << institution_name << std::endl;
     if (!get_instance()->institutions.count(institution_name)) {
         return "";
     }
-    std::cout << "Before vals" << std::endl;
-    for(auto kv : get_instance()->institutions) {
-        std::cout << kv.first << " " << kv.second << std::endl;
-    } 
-    auto inst = get_instance()->institutions[institution_name];
-    std::cout << "Before 1" << std::endl;
-    std::string cov_vals = inst->get_covariant_data(covariant_name);
-    std::cout << "Before return" << std::endl;
+    std::string cov_vals = get_instance()->institutions[institution_name]->get_covariant_data(covariant_name);
     return cov_vals;
 }
 
