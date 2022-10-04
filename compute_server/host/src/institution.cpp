@@ -69,10 +69,15 @@ std::string Institution::get_y_data() {
 }
 
 std::string Institution::get_covariant_data(const std::string& covariant_name) {
+    std::cout << "Before check" << std::endl;
     if (!covariant_data.count(covariant_name)) {
         return "";
     }
-    return covariant_data[covariant_name];
+    std::cout << "Before access data" << std::endl;
+    std::string data = covariant_data[covariant_name];
+    std::cout << "After data" << std::endl;
+    std::cout << data.length() << std::endl;
+    return data;
 }
 
 int Institution::get_allele_data_size() {

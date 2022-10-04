@@ -663,7 +663,12 @@ std::string ComputeServer::get_covariant_data(const int institution_num, const s
         return "";
     }
     std::cout << "Before vals" << std::endl;
-    std::string cov_vals = get_instance()->institutions[institution_name]->get_covariant_data(covariant_name);
+    for(auto kv : get_instance()->institutions) {
+        std::cout << kv.first << " " << kv.second << std::endl;
+    } 
+    auto inst = get_instance()->institutions[institution_name];
+    std::cout << "Before 1" << std::endl;
+    std::string cov_vals = inst->get_covariant_data(covariant_name);
     std::cout << "Before return" << std::endl;
     return cov_vals;
 }
