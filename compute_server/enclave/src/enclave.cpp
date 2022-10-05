@@ -127,11 +127,9 @@ void setup_enclave_phenotypes(const int num_threads, const int analysis_type) {
     std::vector<std::string> covariant_names;
     split_delim(covlist.c_str(), covariant_names);
 
-    std::cout << "Loading cov" << std::endl;
     try{
         char* cov_buffer = new char[ENCLAVE_READ_BUFFER_SIZE];
         for (auto& cov : covariant_names) {
-            std::cout << "Reading new cov" << std::endl;
             if (cov == "1") {
                 Covar* intercept = new Covar(gwas_y->size());
                 gwas->add_covariant(intercept);
@@ -141,25 +139,21 @@ void setup_enclave_phenotypes(const int num_threads, const int analysis_type) {
             for (int client = 0; client < num_clients; ++client) {
                 int cov_buffer_size = 0;
                 memset(buffer_decrypt, 0, ENCLAVE_READ_BUFFER_SIZE);
-                std::cout << "Before get cov" << std::endl;
                 while (!cov_buffer_size) {
                     getcov(&cov_buffer_size, client, cov.c_str(), cov_buffer);
                 }
                 ClientInfo& info = client_info_list[client];
-                std::cout << "Before decrypt" << std::endl;
                 aes_decrypt_data(info.aes_list.front().aes_context,
                                 info.aes_list.front().aes_iv,
                                 (const unsigned char*) cov_buffer,
                                 cov_buffer_size, 
                                 (unsigned char*) buffer_decrypt);
-                std::cout << "Before read" << std::endl;
                 Covar *new_cov_var = new Covar(buffer_decrypt, gwas_y->size());
                 if (new_cov_var->size() != client_y_size[client]) {
                     throw ReadtsvERROR("covariant size mismatch from client: " +
                                     std::to_string(client) + " with cov: " + new_cov_var->name() + 
                                     " size expected: " + std::to_string(client_y_size[client]) + " got: " + std::to_string(new_cov_var->size()));
                 }
-                std::cout << "Before combine" << std::endl;
                 cov_var->combine(new_cov_var);
                 delete new_cov_var;
             }
