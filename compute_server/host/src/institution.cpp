@@ -73,14 +73,10 @@ std::string Institution::get_y_data() {
 
 std::string Institution::get_covariant_data(const std::string& covariant_name) {
     std::lock_guard<std::mutex> raii(covariant_data_lock);
-    std::cout << "Before check" << std::endl;
     if (!covariant_data.count(covariant_name)) {
         return "";
     }
-    std::cout << "Before access data" << std::endl;
     std::string data = covariant_data[covariant_name];
-    std::cout << "After data" << std::endl;
-    std::cout << data.length() << std::endl;
     return data;
 }
 
