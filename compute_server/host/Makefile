@@ -22,7 +22,7 @@ DEBUGOBJECTS := $(patsubst $(SRCDIR)/%,$(BUILDDIR)/%,$(SOURCES:.cpp=_debug.o))
 
 NONOEOBJECTS = $(patsubst $(SRCDIR)/%,$(BUILDDIR)/%,$(SOURCES:.cpp=_nonoe.o))
 NONOEOBJECTS += $(shell find $(SHAREDBUILDDIR) -type f -name *.o)
-CXX_NONENC_FLAGS = -std=c++14 -pedantic -lmbedtls -lmbedcrypto -g3
+CXX_NONENC_FLAGS = -O3 -std=c++14 -pedantic -lmbedtls -lmbedcrypto
 INC := -I ../../shared/include -I .. -pthread -I include -I .
 CRYPTFLAG := -lcryptopp
 CURLFLAG := -lcurl
@@ -44,9 +44,9 @@ LDFLAGS=$(shell pkg-config oehost-$(C_COMPILER) --libs)
 INCDIR=$(shell pkg-config oehost-$(C_COMPILER) --variable=includedir)
 
 CFLAGS+= $(INC) 
-CXXFLAGS+= $(INC) 
+CXXFLAGS+= -O3 $(INC) 
 LDFLAGS+= $(INC) $(LIBTHREAD)
-CXX_NONENC_FLAGS += $(INC)
+CXX_NONENC_FLAGS += -O3 $(INC)
 
 all: build
 

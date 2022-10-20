@@ -45,6 +45,7 @@ rand_discrete_weighted_odds = {'1': .3, '2': .3, '3': .3, '4': .05, '5': .05}
 
 if len(sys.argv) == 3:
     if int(sys.argv[2]) == 0:
+        random.seed('0x18BADF00D')
         with open(f'../client/client_data/disease-{CLIENT_COUNT}.tsv', 'w') as f:
             f.write(f's\tdisease-{CLIENT_COUNT}\n')
             for i in range(CLIENT_COUNT):

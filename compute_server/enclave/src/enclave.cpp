@@ -272,6 +272,7 @@ void regression(const int thread_id, EncAnalysis analysis_type) {
         output_string += loci_string + "\t" + alleles_string;
         //start_timer("converge()");
         bool converge = false;
+        //std::cout << i++ << std::endl;
         try {
             switch (analysis_type) {
                 case EncAnalysis::linear:
