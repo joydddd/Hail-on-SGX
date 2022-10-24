@@ -263,8 +263,11 @@ void Client::handle_message(int connFD, const unsigned int global_id, const Clie
             std::queue<std::string> *allele_queue = allele_queue_list[global_id];
 
             int blocks_sent = 0;
-            std::string block = std::to_string(blocks_sent++) + "\t";
+            std::string block;
+            std::string lengths;
+
             std::string line;
+            std::string line_length;
 
             if (global_id == 0) {
                 std::cout << "Sending first message: "  << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count() << std::endl;
@@ -273,26 +276,40 @@ void Client::handle_message(int connFD, const unsigned int global_id, const Clie
             while (!allele_queue->empty()) {
                 line = allele_queue->front();
                 allele_queue->pop();
-                if ((block.length() + line.length() + 30) >= MAX_MESSAGE_SIZE) {
+                line_length = std::to_string(line.length()) + "\t";
+                
+                if ((block.length() +
+                     line.length() +
+                     lengths.length() +
+                     line_length.length() +
+                     30) >= MAX_MESSAGE_SIZE) {
                     // Remove trailing '\t'
-                    block.pop_back();
-                    send_msg(info.hostname, info.port, response_mtype, block, connFD);
+                    lengths.pop_back();
+                    
+                    // msg format: blocks sent \t lengths (tab delimited) \n (terminating char) blocks of data w no delimiters
+                    std::string block_msg = std::to_string(blocks_sent++) + "\t" + lengths + "\n" + block;
+                    send_msg(info.hostname, info.port, response_mtype, block_msg, connFD);
 
                     // Reset block
-                    block = std::to_string(blocks_sent++) + "\t";
+                    block.clear(); 
+                    lengths.clear();
                 }
-                block += line + "\t";
+                block += line;
+                lengths += line_length;
             }
+            // TODO: Re-evaluate why I compare it to 10? at some point this made a lot of sense to me, not it makes none
             // Send the leftover lines, 10 is an arbitary cut off. I assume most lines will be at least a few hundred characters
             // and we won't be sending more than 10^10 blocks
             if (block.length() > 10) {
                 // Remove trailing '\t'
-                block.pop_back();
-                send_msg(info.hostname, info.port, response_mtype, block, connFD);
+                lengths.pop_back();
+
+                // msg format: blocks sent \t lengths (tab delimited) \n (terminating char) blocks of data w no delimiters
+                std::string block_msg = std::to_string(blocks_sent++) + "\t" + lengths + "\n" + block;
+                send_msg(info.hostname, info.port, response_mtype, block_msg, connFD);
             }
             // If get_block failed we have reached the end of the file, send an EOF.
-            block = std::to_string(blocks_sent) + "\t" + EOFSeperator + "\t" + EOFSeperator + "\t" + EOFSeperator;
-            send_msg(global_id, DATA, block, connFD);
+            send_msg(global_id, EOF_DATA, std::to_string(blocks_sent), connFD);
             
             // auto stop = std::chrono::high_resolution_clock::now();
             // auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
@@ -319,13 +336,13 @@ void Client::send_msg(const unsigned int global_id, const unsigned int mtype, co
     std::string message = client_name + " " + std::to_string(mtype) + " ";
     message = std::to_string(message.length() + msg.length()) + "\n" + message + msg;
     ConnectionInfo info = compute_server_info[global_id];
-    send_message(info.hostname.c_str(), info.port, message.c_str(), message.length(), connFD);
+    send_message(info.hostname.c_str(), info.port, message.data(), message.length(), connFD);
 }
 
 void Client::send_msg(const std::string& hostname, unsigned int port, unsigned int mtype, const std::string& msg, int connFD) {
     std::string message = client_name + " " + std::to_string(mtype) + " ";
     message = std::to_string(message.length() + msg.length()) + "\n" + message + msg;
-    send_message(hostname.c_str(), port, message.c_str(), message.length(), connFD);
+    send_message(hostname.c_str(), port, message.data(), message.length(), connFD);
 }
 
 void Client::queue_helper(const int global_id, const int num_helpers) {
@@ -404,23 +421,6 @@ void Client::fill_queue() {
         boost::thread helper_thread(&Client::queue_helper, this, id, num_helpers);
         helper_thread.detach();
     }
-    // std::string line;
-    // while(getline(xval, line)) {
-    //     if (!num_patients) {
-    //         // Subtract 2 for locus->alleles tab and alleles->first value tab
-    //         std::vector<std::string> patients_split;
-    //         Parser::split(patients_split, line, '\t');
-    //         // This isn't very clean but I want to check the size of the encrypted/encoded line once
-    //         num_patients = patients_split.size() - 2;
-            
-    //     }
-    //     encryption_queue_list[Parser::parse_hash(line, aes_encryptor_list.size())].enqueue(line);
-    // }
-    // auto stop = std::chrono::high_resolution_clock::now();
-    // auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
-    // std::cout << "Worked distributed" << std::endl;
-    // std::cout << "Fill time total: " << duration.count() << std::endl;
-    // work_distributed = true;
 }
 
 void Client::data_sender(int connFD) {
@@ -447,6 +447,7 @@ void Client::prepare_tsv_file(unsigned int global_id, const std::string& filenam
     if (mtype == COVARIANT) {
         data = filename + " " + data;
     }
+
     Phenotype ptype;
     ptype.message = data;
     ptype.mtype = mtype;

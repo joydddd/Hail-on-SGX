@@ -44,7 +44,7 @@ void Institution::set_key_and_iv(std::string aes_key, std::string aes_iv, const 
 
 void Institution::set_y_data(std::string& y_data) {
     std::lock_guard<std::mutex> raii(y_val_data_lock);
-    y_val_data = decoder.decode(y_data);
+    y_val_data = y_data;
 }
 
 void Institution::set_covariant_data(const std::string& covariant_name, const std::string& data) {
@@ -55,7 +55,7 @@ void Institution::set_covariant_data(const std::string& covariant_name, const st
     if (data.length() >= ENCLAVE_READ_BUFFER_SIZE) {
         throw std::runtime_error("Covariant too large for enclave: " + std::to_string(data.length()));
     }
-    covariant_data[covariant_name] = decoder.decode(data);
+    covariant_data[covariant_name] = data;
 }
 
 std::string Institution::get_aes_key(const int thread_id) {
@@ -88,7 +88,7 @@ void Institution::transfer_eligible_blocks() {
     std::lock_guard<std::mutex> raii(blocks_lock);
     while(!blocks.empty()) {
         DataBlockBatch* batch = blocks.top();
-        if(batch->pos != current_pos) {
+        if (batch->pos != current_pos) {
             return;
         }
         blocks.pop();

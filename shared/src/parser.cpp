@@ -80,7 +80,7 @@ void Parser::parse_data_body(std::vector<DataBlock*>& blocks, const std::string&
         DataBlock* block = new DataBlock;
 
         block->locus = split_msg[msg_idx] + "\t" + split_msg[msg_idx + 1];
-        block->data = decoder.decode(split_msg[msg_idx + 2]);
+        block->data = split_msg[msg_idx + 2];
         blocks.push_back(block);
     }
 }

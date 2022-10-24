@@ -20,6 +20,7 @@ void aes_decrypt_data(mbedtls_aes_context* aes_context,
                 output_data);
     if (ret != 0) {
         std::cout << "Decryption failed with error: " << ret << std::endl;
+        std::cout << "Input size " << input_size << std::endl;
         exit(0);
     }
 }

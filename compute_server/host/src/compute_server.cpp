@@ -38,7 +38,7 @@ ComputeServer::~ComputeServer() {
 }
 
 void ComputeServer::init(const std::string& config_file) {
-    num_threads = boost::thread::hardware_concurrency();
+    num_threads = 1;//boost::thread::hardware_concurrency();
 
     std::ifstream compute_config_file(config_file);
     compute_config_file >> compute_config;
@@ -289,7 +289,16 @@ bool ComputeServer::handle_message(int connFD, const std::string& name, ComputeS
         }
         case EOF_DATA:
         {
-            // Currently this is not needed, keeping in case we decide to use it again.
+            DataBlockBatch* batch = new DataBlockBatch;
+            batch->pos = std::stoi(msg);
+            DataBlock* block = new DataBlock;
+
+            block->locus = EOFSeperator;
+            block->data = EOFSeperator;
+
+            batch->blocks_batch.push_back(block);
+            institutions[name]->add_block_batch(batch);
+            institutions[name]->transfer_eligible_blocks();
             break;
         }
         case DATA:
@@ -309,7 +318,7 @@ bool ComputeServer::handle_message(int connFD, const std::string& name, ComputeS
     if (response.length()) {
         send_msg(name, response_mtype, response);
     }
-    if (mtype != DATA) {
+    if (mtype != DATA && mtype != EOF_DATA) {
         // cool, well handled!
         //guarded_cout("\nClosing connection", cout_lock);
         close(connFD);
@@ -416,7 +425,7 @@ void ComputeServer::allele_matcher() {
                     min_locus = block->locus;
                 }
             }
-
+            //std::cout << min_locus << std::endl;
             // if we did not find a min locus, all data has been received and we have processed all of it.
             // enqueue EOF for all enclave threads then shut down the matcher, its work is done.
             if (min_locus == "~") {
@@ -519,43 +528,39 @@ void ComputeServer::parse_header_compute_server_header(const std::string& header
 
     batch->pos = std::stoi(pos_str);
 
-    // Parse all DataBlocks
-    bool create_new_block = true;
-    int num_delims = 0;
-    std::string encoded_data;
-    DataBlock* block;
-    for (; header_idx < header.length(); ++header_idx) {
-        if (header[header_idx] == '\t') {
-            // If we have seen 3 '\t' that means we have rolled over into the next datablock
-            if (++num_delims == 3) {
-                block->data = institutions[client_name]->decoder.decode(encoded_data);
-                batch->blocks_batch.push_back(block);
-                create_new_block = true;
-                num_delims = 0;
-            }
-            if (num_delims != 1) {
-                header_idx++;
-            }
+    // msg format: blocks sent \t lengths (tab delimited) \n (terminating char) blocks of data w no delimiters
+    std::vector<int> lengths;
+    std::string length_str;
+    while(header[header_idx++] != '\n') {
+        if (header[header_idx - 1] == '\t') {
+            lengths.push_back(std::stoi(length_str));
+            length_str.clear();
+            continue;
         }
-        // Create a new DataBlock
-        if (create_new_block) {
-            block = new DataBlock;
-            create_new_block = false;
-            encoded_data = "";
-        }
-
-        // For the first two delims we are reading in the locus + allele
-        if (num_delims < 2) {
-            block->locus.push_back(header[header_idx]);
-        }
-        // Last delim is the encoded data
-        else {
-            encoded_data.push_back(header[header_idx]);
-        }
+        length_str.push_back(header[header_idx - 1]);
     }
-    // Decode the final block
-    block->data = institutions[client_name]->decoder.decode(encoded_data);
-    batch->blocks_batch.push_back(block);
+
+    for (int length : lengths) {
+        std::string substr = header.substr(header_idx, length);
+        header_idx += length;
+        int num_delims = 0;
+        DataBlock* block = new DataBlock;
+
+        for (char c : substr) {
+            if (c == '\t') {
+                // Throw out this tab char!
+                if (++num_delims == 2) {
+                    continue;
+                }
+            }
+            if (num_delims < 2) {
+                    block->locus.push_back(c);
+            } else {
+                block->data.push_back(c);
+            }
+        }
+        batch->blocks_batch.push_back(block);
+    }
 
     institutions[client_name]->add_block_batch(batch);
 }

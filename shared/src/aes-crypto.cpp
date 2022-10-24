@@ -17,7 +17,7 @@ std::string AESCrypto::encrypt_line(const byte* line, int line_size) {
                         new CryptoPP::StringSink(cipher)
                     ) // StreamTransformationFilter
                 );
-    return encode((const byte*)&cipher[0], cipher.size());
+    return cipher;//encode((const byte*)&cipher[0], cipher.size());
 }
 
 std::string AESCrypto::encode(const byte* data, int data_size) {
@@ -32,6 +32,7 @@ std::string AESCrypto::encode(const byte* data, int data_size) {
 }
 
 std::string AESCrypto::decode(const std::string& encoded_line) {
+    // return encoded_line;
     CryptoPP::Base64Decoder decoder;
     std::string decoded;
     decoder.Attach(new CryptoPP::StringSink(decoded));

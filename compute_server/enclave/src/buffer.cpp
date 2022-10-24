@@ -9,7 +9,7 @@ void aes_decrypt_client(const unsigned char* crypto, unsigned char* plaintxt, co
     aes_decrypt_data(client.aes_list[thread_id].aes_context,
                      (unsigned char *)client.aes_list[thread_id].aes_iv,
                      crypto,
-                     client.crypto_size, 
+                     client.crypto_size - 1, 
                      plaintxt);
 }
 

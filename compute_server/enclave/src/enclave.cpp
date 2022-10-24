@@ -99,7 +99,7 @@ void setup_enclave_phenotypes(const int num_threads, const int analysis_type) {
             while (!y_buffer_size){
                 gety(&y_buffer_size, client, y_buffer);
             }
-            ClientInfo& info = client_info_list[client]; 
+            ClientInfo& info = client_info_list[client];
             aes_decrypt_data(info.aes_list.front().aes_context,
                              info.aes_list.front().aes_iv,
                              (const unsigned char*) y_buffer,
@@ -231,9 +231,6 @@ void regression(const int thread_id, EncAnalysis analysis_type) {
     Buffer* buffer = buffer_list[thread_id];
     Batch* batch = nullptr;
     Row* row;
-
-    // DEBUG: tmp output file
-    // ofstream out_st("enc" + std::to_string(thread_id) + ".out");
 
     /* process rows */
     while (true) {
