@@ -10,7 +10,7 @@ SRCEXT := cpp
 SOURCES = $(shell find $(SRCDIR) -type f -name *.cpp)
 # Generate the names of the thread library's object files
 OBJECTS := $(patsubst $(SRCDIR)/%,$(BUILDDIR)/%,$(SOURCES:.$(SRCEXT)=.o))
-CFLAGS := -g -Wall -std=c++14 -pthread
+CFLAGS := -O3 -g -Wall -std=c++14 -pthread
 INC := -I ../shared -I include
 CRYPTFLAG := -lcryptopp
 
