@@ -15,7 +15,6 @@
 #include <mutex>
 #include <boost/thread.hpp>
 #include "json.hpp"
-
 #include "output.h"
 #include "parser.h"
 

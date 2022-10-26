@@ -131,9 +131,9 @@ bool Client::start_thread(int connFD) {
                 throw std::runtime_error("Error reading request body");
             }
         }
-        std::string encrypted_body(body_buffer, body_size);
+        std::string body(body_buffer, body_size);
         std::vector<std::string> parsed_header;
-        Parser::split(parsed_header, encrypted_body, ' ', 2);
+        Parser::split(parsed_header, body, ' ', 2);
 
         guarded_cout("ID: " + parsed_header[0] + 
                      " Msg Type: " + parsed_header[1], cout_lock);
@@ -316,6 +316,9 @@ void Client::handle_message(int connFD, const unsigned int global_id, const Clie
             // std::cout << "Data send time total: " << duration.count() << " " << queue_size <<  " " << duration.count() / queue_size << std::endl;
             if (global_id == 0) {
                 std::cout << "Sending last message: "  << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count() << std::endl;
+                auto stop = std::chrono::high_resolution_clock::now();
+                auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
+                std::cout << "Data send time total: " << duration.count() << std::endl;
             }
             break;
         }

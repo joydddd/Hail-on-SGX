@@ -38,7 +38,7 @@ ComputeServer::~ComputeServer() {
 }
 
 void ComputeServer::init(const std::string& config_file) {
-    num_threads = 1;//boost::thread::hardware_concurrency();
+    num_threads = boost::thread::hardware_concurrency();
 
     std::ifstream compute_config_file(config_file);
     compute_config_file >> compute_config;
@@ -713,7 +713,6 @@ void ComputeServer::write_allele_data(char* output_data, const int buffer_size, 
 
 void ComputeServer::cleanup_output() {
     std::unique_lock<std::mutex> lk(get_instance()->output_queue_lock);
-    //get_instance()->output_queue.push(EOFSeperator);
     terminating = true;
     lk.unlock();
     get_instance()->output_queue_cv.notify_all();
