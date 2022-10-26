@@ -130,9 +130,9 @@ bool RegisterServer::start_thread(int connFD) {
                 throw std::runtime_error("Error reading request body");
             }
         }
-        std::string encrypted_body(body_buffer, body_size);
+        std::string body(body_buffer, body_size);
         std::vector<std::string> parsed_header;
-        Parser::split(parsed_header, encrypted_body, ' ', 2);
+        Parser::split(parsed_header, body, ' ', 2);
 
         RegisterServerMessageType type = static_cast<RegisterServerMessageType>(std::stoi(parsed_header[1]));
         if (type != RegisterServerMessageType::OUTPUT) {
