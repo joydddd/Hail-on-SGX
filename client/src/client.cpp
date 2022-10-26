@@ -314,6 +314,9 @@ void Client::handle_message(int connFD, const unsigned int global_id, const Clie
             // auto stop = std::chrono::high_resolution_clock::now();
             // auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
             // std::cout << "Data send time total: " << duration.count() << " " << queue_size <<  " " << duration.count() / queue_size << std::endl;
+            if (global_id == 0) {
+                std::cout << "Sending last message: "  << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count() << std::endl;
+            }
             break;
         }
         case END_CLIENT:
