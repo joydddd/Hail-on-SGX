@@ -32,7 +32,7 @@ class Batch {
 
    public:
     size_t batch_head;
-    Batch(size_t _row_size, Row_T row_type, GWAS* _gwas);
+    Batch(size_t _row_size, Row_T row_type, GWAS* _gwas, char *plaintxt_buffer);
     ~Batch() { 
         delete row; 
         delete plaintxt;

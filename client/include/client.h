@@ -95,8 +95,6 @@ class Client {
 
     void fill_queue();
 
-    void data_sender(int connFD);
-
     void prepare_tsv_file(unsigned int global_id, const std::string& filename, ComputeServerMessageType mtype);
 
 };

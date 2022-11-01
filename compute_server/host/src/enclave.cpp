@@ -71,6 +71,16 @@ bool getaes(const int client_num,
     return true;
 }
 
+int get_num_patients(const int client_num, char num_patients_buffer[ENCLAVE_SMALL_BUFFER_SIZE]) {
+    std::string num_patients_encrypted = ComputeServer::get_num_patients(client_num);
+    if (!num_patients_encrypted.length()) {
+        return 0;
+    }
+    std::memset(num_patients_buffer, 0, ENCLAVE_SMALL_BUFFER_SIZE);
+    std::memcpy(num_patients_buffer, &num_patients_encrypted[0], num_patients_encrypted.length());
+    return num_patients_encrypted.length();
+}
+
 int gety(const int client_num, char y[ENCLAVE_READ_BUFFER_SIZE]) {
     std::string y_data = ComputeServer::get_y_data(client_num);
     if (!y_data.length()) {
@@ -100,10 +110,6 @@ int getcov(const int client_num,
     std::memcpy(cov, &cov_data[0], cov_data.length());
 
     return cov_data.length();
-}
-
-int get_encrypted_x_size(const int client_num) {
-    return ComputeServer::get_encrypted_allele_size(client_num);
 }
 
 int getbatch(char batch[ENCLAVE_READ_BUFFER_SIZE], const int thread_id) {
@@ -180,15 +186,6 @@ int start_enclave() {
                     result, oe_result_str(result));
             goto exit;
         }
-        
-        // Allow for data to be encrypted beforehand
-        char* tmp = new char[ENCLAVE_READ_BUFFER_SIZE];
-        for (int client_id = 0; client_id < getclientnum(); ++client_id) {
-            while(!gety(client_id, tmp)) {}
-        }
-        delete[] tmp;
-        std::cout << "Starting Enclave: "  << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count() << "\n";
-        auto start = std::chrono::high_resolution_clock::now();
 
         result = setup_enclave_phenotypes(enclave, num_threads, enc_analysis_type);
         if (result != OE_OK) {
@@ -201,10 +198,6 @@ int start_enclave() {
         
         thread_group.join_all();
 
-        auto stop = std::chrono::high_resolution_clock::now();
-        std::cout << "Logistic regression finished!" << std::endl;
-        auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
-        std::cout << "Enclave time total: " << duration.count() << std::endl;
         ComputeServer::print_timings();
         ComputeServer::cleanup_output();
     } catch (ERROR_t& err) {

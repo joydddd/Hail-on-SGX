@@ -1,7 +1,7 @@
 #include "batch.h"
 #include <cstring>
 
-Batch::Batch(size_t _row_size, Row_T row_type, GWAS* _gwas)
+Batch::Batch(size_t _row_size, Row_T row_type, GWAS* _gwas, char *plaintxt_buffer)
     : row_size(_row_size), type(row_type) {
     switch (type) {
         case LOG_t:
@@ -14,7 +14,7 @@ Batch::Batch(size_t _row_size, Row_T row_type, GWAS* _gwas)
             row = new Row(row_size);
             break;
     }
-    plaintxt = new char[ENCLAVE_READ_BUFFER_SIZE * 4];
+    plaintxt = plaintxt_buffer;
     batch_head = 0;
     st = Empty;
     txt_size = 0;

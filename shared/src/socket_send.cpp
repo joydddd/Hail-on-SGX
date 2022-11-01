@@ -59,7 +59,7 @@ int send_message(const char *hostname, int port, const char *message, const int 
 		return -1;
 	}
 
-	// (3) Connect to remote server
+	// Connect to remote server
 	if (sock == -1) {
 		struct addrinfo hints = {}, *addrs;
 		char port_str[16] = {};
@@ -90,21 +90,9 @@ int send_message(const char *hostname, int port, const char *message, const int 
 		if (sock == -1) {
 			throw std::runtime_error("Failed to connect\n");
 		}
-		// (2) Create a sockaddr_in to specify remote host and port
-		// struct sockaddr_in* addr = (sockaddr_in*)malloc(sizeof(sockaddr_in));
-
-		// if (make_client_sockaddr(addr, hostname, port) == -1) {
-		// 	return -1;
-		// }
-
-		// if (connect(sockfd, (sockaddr *) addr, sizeof(sockaddr_in)) == -1) {
-		// 	perror("Error connecting stream socket");
-		// 	return -1;
-		// }
-		// free(addr);
 	}
 
-	// (4) Send message to remote server
+	// Send message to remote server
 	if (send(sock, message, message_length, 0) == -1) {
 		throw std::runtime_error("Hostname: " + std::string(hostname) + " error sending on stream socket");
 	}

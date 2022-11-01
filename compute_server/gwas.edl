@@ -38,6 +38,11 @@ enclave {
             [out] unsigned char key[256],
             [out] unsigned char iv[256]);
 
+        // copy num patients from host machine to enclave;
+        int get_num_patients(
+            const int client_num,
+            [out] char num_patients_buffer[ENCLAVE_SMALL_BUFFER_SIZE]);
+
         // copy y from host machine to enclave;
         int gety(
             const int client_num,
@@ -50,8 +55,6 @@ enclave {
             const int client_num, 
             [in] const char cov_name[MAX_CLIENTNAME_LENGTH], 
             [out] char cov[ENCLAVE_READ_BUFFER_SIZE]);
-
-        int get_encrypted_x_size(const int client_num);
 
         /* input data requests*/
         // get batch from outside of enclave

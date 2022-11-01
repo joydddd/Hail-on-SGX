@@ -10,9 +10,6 @@ Institution::Institution(std::string hostname, int port, int id, const int num_t
           request_conn(-1), current_pos(0), all_data_received(false), id(id) {
     aes_encrypted_key_list.resize(num_threads);
     aes_encrypted_iv_list.resize(num_threads);
-
-    encrypted_allele_data_size = 0;
-    encrypted_allele_data_size_set = false;
 }
 
 Institution::~Institution() {
@@ -42,6 +39,11 @@ void Institution::set_key_and_iv(std::string aes_key, std::string aes_iv, const 
     aes_encrypted_iv_list[thread_id] = decoder.decode(aes_iv);
 }
 
+void Institution::set_num_patients(const std::string& num_patients) {
+    std::lock_guard<std::mutex> raii(num_patients_lock);
+    num_patients_encrypted = num_patients;
+}
+
 void Institution::set_y_data(std::string& y_data) {
     std::lock_guard<std::mutex> raii(y_val_data_lock);
     y_val_data = y_data;
@@ -66,6 +68,11 @@ std::string Institution::get_aes_iv(const int thread_id) {
     return aes_encrypted_iv_list[thread_id];
 }
 
+std::string Institution::get_num_patients() {
+    std::lock_guard<std::mutex> raii(num_patients_lock);
+    return num_patients_encrypted;
+}
+
 std::string Institution::get_y_data() {
     std::lock_guard<std::mutex> raii(y_val_data_lock);
     return y_val_data;
@@ -80,10 +87,6 @@ std::string Institution::get_covariant_data(const std::string& covariant_name) {
     return data;
 }
 
-int Institution::get_allele_data_size() {
-    return encrypted_allele_data_size;
-}
-
 void Institution::transfer_eligible_blocks() {
     std::lock_guard<std::mutex> raii(blocks_lock);
     while(!blocks.empty()) {
@@ -93,10 +96,6 @@ void Institution::transfer_eligible_blocks() {
         }
         blocks.pop();
 
-        if (!encrypted_allele_data_size_set) {
-            encrypted_allele_data_size = batch->blocks_batch.front()->data.length();
-            encrypted_allele_data_size_set = true;
-        }
         for (DataBlock* parsed_block : batch->blocks_batch) {
             eligible_blocks.push(parsed_block);
         }

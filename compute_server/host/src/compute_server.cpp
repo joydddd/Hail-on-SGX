@@ -270,6 +270,11 @@ bool ComputeServer::handle_message(int connFD, const std::string& name, ComputeS
                                     thread_id); // thread id      
             break;
         }
+        case PATIENT_COUNT:
+        {
+            institutions[name]->set_num_patients(msg);
+            break;
+        }
         case Y_VAL:
         {
             institutions[name]->set_y_data(msg);
@@ -368,9 +373,9 @@ void ComputeServer::check_in(const std::string& name) {
             send_msg(it.first, Y_AND_COV, covariant_list + y_val_name);
 
             institutions[it.first]->request_conn = send_msg(it.first, DATA_REQUEST, std::to_string(MIN_BLOCK_COUNT), institutions[it.first]->request_conn);
-            // start listener thread for data!
-            boost::thread data_listener_thread(&ComputeServer::data_listener, this, institutions[it.first]->request_conn);
-            data_listener_thread.detach();
+            // // start listener thread for data!
+            // boost::thread data_listener_thread(&ComputeServer::data_listener, this, institutions[it.first]->request_conn);
+            // data_listener_thread.detach();
         }
 
 
@@ -384,12 +389,12 @@ void ComputeServer::check_in(const std::string& name) {
     }
 }
 
-void ComputeServer::data_listener(int connFD) {
-    // We need a serial listener for this agreed upon connection!
-    char* body_buffer = new char[MAX_MESSAGE_SIZE]();
-    while(start_thread(connFD, body_buffer)) {}
-    delete[] body_buffer;
-}
+// void ComputeServer::data_listener(int connFD) {
+//     // We need a serial listener for this agreed upon connection!
+//     char* body_buffer = new char[MAX_MESSAGE_SIZE]();
+//     while(start_thread(connFD, body_buffer)) {}
+//     delete[] body_buffer;
+// }
 
 void ComputeServer::allele_matcher() {
     //auto start = std::chrono::high_resolution_clock::now();
@@ -601,10 +606,10 @@ void ComputeServer::stop_timer(const std::string& func_name) {
 }
 
 void ComputeServer::print_timings() {
-    // ComputeServer* inst = get_instance();
-    // for (auto it : inst->enclave_total_times) {
-    //     guarded_cout(it.first + "\t" + std::to_string(it.second), cout_lock);
-    // }
+    ComputeServer* inst = get_instance();
+    for (auto it : inst->enclave_total_times) {
+        guarded_cout(it.first + "\t" + std::to_string(it.second), cout_lock);
+    }
 }
 
 void ComputeServer::set_max_batch_lines(unsigned int lines) {
@@ -651,6 +656,16 @@ std::string ComputeServer::get_aes_iv(const int institution_num, const int threa
     return get_instance()->institutions[institution_name]->get_aes_iv(thread_id);
 }
 
+std::string ComputeServer::get_num_patients(const int institution_num) {
+    const std::string institution_name = get_instance()->institution_list[institution_num];
+    if (!get_instance()->institutions.count(institution_name)) {
+        return "";
+    }
+    std::string num_patients_encrypted = get_instance()->institutions[institution_name]->get_num_patients();
+    //std::cout << "Got num patients encrypted: " << num_patients_encrypted.length() << std::endl;
+    return num_patients_encrypted;
+}
+
 std::string ComputeServer::get_y_data(const int institution_num) {
     const std::string institution_name = get_instance()->institution_list[institution_num];
     if (!get_instance()->institutions.count(institution_name)) {
@@ -667,11 +682,6 @@ std::string ComputeServer::get_covariant_data(const int institution_num, const s
     }
     std::string cov_vals = get_instance()->institutions[institution_name]->get_covariant_data(covariant_name);
     return cov_vals;
-}
-
-int ComputeServer::get_encrypted_allele_size(const int institution_num) {
-    const std::string institution_name = get_instance()->institution_list[institution_num];
-    return get_instance()->institutions[institution_name]->get_allele_data_size();
 }
 
 int ComputeServer::get_allele_data(char* batch_data, const int thread_id) {

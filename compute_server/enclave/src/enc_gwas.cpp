@@ -166,7 +166,7 @@ void GWAS::print() const {
 /////////////////////////////////////////////////////////
 ////////////////   Covar    /////////////////////////////
 /////////////////////////////////////////////////////////
-void Covar::read(const char* input, int res_size) {
+int Covar::read(const char* input, int res_size) {
     std::vector<std::string> parts;
     if (res_size)
         parts.reserve(res_size + 1);
@@ -179,26 +179,40 @@ void Covar::read(const char* input, int res_size) {
     }
 
     name_str = parts[0];
-    data.reserve(res_size);
 
-    if (parts.size() != res_size + 1) {
-        std::cout << "Covar size mismatch" << std::endl;
-    }
-
+    int read_size = 0;
     for (int i = 1; i < res_size + 1; ++i) {
         data.push_back(std::stoi(parts[i]));
+        read_size++;
     }
-    
+
+    if (read_size != res_size) {
+        std::cout << "Covar size mismatch" << std::endl;
+    }
     n = data.size();
+
+    return read_size;
 }
 
-void Covar::combine(Covar *other) {
-    if (name() != other->name() && name() != "NA" && other->name() != "NA")
-        throw CombineERROR("covariant/y name mismatch");
-    n += other->n;
-    data.reserve(n);
-    for (auto x : other->data) {
-        data.push_back(x);
-    }
-    if (name_str == "NA") name_str = other->name_str;
+void Covar::reserve(int total_row_size) {
+    data.reserve(total_row_size);
 }
+
+void Covar::init_1_covar(int total_row_size){
+    n = total_row_size;
+    name_str = "1";
+    for (int _ = 0; _ < total_row_size; _++) {
+        data.push_back(1);
+    }
+}
+
+// void Covar::combine(Covar *other) {
+//     if (name() != other->name() && name() != "NA" && other->name() != "NA")
+//         throw CombineERROR("covariant/y name mismatch");
+//     n += other->n;
+//     data.reserve(n);
+//     for (auto x : other->data) {
+//         data.push_back(x);
+//     }
+//     if (name_str == "NA") name_str = other->name_str;
+// }

@@ -48,7 +48,7 @@ class Row {
      Alleles getalleles() { return alleles; }
      size_t size() { return n; }
      virtual void fit() {}
-     virtual bool fit(std::vector<double>& change, std::vector<double>& old_beta, size_t max_iteration = 20, double sig = 1e-6) { return true; }
+     virtual bool fit(std::vector<double>& change, std::vector<double>& old_beta, size_t max_iteration = 20, double sig = 1e-6) { return false; }
      virtual double output_first_beta_element() { return -1; }
      virtual double t_stat() { return -1; }
 
@@ -110,10 +110,12 @@ class Covar {
    public:
     Covar() : n(0), name_str("NA") { }
     Covar(const char* input, int res_size = 0) { read(input, res_size); }
-    void read(const char* input, int res_size = 0);
-    Covar(size_t size, int x = 1) : data(size, x), n(size), name_str("1") {}
+    // Covar(size_t size, int x = 1) : data(size, x), n(size), name_str("1") {}
+    int read(const char* input, int res_size = 0);
+    void reserve(int total_row_size);
+    void init_1_covar(int total_row_size);
     size_t size() { return n; }
-    void combine(Covar *other);
+    // void combine(Covar *other);
     const std::string& name() { return name_str; }
 };
 
@@ -130,7 +132,7 @@ class GWAS {
    public:
     std::vector<Covar*> covariants;
     Covar* y;
-    GWAS() : n(0), m(0), regtype(LogReg_type) {}
+    GWAS(RegType_t _regtype) : n(0), m(0), regtype(_regtype) {}
     GWAS(Covar *_y, RegType_t _regtype) : n(_y->size()), m(1), regtype(_regtype) { add_y(_y); }
 
     void add_y(Covar *_y) {
@@ -149,7 +151,7 @@ class GWAS {
     }
 
     void add_covariant(Covar *cov) {
-        if (cov->size() != n) throw CombineERROR("covariant");
+        if (cov->size() != n) throw CombineERROR("Covariant size did not match n");
         covariants.push_back(cov);
         m++;
     }

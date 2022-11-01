@@ -20,6 +20,7 @@ struct BlockPointerBatchGT {
 
 class Institution {
   private:
+    std::mutex num_patients_lock;
     std::mutex blocks_lock;
     std::mutex covariant_data_lock;
     std::mutex y_val_data_lock;
@@ -27,13 +28,12 @@ class Institution {
     std::queue<DataBlock*> eligible_blocks;
     std::unordered_map<std::string, std::string> covariant_data;
     std::string y_val_data;
+    std::string num_patients_encrypted;
 
     std::vector<std::string> aes_encrypted_key_list;
     std::vector<std::string> aes_encrypted_iv_list;
 
     int id;
-    int encrypted_allele_data_size;
-    bool encrypted_allele_data_size_set;
 
   public:
     Institution(std::string hostname, int port, int id, const int num_threads);
@@ -45,6 +45,8 @@ class Institution {
 
     void transfer_eligible_blocks();
 
+    void set_num_patients(const std::string& num_patients);
+
     void set_y_data(std::string& y_data);
 
     void set_covariant_data(const std::string& covariant_name, const std::string& data);
@@ -52,7 +54,9 @@ class Institution {
     std::string get_aes_key(const int thread_id);
 
     std::string get_aes_iv(const int thread_id);
-  
+
+    std::string get_num_patients();
+
     std::string get_y_data();
 
     std::string get_covariant_data(const std::string& covariant_name);
@@ -62,8 +66,6 @@ class Institution {
     int get_blocks_size();
 
     int get_covariant_size();
-
-    int get_allele_data_size();
 
     DataBlock* get_top_block();
 

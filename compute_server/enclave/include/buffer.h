@@ -33,9 +33,8 @@ class Buffer {
     char* crypttxt;
     uint8_t* plain_txt_compressed;
     char output_buffer[ENCLAVE_READ_BUFFER_SIZE];
-
     Batch* free_batch;
-
+    char* plaintxt_buffer;
     int* client_list;
     char** client_crypto_map;
     int client_count;
@@ -47,8 +46,9 @@ class Buffer {
     void decrypt_line(char* plaintxt, size_t* plaintxt_length, unsigned int num_lines, const std::vector<ClientInfo>& client_info_list, const int thread_id);
 
 public:
-    Buffer(GWAS* _gwas, size_t _row_size, Row_T row_type, int num_clients, int thread_id);
+    Buffer(size_t _row_size, Row_T row_type, int num_clients, int thread_id);
     ~Buffer();
+    void add_gwas(GWAS* _gwas);
     void finish();
     void clean_up();
 

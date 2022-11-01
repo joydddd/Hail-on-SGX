@@ -13,14 +13,15 @@ enum ClientMessageType {
 };
 
 enum ComputeServerMessageType {
-    GLOBAL_ID, 
-    REGISTER,
-    AES_KEY,
-    COVARIANT,
-    Y_VAL,
-    DATA,
-    EOF_DATA,
-    END_COMPUTE
+  GLOBAL_ID, 
+  REGISTER,
+  AES_KEY,
+  PATIENT_COUNT,
+  COVARIANT,
+  Y_VAL,
+  DATA,
+  EOF_DATA,
+  END_COMPUTE
 };
 
 enum RegisterServerMessageType {

@@ -18,6 +18,7 @@
 #endif
 
 static std::vector<Buffer*> buffer_list;
+static std::vector<Covar*> covar_ptr_list;
 static std::vector<ClientInfo> client_info_list;
 static std::vector<int> client_y_size;
 static int num_clients;
@@ -90,108 +91,69 @@ void setup_enclave_encryption(const int num_threads) {
 }
 
 void setup_enclave_phenotypes(const int num_threads, const int analysis_type) {
+    gwas = new GWAS((RegType_t)analysis_type);
     char* buffer_decrypt = new char[ENCLAVE_READ_BUFFER_SIZE];
-    char* y_buffer = new char[ENCLAVE_READ_BUFFER_SIZE];
+    char* phenotype_buffer = new char[ENCLAVE_READ_BUFFER_SIZE];
     Covar* gwas_y = new Covar();
-    try {
-        for (int client = 0; client < num_clients; ++client) {
-            int y_buffer_size = 0;
-            while (!y_buffer_size){
-                gety(&y_buffer_size, client, y_buffer);
-            }
-            ClientInfo& info = client_info_list[client];
-            aes_decrypt_data(info.aes_list.front().aes_context,
-                             info.aes_list.front().aes_iv,
-                             (const unsigned char*) y_buffer,
-                             y_buffer_size, 
-                             (unsigned char*) buffer_decrypt);
-            Covar* new_y = new Covar(buffer_decrypt);
-            client_y_size[client] = new_y->size();
-            client_info_list[client].size = new_y->size();
-            gwas_y->combine(new_y);
-            delete new_y;
-        }
-        delete[] y_buffer;
-    } 
-    catch (ERROR_t& err) {
-        std::cerr << "ERROR: fail to get correct y values" << err.msg << std::endl;
-    }
 
-    gwas = new GWAS(gwas_y, LogReg_type);
-
-    std::cout << "Y value loaded" << std::endl;
-
+    // Read in covariants from each institution
     char covl[ENCLAVE_SMALL_BUFFER_SIZE];
     getcovlist(covl);
     std::string covlist(covl);
     std::vector<std::string> covariant_names;
     split_delim(covlist.c_str(), covariant_names);
 
-    try{
-        char* cov_buffer = new char[ENCLAVE_READ_BUFFER_SIZE];
-        for (auto& cov : covariant_names) {
-            if (cov == "1") {
-                Covar* intercept = new Covar(gwas_y->size());
-                gwas->add_covariant(intercept);
-                continue;
-            }
-            Covar *cov_var = new Covar();
-            for (int client = 0; client < num_clients; ++client) {
-                int cov_buffer_size = 0;
-                memset(buffer_decrypt, 0, ENCLAVE_READ_BUFFER_SIZE);
-                while (!cov_buffer_size) {
-                    getcov(&cov_buffer_size, client, cov.c_str(), cov_buffer);
-                }
-                ClientInfo& info = client_info_list[client];
-                aes_decrypt_data(info.aes_list.front().aes_context,
-                                info.aes_list.front().aes_iv,
-                                (const unsigned char*) cov_buffer,
-                                cov_buffer_size, 
-                                (unsigned char*) buffer_decrypt);
-                Covar *new_cov_var = new Covar(buffer_decrypt, gwas_y->size());
-                if (new_cov_var->size() != client_y_size[client]) {
-                    throw ReadtsvERROR("covariant size mismatch from client: " +
-                                    std::to_string(client) + " with cov: " + new_cov_var->name() + 
-                                    " size expected: " + std::to_string(client_y_size[client]) + " got: " + std::to_string(new_cov_var->size()));
-                }
-                cov_var->combine(new_cov_var);
-                delete new_cov_var;
-            }
-            gwas->add_covariant(cov_var);
+    // Read in number of patients at each institution
+    char num_patients_buffer[ENCLAVE_SMALL_BUFFER_SIZE];
+    int total_row_size = 0;
+    for (int client = 0; client < num_clients; ++client) {
+        int num_patients_buffer_size = 0;
+        while (!num_patients_buffer_size){
+            get_num_patients(&num_patients_buffer_size, client, num_patients_buffer);
         }
-        delete[] cov_buffer;
-        delete[] buffer_decrypt;
-    } catch (ERROR_t& err) {
-        std::cerr << "ERROR: fail to get correct covariant values: " << err.msg << std::endl;
-    } catch (const std::exception &e) { 
-        std::cout << "Crash in cov setup with " << e.what() << std::endl;
+        ClientInfo& info = client_info_list[client];
+        memset(buffer_decrypt, 0, ENCLAVE_READ_BUFFER_SIZE);
+        aes_decrypt_data(info.aes_list.front().aes_context,
+                         info.aes_list.front().aes_iv,
+                         (const unsigned char*) num_patients_buffer,
+                         num_patients_buffer_size, 
+                         (unsigned char*) buffer_decrypt);
+        int client_num_patients = std::stoi(buffer_decrypt);
+        client_y_size[client] = client_num_patients;
+        client_info_list[client].size = client_num_patients;
+        total_row_size += client_num_patients;
     }
 
-    std::cout << "Cov loaded" << std::endl;
-
-
-    int total_row_size = 0;
-    for (auto size : client_y_size) total_row_size += size;
+    gwas_y->reserve(total_row_size);
+    for (int _ = 0; _ < covariant_names.size(); ++_) {
+        Covar* cov_ptr = new Covar();
+        cov_ptr->reserve(total_row_size);
+        covar_ptr_list.push_back(cov_ptr);
+    }
 
     try {
         for (int thread_id = 0; thread_id < num_threads; ++thread_id) {
             // TODO: set buffer type accordingly
-            buffer_list[thread_id] = new Buffer(gwas, total_row_size, (Row_T)analysis_type, num_clients, thread_id);
+            buffer_list[thread_id] = new Buffer(total_row_size, (Row_T)analysis_type, num_clients, thread_id);
         }
     } catch (const std::exception &e) { 
         std::cout << "Crash in buffer malloc with " << e.what() << std::endl;
     }
 
-    /* set up encrypted size */
+    /* set up encrypted size and max batch line */
     int total_crypto_size = 0;
-    for (int i = 0; i < num_clients; i++) {
-        int size = 0;
-        while(!size) {
-            get_encrypted_x_size(&size, i);
+    for (int client = 0; client < num_clients; client++) {
+        // Calculate compaction factor, ceil(plaintext size / 4) -> rounded up to nearest multiple of 16
+        int compacted_size = (client_y_size[client] + 3) / 4;
+        int compacted_remainder = compacted_size % 16;
+        if (compacted_remainder) {
+            compacted_size += 16 - compacted_remainder;
         }
-        client_info_list[i].crypto_size = size;
-        // Add 1 for the tab delimiter
-        total_crypto_size += size + 1;
+
+        client_info_list[client].crypto_size = compacted_size + 1;
+
+        // Add 2 for the tab delimiter and null terminating char
+        total_crypto_size += compacted_size + 2;
     }
     // Add padding for Loci + Allele and list of clients + 1 for new line at very end of sequence
     total_crypto_size += MAX_LOCI_ALLELE_STR_SIZE + (num_clients * 2) + 1;
@@ -202,6 +164,86 @@ void setup_enclave_phenotypes(const int num_threads, const int analysis_type) {
         exit(1);
     }
     setmaxbatchlines(max_batch_lines);
+
+    std::cout << "Init finished" << std::endl;
+
+    // Read in y-vals from each institution
+    try {
+        for (int client = 0; client < num_clients; ++client) {
+            int y_buffer_size = 0;
+            while (!y_buffer_size){
+                gety(&y_buffer_size, client, phenotype_buffer);
+            }
+            ClientInfo& info = client_info_list[client];
+            memset(buffer_decrypt, 0, ENCLAVE_READ_BUFFER_SIZE);
+            aes_decrypt_data(info.aes_list.front().aes_context,
+                             info.aes_list.front().aes_iv,
+                             (const unsigned char*) phenotype_buffer,
+                             y_buffer_size, 
+                             (unsigned char*) buffer_decrypt);
+            int read_size = gwas_y->read(buffer_decrypt, client_y_size[client]);
+            if (read_size != client_y_size[client]) {
+                throw ReadtsvERROR("y val size mismatch from client: " +
+                                    std::to_string(client) + " size expected: " + 
+                                    std::to_string(client_y_size[client]) + " got: " + 
+                                    std::to_string(read_size));
+            }
+        }
+    } 
+    catch (ERROR_t& err) {
+        std::cerr << "ERROR: fail to get correct y values " << err.msg << std::endl;
+    }
+
+    gwas->add_y(gwas_y);
+    std::cout << "Y value loaded" << std::endl;
+    std::cout << "Starting Enclave: "  << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count() << "\n";
+    try{
+        for (int i = 0; i < covariant_names.size(); ++i) {
+            const std::string& cov_name = covariant_names[i];
+            Covar *cov_var = covar_ptr_list[i];
+            if (cov_name == "1") {
+                cov_var->init_1_covar(total_row_size);
+                gwas->add_covariant(cov_var);
+                continue;
+            }
+            for (int client = 0; client < num_clients; ++client) {
+                int cov_buffer_size = 0;
+                while (!cov_buffer_size) {
+                    getcov(&cov_buffer_size, client, cov_name.c_str(), phenotype_buffer);
+                }
+                ClientInfo& info = client_info_list[client];
+                memset(buffer_decrypt, 0, ENCLAVE_READ_BUFFER_SIZE);
+                aes_decrypt_data(info.aes_list.front().aes_context,
+                                info.aes_list.front().aes_iv,
+                                (const unsigned char*) phenotype_buffer,
+                                cov_buffer_size, 
+                                (unsigned char*) buffer_decrypt);
+                int read_size = cov_var->read(buffer_decrypt, client_y_size[client]);
+                if (read_size != client_y_size[client]) {
+                    throw ReadtsvERROR("covariant size mismatch from client: " +
+                                       std::to_string(client) + " with cov: " + cov_var->name() + 
+                                       " size expected: " + std::to_string(client_y_size[client]) + 
+                                       " got: " + std::to_string(read_size));
+                }
+            }
+            gwas->add_covariant(cov_var);
+        }
+    } catch (ERROR_t& err) {
+        std::cerr << "ERROR: fail to get correct covariant values: " << err.msg << std::endl;
+    } catch (const std::exception &e) { 
+        std::cout << "Crash in cov setup with " << e.what() << std::endl;
+    }
+    std::cout << "Cov loaded" << std::endl;
+
+    delete[] phenotype_buffer;
+    delete[] buffer_decrypt;
+    try {
+        for (int thread_id = 0; thread_id < num_threads; ++thread_id) {
+            buffer_list[thread_id]->add_gwas(gwas);
+        }
+    } catch (const std::exception &e) { 
+        std::cout << "Crash in add gwas with " << e.what() << std::endl;
+    }
 
     start_thread = true;
     start_thread_cv.notify_all();

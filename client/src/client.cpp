@@ -254,11 +254,13 @@ void Client::handle_message(int connFD, const unsigned int global_id, const Clie
 
             // First we should send all of the phenotype data
             std::vector<Phenotype>& phenotypes = phenotypes_list[global_id];
+            std::vector<std::thread> p_threads;
             for (const Phenotype& ptype : phenotypes) {
-                send_msg(global_id, ptype.mtype, ptype.message);
+                p_threads.push_back(std::thread([global_id, ptype, this](){
+                    send_msg(global_id, ptype.mtype, ptype.message);
+                }));
             }
 
-            response_mtype = DATA;
             ConnectionInfo info = compute_server_info[global_id];
             std::queue<std::string> *allele_queue = allele_queue_list[global_id];
 
@@ -273,6 +275,7 @@ void Client::handle_message(int connFD, const unsigned int global_id, const Clie
                 std::cout << "Sending first message: "  << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count() << std::endl;
             }
 
+            std::vector<std::thread> block_threads;
             while (!allele_queue->empty()) {
                 line = allele_queue->front();
                 allele_queue->pop();
@@ -288,7 +291,10 @@ void Client::handle_message(int connFD, const unsigned int global_id, const Clie
                     
                     // msg format: blocks sent \t lengths (tab delimited) \n (terminating char) blocks of data w no delimiters
                     std::string block_msg = std::to_string(blocks_sent++) + "\t" + lengths + "\n" + block;
-                    send_msg(info.hostname, info.port, response_mtype, block_msg, connFD);
+                    //block_msgs.push_back(block_msg);
+                    block_threads.push_back(std::thread([info, block_msg, this]() {
+                        send_msg(info.hostname, info.port, DATA, block_msg);
+                    }));
 
                     // Reset block
                     block.clear(); 
@@ -306,12 +312,22 @@ void Client::handle_message(int connFD, const unsigned int global_id, const Clie
 
                 // msg format: blocks sent \t lengths (tab delimited) \n (terminating char) blocks of data w no delimiters
                 std::string block_msg = std::to_string(blocks_sent++) + "\t" + lengths + "\n" + block;
-                send_msg(info.hostname, info.port, response_mtype, block_msg, connFD);
+                send_msg(info.hostname, info.port, DATA, block_msg);
             }
             // If get_block failed we have reached the end of the file, send an EOF.
-            send_msg(global_id, EOF_DATA, std::to_string(blocks_sent), connFD);
-            
+            send_msg(global_id, EOF_DATA, std::to_string(blocks_sent));
+
+            for (std::thread& t : p_threads) {
+                t.join();
+            }
+
+            for (std::thread& t : block_threads) {
+                t.join();
+            }
+
             if (global_id == 0) {
+                std::cout << "Sending last message: "  << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count() << std::endl;
+
                 auto stop = std::chrono::high_resolution_clock::now();
                 auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
                 std::cout << "Data send time total: " << duration.count() << std::endl;
@@ -328,9 +344,7 @@ void Client::handle_message(int connFD, const unsigned int global_id, const Clie
             throw std::runtime_error("Not a valid response type");
     }
     if (mtype != DATA_REQUEST) {
-        //guarded_cout("\nClosing connection\n", cout_lock);
         close(connFD);
-        //guarded_cout("\n--------------\n", cout_lock);
     }
 }
 
@@ -425,23 +439,26 @@ void Client::fill_queue() {
     }
 }
 
-void Client::data_sender(int connFD) {
-    // We need a serial sender for this agreed upon connection!
-    while(start_thread(connFD)) {}
-}
-
 void Client::prepare_tsv_file(unsigned int global_id, const std::string& filename, ComputeServerMessageType mtype) {
     std::ifstream tsv_file("client_data/" + filename + ".tsv");
     std::string data;
     std::string line;
 
     std::vector<std::string> patient_and_data;
+    int patient_count = -1;
     while(getline(tsv_file, line)) {
         patient_and_data.clear();
         Parser::split(patient_and_data, line, '\t');
         data.append(patient_and_data.back() + "\t");
+        patient_count++;
     }
     data.pop_back();
+
+    if (mtype == Y_VAL) {
+        std::string patient_count_str = std::to_string(patient_count);
+        patient_count_str = aes_encryptor_list[global_id].front().encrypt_line((byte *)&patient_count_str[0], patient_count_str.length());
+        send_msg(global_id, ComputeServerMessageType::PATIENT_COUNT, patient_count_str);
+    }
 
     // Some things are read by all threads (y values, covariants, etc.) and therefore 
     // should use the same AES key across all threads - we just thread id 0.

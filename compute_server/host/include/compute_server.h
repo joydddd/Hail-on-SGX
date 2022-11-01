@@ -94,7 +94,7 @@ class ComputeServer {
 
     void data_requester();
 
-    void data_listener(int connFD);
+    // void data_listener(int connFD);
 
     void allele_matcher();
 
@@ -139,6 +139,8 @@ class ComputeServer {
     static std::string get_aes_key(const int institution_num, const int thread_id);
 
     static std::string get_aes_iv(const int institution_num, const int thread_id);
+
+    static std::string get_num_patients(const int institution_num);
 
     static std::string get_y_data(const int institution_num);
 

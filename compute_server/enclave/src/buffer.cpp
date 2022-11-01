@@ -107,20 +107,30 @@ void Buffer::decrypt_line(char* plaintxt, size_t* plaintxt_length, unsigned int 
     *plaintxt_length = plaintxt_head - plaintxt;
 }
 
-Buffer::Buffer(GWAS* _gwas, size_t _row_size, Row_T row_type, int num_clients, int _thread_id)
+Buffer::Buffer(size_t _row_size, Row_T row_type, int num_clients, int _thread_id)
     : row_size(_row_size), type(row_type), thread_id(_thread_id) {
     crypttxt = new char[ENCLAVE_READ_BUFFER_SIZE];
     plain_txt_compressed = new uint8_t[ENCLAVE_READ_BUFFER_SIZE];
-    free_batch = new Batch(row_size, type, _gwas);
     client_list = new int[num_clients];
     client_crypto_map = new char* [num_clients];
+    // I now remember why we do this! Because we do batching, we can load in ENCLAVE_READ_BUFFER_SIZE
+    // amount of data in at a time, BUT this data when decompressed can actually be up to 4 * ENCLAVE_READ_BUFFER_SIZE large
+    plaintxt_buffer = new char[ENCLAVE_READ_BUFFER_SIZE * 4];
     output_tail = 0;
+
+    memset(crypttxt, 0, ENCLAVE_READ_BUFFER_SIZE);
+    memset(plain_txt_compressed, 0, ENCLAVE_READ_BUFFER_SIZE);
+    memset(plaintxt_buffer, 0, ENCLAVE_READ_BUFFER_SIZE * 4);
 }
 
 Buffer::~Buffer() {
     delete free_batch;
     delete [] client_list;
     delete [] client_crypto_map;
+}
+
+void Buffer::add_gwas(GWAS* _gwas) {
+    free_batch = new Batch(row_size, type, _gwas, plaintxt_buffer);
 }
 
 void Buffer::output(const char* out, const size_t& length) {
