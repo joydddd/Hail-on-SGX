@@ -252,6 +252,10 @@ void Client::handle_message(int connFD, const unsigned int global_id, const Clie
 
             auto start = std::chrono::high_resolution_clock::now();
 
+            if (global_id == 0) {
+                std::cout << "Sending first message: "  << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count() << std::endl;
+            }
+
             // First we should send all of the phenotype data
             std::vector<Phenotype>& phenotypes = phenotypes_list[global_id];
             std::vector<std::thread> p_threads;
@@ -270,31 +274,20 @@ void Client::handle_message(int connFD, const unsigned int global_id, const Clie
 
             std::string line;
             std::string line_length;
-
-            if (global_id == 0) {
-                std::cout << "Sending first message: "  << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count() << std::endl;
-            }
-
-            std::vector<std::thread> block_threads;
             while (!allele_queue->empty()) {
                 line = allele_queue->front();
                 allele_queue->pop();
-                line_length = std::to_string(line.length()) + "\t";
-                
+                line_length = "\t" + std::to_string(line.length());
+
                 if ((block.length() +
                      line.length() +
                      lengths.length() +
                      line_length.length() +
-                     30) >= MAX_MESSAGE_SIZE) {
-                    // Remove trailing '\t'
-                    lengths.pop_back();
-                    
+                     30) > (1 << 16) - 1) {
+
                     // msg format: blocks sent \t lengths (tab delimited) \n (terminating char) blocks of data w no delimiters
-                    std::string block_msg = std::to_string(blocks_sent++) + "\t" + lengths + "\n" + block;
-                    //block_msgs.push_back(block_msg);
-                    block_threads.push_back(std::thread([info, block_msg, this]() {
-                        send_msg(info.hostname, info.port, DATA, block_msg);
-                    }));
+                    std::string block_msg = std::to_string(blocks_sent++) + lengths + "\n" + block;
+                    send_msg(info.hostname, info.port, DATA, block_msg, connFD);
 
                     // Reset block
                     block.clear(); 
@@ -307,21 +300,14 @@ void Client::handle_message(int connFD, const unsigned int global_id, const Clie
             // Send the leftover lines, 10 is an arbitary cut off. I assume most lines will be at least a few hundred characters
             // and we won't be sending more than 10^10 blocks
             if (block.length() > 10) {
-                // Remove trailing '\t'
-                lengths.pop_back();
-
                 // msg format: blocks sent \t lengths (tab delimited) \n (terminating char) blocks of data w no delimiters
-                std::string block_msg = std::to_string(blocks_sent++) + "\t" + lengths + "\n" + block;
+                std::string block_msg = std::to_string(blocks_sent++) + lengths + "\n" + block;
                 send_msg(info.hostname, info.port, DATA, block_msg);
             }
             // If get_block failed we have reached the end of the file, send an EOF.
             send_msg(global_id, EOF_DATA, std::to_string(blocks_sent));
 
             for (std::thread& t : p_threads) {
-                t.join();
-            }
-
-            for (std::thread& t : block_threads) {
                 t.join();
             }
 

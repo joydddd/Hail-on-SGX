@@ -31,8 +31,6 @@ class AESCrypto {
         CryptoPP::SecByteBlock key;
         CryptoPP::SecByteBlock iv;
         CryptoPP::CBC_Mode<CryptoPP::AES>::Encryption encryptor;
-
-        
 };
 
 

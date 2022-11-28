@@ -28,7 +28,7 @@ class Lin_row : public Row {
 
     /* fitting */
     void fit();
-    bool fit(std::vector<double>& change, std::vector<double>& old_beta, size_t max_iteration = 20, double sig = 1e-6) { return false; }
+    bool fit(std::vector<double>& change, std::vector<double>& old_beta, size_t max_iteration = 25, double sig = 1e-6) { return false; }
     
     /* output results */
     double output_first_beta_element() { return beta[0]; };
