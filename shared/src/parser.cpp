@@ -131,7 +131,8 @@ void Parser::parse_allele_line(std::string& line,
         }
     }
     two_bit_compress(&vals[0], &compressed_vals[0], vals.size());
-    line = locus_and_allele + encryptor.encrypt_line((byte *)&compressed_vals[0], compressed_vals.size()) + "\n";
+    const std::string enc = encryptor.encrypt_line((byte *)&compressed_vals[0], compressed_vals.size());
+    line = locus_and_allele + enc + "\n";
 }
 
 unsigned int Parser::convert_to_num(const std::string& str) {
