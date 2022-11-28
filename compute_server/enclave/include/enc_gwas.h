@@ -7,12 +7,14 @@
 #include <sstream>
 #include <string>
 #include <vector>
+#include <iostream>
 
 #include "gwas.h"
 /* provide Alleles & Loci */
 
 #define NA_uint8 0x3
 #define NA_uint UINT_MAX
+#define NA_double 3.0
 #define uint8_OFFSET 0
 
 template <typename T>
@@ -20,7 +22,10 @@ inline bool is_NA(T a) {
     if (std::isnan(a)) return true;
     if (std::is_same<T, uint8_t>::value) return (a == NA_uint8);
     if (std::is_same<T, unsigned int>::value) return (a == NA_uint);
+    if (std::is_same<T, double>::value) return (a == NA_double);
     return true;
+    // std::cout << a << " " << (a == NA_uint8) << " " << (a == NA_double) << std::endl;
+    // return true;
 }
 
 // utilities
@@ -38,6 +43,10 @@ class Row {
      size_t n;
      std::vector<uint8_t *> data;
      std::vector<size_t> length;
+     size_t genotype_sum;
+     size_t genotype_count;
+     double genotype_average;
+     size_t it_count;
 
      std::string loci_str;
      std::string alleles_str;
@@ -47,10 +56,11 @@ class Row {
      Loci getloci() { return loci; }
      Alleles getalleles() { return alleles; }
      size_t size() { return n; }
-     virtual void fit() {}
-     virtual bool fit(std::vector<double>& change, std::vector<double>& old_beta, size_t max_iteration = 20, double sig = 1e-6) { return false; }
-     virtual double output_first_beta_element() { return -1; }
-     virtual double t_stat() { return -1; }
+     virtual bool fit(size_t max_iteration = 25, double sig = 1e-6) { return false; }
+     virtual double get_beta() { return -1; }
+     virtual double get_t_stat() { return -1; }
+     virtual double get_standard_error() { return -1; }
+     size_t get_iterations() { return it_count; }
 
 
      /* setup */
@@ -110,12 +120,10 @@ class Covar {
    public:
     Covar() : n(0), name_str("NA") { }
     Covar(const char* input, int res_size = 0) { read(input, res_size); }
-    // Covar(size_t size, int x = 1) : data(size, x), n(size), name_str("1") {}
     int read(const char* input, int res_size = 0);
     void reserve(int total_row_size);
     void init_1_covar(int total_row_size);
     size_t size() { return n; }
-    // void combine(Covar *other);
     const std::string& name() { return name_str; }
 };
 

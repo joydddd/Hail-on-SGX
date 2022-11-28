@@ -5,7 +5,7 @@
 #include "string.h"
 #include <map>
 
-void aes_decrypt_client(const unsigned char* crypto, unsigned char* plaintxt, const ClientInfo& client, const int thread_id){
+void aes_decrypt_client(const unsigned char* crypto, unsigned char* plaintxt, const ClientInfo& client, const int thread_id) {
     aes_decrypt_data(client.aes_list[thread_id].aes_context,
                      (unsigned char *)client.aes_list[thread_id].aes_iv,
                      crypto,
@@ -37,20 +37,20 @@ void Buffer::decrypt_line(char* plaintxt, size_t* plaintxt_length, unsigned int 
         end_of_loci = crypt_head;
         while (true) {
             if (*crypt_head == '\t') {
-                if (end_of_allele != crypt_start) {
-                    end_of_loci = crypt_head;
+                if (end_of_loci != crypt_start) {
+                    end_of_allele = crypt_head;
                     break;
                 } else {
-                    end_of_allele = crypt_head;
+                    end_of_loci = crypt_head;
                 }
             }
             crypt_head++;
         }
         /* copy allele & loci to plaintxt */
-        strncpy(plaintxt_head, crypt_start, end_of_loci - crypt_start + 1);
-        plaintxt_head += end_of_loci - crypt_start + 1;
+        strncpy(plaintxt_head, crypt_start, end_of_allele - crypt_start + 1);
+        plaintxt_head += end_of_allele - crypt_start + 1;
 
-        char* tab_pos = end_of_loci;
+        char* tab_pos = end_of_allele;
         client_count = 0;
         /* get client list */
         crypt_head++;
@@ -89,6 +89,8 @@ void Buffer::decrypt_line(char* plaintxt, size_t* plaintxt_length, unsigned int 
                     two_bit_decompress(plain_txt_compressed, 
                                        (uint8_t*)plaintxt_head, 
                                        client_info_list[client].size);
+                    // memset(plain_txt_compressed, 0, ENCLAVE_READ_BUFFER_SIZE);
+                    // memset(client_crypto_map[list_id], 0, client_info_list[client].crypto_size);
                     client_found = true;
                 }
             }

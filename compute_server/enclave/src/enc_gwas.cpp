@@ -4,6 +4,7 @@
 Row::Row(size_t _size) : n(_size) {
     data.push_back(new uint8_t[_size]);
     length.push_back(_size);
+    it_count = 0;
 }
 
 void Row::reset() { 
@@ -17,6 +18,11 @@ size_t Row::read(const char line[]) {
     alleles_str.clear();
     int tabs_found = 0;
     int idx = 0;
+
+    // Used to average genotype values for a SNP
+    genotype_sum = 0;
+    genotype_count = 0;
+
     while(tabs_found < 2) {
         char curr_char = line[idx++];
         if (curr_char == '\t') {
@@ -58,7 +64,14 @@ size_t Row::read(const char line[]) {
             std::cout << i << " " << (int)data[0][i] << " " << n << std::endl;
             throw ReadtsvERROR("Invalid row entry for " + loci_str + "\t" + alleles_str);
         }
+        if (!is_NA(data[0][i])) {
+             genotype_sum += data[0][i];
+             genotype_count++;
+        }
     }
+
+    genotype_average = (double)genotype_sum / (double)genotype_count;
+
     if (line[n + loci_str.size() + alleles_str.size() + 2] != '\n')
         throw ReadtsvERROR("Invalid row terminator");
     return n + loci_str.size() + alleles_str.size() + 3;
@@ -131,8 +144,8 @@ double read_entry_int(std::string &entry) {
 
 double max(std::vector<double>& vec) {
     double max = -std::numeric_limits<double>::infinity();
-    for (auto x : vec) {
-        if (x >= max) max = x;
+    for (double x : vec) {
+        if (x > max) max = x;
     }
     return max;
 }
@@ -205,14 +218,3 @@ void Covar::init_1_covar(int total_row_size){
         data.push_back(1);
     }
 }
-
-// void Covar::combine(Covar *other) {
-//     if (name() != other->name() && name() != "NA" && other->name() != "NA")
-//         throw CombineERROR("covariant/y name mismatch");
-//     n += other->n;
-//     data.reserve(n);
-//     for (auto x : other->data) {
-//         data.push_back(x);
-//     }
-//     if (name_str == "NA") name_str = other->name_str;
-// }

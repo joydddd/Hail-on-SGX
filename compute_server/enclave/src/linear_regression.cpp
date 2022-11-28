@@ -43,7 +43,7 @@ Lin_row::Lin_row(size_t _size, GWAS* _gwas)
 void Lin_row::init() {
 }
 
-void Lin_row::fit() {
+bool Lin_row::fit(size_t max_iteration, double sig) {
     for (int i = 0; i < gwas->dim(); i++) {
         beta[i] = 0;
         XTY[i] = XTY_og[i];
@@ -55,7 +55,9 @@ void Lin_row::fit() {
     size_t client_idx = 0, data_idx = 0;
     for (int i = 0; i < n; ++i) {
         uint8_t x = data[client_idx][data_idx];
+        //x = !is_NA(x) ? x : genotype_average;
         double y = gwas->y->data[i];
+
         if (!is_NA(x)) {
             XTY[0] += x * y;
             for (int j = 0; j < gwas->dim(); ++j) {
@@ -64,6 +66,7 @@ void Lin_row::fit() {
             }
         } else { // adjust the part non valid
         // TODO: some optimization here: whether to precalculate Xcov * Y and Xocv * Xcov for each patient
+            //std::cout << "???" << std::endl;
             for (int j = 1; j < gwas->dim(); ++j){
                 XTY[j] -= gwas->covariants[j - 1]->data[i] * y;
                 for (int k = 1; k <= j; ++k){
@@ -97,6 +100,7 @@ void Lin_row::fit() {
     data_idx = 0;
     for (int i = 0; i < n; ++i) {
         uint8_t x = data[client_idx][data_idx];
+        //x = !is_NA(x) ? x : genotype_average;
         double y = gwas->y->data[i];
         if (!is_NA(x)) {
             double y_est = beta[0] * x;
@@ -117,9 +121,18 @@ void Lin_row::fit() {
     sse = sse / (n - gwas->dim() - 1);
     for (int j = 0; j < gwas->dim(); ++j){
         SSE[j] = sse*(*XTX.t)[j][j];
-    } 
+    }
+    return true;
 }
 
-double Lin_row::t_stat() {
+double Lin_row::get_beta() {
+    return beta[0];
+}
+
+double Lin_row::get_standard_error() {
+    return sqrt(SSE[0]);
+}
+
+double Lin_row::get_t_stat() {
     return beta[0] / sqrt(SSE[0]);
 }

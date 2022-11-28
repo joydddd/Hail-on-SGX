@@ -73,7 +73,7 @@ void RegisterServer::run() {
     }
 
     // (4) Begin listening for incoming connections.
-	if (listen(sockfd, 300) < 0) {
+	if (listen(sockfd, 4096) < 0) {
         guarded_cout("listen: " + std::to_string(errno), cout_lock);
     }
 

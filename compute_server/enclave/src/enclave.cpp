@@ -189,7 +189,7 @@ void setup_enclave_phenotypes(const int num_threads, const int analysis_type) {
                                     std::to_string(read_size));
             }
         }
-    } 
+    }
     catch (ERROR_t& err) {
         std::cerr << "ERROR: fail to get correct y values " << err.msg << std::endl;
     }
@@ -267,8 +267,6 @@ void regression(const int thread_id, EncAnalysis analysis_type) {
     while (!start_thread) {
         start_thread_cv.wait(useless_lock_wrapper);
     }
-    std::vector<double> change(gwas->dim());
-    std::vector<double> old_beta(gwas->dim());
 
     Buffer* buffer = buffer_list[thread_id];
     Batch* batch = nullptr;
@@ -310,29 +308,26 @@ void regression(const int thread_id, EncAnalysis analysis_type) {
         alleles_to_str(row->getalleles(), alleles_string);
         output_string += loci_string + "\t" + alleles_string;
         //start_timer("converge()");
-        bool converge = false;
+        bool converge;
         //std::cout << i++ << std::endl;
         try {
-            switch (analysis_type) {
-                case EncAnalysis::linear:
-                    row->fit();
-                    break;
-                case EncAnalysis::logistic:
-                    converge = row->fit(change, old_beta);
-                    break;
-            }
-            output_string += "\t" +
-                             std::to_string(row->output_first_beta_element()) +
-                             "\t" + std::to_string(row->t_stat()) + "\t";
-            // wanted to use a ternary, but the compiler doesn't like it?
-            if (converge) {
-                output_string += "true";
-            } else if (analysis_type == EncAnalysis::logistic) {
-                 output_string += "false";
+            converge = row->fit();
+            output_string += "\t" + std::to_string(row->get_beta()) +
+                             "\t" + std::to_string(row->get_standard_error()) +
+                             "\t" + std::to_string(row->get_t_stat());
+
+            if (analysis_type == EncAnalysis::logistic) {
+                output_string += + "\t" + std::to_string(row->get_iterations()) + "\t";
+                // wanted to use a ternary, but the compiler doesn't like it?
+                if (converge) {
+                    output_string += "true";
+                } else {
+                    output_string += "false";
+                }
             }
             output_string += "\n";
         } catch (MathError& err) {
-            output_string += "\tNA\tNA\tNA\n";
+            output_string += "\tNA\tNA\tNA\t1\tfalse\n";
             // cerr << "MathError while fiting " << ss.str() << ": " << err.msg
             //      << std::endl;
             // ss << "\tNA\tNA\tNA" << std::endl;

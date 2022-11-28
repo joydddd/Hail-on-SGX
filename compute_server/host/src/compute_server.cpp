@@ -134,7 +134,7 @@ void ComputeServer::run() {
     }
 
     // (4) Begin listening for incoming connections.
-	if (listen(sockfd, 100) < 0) {
+	if (listen(sockfd, 4096) < 0) {
         guarded_cout("listen: " + std::to_string(errno), cout_lock);
     }
 
@@ -373,9 +373,9 @@ void ComputeServer::check_in(const std::string& name) {
             send_msg(it.first, Y_AND_COV, covariant_list + y_val_name);
 
             institutions[it.first]->request_conn = send_msg(it.first, DATA_REQUEST, std::to_string(MIN_BLOCK_COUNT), institutions[it.first]->request_conn);
-            // // start listener thread for data!
-            // boost::thread data_listener_thread(&ComputeServer::data_listener, this, institutions[it.first]->request_conn);
-            // data_listener_thread.detach();
+            // start listener thread for data!
+            boost::thread data_listener_thread(&ComputeServer::data_listener, this, institutions[it.first]->request_conn);
+            data_listener_thread.detach();
         }
 
 
@@ -389,12 +389,12 @@ void ComputeServer::check_in(const std::string& name) {
     }
 }
 
-// void ComputeServer::data_listener(int connFD) {
-//     // We need a serial listener for this agreed upon connection!
-//     char* body_buffer = new char[MAX_MESSAGE_SIZE]();
-//     while(start_thread(connFD, body_buffer)) {}
-//     delete[] body_buffer;
-// }
+void ComputeServer::data_listener(int connFD) {
+    // We need a serial listener for this agreed upon connection!
+    char* body_buffer = new char[MAX_MESSAGE_SIZE]();
+    while(start_thread(connFD, body_buffer)) {}
+    delete[] body_buffer;
+}
 
 void ComputeServer::allele_matcher() {
     //auto start = std::chrono::high_resolution_clock::now();
@@ -538,15 +538,25 @@ void ComputeServer::parse_header_compute_server_header(const std::string& header
     std::string length_str;
     while(header[header_idx++] != '\n') {
         if (header[header_idx - 1] == '\t') {
-            lengths.push_back(std::stoi(length_str));
+             try {
+                lengths.push_back(std::stoi(length_str));
+            } catch (std::exception e) {
+                std::cout << "!!! " << length_str << " ! " << header << std::endl;
+            }
             length_str.clear();
             continue;
         }
         length_str.push_back(header[header_idx - 1]);
     }
+    try {
+        lengths.push_back(std::stoi(length_str));
+    } catch (std::exception e) {
+        std::cout << "??? " << length_str << std::endl;
+    }
+    
 
     for (int length : lengths) {
-        std::string substr = header.substr(header_idx, length);
+        const std::string substr = header.substr(header_idx, length);
         header_idx += length;
         int num_delims = 0;
         DataBlock* block = new DataBlock;

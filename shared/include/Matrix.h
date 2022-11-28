@@ -146,8 +146,8 @@ class SqrMatrix{
             (*cof)[0][0] = 1;
             return;
         }
-        for(int i = 0; i < n; ++i) {
-            for(int j = 0; j < n; ++j) {
+        for (int i = 0; i < n; ++i) {
+            for (int j = 0; j < n; ++j) {
                 (*cof)[i][j] = 0;
                 if (i < n - 1 && j < n - 1 ) {
                     (*sub)[i][j] = 0;
@@ -167,7 +167,7 @@ class SqrMatrix{
                     }
                     subi++;
                 }
-                (*cof)[x][y] = ((x+y)%2==0?1:-1) * sub->DET();
+                (*cof)[x][y] = ((x + y) % 2 == 0 ? 1: -1) * sub->DET();
             }
         }
     }
@@ -186,10 +186,10 @@ class SqrMatrix{
 
         for(int k = 0; k < n - 1; k++) {
             //Pivot - row swap needed
-            if((*det)[k][k] == 0) {
+            if ((*det)[k][k] == 0) {
                 int l = 0;
-                for(l = k + 1; l < n; l++) {
-                    if((*det)[l][k] != 0) {       
+                for (l = k + 1; l < n; l++) {
+                    if ((*det)[l][k] != 0) {       
                         std::swap((*det)[l], (*det)[k]);
                         sign = -sign;
                         break;
@@ -206,7 +206,7 @@ class SqrMatrix{
             for (int i = k + 1; i < n; i++) {
                 for (int j = k + 1; j < n; j++) {
                     (*det)[i][j] = (*det)[k][k] * (*det)[i][j] - (*det)[i][k] * (*det)[k][j];
-                    if(k != 0) {
+                    if (k != 0) {
                         (*det)[i][j] /= (*det)[k-1][k-1];
                     }
                 }

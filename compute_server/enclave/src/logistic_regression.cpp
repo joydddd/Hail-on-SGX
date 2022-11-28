@@ -16,51 +16,41 @@ Log_row::Log_row(size_t _size, GWAS* _gwas) : Row(_size), gwas(_gwas) {
 }
 
 /* fitting */
-bool Log_row::fit(std::vector<double>& change, std::vector<double>& old_beta, size_t max_it, double sig) {
+bool Log_row::fit(size_t max_it, double sig) {
     /* intialize beta to 0*/
     init();
+    it_count = 0;
 
-    for (int i = 0; i < gwas->dim(); ++i) {
-        change[i] = 1;
-    }
-    size_t it_count = 0;
-
-    //start_timer("while_loop");
-    while (it_count < max_it && max(change) > sig) {
-        for (int i = 0; i < gwas->dim(); ++i) {
-            old_beta[i] = b[i];
-        }
+    while (it_count < max_it && max(beta_delta) >= sig) {
         update_beta();
-        for (size_t j = 0; j < gwas->dim(); j++) {
-            change[j] = abs(b[j] - old_beta[j]);
-        }
         it_count++;
     }
-    //stop_timer("while_loop");
+
     if (it_count == max_it)
         return false;
     else {
         fitted = true;
-        //start_timer("calculate_standard_error");
         H.INV();
         standard_error = sqrt((*H.t)[0][0]);
-        //stop_timer("calculate_standard_error");
-        // DEBUG:
-        // cout << loci << "\t" << alleles << "\t" << it_count << endl;
         return true;
     }
 }
 
 /* output results*/
-double Log_row::output_first_beta_element() {
+double Log_row::get_beta() {
     if (!fitted)
         for (auto &bn : b) bn = nan("");
     return b.front();
 }
 
-double Log_row::t_stat() {
+double Log_row::get_t_stat() {
     if (!fitted) return nan("");
     return b[0] / standard_error;
+}
+
+double Log_row::get_standard_error() {
+    if (!fitted) return nan("");
+    return standard_error;
 }
 
 /* fitting helper functions */
@@ -69,8 +59,10 @@ void Log_row::update_beta() {
     // calculate_beta
     H.INV();
     H.t->calculate_beta_delta(Grad, beta_delta);
-    for (size_t j = 0; j < gwas->dim(); j++) {
-        b[j] += beta_delta[j];
+    for (size_t i = 0; i < gwas->dim(); i++) {
+        b[i] += beta_delta[i];
+        // take abs after adding beta delta so that we can determine if we have passed tolerance
+        beta_delta[i] = abs(beta_delta[i]);
     }
     update_estimate();
 }
@@ -82,6 +74,9 @@ void Log_row::init() {
     }
     for (int i = 0; i < n; ++i) {
         b[i] = 0;
+    }
+    for (int i = 0; i < gwas->dim(); ++i) {
+        beta_delta[i] = 1;
     }
     update_estimate();
 }
@@ -96,7 +91,8 @@ void Log_row::update_estimate() {
     double y_est;
     size_t client_idx = 0, data_idx = 0;
     for (size_t i = 0; i < n; i++) {
-        uint8_t x = data[client_idx][data_idx];
+        double x = data[client_idx][data_idx];
+        //x = !is_NA(x) ? x : genotype_average;
         if (!is_NA(x)) {
             y_est = b[0] * x;
             for (size_t j = 1; j < gwas->dim(); j++)

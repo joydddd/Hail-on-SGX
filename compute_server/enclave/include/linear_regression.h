@@ -27,12 +27,13 @@ class Lin_row : public Row {
     Lin_row(size_t size, GWAS* _gwas);
 
     /* fitting */
-    void fit();
-    bool fit(std::vector<double>& change, std::vector<double>& old_beta, size_t max_iteration = 20, double sig = 1e-6) { return false; }
+    bool fit(size_t max_iteration = 25, double sig = 1e-6);
     
     /* output results */
-    double output_first_beta_element() { return beta[0]; };
-    double t_stat();
+    double get_beta();
+    double get_t_stat();
+    double get_standard_error();
+
     int size() { return n; }
     /* reqires boost library. To avoid using boost:
     find t_stat and degree of freedom = n-beta.size()-1 and apply CDF of t

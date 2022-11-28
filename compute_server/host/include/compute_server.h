@@ -94,7 +94,7 @@ class ComputeServer {
 
     void data_requester();
 
-    // void data_listener(int connFD);
+    void data_listener(int connFD);
 
     void allele_matcher();
 

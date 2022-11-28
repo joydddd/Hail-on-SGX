@@ -15,8 +15,6 @@ class Log_row : public Row {
 
     /* model data */
     std::vector<double> b;
-    // vector<double> change;
-    std::vector<double> old_beta;
     std::vector<double> beta_delta;
     SqrMatrix H;
     std::vector<double> Grad;
@@ -35,13 +33,12 @@ class Log_row : public Row {
     Log_row(size_t _size, GWAS* _gwas);
 
     /* fitting */
-    // return true if converge, return false if explode
-    bool fit(std::vector<double>& change, std::vector<double>& old_beta, size_t max_iteration = 20, double sig = 1e-6);
-    void fit() {}
+    bool fit(size_t max_iteration = 25, double sig = 1e-6);
 
     /* output results */
-    double output_first_beta_element();
-    double t_stat();
+    double get_beta();
+    double get_t_stat();
+    double get_standard_error();
 };
 
 #endif
