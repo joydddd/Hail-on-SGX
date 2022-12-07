@@ -187,7 +187,7 @@ int start_enclave() {
             goto exit;
         }
 
-        result = setup_enclave_phenotypes(enclave, num_threads, enc_analysis_type);
+        result = setup_enclave_phenotypes(enclave, num_threads, enc_analysis_type, ComputeServer::get_impute_policy());
         if (result != OE_OK) {
             fprintf(stderr,
                     "calling into enclave_gwas failed: result=%u (%s)\n",

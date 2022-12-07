@@ -8,7 +8,7 @@
 //////////              Log_row             /////////////////
 /////////////////////////////////////////////////////////////
 
-Log_row::Log_row(size_t _size, GWAS* _gwas) : Row(_size), gwas(_gwas) {
+Log_row::Log_row(size_t _size, GWAS* _gwas, ImputePolicy _impute_policy) : Row(_size, _impute_policy), gwas(_gwas) {
     beta_delta.resize(gwas->dim());
     // 2 is a magic number that helps with SqrMatrix construction, "highest level matrix"
     H = SqrMatrix(gwas->dim(), 2);
@@ -92,7 +92,7 @@ void Log_row::update_estimate() {
     size_t client_idx = 0, data_idx = 0;
     for (size_t i = 0; i < n; i++) {
         double x = data[client_idx][data_idx];
-        //x = !is_NA(x) ? x : genotype_average;
+        x = (impute_policy == ImputePolicy::Hail) && is_NA(x) ? genotype_average : x;
         if (!is_NA(x)) {
             y_est = b[0] * x;
             for (size_t j = 1; j < gwas->dim(); j++)

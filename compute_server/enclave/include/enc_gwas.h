@@ -51,6 +51,8 @@ class Row {
      std::string loci_str;
      std::string alleles_str;
 
+     ImputePolicy impute_policy;
+
     public:
      /* return metadata */
      Loci getloci() { return loci; }
@@ -64,7 +66,7 @@ class Row {
 
 
      /* setup */
-     Row(size_t size);
+     Row(size_t size, ImputePolicy _impute_policy);
      size_t read(const char line[]); // return the size of line consumed
      void combine(Row *other);
      void append_invalid_elts(size_t size);
@@ -127,31 +129,29 @@ class Covar {
     const std::string& name() { return name_str; }
 };
 
-enum RegType_t{ LogReg_type, LinReg_type };
-
 
 /* gwas setup. contains information for covariant and meta data */
 class GWAS {
     std::string name;
     size_t m;  // dimension
     size_t n;  // sample size
-    RegType_t regtype;
+    EncAnalysis regtype;
 
    public:
     std::vector<Covar*> covariants;
     Covar* y;
-    GWAS(RegType_t _regtype) : n(0), m(0), regtype(_regtype) {}
-    GWAS(Covar *_y, RegType_t _regtype) : n(_y->size()), m(1), regtype(_regtype) { add_y(_y); }
+    GWAS(EncAnalysis _regtype) : n(0), m(0), regtype(_regtype) {}
+    GWAS(Covar *_y, EncAnalysis _regtype) : n(_y->size()), m(1), regtype(_regtype) { add_y(_y); }
 
     void add_y(Covar *_y) {
         n = _y->size();
         m = 1;
         y = _y;
         switch (regtype){
-            case LogReg_type:
-                name = _y->name() + "_logic_gwas";
+            case EncAnalysis::logistic:
+                name = _y->name() + "_logistic_gwas";
                 break;
-            case LinReg_type:
+            case EncAnalysis::linear:
                 name = _y->name() + "_linear_gwas";
                 break;
         }

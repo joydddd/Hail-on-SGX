@@ -1,16 +1,25 @@
 import random
 import numpy as np
 import sys
+import multiprocessing
+import subprocess
+import glob
+import os
 
 random.seed('0x8BADF00D')
 
 rand_size = 100003
 
 rands = np.random.random(rand_size)
-index = 0
 
-ALLELE_COUNT = 1000000
-CLIENT_COUNT = 10000 if len(sys.argv) != 2 else int(sys.argv[1])
+ALLELE_COUNT = 100000
+CLIENT_COUNT = 1235 if len(sys.argv) != 2 else int(sys.argv[1])
+NUM_PROCS = multiprocessing.cpu_count() * 2
+OUTPUT_FILE = f"../client/client_data/generated_alleles_{CLIENT_COUNT}.tsv"
+
+def run_bash_cmd(cmd):
+    process = subprocess.Popen(cmd.split(), stdout=subprocess.PIPE)
+    process.communicate()
 
 def weighted_random_by_dct(dct):
     rand_val = random.random()
@@ -65,27 +74,58 @@ for key in alleles:
 
 scale_up_factor =  (ALLELE_COUNT // num_alleles) + 1
 
-with open(f'../client/client_data/generated_alleles_{CLIENT_COUNT}.tsv', 'w') as f:
-    top_line = ""
-    for i in range(CLIENT_COUNT):
-        top_line += f'HG{i} '
-    f.write(f'locus\talleles {top_line[:-1]}\n')
-    for locus in (locuses if len(sys.argv) != 2 else locuses[:1]):
-        locus_split = locus.split(':')
-        num = int(locus_split[1])
-        nums = set()
-        for i in range(scale_up_factor):
-            while(True):
-                random_num = random.randint(num - 7000, num + 7000)
-                if random_num not in nums:
-                    nums.add(random_num)
-                    break
-        sorted_nums = sorted(nums)
+proc_div = num_alleles // NUM_PROCS
 
-        for s_num in sorted_nums:
-            random_allele = weighted_random_by_dct(alleles)
-            genotype_data = ""
-            for i in range(CLIENT_COUNT):
-                genotype_data += get_random_allele(rands[index % rand_size]) + '\t'
-                index += 1
-            f.write(f'{locus_split[0]}:{str(s_num)}\t{random_allele}\t{genotype_data[:-1]}\n')
+# with open(f'../client/client_data/generated_alleles_{CLIENT_COUNT}.tsv', 'w') as f:
+
+def helper(pid, locuses):
+    index = pid * proc_div * scale_up_factor * CLIENT_COUNT
+    with open(f'tmp{str(pid).zfill(3)}.txt', 'w') as f:
+        top_line = ""
+        for i in range(CLIENT_COUNT):
+            top_line += f'HG{i} '
+        if pid == 0:
+            f.write(f'locus\talleles {top_line[:-1]}\n')
+
+        for loc_idx, locus in enumerate((locuses if len(sys.argv) != 2 else locuses[:1])):
+            if int(loc_idx / proc_div) != pid:
+                continue 
+            locus_split = locus.split(':')
+            num = int(locus_split[1])
+            nums = set()
+            for i in range(scale_up_factor):
+                while(True):
+                    random_num = random.randint(num - 7000, num + 7000)
+                    if random_num not in nums:
+                        nums.add(random_num)
+                        break
+            
+            sorted_nums = sorted(nums)
+            for s_num in sorted_nums:
+                random_allele = weighted_random_by_dct(alleles)
+                genotype_data = ""
+                for i in range(CLIENT_COUNT):
+                    genotype_data += get_random_allele(rands[index % rand_size]) + '\t'
+                    index += 1
+                f.write(f'{locus_split[0]}:{str(s_num)}\t{random_allele}\t{genotype_data[:-1]}\n')
+
+ps = []
+
+for pid in range(NUM_PROCS):
+    p = multiprocessing.Process(target=helper, args=(pid, locuses,))
+    p.start()
+    ps.append(p)
+    # helper(pid, locuses)
+
+for p in ps:
+    p.join()
+
+read_files = sorted(glob.glob("tmp*.txt"))
+
+with open(OUTPUT_FILE, 'wb') as outfile:
+    for f in read_files:
+        with open(f, 'rb') as infile:
+            outfile.write(infile.read())
+
+for path in glob.glob('tmp*.txt'):
+    os.remove(path)

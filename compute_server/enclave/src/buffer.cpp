@@ -131,8 +131,8 @@ Buffer::~Buffer() {
     delete [] client_crypto_map;
 }
 
-void Buffer::add_gwas(GWAS* _gwas) {
-    free_batch = new Batch(row_size, type, _gwas, plaintxt_buffer);
+void Buffer::add_gwas(GWAS* _gwas, ImputePolicy impute_policy) {
+    free_batch = new Batch(row_size, type, impute_policy, _gwas, plaintxt_buffer);
 }
 
 void Buffer::output(const char* out, const size_t& length) {

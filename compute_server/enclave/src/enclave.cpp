@@ -90,8 +90,8 @@ void setup_enclave_encryption(const int num_threads) {
     }
 }
 
-void setup_enclave_phenotypes(const int num_threads, const int analysis_type) {
-    gwas = new GWAS((RegType_t)analysis_type);
+void setup_enclave_phenotypes(const int num_threads, EncAnalysis analysis_type, ImputePolicy impute_policy) {
+    gwas = new GWAS(analysis_type);
     char* buffer_decrypt = new char[ENCLAVE_READ_BUFFER_SIZE];
     char* phenotype_buffer = new char[ENCLAVE_READ_BUFFER_SIZE];
     Covar* gwas_y = new Covar();
@@ -239,7 +239,7 @@ void setup_enclave_phenotypes(const int num_threads, const int analysis_type) {
     delete[] buffer_decrypt;
     try {
         for (int thread_id = 0; thread_id < num_threads; ++thread_id) {
-            buffer_list[thread_id]->add_gwas(gwas);
+            buffer_list[thread_id]->add_gwas(gwas, impute_policy);
         }
     } catch (const std::exception &e) { 
         std::cout << "Crash in add gwas with " << e.what() << std::endl;

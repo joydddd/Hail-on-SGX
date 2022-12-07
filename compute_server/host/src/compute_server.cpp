@@ -67,9 +67,10 @@ void ComputeServer::init(const std::string& config_file) {
     if (compute_config.count("flag")) {
         if (compute_config["flag"] == "simulate") {
             enc_mode = EncMode::simulate;
-        }
-        if (compute_config["flag"] == "debug") {
+        } else if (compute_config["flag"] == "debug") {
             enc_mode = EncMode::debug;
+        } else {
+            throw std::runtime_error("Config \"flag\" type is unknown.");
         }
     }
 
@@ -80,6 +81,17 @@ void ComputeServer::init(const std::string& config_file) {
         enc_analysis = EncAnalysis::linear;
     } else if (compute_config["analysis_type"] == "logistic") {
         enc_analysis = EncAnalysis::logistic;
+    }
+
+    impute_policy = ImputePolicy::EPACTS;
+    if (compute_config.count("impute_policy")) {
+        if (compute_config["impute_policy"] == "EPACTS") {
+            // already default
+        } else if (compute_config["impute_policy"] == "Hail") {
+            impute_policy = ImputePolicy::Hail;
+        } else {
+            throw std::runtime_error("Config \"impute_policy\" type is unknown.");
+        }
     }
 
     server_eof = false;
@@ -591,6 +603,10 @@ EncMode ComputeServer::get_mode() {
 
 EncAnalysis ComputeServer::get_analysis() {
     return get_instance()->enc_analysis;
+}
+
+ImputePolicy ComputeServer::get_impute_policy() {
+    return get_instance()->impute_policy;
 }
 
 void ComputeServer::finish_setup() {

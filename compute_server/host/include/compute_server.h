@@ -46,6 +46,7 @@ class ComputeServer {
 
     EncMode enc_mode;
     EncAnalysis enc_analysis;
+    ImputePolicy impute_policy;
 
     std::vector<bool> eof_read_list;
 
@@ -123,6 +124,8 @@ class ComputeServer {
     static EncMode get_mode();
 
     static EncAnalysis get_analysis();
+
+    static ImputePolicy get_impute_policy();
 
     static void finish_setup();
 

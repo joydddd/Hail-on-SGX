@@ -1,7 +1,7 @@
 #include "enc_gwas.h"
 #include "assert.h"
 
-Row::Row(size_t _size) : n(_size) {
+Row::Row(size_t _size, ImputePolicy _impute_policy) : n(_size), impute_policy(_impute_policy) {
     data.push_back(new uint8_t[_size]);
     length.push_back(_size);
     it_count = 0;

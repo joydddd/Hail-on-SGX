@@ -7,8 +7,8 @@
 // DEBUG:
 #include <iostream>
 
-Lin_row::Lin_row(size_t _size, GWAS* _gwas)
-    : Row(_size), gwas(_gwas), XTX(gwas->dim(), 2), XTX_og(gwas->dim(), 2) {
+Lin_row::Lin_row(size_t _size, GWAS* _gwas, ImputePolicy _impute_policy)
+    : Row(_size, _impute_policy), gwas(_gwas), XTX(gwas->dim(), 2), XTX_og(gwas->dim(), 2) {
     beta.resize(gwas->dim());
     XTY.resize(gwas->dim());
     XTY_og.resize(gwas->dim());
@@ -40,8 +40,7 @@ Lin_row::Lin_row(size_t _size, GWAS* _gwas)
     }
 }
 
-void Lin_row::init() {
-}
+void Lin_row::init() {}
 
 bool Lin_row::fit(size_t max_iteration, double sig) {
     for (int i = 0; i < gwas->dim(); i++) {
@@ -55,7 +54,7 @@ bool Lin_row::fit(size_t max_iteration, double sig) {
     size_t client_idx = 0, data_idx = 0;
     for (int i = 0; i < n; ++i) {
         uint8_t x = data[client_idx][data_idx];
-        //x = !is_NA(x) ? x : genotype_average;
+        x = (impute_policy == ImputePolicy::Hail) && is_NA(x) ? genotype_average : x;
         double y = gwas->y->data[i];
 
         if (!is_NA(x)) {
@@ -100,7 +99,7 @@ bool Lin_row::fit(size_t max_iteration, double sig) {
     data_idx = 0;
     for (int i = 0; i < n; ++i) {
         uint8_t x = data[client_idx][data_idx];
-        //x = !is_NA(x) ? x : genotype_average;
+        x = (impute_policy == ImputePolicy::Hail) && is_NA(x) ? genotype_average : x;
         double y = gwas->y->data[i];
         if (!is_NA(x)) {
             double y_est = beta[0] * x;

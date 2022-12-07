@@ -24,7 +24,7 @@ class Lin_row : public Row {
 
    public:
    /* setup */
-    Lin_row(size_t size, GWAS* _gwas);
+    Lin_row(size_t size, GWAS* _gwas, ImputePolicy _impute_policy);
 
     /* fitting */
     bool fit(size_t max_iteration = 25, double sig = 1e-6);

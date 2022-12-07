@@ -6,8 +6,8 @@
     "analysis_type": "linear",
     "enclave_path": "../enclave/gwasenc.signed",
     "register_server_info": {
-        "hostname": "paper.eecs.umich.edu",
+        "hostname": "sgx.eecs.umich.edu",
         "port": 6401
     }
 }
-// You can add "flag": "simulate" or "flag": "debug" to the config to run the enclave in simulation/debugging mode!
+// Add "flag": "simulate" or "flag": "debug" to the config to run the enclave in simulation/debugging mode!

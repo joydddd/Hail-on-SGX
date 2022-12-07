@@ -48,7 +48,7 @@ class Buffer {
 public:
     Buffer(size_t _row_size, Row_T row_type, int num_clients, int thread_id);
     ~Buffer();
-    void add_gwas(GWAS* _gwas);
+    void add_gwas(GWAS* _gwas, ImputePolicy impute_policy);
     void finish();
     void clean_up();
 

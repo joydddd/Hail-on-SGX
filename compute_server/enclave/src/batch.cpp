@@ -1,17 +1,17 @@
 #include "batch.h"
 #include <cstring>
 
-Batch::Batch(size_t _row_size, Row_T row_type, GWAS* _gwas, char *plaintxt_buffer)
+Batch::Batch(size_t _row_size, Row_T row_type, ImputePolicy impute_policy, GWAS* _gwas, char *plaintxt_buffer)
     : row_size(_row_size), type(row_type) {
     switch (type) {
         case LOG_t:
-            row = new Log_row(row_size, _gwas);
+            row = new Log_row(row_size, _gwas, impute_policy);
             break;
         case Lin_t:
-            row = new Lin_row(row_size, _gwas);
+            row = new Lin_row(row_size, _gwas, impute_policy);
             break;
         default:
-            row = new Row(row_size);
+            row = new Row(row_size, impute_policy);
             break;
     }
     plaintxt = plaintxt_buffer;
