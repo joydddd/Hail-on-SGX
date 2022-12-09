@@ -39,7 +39,7 @@ def get_random_allele(rand_val):
     elif rand_val <= 0.9497530511269928:
         return '2'
     else:
-        return '3'
+        return 'NA'
 
 genotypes = {"0": 0, "1": 0, "2": 0, "NA": 0}
 locuses = []
@@ -88,7 +88,7 @@ def helper(pid, locuses):
         if pid == 0:
             f.write(f'locus\talleles {top_line[:-1]}\n')
 
-        for loc_idx, locus in enumerate((locuses if len(sys.argv) != 3 else locuses[:1])):
+        for loc_idx, locus in enumerate((locuses if len(sys.argv) != 99 else locuses[:1])):
             if int(loc_idx / proc_div) != pid:
                 continue 
             locus_split = locus.split(':')
