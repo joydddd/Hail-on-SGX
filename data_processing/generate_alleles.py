@@ -80,7 +80,7 @@ proc_div = num_alleles // NUM_PROCS
 
 def helper(pid, locuses):
     index = pid * proc_div * scale_up_factor * CLIENT_COUNT
-    with open(f'tmp{str(pid).zfill(3)}.txt', 'w') as f:
+    with open(f'tmp-{CLIENT_COUNT}-{str(pid).zfill(7)}.txt', 'w') as f:
         top_line = ""
         for i in range(CLIENT_COUNT):
             top_line += f'HG{i} '
@@ -120,7 +120,7 @@ for pid in range(NUM_PROCS):
 for p in ps:
     p.join()
 
-read_files = sorted(glob.glob("tmp*.txt"))
+read_files = sorted(glob.glob(f"tmp-{CLIENT_COUNT}-*.txt"))
 
 with open(OUTPUT_FILE, 'wb') as outfile:
     for f in read_files:
