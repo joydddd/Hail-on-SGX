@@ -12,8 +12,9 @@ rand_size = 100003
 
 rands = np.random.random(rand_size)
 
-ALLELE_COUNT = 100000
-CLIENT_COUNT = 1235 if len(sys.argv) != 2 else int(sys.argv[1])
+ALLELE_COUNT = 1000000
+CLIENT_COUNT = 5000 if len(sys.argv) != 2 else int(sys.argv[1])
+print(CLIENT_COUNT)
 NUM_PROCS = multiprocessing.cpu_count() * 2
 OUTPUT_FILE = f"../client/client_data/generated_alleles_{CLIENT_COUNT}.tsv"
 
@@ -38,7 +39,7 @@ def get_random_allele(rand_val):
     elif rand_val <= 0.9497530511269928:
         return '2'
     else:
-        return 'NA'
+        return '3'
 
 genotypes = {"0": 0, "1": 0, "2": 0, "NA": 0}
 locuses = []
@@ -74,12 +75,12 @@ for key in alleles:
 
 scale_up_factor =  (ALLELE_COUNT // num_alleles) + 1
 
-proc_div = num_alleles // NUM_PROCS
+proc_div = num_alleles / NUM_PROCS
 
 # with open(f'../client/client_data/generated_alleles_{CLIENT_COUNT}.tsv', 'w') as f:
 
 def helper(pid, locuses):
-    index = pid * proc_div * scale_up_factor * CLIENT_COUNT
+    index = pid * int(proc_div) * scale_up_factor * CLIENT_COUNT
     with open(f'tmp-{CLIENT_COUNT}-{str(pid).zfill(7)}.txt', 'w') as f:
         top_line = ""
         for i in range(CLIENT_COUNT):
@@ -87,7 +88,7 @@ def helper(pid, locuses):
         if pid == 0:
             f.write(f'locus\talleles {top_line[:-1]}\n')
 
-        for loc_idx, locus in enumerate((locuses if len(sys.argv) != 2 else locuses[:1])):
+        for loc_idx, locus in enumerate((locuses if len(sys.argv) != 3 else locuses[:1])):
             if int(loc_idx / proc_div) != pid:
                 continue 
             locus_split = locus.split(':')
@@ -115,17 +116,16 @@ for pid in range(NUM_PROCS):
     p = multiprocessing.Process(target=helper, args=(pid, locuses,))
     p.start()
     ps.append(p)
-    # helper(pid, locuses)
 
 for p in ps:
     p.join()
 
-read_files = sorted(glob.glob(f"tmp-{CLIENT_COUNT}-*.txt"))
+read_files = sorted(glob.glob(f'tmp-{CLIENT_COUNT}-*.txt'))
 
 with open(OUTPUT_FILE, 'wb') as outfile:
     for f in read_files:
         with open(f, 'rb') as infile:
             outfile.write(infile.read())
 
-for path in glob.glob('tmp*.txt'):
+for path in glob.glob(f'tmp-{CLIENT_COUNT}-*.txt'):
     os.remove(path)
