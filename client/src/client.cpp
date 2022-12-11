@@ -253,7 +253,10 @@ void Client::handle_message(int connFD, const unsigned int global_id, const Clie
             auto start = std::chrono::high_resolution_clock::now();
 
             if (global_id == 0) {
+                // Using guarded_cout is hard here because converting duration.count() to a string sucks
+                cout_lock.lock();
                 std::cout << "Sending first message: "  << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count() << std::endl;
+                cout_lock.unlock();
             }
 
             // First we should send all of the phenotype data
@@ -413,7 +416,10 @@ void Client::queue_helper(const int global_id, const int num_helpers) {
     auto stop = std::chrono::high_resolution_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
     if (global_id == 0) {
+        // Using guarded_cout is hard here because converting duration.count() to a string sucks
+        cout_lock.lock();
         std::cout << "Fill/encryption time total: " << duration.count() << std::endl;
+        cout_lock.unlock();
     }
 }
 
