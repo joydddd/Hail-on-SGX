@@ -1,5 +1,5 @@
 {
     "register_server_bind_port": 6401,
-    "compute_server_count": 64,
+    "compute_server_count": 128,
     "output_file_name": "results.out"
 }
