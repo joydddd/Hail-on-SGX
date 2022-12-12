@@ -6,7 +6,7 @@
     "analysis_type": "logistic",
     "enclave_path": "../enclave/gwasenc.signed",
     "register_server_info": {
-        "hostname": "20.121.42.192",
+        "hostname": "sgx.eecs.umich.edu",
         "port": 6401
     }
 }

@@ -35,6 +35,7 @@ void RegisterServer::init(const std::string& config_file) {
     output_file.open(register_config["output_file_name"]);
 
     eof_messages_received = 0;
+    first = true;
 }
 
 void RegisterServer::run() {
@@ -200,6 +201,11 @@ bool RegisterServer::handle_message(int connFD, RegisterServerMessageType mtype,
         case OUTPUT:
         {
             output_lock.lock();
+            if (first) {
+                first = false;
+                std::thread enforcer(&RegisterServer::time_enforcer, this);
+                enforcer.detach();
+            }
             output_file << msg;
             output_file.flush();
             output_lock.unlock();
@@ -211,7 +217,7 @@ bool RegisterServer::handle_message(int connFD, RegisterServerMessageType mtype,
                 output_lock.lock();
                 output_file.flush();
                 output_lock.unlock();
-                std::cout << "Received last message: "  << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count() << "\n";
+                std::cout << "Received last message: "  << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count() << std::endl;
                 // These aren't necesary for program correctness, but they help with iterative testing!
                 for (ConnectionInfo institution_info : institution_info_list) {
                     send_msg(institution_info.hostname, institution_info.port, ClientMessageType::END_CLIENT, "");
@@ -230,6 +236,20 @@ bool RegisterServer::handle_message(int connFD, RegisterServerMessageType mtype,
     }
     close(connFD);
     return false;
+}
+
+void RegisterServer::time_enforcer()
+{
+    std::cout << "Starting enforcer" << std::endl;
+    std::this_thread::sleep_for(std::chrono::seconds(30));
+    std::cout << "Shutting down, took too long!" << std::endl;
+    for (ConnectionInfo institution_info : institution_info_list) {
+        send_msg(institution_info.hostname, institution_info.port, ClientMessageType::END_CLIENT, "");
+    }
+    for (ConnectionInfo compute_info : compute_info_list) {
+        send_msg(compute_info.hostname, compute_info.port, ComputeServerMessageType::END_COMPUTE, "");
+    }
+    exit(0);
 }
 
 int RegisterServer::send_msg(const std::string& hostname, const int port, int mtype, const std::string& msg, int connFD) {

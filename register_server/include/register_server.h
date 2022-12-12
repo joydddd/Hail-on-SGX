@@ -14,6 +14,7 @@
 #include <queue>
 #include <mutex>
 #include <boost/thread.hpp>
+#include <thread>
 #include "json.hpp"
 #include "output.h"
 #include "parser.h"
@@ -34,6 +35,8 @@ class RegisterServer {
 
     std::ofstream output_file;
 
+    bool first;
+
     // set up data structures
     void init(const std::string& config_file);
     
@@ -45,6 +48,8 @@ class RegisterServer {
 
     // start a thread that will handle a message and exit properly if it finds an error
     bool start_thread(int connFD);
+
+    void time_enforcer();
 
   public:
 
