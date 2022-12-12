@@ -751,6 +751,6 @@ void ComputeServer::cleanup_output() {
     terminating = true;
     lk.unlock();
     get_instance()->output_queue_cv.notify_all();
-    send_msg_output(EOFSeperator);
+    get_instance()->send_msg_output(EOFSeperator);
     std::cout << "Sending EOF message: "  << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count() << std::endl;
 }
