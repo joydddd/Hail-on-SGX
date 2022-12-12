@@ -170,7 +170,7 @@ int start_enclave() {
     }
 
     try {
-        std::cout << "\n\n**RUNNING REGRESSION**\n\n";
+        std::cout << "\n\n**RUNNING REGRESSION**\n" << std::endl;
 
         int num_threads = ComputeServer::get_num_threads();
         boost::thread_group thread_group;

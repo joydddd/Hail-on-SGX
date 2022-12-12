@@ -498,7 +498,7 @@ void ComputeServer::output_sender() {
     std::unique_lock<std::mutex> lk(get_instance()->output_queue_lock);
     while(!terminating || output_queue.size()) {
         // This wait -> signal system seriously improves performance as it reduces busy waiting
-        if (!output_queue.size())
+        if (!terminating && !output_queue.size())
             output_queue_cv.wait(lk);
 
         while (output_queue.size()) {
@@ -751,6 +751,9 @@ void ComputeServer::cleanup_output() {
     std::unique_lock<std::mutex> lk(get_instance()->output_queue_lock);
     terminating = true;
     lk.unlock();
-    get_instance()->output_queue_cv.notify_all();
     std::cout << "Sending EOF message: "  << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count() << "\n";
+    while(true) {
+        get_instance()->output_queue_cv.notify_all();
+        boost::this_thread::sleep_for(boost::chrono::milliseconds(100));
+    }
 }
