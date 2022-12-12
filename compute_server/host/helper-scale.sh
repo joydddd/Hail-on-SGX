@@ -1,5 +1,5 @@
 #!/bin/bash
-for _ in {1..3}
+for _ in {1..10}
 do
     ./gwashost compute_server_config1000log.json
     ./gwashost compute_server_config1000lin.json
