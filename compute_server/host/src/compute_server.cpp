@@ -754,6 +754,5 @@ void ComputeServer::cleanup_output() {
     std::cout << "Sending EOF message: "  << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count() << "\n";
     while(true) {
         get_instance()->output_queue_cv.notify_all();
-        boost::this_thread::sleep_for(boost::chrono::milliseconds(100));
     }
 }
