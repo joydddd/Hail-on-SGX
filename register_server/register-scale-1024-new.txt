@@ -1,3 +1,4 @@
 Log 1000
 
  Running on port 6401
+ID/Client: client1 Msg Type: 1
