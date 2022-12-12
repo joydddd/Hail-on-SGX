@@ -49,8 +49,6 @@ class RegisterServer {
     // start a thread that will handle a message and exit properly if it finds an error
     bool start_thread(int connFD);
 
-    void time_enforcer();
-
   public:
 
     RegisterServer(const std::string& config_file);

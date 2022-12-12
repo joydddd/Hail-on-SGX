@@ -201,11 +201,6 @@ bool RegisterServer::handle_message(int connFD, RegisterServerMessageType mtype,
         case OUTPUT:
         {
             output_lock.lock();
-            if (first) {
-                first = false;
-                std::thread enforcer(&RegisterServer::time_enforcer, this);
-                enforcer.detach();
-            }
             output_file << msg;
             output_file.flush();
             output_lock.unlock();
@@ -236,20 +231,6 @@ bool RegisterServer::handle_message(int connFD, RegisterServerMessageType mtype,
     }
     close(connFD);
     return false;
-}
-
-void RegisterServer::time_enforcer()
-{
-    std::cout << "Starting enforcer" << std::endl;
-    std::this_thread::sleep_for(std::chrono::seconds(30));
-    std::cout << "Shutting down, took too long!" << std::endl;
-    for (ConnectionInfo institution_info : institution_info_list) {
-        send_msg(institution_info.hostname, institution_info.port, ClientMessageType::END_CLIENT, "");
-    }
-    for (ConnectionInfo compute_info : compute_info_list) {
-        send_msg(compute_info.hostname, compute_info.port, ComputeServerMessageType::END_COMPUTE, "");
-    }
-    exit(0);
 }
 
 int RegisterServer::send_msg(const std::string& hostname, const int port, int mtype, const std::string& msg, int connFD) {
