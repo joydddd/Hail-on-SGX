@@ -508,7 +508,6 @@ void ComputeServer::output_sender() {
         }
     }
     lk.unlock();
-    send_msg_output(EOFSeperator);
 } 
 
 void ComputeServer::parse_header_compute_server_header(const std::string& header, std::string& msg, 
@@ -751,8 +750,7 @@ void ComputeServer::cleanup_output() {
     std::unique_lock<std::mutex> lk(get_instance()->output_queue_lock);
     terminating = true;
     lk.unlock();
+    get_instance()->output_queue_cv.notify_all();
+    send_msg_output(EOFSeperator);
     std::cout << "Sending EOF message: "  << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count() << std::endl;
-    while(true) {
-        get_instance()->output_queue_cv.notify_all();
-    }
 }
