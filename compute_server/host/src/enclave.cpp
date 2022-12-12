@@ -220,7 +220,7 @@ int start_enclave() {
     int ret = 1;
 
     try {
-        std::cout << "\n\n**RUNNING LOG REGRESSION**\n\n";
+        std::cout << "\n\n**RUNNING REGRESSION**\n" << std::endl;
 
         EncAnalysis enc_analysis_type = ComputeServer::get_analysis();
         int num_threads = 1;
