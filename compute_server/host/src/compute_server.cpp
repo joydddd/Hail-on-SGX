@@ -751,7 +751,7 @@ void ComputeServer::cleanup_output() {
     std::unique_lock<std::mutex> lk(get_instance()->output_queue_lock);
     terminating = true;
     lk.unlock();
-    std::cout << "Sending EOF message: "  << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count() << "\n";
+    std::cout << "Sending EOF message: "  << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count() << std::endl;
     while(true) {
         get_instance()->output_queue_cv.notify_all();
     }
