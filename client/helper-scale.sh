@@ -1,5 +1,5 @@
 #!/bin/bash
-for _ in {1..3}
+for _ in {1..10}
 do
     echo "Log 1000"
     ./bin/client client_config1000.json
