@@ -135,8 +135,8 @@ bool Client::start_thread(int connFD) {
         std::vector<std::string> parsed_header;
         Parser::split(parsed_header, body, ' ', 2);
 
-        guarded_cout("ID: " + parsed_header[0] + 
-                     " Msg Type: " + parsed_header[1], cout_lock);
+        // guarded_cout("ID: " + parsed_header[0] + 
+        //              " Msg Type: " + parsed_header[1], cout_lock);
         // guarded_cout("\nEncrypted body:\n" + parsed_header[2], cout_lock);
 
         handle_message(connFD, std::stoi(parsed_header[0]), static_cast<ClientMessageType>(std::stoi(parsed_header[1])), parsed_header[2]);
@@ -172,9 +172,9 @@ void Client::handle_message(int connFD, const unsigned int global_id, const Clie
             std::vector<std::mutex> tmp(num_compute_servers);
             encryption_queue_lock_list.swap(tmp);
 
-            for (int idx = 0; idx < num_compute_servers; ++idx) {
-                allele_queue_list[idx] = new std::queue<std::string>();
-            } 
+            // for (int idx = 0; idx < num_compute_servers; ++idx) {
+            //     allele_queue_list[idx] = new std::queue<std::string>();
+            // } 
 
             for (const std::string& compute_info : parsed_compute_info) {
                 ConnectionInfo info;
@@ -243,13 +243,6 @@ void Client::handle_message(int connFD, const unsigned int global_id, const Clie
         }
         case DATA_REQUEST:
         {   
-            std::mutex useless_lock;
-            std::unique_lock<std::mutex> useless_lock_wrapper(useless_lock);
-            // Wait until all data is ready to go!
-            while (filled_count != allele_queue_list.size()) {
-                start_sender_cv.wait(useless_lock_wrapper);
-            }
-
             auto start = std::chrono::high_resolution_clock::now();
 
             if (global_id == 0) {
@@ -259,68 +252,29 @@ void Client::handle_message(int connFD, const unsigned int global_id, const Clie
                 cout_lock.unlock();
             }
 
-            // First we should send all of the phenotype data
-            std::vector<Phenotype>& phenotypes = phenotypes_list[global_id];
-            std::vector<std::thread> p_threads;
-            for (const Phenotype& ptype : phenotypes) {
-                p_threads.push_back(std::thread([global_id, ptype, this](){
-                    send_msg(global_id, ptype.mtype, ptype.message);
-                }));
-            }
+            boost::thread data_sender_thread(&Client::data_sender, this, connFD);
+            data_sender_thread.detach();
 
             ConnectionInfo info = compute_server_info[global_id];
-            std::queue<std::string> *allele_queue = allele_queue_list[global_id];
-
-            int blocks_sent = 0;
-            std::string block;
-            std::string lengths;
-
-            std::string line;
-            std::string line_length;
-            while (!allele_queue->empty()) {
-                line = allele_queue->front();
-                allele_queue->pop();
-                line_length = "\t" + std::to_string(line.length());
-
-                if ((block.length() +
-                     line.length() +
-                     lengths.length() +
-                     line_length.length() +
-                     30) > (1 << 16) - 1) {
-
-                    // msg format: blocks sent \t lengths (tab delimited) \n (terminating char) blocks of data w no delimiters
-                    std::string block_msg = std::to_string(blocks_sent++) + lengths + "\n" + block;
-                    send_msg(info.hostname, info.port, DATA, block_msg, connFD);
-
-                    // Reset block
-                    block.clear(); 
-                    lengths.clear();
+            send_msg(info.hostname, info.port, PING, "", connFD);
+            ping_count++;
+            break;
+        }
+        case PONG:
+        {
+            ConnectionInfo info = compute_server_info[global_id];
+            if (ping_count == 6) {
+                if (++num_alleles < 100000) {
+                    ping_count = 0;
+                } else {
+                    send_msg(info.hostname, info.port, END_PING, "", connFD);
+                    std::cout << "Sending last message: "  << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count() << std::endl;
+                    break;
                 }
-                block += line;
-                lengths += line_length;
             }
-            // TODO: Re-evaluate why I compare it to 10? at some point this made a lot of sense to me, not it makes none
-            // Send the leftover lines, 10 is an arbitary cut off. I assume most lines will be at least a few hundred characters
-            // and we won't be sending more than 10^10 blocks
-            if (block.length() > 10) {
-                // msg format: blocks sent \t lengths (tab delimited) \n (terminating char) blocks of data w no delimiters
-                std::string block_msg = std::to_string(blocks_sent++) + lengths + "\n" + block;
-                send_msg(info.hostname, info.port, DATA, block_msg);
-            }
-            // If get_block failed we have reached the end of the file, send an EOF.
-            send_msg(global_id, EOF_DATA, std::to_string(blocks_sent));
-
-            for (std::thread& t : p_threads) {
-                t.join();
-            }
-
-            if (global_id == 0) {
-                std::cout << "Sending last message: "  << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count() << std::endl;
-
-                auto stop = std::chrono::high_resolution_clock::now();
-                auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
-                std::cout << "Data send time total: " << duration.count() << std::endl;
-            }
+            // std::cout << "PONG" << std::endl;
+            send_msg(info.hostname, info.port, PING, "", connFD);
+            ping_count++;
             break;
         }
         case END_CLIENT:
@@ -332,9 +286,14 @@ void Client::handle_message(int connFD, const unsigned int global_id, const Clie
         default:
             throw std::runtime_error("Not a valid response type");
     }
-    if (mtype != DATA_REQUEST) {
+    if (mtype != DATA_REQUEST && mtype != PONG) {
         close(connFD);
     }
+}
+
+void Client::data_sender(int connFD) {
+    // We need a serial listener for this agreed upon connection!
+    while(start_thread(connFD)) {}
 }
 
 void Client::send_msg(const unsigned int global_id, const unsigned int mtype, const std::string& msg, int connFD) {

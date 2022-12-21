@@ -97,6 +97,8 @@ void ComputeServer::init(const std::string& config_file) {
     server_eof = false;
     max_batch_lines = 0;
     global_id = -1;
+    ping_counts = 0;
+    end_ping_counts = 0;
 
     allele_queue_list.resize(num_threads);
     eof_read_list.resize(num_threads);
@@ -106,8 +108,9 @@ void ComputeServer::init(const std::string& config_file) {
     }
 
     // Also start the enclave thread.
-    boost::thread enclave_thread(start_enclave);
-    enclave_thread.detach();
+    // boost::thread enclave_thread(start_enclave);
+    // enclave_thread.detach();
+    finish_setup();
 }
 
 void ComputeServer::run() {
@@ -212,7 +215,7 @@ bool ComputeServer::start_thread(int connFD, char* body_buffer) {
         std::string client_name;
         ComputeServerMessageType mtype;
         parse_header_compute_server_header(body, msg, client_name, mtype);
-
+        // guarded_cout("Mtype " + std::to_string(mtype), cout_lock);
         handle_message(connFD, client_name, mtype, msg);
     }
     catch (const std::runtime_error e)  {
@@ -262,8 +265,9 @@ bool ComputeServer::handle_message(int connFD, const std::string& name, ComputeS
             if (!found) {
                 throw std::runtime_error("No institution with that name was found");
             }
-            response_mtype = RSA_PUB_KEY;
-            response = reinterpret_cast<char *>(rsa_public_key);
+            // response_mtype = RSA_PUB_KEY;
+            // response = reinterpret_cast<char *>(rsa_public_key);
+            check_in(name);
             break;
         }
         case AES_KEY:
@@ -290,6 +294,32 @@ bool ComputeServer::handle_message(int connFD, const std::string& name, ComputeS
         case Y_VAL:
         {
             institutions[name]->set_y_data(msg);
+            break;
+        }
+        case PING:
+        {
+            ConnectionInfo info;
+            // using mislabelled struct name for this because i am lazy and don't want to make a new struct
+            info.hostname = name;
+            info.port = connFD;
+            ping_lock.lock();
+            ping_info_list.push_back(info);
+            if (++ping_counts == institutions.size()) {
+                for (int i = 0; i < ping_counts; i++) {
+                    ConnectionInfo pong_info = ping_info_list.back();
+                    send_msg(pong_info.hostname, PONG, "", pong_info.port);
+                    ping_info_list.pop_back();
+                }
+                ping_counts = 0;
+            }
+            ping_lock.unlock();
+            break;
+        }
+        case END_PING:
+        {
+            if (++end_ping_counts == institutions.size()) {
+                send_msg_output(EOFSeperator);
+            }
             break;
         }
         case COVARIANT:
@@ -326,7 +356,9 @@ bool ComputeServer::handle_message(int connFD, const std::string& name, ComputeS
         case END_COMPUTE:
         {
             guarded_cout("Exiting enclave", cout_lock);
-            exit(0);
+            // exit(0) won't work here... ok, I guess I'll FORCE the program to crash??
+            int* a = nullptr;
+            *a = 3;
         }
         default:
             throw std::runtime_error("Not a valid response type");
@@ -335,7 +367,7 @@ bool ComputeServer::handle_message(int connFD, const std::string& name, ComputeS
     if (response.length()) {
         send_msg(name, response_mtype, response);
     }
-    if (mtype != DATA && mtype != EOF_DATA) {
+    if (mtype != DATA && mtype != EOF_DATA && mtype != PING && mtype != END_PING) {
         // cool, well handled!
         //guarded_cout("\nClosing connection", cout_lock);
         close(connFD);
@@ -382,7 +414,7 @@ void ComputeServer::check_in(const std::string& name) {
     if (!expected_institutions.size()) {
         // request y, cov, and data
         for (const auto& it : institutions) {
-            send_msg(it.first, Y_AND_COV, covariant_list + y_val_name);
+            // send_msg(it.first, Y_AND_COV, covariant_list + y_val_name);
 
             institutions[it.first]->request_conn = send_msg(it.first, DATA_REQUEST, std::to_string(MIN_BLOCK_COUNT), institutions[it.first]->request_conn);
             // start listener thread for data!
@@ -392,8 +424,8 @@ void ComputeServer::check_in(const std::string& name) {
 
 
         // Now that all institutions are registered, start up the allele matching thread.
-        boost::thread msg_thread(&ComputeServer::allele_matcher, this);
-        msg_thread.detach();
+        // boost::thread msg_thread(&ComputeServer::allele_matcher, this);
+        // msg_thread.detach();
 
         // And now start up the thread to send out our results to the register server.
         boost::thread output_thread(&ComputeServer::output_sender, this);
@@ -609,13 +641,14 @@ ImputePolicy ComputeServer::get_impute_policy() {
 }
 
 void ComputeServer::finish_setup() {
+    const nlohmann::json config = compute_config;
     // Register with the register server!
-    const nlohmann::json config = get_instance()->compute_config;
-    std::string msg = std::string(get_hostname_str()) + "\t" + std::to_string(get_instance()->port) + "\t" + std::to_string(get_instance()->num_threads);
-    get_instance()->send_msg(config["register_server_info"]["hostname"], 
-                            config["register_server_info"]["port"],
-                            RegisterServerMessageType::COMPUTE_REGISTER,
-                            msg);
+    
+    std::string msg = std::string(get_hostname_str()) + "\t" + std::to_string(port) + "\t" + std::to_string(num_threads);
+    send_msg(config["register_server_info"]["hostname"], 
+                             config["register_server_info"]["port"],
+                             RegisterServerMessageType::COMPUTE_REGISTER,
+                             msg);
 }
 
 void ComputeServer::start_timer(const std::string& func_name) {

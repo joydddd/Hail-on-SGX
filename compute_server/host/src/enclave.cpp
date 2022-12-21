@@ -33,7 +33,7 @@ void setrsapubkey(uint8_t enc_rsa_pub_key[RSA_PUB_KEY_SIZE]) {
     std::memcpy(ComputeServer::get_rsa_pub_key(), enc_rsa_pub_key, RSA_PUB_KEY_SIZE);
     
     // Once we have generated an RSA key pair we can start communication!
-    ComputeServer::finish_setup();
+    // ComputeServer::finish_setup();
 }
 
 void setmaxbatchlines(int lines) {

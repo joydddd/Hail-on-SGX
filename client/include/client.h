@@ -59,6 +59,10 @@ class Client {
 
     std::ifstream xval;
 
+    unsigned int num_alleles = 0;
+    unsigned int ping_count = 0;
+
+
     std::vector<std::vector<AESCrypto> > aes_encryptor_list;
     std::vector<std::vector<Phenotype> > phenotypes_list;
     std::vector<ConnectionInfo> compute_server_info;
@@ -97,6 +101,7 @@ class Client {
 
     void prepare_tsv_file(unsigned int global_id, const std::string& filename, ComputeServerMessageType mtype);
 
+    void data_sender(int connFD);
 };
 
 #endif /* _CLIENT_H_ */

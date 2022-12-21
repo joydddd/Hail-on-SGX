@@ -14,6 +14,7 @@
 #include <queue>
 #include <vector>
 #include <mutex>
+#include <atomic>
 #include <condition_variable>
 #include <unordered_set>
 #include <functional>
@@ -77,6 +78,11 @@ class ComputeServer {
     std::mutex output_queue_lock;
     std::condition_variable output_queue_cv;
 
+    std::mutex ping_lock;
+    int ping_counts;
+    std::atomic<int> end_ping_counts;
+    std::vector<ConnectionInfo> ping_info_list;
+
     // set up Server data structures
     void init(const std::string& config_file);
     
@@ -127,7 +133,7 @@ class ComputeServer {
 
     static ImputePolicy get_impute_policy();
 
-    static void finish_setup();
+    void finish_setup();
 
     static void set_max_batch_lines(unsigned int lines);
 
