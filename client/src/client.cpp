@@ -264,7 +264,7 @@ void Client::handle_message(int connFD, const unsigned int global_id, const Clie
         {
             ConnectionInfo info = compute_server_info[global_id];
             if (ping_count == 6) {
-                if (++num_alleles < 1000) {
+                if (++num_alleles < 2000) {
                     ping_count = 0;
                 } else {
                     send_msg(info.hostname, info.port, END_PING, "", connFD);
