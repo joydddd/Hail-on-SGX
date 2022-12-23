@@ -1,4 +1,4 @@
-for VAR in 1 2 3 .. 5
+for VAR in 1 2 3
 do
-    ./gwashost compute_server_config.json
+    ./gwashost compute_server_config.json >> output.txt
 done
