@@ -12,8 +12,8 @@ rand_size = 100003
 
 rands = np.random.random(rand_size)
 
-ALLELE_COUNT = 1000000
-CLIENT_COUNT = 5000 if len(sys.argv) != 2 else int(sys.argv[1])
+ALLELE_COUNT = 1
+CLIENT_COUNT = 10000 if len(sys.argv) != 2 else int(sys.argv[1])
 print(CLIENT_COUNT)
 NUM_PROCS = multiprocessing.cpu_count() * 2
 OUTPUT_FILE = f"../client/client_data/generated_alleles_{CLIENT_COUNT}.tsv"
@@ -88,7 +88,7 @@ def helper(pid, locuses):
         if pid == 0:
             f.write(f'locus\talleles {top_line[:-1]}\n')
 
-        for loc_idx, locus in enumerate((locuses if len(sys.argv) != 99 else locuses[:1])):
+        for loc_idx, locus in enumerate((locuses if len(sys.argv) != 2 else locuses[:1000])):
             if int(loc_idx / proc_div) != pid:
                 continue 
             locus_split = locus.split(':')

@@ -38,7 +38,7 @@ ComputeServer::~ComputeServer() {
 }
 
 void ComputeServer::init(const std::string& config_file) {
-    num_threads = boost::thread::hardware_concurrency();
+    num_threads = 1;//boost::thread::hardware_concurrency();
 
     std::ifstream compute_config_file(config_file);
     compute_config_file >> compute_config;
@@ -547,22 +547,18 @@ void ComputeServer::parse_header_compute_server_header(const std::string& header
     // msg format: blocks sent \t lengths (tab delimited) \n (terminating char) blocks of data w no delimiters
     std::vector<int> lengths;
     std::string length_str;
-    while(header[header_idx++] != '\n') {
-        if (header[header_idx - 1] == '\t') {
-             try {
-                lengths.push_back(std::stoi(length_str));
-            } catch (std::exception e) {
-                std::cout << "!!! " << length_str << " ! " << header << std::endl;
-            }
-            length_str.clear();
-            continue;
-        }
-        length_str.push_back(header[header_idx - 1]);
-    }
     try {
+        while(header[header_idx++] != '\n') {
+            if (header[header_idx - 1] == '\t') {
+                lengths.push_back(std::stoi(length_str));
+                length_str.clear();
+                continue;
+            }
+            length_str.push_back(header[header_idx - 1]);
+        }
         lengths.push_back(std::stoi(length_str));
-    } catch (std::exception e) {
-        std::cout << "??? " << length_str << std::endl;
+    } catch (const std::exception& e) {
+        std::cout << "Failed header parse with error " << e.what() << std::endl;
     }
     
 

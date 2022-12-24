@@ -282,12 +282,9 @@ void Client::handle_message(int connFD, const unsigned int global_id, const Clie
                 allele_queue->pop();
                 line_length = "\t" + std::to_string(line.length());
 
-                if ((block.length() +
-                     line.length() +
-                     lengths.length() +
-                     line_length.length() +
-                     30) > (1 << 16) - 1) {
-
+                // 30 is magic number for extra padding
+                int prospective_length = block.length() + line.length() + lengths.length() + line_length.length() + 30;
+                if ((prospective_length > (1 << 16) - 1) && block.length()) {
                     // msg format: blocks sent \t lengths (tab delimited) \n (terminating char) blocks of data w no delimiters
                     std::string block_msg = std::to_string(blocks_sent++) + lengths + "\n" + block;
                     send_msg(info.hostname, info.port, DATA, block_msg, connFD);
