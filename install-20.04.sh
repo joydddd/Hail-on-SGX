@@ -26,6 +26,22 @@ cd compute_server
 make clean; make
 make clean; make
 
+cd ../client
+
+make clean; make
+
+cd ../register_server
+
+make clean; make
+
 sudo apt install python3-pip -y
 pip3 install numpy
 pip3 install scipy
+
+cd ../data_processing
+
+python3 generate_alleles.py 2500
+
+python3 generate_phenotypes.py 2500 5
+
+python3 generate_phenotypes.py 2500 0
