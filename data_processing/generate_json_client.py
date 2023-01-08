@@ -1,4 +1,4 @@
-for count in range(100000, 1600000, 100000):
+for count in range(100000, 2100000, 100000):
     for cov in range(1, 17, 1):
         with open(f'../client/client_config-{count}.json', 'w') as f:
             f.write('{\n')
