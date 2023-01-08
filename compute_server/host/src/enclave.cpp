@@ -194,9 +194,13 @@ int start_enclave() {
                     result, oe_result_str(result));
             goto exit;
         }
-
+        auto start = std::chrono::high_resolution_clock::now();
         
         thread_group.join_all();
+
+        auto stop = std::chrono::high_resolution_clock::now();
+        auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
+        std::cout << "Enclave time total: " << duration.count() << std::endl;
 
         ComputeServer::print_timings();
         ComputeServer::cleanup_output();
@@ -232,12 +236,6 @@ int start_enclave() {
         }
 
         setup_enclave_encryption(num_threads);
-
-        char* tmp = new char[ENCLAVE_READ_BUFFER_SIZE];
-        for (int client_id = 0; client_id < getclientnum(); ++client_id) {
-            while(!gety(client_id, tmp)) {}
-        }
-        delete[] tmp;
 
         auto start = std::chrono::high_resolution_clock::now();
 
