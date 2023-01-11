@@ -4,7 +4,7 @@
 # read x
 x=$(($2 * 100000))
 
-for cov in $1
+for cov in $(eval echo {$1..16..3})
 do 
     echo Covariants: $cov
     for count in $(eval echo {$x..2000000..100000})

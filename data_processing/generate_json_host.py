@@ -11,5 +11,5 @@ for count in range(100000, 2100000, 100000):
             f.write(f'\t"y_val_name": "disease-{count}",\n')
             f.write('\t"analysis_type": "linear",\n')
             f.write('\t"enclave_path": "../enclave/gwasenc.signed",\n')
-            f.write('\t"register_server_info": { "hostname": "20.42.86.216", "port": 6401 }\n')
+            f.write('\t"register_server_info": { "hostname": "20.121.51.244", "port": 6401 }\n')
             f.write('}')
