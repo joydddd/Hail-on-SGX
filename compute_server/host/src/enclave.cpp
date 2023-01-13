@@ -227,7 +227,7 @@ int start_enclave() {
         std::cout << "\n\n**RUNNING REGRESSION**\n" << std::endl;
 
         EncAnalysis enc_analysis_type = ComputeServer::get_analysis();
-        int num_threads = 1;
+        int num_threads = ComputeServer::get_num_threads();
         boost::thread_group thread_group;
 
         for (int thread_id = 0; thread_id < num_threads; ++thread_id) {
@@ -239,7 +239,7 @@ int start_enclave() {
 
         auto start = std::chrono::high_resolution_clock::now();
 
-        setup_enclave_phenotypes(num_threads, enc_analysis_type);
+        setup_enclave_phenotypes(num_threads, enc_analysis_type, ComputeServer::get_impute_policy());
         thread_group.join_all();
 
         auto stop = std::chrono::high_resolution_clock::now();

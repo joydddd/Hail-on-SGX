@@ -10,7 +10,7 @@
 
 /* ECALL */
 void setup_enclave_encryption(const int num_threads);
-void setup_enclave_phenotypes(const int num_threads, const int analysis_type);
+void setup_enclave_phenotypes(const int num_threads, enum EncAnalysis analysis_type, enum ImputePolicy impute_policy);
 void regression(const int thread_id, EncAnalysis analysis_type);
 
 /* OCALLs */
@@ -24,6 +24,8 @@ void setmaxbatchlines(int lines);
 
 void getclientnum(int* _retval);
 
+void get_num_patients(int* _retval, const int client_num, char num_patients_buffer[ENCLAVE_SMALL_BUFFER_SIZE]);
+
 void getcovlist(char covlist[ENCLAVE_READ_BUFFER_SIZE]);
 
 void getaes(bool* _retval, const int client_num, const int thread_id,
@@ -35,8 +37,6 @@ void gety(int* _retval, const int client_num,
 void getcov(int* _retval, const int client_num,
                    const char cov_name[MAX_CLIENTNAME_LENGTH],
                    char cov[ENCLAVE_READ_BUFFER_SIZE]);
-
-void get_encrypted_x_size(int* _retval, const int client_num);
 
 void getbatch(int* _retval, char batch[ENCLAVE_READ_BUFFER_SIZE],
                      const int thread_id);
