@@ -1,0 +1,13 @@
+{
+    "compute_server_bind_port": 6701,
+    "covariants": ["1", "1-20000", "2-20000", "3-20000", "4-20000", "5-20000"],
+    "institutions": ["client1"],
+    "y_val_name": "disease-20000",
+    "analysis_type": "linear",
+    "enclave_path": "../enclave/gwasenc.signed",
+    "register_server_info": {
+        "hostname": "172.174.218.5",
+        "port": 6401
+    }
+}
+// You can add "flag": "simulate" or "flag": "debug" to the config to run the enclave in simulation/debugging mode!
