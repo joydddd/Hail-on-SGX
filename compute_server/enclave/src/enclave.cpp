@@ -44,6 +44,7 @@ void setup_enclave_encryption(const int num_threads) {
     client_info_list.resize(num_clients);
     client_y_size.resize(num_clients);
     buffer_list.resize(num_threads);
+    std::cout << "1" << std::endl;
 
     // We should store num_client number of aes keys/iv/contexts.
     for (ClientInfo& client: client_info_list) {
@@ -54,26 +55,33 @@ void setup_enclave_encryption(const int num_threads) {
             mbedtls_aes_init(aes.aes_context);
             client.aes_list[thread_id] = aes;
         }
+        std::cout << "2" << std::endl;
     }
+    std::cout << "3" << std::endl;
 
     try {
         unsigned char enc_aes_key[256];
         unsigned char enc_aes_iv[256];
         size_t* aes_length = new size_t(AES_KEY_LENGTH);
-
+        std::cout << "Before for loop" << std::endl;
         for (int client = 0; client < num_clients; ++client) {
             for (int thread_id = 0; thread_id < num_threads; ++thread_id) {
                 bool rt = false;
+                std::cout << "Before getaes" << std::endl;
                 while (!rt) {
                     getaes(&rt, client, thread_id, enc_aes_key, enc_aes_iv);
                 }
+                std::cout << "Before thread aes access" << std::endl;
                 AESData& thread_aes_data = client_info_list[client].aes_list[thread_id];
+                std::cout << "Before key decrypt" << std::endl;
                 rsa.decrypt(enc_aes_key, 256,
                             (uint8_t*)&thread_aes_data.aes_key, aes_length);
+                std::cout << "Before iv decrypt" << std::endl;
                 rsa.decrypt(enc_aes_iv, 256, 
                             (uint8_t*)&thread_aes_data.aes_iv, aes_length);
                 // Initialize AES context so that we can decrypt data coming into
                 // the enclave.
+                std::cout << "Before set dec" << std::endl;
                 int ret = mbedtls_aes_setkey_dec(thread_aes_data.aes_context,
                                                  thread_aes_data.aes_key,
                                                  AES_KEY_LENGTH * 8);
@@ -88,6 +96,7 @@ void setup_enclave_encryption(const int num_threads) {
     } catch (ERROR_t& err) {
         std::cerr << "ERROR: fail to get AES KEY " << err.msg << std::endl;
     }
+    std::cout << "4" << std::endl;
 }
 
 void setup_enclave_phenotypes(const int num_threads, EncAnalysis analysis_type, ImputePolicy impute_policy) {
@@ -157,13 +166,14 @@ void setup_enclave_phenotypes(const int num_threads, EncAnalysis analysis_type, 
     }
     // Add padding for Loci + Allele and list of clients + 1 for new line at very end of sequence
     total_crypto_size += MAX_LOCI_ALLELE_STR_SIZE + (num_clients * 2) + 1;
-    
+
     int max_batch_lines = ENCLAVE_READ_BUFFER_SIZE / total_crypto_size;
     if (!max_batch_lines) {
         std::cerr << "Data is too long to fit into enclave read buffer" << std::endl;
         exit(1);
     }
     setmaxbatchlines(max_batch_lines);
+    
 
     std::cout << "Init finished" << std::endl;
 
