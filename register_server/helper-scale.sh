@@ -9,8 +9,8 @@ do
     # ./bin/register_server register_config.json
     # echo "Lin 5000"
     # ./bin/register_server register_config.json
-    echo "Log 10000"
-    ./bin/register_server register_config.json
+    # echo "Log 10000"
+    # ./bin/register_server register_config.json
     echo "Lin 10000"
     ./bin/register_server register_config.json
 
