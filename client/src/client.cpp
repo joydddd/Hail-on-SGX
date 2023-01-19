@@ -261,11 +261,10 @@ void Client::handle_message(int connFD, const unsigned int global_id, const Clie
 
             // First we should send all of the phenotype data
             std::vector<Phenotype>& phenotypes = phenotypes_list[global_id];
-            std::vector<std::thread> p_threads;
             for (const Phenotype& ptype : phenotypes) {
-                p_threads.push_back(std::thread([global_id, ptype, this](){
+                std::thread([global_id, ptype, this](){
                     send_msg(global_id, ptype.mtype, ptype.message);
-                }));
+                }).detach();
             }
 
             ConnectionInfo info = compute_server_info[global_id];
@@ -307,9 +306,6 @@ void Client::handle_message(int connFD, const unsigned int global_id, const Clie
             // If get_block failed we have reached the end of the file, send an EOF.
             send_msg(global_id, EOF_DATA, std::to_string(blocks_sent));
 
-            for (std::thread& t : p_threads) {
-                t.join();
-            }
 
             if (global_id == 0) {
                 std::cout << "Sending last message: "  << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count() << std::endl;
