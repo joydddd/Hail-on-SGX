@@ -63,20 +63,25 @@ void setup_enclave_encryption(const int num_threads) {
         unsigned char enc_aes_key[256];
         unsigned char enc_aes_iv[256];
         size_t* aes_length = new size_t(AES_KEY_LENGTH);
-
+        std::cout << "Before for loop" << std::endl;
         for (int client = 0; client < num_clients; ++client) {
             for (int thread_id = 0; thread_id < num_threads; ++thread_id) {
                 bool rt = false;
+                std::cout << "Before getaes" << std::endl;
                 while (!rt) {
                     getaes(&rt, client, thread_id, enc_aes_key, enc_aes_iv);
                 }
+                std::cout << "Before thread aes access" << std::endl;
                 AESData& thread_aes_data = client_info_list[client].aes_list[thread_id];
+                std::cout << "Before key decrypt" << std::endl;
                 rsa.decrypt(enc_aes_key, 256,
                             (uint8_t*)&thread_aes_data.aes_key, aes_length);
+                std::cout << "Before iv decrypt" << std::endl;
                 rsa.decrypt(enc_aes_iv, 256, 
                             (uint8_t*)&thread_aes_data.aes_iv, aes_length);
                 // Initialize AES context so that we can decrypt data coming into
                 // the enclave.
+                std::cout << "Before set dec" << std::endl;
                 int ret = mbedtls_aes_setkey_dec(thread_aes_data.aes_context,
                                                  thread_aes_data.aes_key,
                                                  AES_KEY_LENGTH * 8);
@@ -95,12 +100,10 @@ void setup_enclave_encryption(const int num_threads) {
 }
 
 void setup_enclave_phenotypes(const int num_threads, EncAnalysis analysis_type, ImputePolicy impute_policy) {
-    std::cout << "5" << std::endl;
     gwas = new GWAS(analysis_type);
     char* buffer_decrypt = new char[ENCLAVE_READ_BUFFER_SIZE];
     char* phenotype_buffer = new char[ENCLAVE_READ_BUFFER_SIZE];
     Covar* gwas_y = new Covar();
-    std::cout << "6" << std::endl;
 
     // Read in covariants from each institution
     char covl[ENCLAVE_SMALL_BUFFER_SIZE];
@@ -108,7 +111,6 @@ void setup_enclave_phenotypes(const int num_threads, EncAnalysis analysis_type, 
     std::string covlist(covl);
     std::vector<std::string> covariant_names;
     split_delim(covlist.c_str(), covariant_names);
-    std::cout << "7" << std::endl;
 
     // Read in number of patients at each institution
     char num_patients_buffer[ENCLAVE_SMALL_BUFFER_SIZE];
@@ -130,7 +132,6 @@ void setup_enclave_phenotypes(const int num_threads, EncAnalysis analysis_type, 
         client_info_list[client].size = client_num_patients;
         total_row_size += client_num_patients;
     }
-    std::cout << "8" << std::endl;
 
     gwas_y->reserve(total_row_size);
     for (int _ = 0; _ < covariant_names.size(); ++_) {
@@ -138,7 +139,6 @@ void setup_enclave_phenotypes(const int num_threads, EncAnalysis analysis_type, 
         cov_ptr->reserve(total_row_size);
         covar_ptr_list.push_back(cov_ptr);
     }
-    std::cout << "9" << std::endl;
 
     try {
         for (int thread_id = 0; thread_id < num_threads; ++thread_id) {
@@ -148,7 +148,6 @@ void setup_enclave_phenotypes(const int num_threads, EncAnalysis analysis_type, 
     } catch (const std::exception &e) { 
         std::cout << "Crash in buffer malloc with " << e.what() << std::endl;
     }
-    std::cout << "10" << std::endl;
 
     /* set up encrypted size and max batch line */
     int total_crypto_size = 0;
@@ -167,7 +166,6 @@ void setup_enclave_phenotypes(const int num_threads, EncAnalysis analysis_type, 
     }
     // Add padding for Loci + Allele and list of clients + 1 for new line at very end of sequence
     total_crypto_size += MAX_LOCI_ALLELE_STR_SIZE + (num_clients * 2) + 1;
-    std::cout << "11" << std::endl;
 
     int max_batch_lines = ENCLAVE_READ_BUFFER_SIZE / total_crypto_size;
     if (!max_batch_lines) {
