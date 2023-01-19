@@ -24,6 +24,7 @@ class Institution {
     std::mutex blocks_lock;
     std::mutex covariant_data_lock;
     std::mutex y_val_data_lock;
+    std::mutex aes_key_iv_lock;
     std::priority_queue<DataBlockBatch*, std::vector<DataBlockBatch* >, BlockPointerBatchGT > blocks;
     std::queue<DataBlock*> eligible_blocks;
     std::unordered_map<std::string, std::string> covariant_data;

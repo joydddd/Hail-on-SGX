@@ -35,6 +35,7 @@ int Institution::get_id() {
 }
 
 void Institution::set_key_and_iv(std::string aes_key, std::string aes_iv, const int thread_id) {
+    std::lock_guard<std::mutex> raii(aes_key_iv_lock);
     aes_encrypted_key_list[thread_id] = decoder.decode(aes_key);
     aes_encrypted_iv_list[thread_id] = decoder.decode(aes_iv);
 }
@@ -61,10 +62,12 @@ void Institution::set_covariant_data(const std::string& covariant_name, const st
 }
 
 std::string Institution::get_aes_key(const int thread_id) {
+    std::lock_guard<std::mutex> raii(aes_key_iv_lock);
     return aes_encrypted_key_list[thread_id];
 }
 
 std::string Institution::get_aes_iv(const int thread_id) {
+    std::lock_guard<std::mutex> raii(aes_key_iv_lock);
     return aes_encrypted_iv_list[thread_id];
 }
 
