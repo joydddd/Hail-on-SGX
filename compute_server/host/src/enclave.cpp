@@ -61,12 +61,16 @@ bool getaes(const int client_num,
             const int thread_id,
             unsigned char key[256],
             unsigned char iv[256]) {
+    std::cout << "before get key" << std::endl;
     std::string encrypted_aes_key = ComputeServer::get_aes_key(client_num, thread_id);
+    std::cout << "before get iv" << std::endl;
     std::string encrypted_aes_iv = ComputeServer::get_aes_iv(client_num, thread_id);
     if (!encrypted_aes_key.length() || !encrypted_aes_iv.length()) {
         return false;
     }
+    std::cout << encrypted_aes_key.length() << std::endl;
     std::memcpy(key, &encrypted_aes_key[0], 256);
+    std::cout << encrypted_aes_iv.length() << std::endl;
     std::memcpy(iv, &encrypted_aes_iv[0], 256);
     return true;
 }
