@@ -164,7 +164,7 @@ bool RegisterServer::handle_message(int connFD, RegisterServerMessageType mtype,
             // Send the compute server its global ID
             std::lock_guard<std::mutex> raii(compute_lock);
             send_msg(compute_info.hostname, compute_info.port, ComputeServerMessageType::GLOBAL_ID, std::to_string(compute_server_info.size()));
-
+            std::cout << compute_info.hostname << " " << std::to_string(compute_server_info.size()) << std::endl;
             compute_info_list.push_back(compute_info);
 
             compute_server_info.push_back(msg);
