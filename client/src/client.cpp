@@ -249,7 +249,6 @@ void Client::handle_message(int connFD, const unsigned int global_id, const Clie
             while (filled_count != allele_queue_list.size()) {
                 start_sender_cv.wait(useless_lock_wrapper);
             }
-
             auto start = std::chrono::high_resolution_clock::now();
 
             if (global_id == 0) {
@@ -375,7 +374,6 @@ void Client::queue_helper(const int global_id, const int num_helpers) {
             break;
         }
     }
-
     std::mutex useless_lock;
     std::unique_lock<std::mutex> useless_lock_wrapper(useless_lock);
     while(work_distributed_count != num_helpers) {
