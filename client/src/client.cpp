@@ -252,7 +252,7 @@ void Client::handle_message(int connFD, const unsigned int global_id, const Clie
             auto start = std::chrono::high_resolution_clock::now();
 
             if (global_id == 0) {
-                // Using guarded_cout is hard here because converting duration.count() to a string sucks
+                // Casting duration.count() to a string sucks, so RAII is difficult here
                 cout_lock.lock();
                 std::cout << "Sending first message: "  << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count() << std::endl;
                 cout_lock.unlock();

@@ -1,5 +1,5 @@
 #!/bin/bash
-for snps in 31250 15625 7813 3907 1954 977
+for snps in 125000 62500 #31250 15625 7813 3907 1954 977
 do
     echo "SNPS" $snps
     for _ in {1..5}
