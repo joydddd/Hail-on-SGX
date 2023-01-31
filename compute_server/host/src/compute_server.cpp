@@ -17,6 +17,12 @@
 #include "enclave.h"
 #include "hashing.h"
 
+#ifdef NON_OE
+#define AVERAGE_OCALL_OVERHEAD_MICROSECONDS 0.00003534999965
+#else
+#define AVERAGE_OCALL_OVERHEAD_MICROSECONDS 5.00908909
+#endif
+
 std::mutex cout_lock;
 
 // This lock does nothing - we really want a "signal" without the complexity of condition variables,
@@ -38,7 +44,7 @@ ComputeServer::~ComputeServer() {
 }
 
 void ComputeServer::init(const std::string& config_file) {
-    num_threads = boost::thread::hardware_concurrency();
+    num_threads = 1;//boost::thread::hardware_concurrency();
 
     std::ifstream compute_config_file(config_file);
     compute_config_file >> compute_config;
@@ -504,10 +510,11 @@ void ComputeServer::output_sender() {
         while (output_queue.size()) {
             output_str = output_queue.front();
             output_queue.pop(); 
-            send_msg_output(output_str);
+            get_instance()->send_msg_output(output_str);
         }
     }
     lk.unlock();
+    get_instance()->send_msg_output(EOFSeperator);
 } 
 
 void ComputeServer::parse_header_compute_server_header(const std::string& header, std::string& msg, 
@@ -622,14 +629,16 @@ void ComputeServer::stop_timer(const std::string& func_name) {
     ComputeServer* inst = get_instance();
     if (!inst->enclave_total_times.count(func_name)) {
         inst->enclave_total_times[func_name] = 0;
+        inst->enclave_total_calls[func_name] = 0;
     }
     inst->enclave_total_times[func_name] += std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::high_resolution_clock::now() - inst->enclave_clocks[func_name]).count();
+    inst->enclave_total_calls[func_name] += 1;
 }
 
 void ComputeServer::print_timings() {
     ComputeServer* inst = get_instance();
     for (auto it : inst->enclave_total_times) {
-        guarded_cout(it.first + "\t" + std::to_string(it.second), cout_lock);
+        guarded_cout(it.first + "\t" + std::to_string(it.second - (inst->enclave_total_calls[it.first] * AVERAGE_OCALL_OVERHEAD_MICROSECONDS)), cout_lock);
     }
 }
 
@@ -747,6 +756,5 @@ void ComputeServer::cleanup_output() {
     terminating = true;
     lk.unlock();
     get_instance()->output_queue_cv.notify_all();
-    get_instance()->send_msg_output(EOFSeperator);
     std::cout << "Sending EOF message: "  << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count() << std::endl;
 }

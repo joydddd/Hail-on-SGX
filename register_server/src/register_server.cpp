@@ -14,6 +14,7 @@
 #include "parser.h"
 #include <sys/types.h>
 #include <sys/socket.h>
+#include <thread>
 #include <netdb.h>
 
 std::mutex cout_lock;
@@ -213,6 +214,7 @@ bool RegisterServer::handle_message(int connFD, RegisterServerMessageType mtype,
                 output_file.flush();
                 output_lock.unlock();
                 std::cout << "Received last message: "  << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count() << std::endl;
+                std::this_thread::sleep_for(std::chrono::milliseconds(3000)); // this is annoying - I think the networking is asynchronous, I should switch this to combine EOF with the msg
                 // These aren't necesary for program correctness, but they help with iterative testing!
                 for (ConnectionInfo institution_info : institution_info_list) {
                     send_msg(institution_info.hostname, institution_info.port, ClientMessageType::END_CLIENT, "");

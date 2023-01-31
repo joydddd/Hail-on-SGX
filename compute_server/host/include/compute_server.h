@@ -67,6 +67,7 @@ class ComputeServer {
   
     std::unordered_map<std::string, std::chrono::system_clock::time_point> enclave_clocks;
     std::unordered_map<std::string, unsigned long long> enclave_total_times;
+    std::unordered_map<std::string, unsigned long long> enclave_total_calls;
     
     std::unordered_map<std::string, std::string> covariant_dtype;
 

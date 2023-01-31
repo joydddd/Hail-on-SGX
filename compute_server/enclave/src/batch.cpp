@@ -1,6 +1,12 @@
 #include "batch.h"
 #include <cstring>
 
+#ifdef NON_OE
+#include "enclave_glue.h"
+#else
+#include "gwas_t.h"
+#endif
+
 Batch::Batch(size_t _row_size, Row_T row_type, ImputePolicy impute_policy, GWAS* _gwas, char *plaintxt_buffer)
     : row_size(_row_size), type(row_type) {
     switch (type) {
@@ -32,9 +38,12 @@ void Batch::reset() {
 Row* Batch::get_row(Buffer* buffer) {
     if (batch_head >= txt_size) {
         st = Finished;
+        //start_timer("output()");
         buffer->finish();
+        //stop_timer("output()");
         return nullptr;
     }
+    //start_timer("parse_and_decrypt()");
     st = Working;
     row->reset();
     int res = row->read(plaintxt + batch_head);

@@ -275,15 +275,15 @@ void regression(const int thread_id, EncAnalysis analysis_type) {
 
     /* process rows */
     while (true) {
-        //start_timer("get_batch()");
+        //start_timer("input()");
         if (!batch || batch->st != Batch::Working)
             batch = buffer->launch(client_info_list, thread_id);
         if (!batch) {
             buffer->clean_up();
             break;
         }
-        //stop_timer("get_batch()");
-        //start_timer("get_row()");
+        //stop_timer("input()");
+        // starting the get_row timer happens within the function because our code is written weirdly and we do our output
         try {
             switch(analysis_type) {
                 case EncAnalysis::linear:
@@ -303,12 +303,12 @@ void regression(const int thread_id, EncAnalysis analysis_type) {
             std::cout << "Crash in get_row with " << e.what() << std::endl;
             exit(0);
         }
-        //stop_timer("get_row()");
+        //stop_timer("parse_and_decrypt()");
         //  compute results
         loci_to_str(row->getloci(), loci_string);
         alleles_to_str(row->getalleles(), alleles_string);
         output_string += loci_string + "\t" + alleles_string;
-        //start_timer("converge()");
+        //start_timer("kernel()");
         bool converge;
         //std::cout << i++ << std::endl;
         try {
@@ -337,10 +337,8 @@ void regression(const int thread_id, EncAnalysis analysis_type) {
             // ss << "\tNA\tNA\tNA" << std::endl;
             exit(1);
         }
-        //stop_timer("converge()");
-        //start_timer("batch_write()");
+        //stop_timer("kernel()");
         batch->write(output_string);
         output_string.clear();
-        //stop_timer("batch_write()");
     }
 }
