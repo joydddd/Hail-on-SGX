@@ -113,7 +113,8 @@ int getcov(const int client_num,
 }
 
 int getbatch(char batch[ENCLAVE_READ_BUFFER_SIZE], const int thread_id) {
-    return ComputeServer::get_allele_data(batch, thread_id);
+    int res = ComputeServer::get_allele_data(batch, thread_id);
+    return res;
 }
 
 void writebatch(Row_T type, char buffer[ENCLAVE_READ_BUFFER_SIZE], const int buffer_size, const int thread_id) {

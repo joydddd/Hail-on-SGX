@@ -44,7 +44,7 @@ ComputeServer::~ComputeServer() {
 }
 
 void ComputeServer::init(const std::string& config_file) {
-    num_threads = 1;//boost::thread::hardware_concurrency();
+    num_threads = 1; //boost::thread::hardware_concurrency();
 
     std::ifstream compute_config_file(config_file);
     compute_config_file >> compute_config;
@@ -369,10 +369,10 @@ int ComputeServer::send_msg(const std::string& name, const int mtype, const std:
                     connFD);
 }
 
-int ComputeServer::send_msg_output(const std::string& msg, int connFD) {
+int ComputeServer::send_msg_output(const std::string& msg, RegisterServerMessageType msg_type, int connFD) {
     return send_msg(compute_config["register_server_info"]["hostname"], 
                     compute_config["register_server_info"]["port"],
-                    strcmp(msg.c_str(), EOFSeperator) == 0 ? RegisterServerMessageType::EOF_OUTPUT : RegisterServerMessageType::OUTPUT,
+                    msg_type,
                     msg,
                     connFD);
 }
@@ -453,7 +453,7 @@ void ComputeServer::allele_matcher() {
             // enqueue EOF for all enclave threads then shut down the matcher, its work is done.
             if (min_locus == "~") {
                 std::cout << "received last message: "  << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count() << "\n";
-                for(int thread_id = 0; thread_id < num_threads; ++thread_id) {
+                for (int thread_id = 0; thread_id < num_threads; ++thread_id) {
                     allele_queue_list[thread_id].enqueue(EOFSeperator);
                 }
                 // auto stop = std::chrono::high_resolution_clock::now();
@@ -502,6 +502,7 @@ void ComputeServer::allele_matcher() {
 void ComputeServer::output_sender() {
     std::string output_str;
     std::unique_lock<std::mutex> lk(get_instance()->output_queue_lock);
+    bool eof_sent = false;
     while(!terminating || output_queue.size()) {
         // This wait -> signal system seriously improves performance as it reduces busy waiting
         if (!terminating && !output_queue.size())
@@ -509,12 +510,20 @@ void ComputeServer::output_sender() {
 
         while (output_queue.size()) {
             output_str = output_queue.front();
-            output_queue.pop(); 
-            get_instance()->send_msg_output(output_str);
+            output_queue.pop();
+            if (terminating && !output_queue.size()) {
+                get_instance()->send_msg_output(output_str, RegisterServerMessageType::EOF_OUTPUT);
+                eof_sent = true;
+            } else {
+                get_instance()->send_msg_output(output_str, RegisterServerMessageType::OUTPUT);
+            }
+            
         }
     }
     lk.unlock();
-    get_instance()->send_msg_output(EOFSeperator);
+    if (!eof_sent) {
+        get_instance()->send_msg_output(EOFSeperator, EOF_OUTPUT);
+    }
 } 
 
 void ComputeServer::parse_header_compute_server_header(const std::string& header, std::string& msg, 
@@ -721,8 +730,9 @@ int ComputeServer::get_allele_data(char* batch_data, const int thread_id) {
     // This is not very clean code, but searching for ~EOF~ in the enclave is slow!
     if (get_instance()->eof_read_list[thread_id]) {
         // Set this back to false so that later function calls return 0!
-        get_instance()->eof_read_list[thread_id] = false;
-        strcpy(batch_data, EOFSeperator);
+        //get_instance()->eof_read_list[thread_id] = false;
+        memset(batch_data, 0, ENCLAVE_READ_BUFFER_SIZE);
+        memcpy(batch_data, EOFSeperator, strlen(EOFSeperator));
         return 1;
     }
 

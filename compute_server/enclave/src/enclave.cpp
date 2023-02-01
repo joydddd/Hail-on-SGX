@@ -145,10 +145,9 @@ void setup_enclave_phenotypes(const int num_threads, EncAnalysis analysis_type, 
         // Calculate compaction factor, ceil(plaintext size / 4) -> rounded up to nearest multiple of 16
         int compacted_size = (client_y_size[client] + 3) / 4;
         int compacted_remainder = compacted_size % 16;
-        if (compacted_remainder) {
-            compacted_size += 16 - compacted_remainder;
-        }
-       // compacted_size += 16;
+        
+        // I should test this with more sizes - I assumed that if the compacted remainder was divisble by 16 we wouldn't need to add any padding... I guess not?
+        compacted_size += 16 - compacted_remainder;
 
         client_info_list[client].crypto_size = compacted_size + 1;
 

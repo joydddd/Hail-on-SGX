@@ -87,7 +87,7 @@ class ComputeServer {
     // construct response header, encrypt response body, and send
     int send_msg(const std::string& name, const int mtype, const std::string& msg, int connFD=-1);
     int send_msg(const std::string& hostname, const int port, const int mtype, const std::string& msg, int connFD=-1);
-    int send_msg_output(const std::string& msg, int connFD=-1);
+    int send_msg_output(const std::string& msg, RegisterServerMessageType msg_type, int connFD=-1);
 
     // start a thread that will handle a message and exit properly if it finds an error
     bool start_thread(int connFD, char* body_buffer);
