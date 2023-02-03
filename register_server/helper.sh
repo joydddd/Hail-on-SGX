@@ -1,4 +1,23 @@
-for VAR in 1 2 3
+for VAR in 1
 do
-    ./bin/register_server register_config.json >> register-output.txt
+    # ./bin/register_server register_config.json
+    # ./bin/register_server register_config.json
+
+    # ./bin/register_server register_config.json
+    # ./bin/register_server register_config.json
+
+    # ./bin/register_server register_config.json
+    # ./bin/register_server register_config.json
+
+    # # ./bin/register_server register_config.json
+    # # ./bin/register_server register_config.json
+
+    # # ./bin/register_server register_config.json
+    # # ./bin/register_server register_config.json
+
+    # ./bin/register_server register_config.json
+    # ./bin/register_server register_config.json
+
+    # ./bin/register_server register_config.json
+    ./bin/register_server register_config.json
 done
