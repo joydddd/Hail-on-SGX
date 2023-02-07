@@ -693,7 +693,6 @@ std::string ComputeServer::get_covariants() {
 
 std::string ComputeServer::get_aes_key(const int institution_num, const int thread_id) {
     const std::string institution_name = get_instance()->institution_list[institution_num];
-    std::cout << "before 4" << std::endl;
     get_instance()->institutions_lock.lock();
     if (!get_instance()->institutions.count(institution_name)) {
         get_instance()->institutions_lock.unlock();
@@ -707,7 +706,6 @@ std::string ComputeServer::get_aes_key(const int institution_num, const int thre
 
 std::string ComputeServer::get_aes_iv(const int institution_num, const int thread_id) {
     const std::string institution_name = get_instance()->institution_list[institution_num];
-    std::cout << "before 5" << std::endl;
     get_instance()->institutions_lock.lock();
     if (!get_instance()->institutions.count(institution_name)) {
         get_instance()->institutions_lock.unlock();
