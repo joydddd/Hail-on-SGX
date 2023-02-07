@@ -699,7 +699,6 @@ std::string ComputeServer::get_aes_key(const int institution_num, const int thre
         return "";
     }
     get_instance()->institutions_lock.unlock();
-    std::cout << "after 4" << std::endl;
 
     return get_instance()->institutions[institution_name]->get_aes_key(thread_id);
 }
@@ -712,7 +711,6 @@ std::string ComputeServer::get_aes_iv(const int institution_num, const int threa
         return "";
     }
     get_instance()->institutions_lock.unlock();
-    std::cout << "after 5" << std::endl;
 
     return get_instance()->institutions[institution_name]->get_aes_iv(thread_id);
 }
