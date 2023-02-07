@@ -261,12 +261,14 @@ bool ComputeServer::handle_message(int connFD, const std::string& name, ComputeS
                 // Look for client id!
                 if (institution_list[id] == name) {
                     found = true;
+                    std::cout << "before 1" << std::endl;
                     institutions_lock.lock();
                     institutions[name] = new Institution(hostname_and_port[0], 
                                                          std::stoi(hostname_and_port[1]),
                                                          id,
                                                          num_threads);
                     institutions_lock.unlock();
+                    std::cout << "after 1" << std::endl;
                 }
             }
             if (!found) {
@@ -286,19 +288,23 @@ bool ComputeServer::handle_message(int connFD, const std::string& name, ComputeS
             if (thread_id == 0) {
                 check_in(name);
             }
+            std::cout << "before 2" << std::endl;
             institutions_lock.lock();
             institutions[name]->set_key_and_iv(
                                     aes_info[0], // encrypted key
                                     aes_info[1], // encrypted iv
                                     thread_id); // thread id    
             institutions_lock.unlock();  
+            std::cout << "after 2" << std::endl;
             break;
         }
         case PATIENT_COUNT:
         {
+            std::cout << "before 3" << std::endl;
             institutions_lock.lock();
             institutions[name]->set_num_patients(msg);
             institutions_lock.unlock();
+            std::cout << "after 3" << std::endl;
             break;
         }
         case Y_VAL:
@@ -687,22 +693,28 @@ std::string ComputeServer::get_covariants() {
 
 std::string ComputeServer::get_aes_key(const int institution_num, const int thread_id) {
     const std::string institution_name = get_instance()->institution_list[institution_num];
+    std::cout << "before 4" << std::endl;
     get_instance()->institutions_lock.lock();
     if (!get_instance()->institutions.count(institution_name)) {
+        get_instance()->institutions_lock.unlock();
         return "";
     }
     get_instance()->institutions_lock.unlock();
+    std::cout << "after 4" << std::endl;
 
     return get_instance()->institutions[institution_name]->get_aes_key(thread_id);
 }
 
 std::string ComputeServer::get_aes_iv(const int institution_num, const int thread_id) {
     const std::string institution_name = get_instance()->institution_list[institution_num];
+    std::cout << "before 5" << std::endl;
     get_instance()->institutions_lock.lock();
     if (!get_instance()->institutions.count(institution_name)) {
+        get_instance()->institutions_lock.unlock();
         return "";
     }
     get_instance()->institutions_lock.unlock();
+    std::cout << "after 5" << std::endl;
 
     return get_instance()->institutions[institution_name]->get_aes_iv(thread_id);
 }
@@ -711,6 +723,7 @@ std::string ComputeServer::get_num_patients(const int institution_num) {
     const std::string institution_name = get_instance()->institution_list[institution_num];
     get_instance()->institutions_lock.lock();
     if (!get_instance()->institutions.count(institution_name)) {
+        get_instance()->institutions_lock.unlock();
         return "";
     }
     get_instance()->institutions_lock.unlock();
