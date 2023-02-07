@@ -219,6 +219,8 @@ bool ComputeServer::start_thread(int connFD, char* body_buffer) {
         ComputeServerMessageType mtype;
         parse_header_compute_server_header(body, msg, client_name, mtype);
 
+        guarded_cout("Msg type: " + std::to_string(mtype) + " client: " + client_name, cout_lock);
+
         handle_message(connFD, client_name, mtype, msg);
     }
     catch (const std::runtime_error e)  {
