@@ -17,6 +17,7 @@ sudo apt install libmbedtls-dev -y
 sudo apt-get install python -y
 sudo apt-get install libcurl4-openssl-dev -y
 sudo apt-get install libboost-all-dev -y
+sudo apt install gdb -y
 
 
 sudo apt -y install dkms
