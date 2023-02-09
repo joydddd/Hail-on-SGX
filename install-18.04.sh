@@ -33,7 +33,7 @@ cd compute_server
 
 make clean; make
 make clean; make
-make clean; make nonoe
+# make clean; make nonoe
 
 sudo apt install python3-pip -y
 pip3 install numpy

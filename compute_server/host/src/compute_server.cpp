@@ -219,7 +219,7 @@ bool ComputeServer::start_thread(int connFD, char* body_buffer) {
         ComputeServerMessageType mtype;
         parse_header_compute_server_header(body, msg, client_name, mtype);
 
-        guarded_cout("Msg type: " + std::to_string(mtype) + " client: " + client_name, cout_lock);
+        //guarded_cout("Msg type: " + std::to_string(mtype) + " client: " + client_name, cout_lock);
 
         handle_message(connFD, client_name, mtype, msg);
     }
@@ -261,14 +261,12 @@ bool ComputeServer::handle_message(int connFD, const std::string& name, ComputeS
                 // Look for client id!
                 if (institution_list[id] == name) {
                     found = true;
-                    std::cout << "before 1" << std::endl;
                     institutions_lock.lock();
                     institutions[name] = new Institution(hostname_and_port[0], 
                                                          std::stoi(hostname_and_port[1]),
                                                          id,
                                                          num_threads);
                     institutions_lock.unlock();
-                    std::cout << "after 1" << std::endl;
                 }
             }
             if (!found) {
@@ -288,23 +286,19 @@ bool ComputeServer::handle_message(int connFD, const std::string& name, ComputeS
             if (thread_id == 0) {
                 check_in(name);
             }
-            std::cout << "before 2" << std::endl;
             institutions_lock.lock();
             institutions[name]->set_key_and_iv(
                                     aes_info[0], // encrypted key
                                     aes_info[1], // encrypted iv
                                     thread_id); // thread id    
-            institutions_lock.unlock();  
-            std::cout << "after 2" << std::endl;
+            institutions_lock.unlock();
             break;
         }
         case PATIENT_COUNT:
         {
-            std::cout << "before 3" << std::endl;
             institutions_lock.lock();
             institutions[name]->set_num_patients(msg);
             institutions_lock.unlock();
-            std::cout << "after 3" << std::endl;
             break;
         }
         case Y_VAL:
