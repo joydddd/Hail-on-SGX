@@ -25,7 +25,7 @@ static int num_clients;
 static GWAS* gwas;
 
 std::condition_variable start_thread_cv;
-static volatile bool start_thread = false;
+static bool start_thread = false;
 
 void setup_enclave_encryption(const int num_threads) {
     RSACrypto rsa = RSACrypto();
@@ -245,8 +245,10 @@ void setup_enclave_phenotypes(const int num_threads, EncAnalysis analysis_type, 
         std::cout << "Crash in add gwas with " << e.what() << std::endl;
     }
 
-    start_thread = true;
-    start_thread_cv.notify_all();
+    for (int i = 0; i < 100; i++) {
+        start_thread = true;
+        start_thread_cv.notify_all();
+    }
 
     std::cout << "Setup finished" << std::endl;
 }
@@ -267,6 +269,7 @@ void regression(const int thread_id, EncAnalysis analysis_type) {
     while (!start_thread) {
         start_thread_cv.wait(useless_lock_wrapper);
     }
+    std::cout << "Starting regression" << std::endl;
 
     Buffer* buffer = buffer_list[thread_id];
     Batch* batch = nullptr;
