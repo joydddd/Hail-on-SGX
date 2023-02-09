@@ -80,6 +80,7 @@ proc_div = num_alleles / NUM_PROCS
 # with open(f'../client/client_data/generated_alleles_{CLIENT_COUNT}.tsv', 'w') as f:
 
 def helper(pid, locuses):
+    random.seed('0x8BADF00D')
     index = pid * int(proc_div) * scale_up_factor * CLIENT_COUNT
     with open(f'tmp-{CLIENT_COUNT}-{str(pid).zfill(7)}.txt', 'w') as f:
         top_line = ""
