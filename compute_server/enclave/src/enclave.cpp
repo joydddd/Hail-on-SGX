@@ -25,7 +25,7 @@ static int num_clients;
 static GWAS* gwas;
 
 std::condition_variable start_thread_cv;
-static bool start_thread = false;
+volatile bool start_thread = false;
 
 void setup_enclave_encryption(const int num_threads) {
     RSACrypto rsa = RSACrypto();
@@ -247,7 +247,6 @@ void setup_enclave_phenotypes(const int num_threads, EncAnalysis analysis_type, 
 
     for (int i = 0; i < 100; i++) {
         start_thread = true;
-        start_thread_cv.notify_all();
     }
 
     std::cout << "Setup finished" << std::endl;
@@ -260,23 +259,23 @@ void regression(const int thread_id, EncAnalysis analysis_type) {
     output_string.reserve(50);
     loci_string.reserve(50);
     alleles_string.reserve(20);
-    int i = 0;
 
     std::mutex useless_lock;
     std::unique_lock<std::mutex> useless_lock_wrapper(useless_lock);
     // experimental - checking to see if spinning up threads adds a noticable
     // amount of overhead... need +1 TCS in config
     while (!start_thread) {
-        start_thread_cv.wait(useless_lock_wrapper);
+        std::this_thread::yield();
     }
-    std::cout << "Starting regression" << std::endl;
+    std::cout << "id " << thread_id << std::endl;
 
     Buffer* buffer = buffer_list[thread_id];
     Batch* batch = nullptr;
     Row* row;
-
+    int j = 0;
     /* process rows */
     while (true) {
+        std::cout << j++ << std::endl;
         //start_timer("input()");
         if (!batch || batch->st != Batch::Working)
             batch = buffer->launch(client_info_list, thread_id);
