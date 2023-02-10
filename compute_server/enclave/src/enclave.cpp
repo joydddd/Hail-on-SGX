@@ -245,9 +245,7 @@ void setup_enclave_phenotypes(const int num_threads, EncAnalysis analysis_type, 
         std::cout << "Crash in add gwas with " << e.what() << std::endl;
     }
 
-    for (int i = 0; i < 100; i++) {
-        start_thread = true;
-    }
+    start_thread = true;
 
     std::cout << "Setup finished" << std::endl;
 }
@@ -277,7 +275,7 @@ void regression(const int thread_id, EncAnalysis analysis_type) {
         if (!batch || batch->st != Batch::Working)
             batch = buffer->launch(client_info_list, thread_id);
         if (!batch) {
-            std::cout << "id " << thread_id << std::endl;
+            // std::cout << "id " << thread_id << std::endl;
             buffer->clean_up();
             break;
         }
