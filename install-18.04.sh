@@ -21,8 +21,8 @@ sudo apt install gdb -y
 
 
 sudo apt -y install dkms
-wget https://download.01.org/intel-sgx/sgx-dcap/1.7/linux/distro/ubuntu18.04-server/sgx_linux_x64_driver_1.35.bin -O sgx_linux_x64_driver.bin
-chmod +x sgx_linux_x64_driver.bin
+sudo wget https://download.01.org/intel-sgx/sgx-dcap/1.7/linux/distro/ubuntu18.04-server/sgx_linux_x64_driver_1.35.bin -O sgx_linux_x64_driver.bin
+sudo chmod +x sgx_linux_x64_driver.bin
 sudo ./sgx_linux_x64_driver.bin
 
 sudo apt -y install clang-10 libssl-dev gdb libsgx-enclave-common libsgx-quote-ex libprotobuf10 libsgx-dcap-ql libsgx-dcap-ql-dev az-dcap-client open-enclave
