@@ -267,19 +267,17 @@ void regression(const int thread_id, EncAnalysis analysis_type) {
     while (!start_thread) {
         std::this_thread::yield();
     }
-    std::cout << "id " << thread_id << std::endl;
 
     Buffer* buffer = buffer_list[thread_id];
     Batch* batch = nullptr;
     Row* row;
-    int j = 0;
     /* process rows */
     while (true) {
-        std::cout << j++ << std::endl;
         //start_timer("input()");
         if (!batch || batch->st != Batch::Working)
             batch = buffer->launch(client_info_list, thread_id);
         if (!batch) {
+            std::cout << "id " << thread_id << std::endl;
             buffer->clean_up();
             break;
         }
