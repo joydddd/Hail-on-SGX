@@ -40,7 +40,7 @@ pip3 install scipy
 
 cd ../data_processing
 
-python3 generate_alleles.py 5000
+python3 generate_alleles.py
 
 python3 generate_phenotypes.py 5000 11
 
