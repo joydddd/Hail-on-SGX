@@ -6,7 +6,7 @@
     "analysis_type": "logistic",
     "enclave_path": "../enclave/gwasenc.signed",
     "register_server_info": {
-        "hostname": "74.235.96.228",
+        "hostname": "20.84.58.113",
         "port": 6401
     }
 }
