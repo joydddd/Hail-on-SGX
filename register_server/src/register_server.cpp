@@ -18,7 +18,6 @@
 #include <netdb.h>
 
 std::mutex cout_lock;
-std::mutex output_lock;
 
 RegisterServer::RegisterServer(const std::string& config_file) {
     init(config_file);
@@ -33,7 +32,13 @@ void RegisterServer::init(const std::string& config_file) {
     register_config_file >> register_config;
     port = register_config["register_server_bind_port"];
     compute_server_count = register_config["compute_server_count"];
-    output_file.open(register_config["output_file_name"]);
+    output_file_name = register_config["output_file_name"];
+    output_file.open(output_file_name);
+    
+    tmp_file_string_list.resize(compute_server_count);
+
+    std::vector<std::mutex> mux_tmp(compute_server_count);
+    tmp_file_mutex_list.swap(mux_tmp);
 
     eof_messages_received = 0;
     first = true;
@@ -142,7 +147,7 @@ bool RegisterServer::start_thread(int connFD) {
                          " Msg Type: " + parsed_header[1], cout_lock);
         }
         //guarded_cout("\nEncrypted body:\n" + parsed_header[2], cout_lock);
-        handle_message(connFD, type, parsed_header[2]);
+        handle_message(connFD, type, parsed_header[2], parsed_header[0]);
     }
     catch (const std::runtime_error e)  {
         guarded_cout("Exception " + std::string(e.what()) + "\n", cout_lock);
@@ -153,7 +158,7 @@ bool RegisterServer::start_thread(int connFD) {
     return true;
 }
 
-bool RegisterServer::handle_message(int connFD, RegisterServerMessageType mtype, std::string& msg) {
+bool RegisterServer::handle_message(int connFD, RegisterServerMessageType mtype, std::string& msg, std::string global_id) {
     std::string response;
 
     switch (mtype) {
@@ -201,19 +206,23 @@ bool RegisterServer::handle_message(int connFD, RegisterServerMessageType mtype,
         }
         case OUTPUT:
         {
-            output_lock.lock();
-            output_file << msg;
-            output_file.flush();
-            output_lock.unlock();
+            int id = std::stoi(global_id);
+            std::vector<std::string> &tmp_file_string = tmp_file_string_list[id];
+            std::mutex &file_lock = tmp_file_mutex_list[id];
+            file_lock.lock();
+            tmp_file_string.push_back(msg);
+            file_lock.unlock();
             break;
         }
         case EOF_OUTPUT:
         {
             if (strcmp(msg.c_str(), EOFSeperator) != 0) {
-                output_lock.lock();
-                output_file << msg;
-                output_file.flush();
-                output_lock.unlock();
+                int id = std::stoi(global_id);
+                std::vector<std::string> &tmp_file_string = tmp_file_string_list[id];
+                std::mutex &file_lock = tmp_file_mutex_list[id];
+                file_lock.lock();
+                tmp_file_string.push_back(msg);
+                file_lock.unlock();
             }
             
             if (++eof_messages_received == compute_server_count) {
@@ -225,6 +234,13 @@ bool RegisterServer::handle_message(int connFD, RegisterServerMessageType mtype,
                 for (ConnectionInfo compute_info : compute_info_list) {
                     send_msg(compute_info.hostname, compute_info.port, ComputeServerMessageType::END_COMPUTE, "");
                 }
+
+                for (std::vector<std::string>& tmp_file_string : tmp_file_string_list) {
+                    for (std::string tmp : tmp_file_string) {
+                        output_file << tmp;
+                    }
+                }
+                output_file.flush();
 
                 // All files recieved, all shutdown messages sent, we can exit now
                 exit(0);

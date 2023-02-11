@@ -33,7 +33,12 @@ class RegisterServer {
     std::vector<ConnectionInfo> institution_info_list;
     std::vector<ConnectionInfo> compute_info_list;
 
+    std::vector<std::vector<std::string> > tmp_file_string_list;
+    std::vector<std::mutex> tmp_file_mutex_list;
+
     std::ofstream output_file;
+
+    std::string output_file_name;
 
     bool first;
 
@@ -41,7 +46,7 @@ class RegisterServer {
     void init(const std::string& config_file);
     
     // parses and calls the appropriate handler for an incoming client request
-    bool handle_message(int connFD, RegisterServerMessageType mtype, std::string& msg);
+    bool handle_message(int connFD, RegisterServerMessageType mtype, std::string& msg, std::string global_id);
 
     // send messages to the client
     int send_msg(const std::string& hostname, const int port, int mtype, const std::string& msg, int connFD=-1);
