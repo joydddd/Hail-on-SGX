@@ -235,12 +235,20 @@ bool RegisterServer::handle_message(int connFD, RegisterServerMessageType mtype,
                     send_msg(compute_info.hostname, compute_info.port, ComputeServerMessageType::END_COMPUTE, "");
                 }
 
+                for (std::mutex& mux : tmp_file_mutex_list) {
+                    mux.lock();
+                }
+
                 for (std::vector<std::string>& tmp_file_string : tmp_file_string_list) {
                     for (std::string tmp : tmp_file_string) {
                         output_file << tmp;
                     }
                 }
                 output_file.flush();
+
+                for (std::mutex& mux : tmp_file_mutex_list) {
+                    mux.unlock();
+                }
 
                 // All files recieved, all shutdown messages sent, we can exit now
                 exit(0);
