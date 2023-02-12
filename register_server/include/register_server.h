@@ -19,6 +19,41 @@
 #include "output.h"
 #include "parser.h"
 
+struct AlleleGT {
+  inline bool operator()(const std::string &a, const std::string &b) const {
+    // Months ago I wrote a sorter in python. I don't remember why it works (or if it's 100% correct?)
+    // but here is the C++ implementation. Not optimized in the slightest and horrible to read - enjoy!
+    std::vector<std::string> a_split;
+    std::vector<std::string> b_split;
+    std::vector<std::string> a_split2;
+    std::vector<std::string> b_split2;
+
+    Parser::split(a_split, a, ':');
+    Parser::split(b_split, b, ':');
+    int a_loci_1 = a_split[0] == "X" ? 24 : std::stoi(a_split[0]);
+    int b_loci_1 = b_split[0] == "X" ? 24 :std::stoi(b_split[0]);
+    Parser::split(a_split2, a_split[1], '\t');
+    Parser::split(b_split2, b_split[1], '\t');
+    std::string a_loci_2 = a_split2[0];
+    std::string b_loci_2 = b_split2[0];
+
+    if (a_loci_1 == b_loci_1) {
+      if (a_loci_2.length() != b_loci_2.length()) {
+        if (a_loci_2.length() < b_loci_2.length()) {
+          return false;
+        } else {
+          return true;
+        }
+      }
+      if (a_loci_2 > b_loci_2) {
+        return true;
+      }
+      return false;
+    }
+    return a_loci_1 > b_loci_1;
+  }
+};
+
 class RegisterServer {
   private:
     unsigned int port;
@@ -35,6 +70,8 @@ class RegisterServer {
 
     std::vector<std::vector<std::string> > tmp_file_string_list;
     std::vector<std::mutex> tmp_file_mutex_list;
+
+    std::priority_queue<std::string, std::vector<std::string>, AlleleGT > sorted_file_queue;
 
     std::ofstream output_file;
 

@@ -240,9 +240,18 @@ bool RegisterServer::handle_message(int connFD, RegisterServerMessageType mtype,
                 }
 
                 for (std::vector<std::string>& tmp_file_string : tmp_file_string_list) {
-                    for (std::string tmp : tmp_file_string) {
-                        output_file << tmp;
+                    for (const std::string& tmp : tmp_file_string) {
+                        std::vector<std::string> split;
+                        Parser::split(split, tmp, '\n');
+                        for (const std::string& tmp_split : split) {
+                            sorted_file_queue.push(tmp_split);
+                        }
                     }
+                }
+
+                while(!sorted_file_queue.empty()) {
+                    output_file << sorted_file_queue.top() << std::endl;
+                    sorted_file_queue.pop();
                 }
                 output_file.flush();
 
