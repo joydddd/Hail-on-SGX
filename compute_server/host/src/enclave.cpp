@@ -25,7 +25,6 @@
 #endif
 
 
-;
 // index -1 is reserved for intercept
 
 

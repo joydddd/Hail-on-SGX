@@ -53,7 +53,7 @@ bool Lin_row::fit(size_t max_iteration, double sig) {
     /* calculate XTX & XTY*/
     size_t client_idx = 0, data_idx = 0;
     for (int i = 0; i < n; ++i) {
-        uint8_t x = data[client_idx][data_idx];
+        double x = data[i];
         x = (impute_policy == ImputePolicy::Hail) && is_NA(x) ? genotype_average : x;
         double y = gwas->y->data[i];
 
@@ -98,7 +98,7 @@ bool Lin_row::fit(size_t max_iteration, double sig) {
     client_idx = 0;
     data_idx = 0;
     for (int i = 0; i < n; ++i) {
-        uint8_t x = data[client_idx][data_idx];
+        double x = data[i];
         x = (impute_policy == ImputePolicy::Hail) && is_NA(x) ? genotype_average : x;
         double y = gwas->y->data[i];
         if (!is_NA(x)) {
@@ -110,11 +110,6 @@ bool Lin_row::fit(size_t max_iteration, double sig) {
         }
 
         /* update data index */
-        data_idx++;
-        if (data_idx >= length[client_idx]) {
-            data_idx = 0;
-            client_idx++;
-        }
     }
 
     sse = sse / (n - gwas->dim() - 1);

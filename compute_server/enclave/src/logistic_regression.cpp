@@ -3,6 +3,7 @@
 #include <limits>
 
 #include "logistic_regression.h"
+#include "gwas.h"
 
 /////////////////////////////////////////////////////////////
 //////////              Log_row             /////////////////
@@ -64,6 +65,7 @@ void Log_row::update_beta() {
         // take abs after adding beta delta so that we can determine if we have passed tolerance
         beta_delta[i] = abs(beta_delta[i]);
     }
+
     update_estimate();
 }
 
@@ -90,8 +92,9 @@ void Log_row::update_estimate() {
     }
     double y_est;
     size_t client_idx = 0, data_idx = 0;
+    double x;
     for (size_t i = 0; i < n; i++) {
-        double x = data[client_idx][data_idx];
+        double x = data[i];
         x = (impute_policy == ImputePolicy::Hail) && is_NA(x) ? genotype_average : x;
         if (!is_NA(x)) {
             y_est = b[0] * x;
@@ -102,15 +105,13 @@ void Log_row::update_estimate() {
             update_upperH(y_est, x, i);
             update_Grad(y_est, x, i);
         }
-
         /* update data index */
-        data_idx++;
-        if (data_idx >= length[client_idx]) {
-            data_idx = 0;
-            client_idx++;
-        }
+        // data_idx++;
+        // if (data_idx >= length[client_idx]) {
+        //     data_idx = 0;
+        //     client_idx++;
+        // }
     }
-
     /* build lower half of H */
     for (size_t j = 0; j < gwas->dim(); j++) {
         for (size_t k = j + 1; k < gwas->dim(); k++) {

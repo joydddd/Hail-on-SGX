@@ -2,7 +2,8 @@
 #include "assert.h"
 
 Row::Row(size_t _size, ImputePolicy _impute_policy) : n(_size), impute_policy(_impute_policy) {
-    data.push_back(new uint8_t[_size]);
+    data.resize(_size);
+    //data.push_back(new uint8_t[_size]);
     length.push_back(_size);
     it_count = 0;
 }
@@ -56,16 +57,16 @@ size_t Row::read(const char line[]) {
         std::cout << "Invalid chrom/loc " << loci.chrom << " " << loci.loc << " " << std::endl;
         exit(0);
     }
+    const int data_offset = loci_str.size() + alleles_str.size() + 2;
     for (size_t i = 0; i < n; i++) {
-        data[0][i] =
-            (uint8_t)line[i + loci_str.size() + alleles_str.size() + 2] - uint8_OFFSET;
-        if (data[0][i] > NA_uint8){
+        data[i] = (uint8_t)line[i + data_offset]; 
+        if (data[i] > NA_uint8) {
             std::cout << std::string(line) << std::endl;
-            std::cout << i << " " << (int)data[0][i] << " " << n << std::endl;
+            std::cout << i << " " << (int)data[i] << " " << n << std::endl;
             throw ReadtsvERROR("Invalid row entry for " + loci_str + "\t" + alleles_str);
         }
-        if (!is_NA(data[0][i])) {
-             genotype_sum += data[0][i];
+        if (!is_NA(data[i])) {
+             genotype_sum += data[i];
              genotype_count++;
         }
     }
@@ -100,7 +101,7 @@ void Row::combine(Row *other) {
 
 void Row::append_invalid_elts(size_t size) {
     uint8_t *new_array = new uint8_t[size];
-    data.push_back(new_array);
+    // data.push_back(new_array);
     length.push_back(size);
     n += size;
     for (size_t i = 0; i < size; i++) new_array[i] = NA_uint8;

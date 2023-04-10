@@ -13,7 +13,7 @@ Client::Client(const std::string& config_file) {
 Client::~Client() {}
 
 void Client::init(const std::string& config_file) {
-    std::this_thread::sleep_for(std::chrono::milliseconds(10000));
+    std::this_thread::sleep_for(std::chrono::milliseconds(5000));
 
     std::ifstream client_config_file(config_file);
     client_config_file >> client_config;

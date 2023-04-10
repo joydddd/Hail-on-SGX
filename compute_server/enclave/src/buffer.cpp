@@ -145,7 +145,7 @@ void Buffer::output(const char* out, const size_t& length) {
     output_tail += length;
 }
 
-void Buffer::clean_up() {
+void Buffer:: clean_up() {
     if (output_tail > 0) {
         writebatch(type, output_buffer, output_tail, thread_id);
     }
