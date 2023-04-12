@@ -41,7 +41,8 @@ class Row {
      Loci loci;
      Alleles alleles;
      size_t n;
-     std::vector<uint8_t> data;
+    //  std::vector<uint8_t> data;
+     uint8_t *data;
      std::vector<size_t> length;
      size_t genotype_sum;
      size_t genotype_count;

@@ -10,7 +10,6 @@
 #include <stdexcept>
 #include <chrono>
 #include <stdint.h>
-#include <string>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netdb.h>
@@ -448,6 +447,7 @@ void ComputeServer::allele_matcher() {
                     }
                     // otherwise, we need to wait for all institutions to send their data!
                     else {
+                        std::this_thread::yield();
                         goto loop_start;
                     }
                 }

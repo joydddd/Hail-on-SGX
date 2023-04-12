@@ -246,7 +246,7 @@ void setup_enclave_phenotypes(const int num_threads, EncAnalysis analysis_type, 
     }
 
     start_thread = true;
-
+    start_thread_cv.notify_all();
     std::cout << "Setup finished" << std::endl;
 }
 
@@ -263,7 +263,8 @@ void regression(const int thread_id, EncAnalysis analysis_type) {
     // experimental - checking to see if spinning up threads adds a noticable
     // amount of overhead... need +1 TCS in config
     while (!start_thread) {
-        std::this_thread::yield();
+        // std::this_thread::yield();
+        start_thread_cv.wait(useless_lock_wrapper);
     }
 
     Buffer* buffer = buffer_list[thread_id];

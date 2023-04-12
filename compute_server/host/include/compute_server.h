@@ -14,6 +14,7 @@
 #include <queue>
 #include <vector>
 #include <mutex>
+#include <thread>
 #include <condition_variable>
 #include <unordered_set>
 #include <functional>
@@ -27,8 +28,6 @@
 #include "aes-crypto.h"
 #include "buffer_size.h"
 #include "readerwriterqueue.h"
-
-#define OUTPUT_FILE "gwasoutput/writeback"
 
 enum EncMode { sgx, simulate, debug, NA };
 

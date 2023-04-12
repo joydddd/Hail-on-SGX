@@ -2,7 +2,7 @@
 #include "assert.h"
 
 Row::Row(size_t _size, ImputePolicy _impute_policy) : n(_size), impute_policy(_impute_policy) {
-    data.resize(_size);
+    //data.resize(_size);
     //data.push_back(new uint8_t[_size]);
     length.push_back(_size);
     it_count = 0;
@@ -57,46 +57,46 @@ size_t Row::read(const char line[]) {
         std::cout << "Invalid chrom/loc " << loci.chrom << " " << loci.loc << " " << std::endl;
         exit(0);
     }
-    const int data_offset = loci_str.size() + alleles_str.size() + 2;
-    for (size_t i = 0; i < n; i++) {
-        data[i] = (uint8_t)line[i + data_offset]; 
-        if (data[i] > NA_uint8) {
-            std::cout << std::string(line) << std::endl;
-            std::cout << i << " " << (int)data[i] << " " << n << std::endl;
-            throw ReadtsvERROR("Invalid row entry for " + loci_str + "\t" + alleles_str);
-        }
-        if (!is_NA(data[i])) {
-             genotype_sum += data[i];
-             genotype_count++;
-        }
-    }
+    data = (uint8_t *)(line + loci_str.size() + alleles_str.size() + 2);
+    // for (size_t i = 0; i < n; i++) {
+    //     data[i] = (uint8_t)line[i + data_offset]; 
+    //     if (data[i] > NA_uint8) {
+    //         std::cout << std::string(line) << std::endl;
+    //         std::cout << i << " " << (int)data[i] << " " << n << std::endl;
+    //         throw ReadtsvERROR("Invalid row entry for " + loci_str + "\t" + alleles_str);
+    //     }
+    //     if (!is_NA(data[i])) {
+    //          genotype_sum += data[i];
+    //          genotype_count++;
+    //     }
+    // }
 
-    genotype_average = (double)genotype_sum / (double)genotype_count;
+    //genotype_average = (double)genotype_sum / (double)genotype_count;
 
-    if (line[n + loci_str.size() + alleles_str.size() + 2] != '\n')
-        throw ReadtsvERROR("Invalid row terminator");
+    // if (line[n + loci_str.size() + alleles_str.size() + 2] != '\n')
+    //     throw ReadtsvERROR("Invalid row terminator");
     return n + loci_str.size() + alleles_str.size() + 3;
 }
 void Row::combine(Row *other) {
-    /* check if loci & alleles match */
-    if (this->loci == Loci())
-        this->loci = other->loci;
-    else if (other->loci != loci && other->loci != Loci())
-        throw CombineERROR("locus mismatch");
+    // /* check if loci & alleles match */
+    // if (this->loci == Loci())
+    //     this->loci = other->loci;
+    // else if (other->loci != loci && other->loci != Loci())
+    //     throw CombineERROR("locus mismatch");
 
-    if (alleles == Alleles())
-        alleles = other->alleles;
-    else if (other->alleles != alleles && other->alleles != Alleles())
-        throw CombineERROR("alleles mismatch");
+    // if (alleles == Alleles())
+    //     alleles = other->alleles;
+    // else if (other->alleles != alleles && other->alleles != Alleles())
+    //     throw CombineERROR("alleles mismatch");
 
-    this->n += other->n;
-    this->data.reserve(this->data.size() + other->data.size());
-    for (size_t i = 0; i < other->data.size(); i++) {
-        data.push_back(other->data[i]);
-        length.push_back(other->length[i]);
-    }
-    other->data.clear();
-    other->length.clear();
+    // this->n += other->n;
+    // this->data.reserve(this->data.size() + other->data.size());
+    // for (size_t i = 0; i < other->data.size(); i++) {
+    //     data.push_back(other->data[i]);
+    //     length.push_back(other->length[i]);
+    // }
+    // other->data.clear();
+    // other->length.clear();
 }
 
 void Row::append_invalid_elts(size_t size) {
