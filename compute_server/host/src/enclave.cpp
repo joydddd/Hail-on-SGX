@@ -27,10 +27,6 @@
 
 // index -1 is reserved for intercept
 
-int _max_lines = 0;
-
-#define NUM_INST 1
-
 
 void setrsapubkey(uint8_t enc_rsa_pub_key[RSA_PUB_KEY_SIZE]) {
     std::memcpy(ComputeServer::get_rsa_pub_key(), enc_rsa_pub_key, RSA_PUB_KEY_SIZE);
@@ -41,7 +37,6 @@ void setrsapubkey(uint8_t enc_rsa_pub_key[RSA_PUB_KEY_SIZE]) {
 
 void setmaxbatchlines(int lines) {
     ComputeServer::set_max_batch_lines(lines);
-    // _max_lines = lines;
 }
 
 void start_timer(const char func_name[MAX_CLIENTNAME_LENGTH]) {
