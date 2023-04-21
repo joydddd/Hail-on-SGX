@@ -94,7 +94,10 @@ void Log_row::update_estimate() {
     size_t client_idx = 0, data_idx = 0;
     double x;
     for (size_t i = 0; i < n; i++) {
-        double x = data[i];
+        //two_bit_arr += input[input_idx] << (2 * two_bit_arr_count++);
+        double x = (data[i / 4] >> ((i % 4) * 2) ) & 0b11;
+        // data[i / 4] >>= 2;
+        // std::cout << x << "   ";
         x = (impute_policy == ImputePolicy::Hail) && is_NA(x) ? genotype_average : x;
         if (!is_NA(x)) {
             y_est = b[0] * x;
@@ -118,6 +121,8 @@ void Log_row::update_estimate() {
             H[j][k] = H[k][j];
         }
     }
+    // std::cout << std::endl;
+    // exit(0);
 }
 
 void Log_row::update_upperH(double y_est, uint8_t x, size_t i) {

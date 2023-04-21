@@ -53,7 +53,7 @@ bool Lin_row::fit(size_t max_iteration, double sig) {
     /* calculate XTX & XTY*/
     size_t client_idx = 0, data_idx = 0;
     for (int i = 0; i < n; ++i) {
-        double x = data[i];
+        double x = (data[i / 4] >> ((i % 4) * 2) ) & 0b11;
         x = (impute_policy == ImputePolicy::Hail) && is_NA(x) ? genotype_average : x;
         double y = gwas->y->data[i];
 
@@ -98,7 +98,7 @@ bool Lin_row::fit(size_t max_iteration, double sig) {
     client_idx = 0;
     data_idx = 0;
     for (int i = 0; i < n; ++i) {
-        double x = data[i];
+        double x = (data[i / 4] >> ((i % 4) * 2) ) & 0b11;
         x = (impute_policy == ImputePolicy::Hail) && is_NA(x) ? genotype_average : x;
         double y = gwas->y->data[i];
         if (!is_NA(x)) {

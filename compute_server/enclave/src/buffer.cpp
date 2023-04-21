@@ -83,12 +83,12 @@ void Buffer::decrypt_line(char* plaintxt, size_t* plaintxt_length, unsigned int 
             for (int list_id = 0; list_id < client_count; ++list_id) {
                 if (client_list[list_id] == client) {
                     aes_decrypt_client((const unsigned char*)client_crypto_map[list_id],
-                                       (unsigned char*)plain_txt_compressed,
+                                       (unsigned char*)plaintxt_head,
                                        client_info_list[client], 
                                        thread_id);
-                    two_bit_decompress(plain_txt_compressed, 
-                                       (uint8_t*)plaintxt_head, 
-                                       client_info_list[client].size);
+                    // two_bit_decompress(plain_txt_compressed, 
+                    //                    (uint8_t*)plaintxt_head, 
+                    //                    client_info_list[client].size);
                     // memset(plain_txt_compressed, 0, ENCLAVE_READ_BUFFER_SIZE);
                     // memset(client_crypto_map[list_id], 0, client_info_list[client].crypto_size);
                     client_found = true;
@@ -100,7 +100,8 @@ void Buffer::decrypt_line(char* plaintxt, size_t* plaintxt_length, unsigned int 
                     *(plaintxt_head + j) = NA_uint8;
                 }
             }
-            plaintxt_head += client_info_list[client].size;
+            // plaintxt_head += client_info_list[client].size;
+            plaintxt_head += (client_info_list[client].size / 4) + (client_info_list[client].size % 4 == 0 ? 0 : 1);
         }
         *plaintxt_head = '\n';
         plaintxt_head++;

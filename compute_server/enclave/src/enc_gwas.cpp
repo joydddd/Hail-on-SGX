@@ -75,7 +75,8 @@ size_t Row::read(const char line[]) {
 
     // if (line[n + loci_str.size() + alleles_str.size() + 2] != '\n')
     //     throw ReadtsvERROR("Invalid row terminator");
-    return n + loci_str.size() + alleles_str.size() + 3;
+    // return n + loci_str.size() + alleles_str.size() + 3;
+    return ((n / 4) + (n % 4 == 0 ? 0 : 1)) + loci_str.size() + alleles_str.size() + 3;
 }
 void Row::combine(Row *other) {
     // /* check if loci & alleles match */
