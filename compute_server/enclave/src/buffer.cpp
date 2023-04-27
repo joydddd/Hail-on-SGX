@@ -100,8 +100,8 @@ void Buffer::decrypt_line(char* plaintxt, size_t* plaintxt_length, unsigned int 
                     *(plaintxt_head + j) = NA_uint8;
                 }
             }
-            // plaintxt_head += client_info_list[client].size;
-            plaintxt_head += (client_info_list[client].size / 4) + (client_info_list[client].size % 4 == 0 ? 0 : 1);
+            plaintxt_head += client_info_list[client].size;
+            //plaintxt_head += (client_info_list[client].size / 4) + (client_info_list[client].size % 4 == 0 ? 0 : 1);
         }
         *plaintxt_head = '\n';
         plaintxt_head++;

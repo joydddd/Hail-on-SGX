@@ -41,6 +41,7 @@ class Row {
      Loci loci;
      Alleles alleles;
      size_t n;
+     size_t read_row_len;
     //  std::vector<uint8_t> data;
      uint8_t *data;
      std::vector<size_t> length;

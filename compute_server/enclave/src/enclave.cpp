@@ -120,6 +120,7 @@ void setup_enclave_phenotypes(const int num_threads, EncAnalysis analysis_type, 
         int client_num_patients = std::stoi(buffer_decrypt);
         client_y_size[client] = client_num_patients;
         client_info_list[client].size = client_num_patients;
+        //client_info_list[client].size = (client_num_patients / 4) + (client_num_patients % 4 == 0 ? 0 : 1);
         total_row_size += client_num_patients;
     }
 
@@ -143,7 +144,7 @@ void setup_enclave_phenotypes(const int num_threads, EncAnalysis analysis_type, 
     int total_crypto_size = 0;
     for (int client = 0; client < num_clients; client++) {
         // Calculate compaction factor, ceil(plaintext size / 4) -> rounded up to nearest multiple of 16
-        int compacted_size = (client_y_size[client] + 3) / 4;
+        int compacted_size = client_y_size[client];
         int compacted_remainder = compacted_size % 16;
         
         // I should test this with more sizes - I assumed that if the compacted remainder was divisble by 16 we wouldn't need to add any padding... I guess not?

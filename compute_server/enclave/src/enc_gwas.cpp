@@ -6,6 +6,8 @@ Row::Row(size_t _size, ImputePolicy _impute_policy) : n(_size), impute_policy(_i
     //data.push_back(new uint8_t[_size]);
     length.push_back(_size);
     it_count = 0;
+    read_row_len = n;
+    //read_row_len = ((n / 4) + (n % 4 == 0 ? 0 : 1));
 }
 
 void Row::reset() { 
@@ -76,7 +78,7 @@ size_t Row::read(const char line[]) {
     // if (line[n + loci_str.size() + alleles_str.size() + 2] != '\n')
     //     throw ReadtsvERROR("Invalid row terminator");
     // return n + loci_str.size() + alleles_str.size() + 3;
-    return ((n / 4) + (n % 4 == 0 ? 0 : 1)) + loci_str.size() + alleles_str.size() + 3;
+    return read_row_len + loci_str.size() + alleles_str.size() + 3;
 }
 void Row::combine(Row *other) {
     // /* check if loci & alleles match */
