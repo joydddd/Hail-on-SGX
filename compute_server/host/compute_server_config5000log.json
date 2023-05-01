@@ -1,12 +1,12 @@
 {
     "compute_server_bind_port": 6701,
-    "covariants": ["1", "1-5000", "2-5000", "3-5000", "4-5000", "5-5000", "6-5000", "7-5000", "8-5000", "9-5000", "10-5000", "11-5000"],
-    "institutions": ["client1", "client2", "client3", "client4"],
+    "covariants": ["1", "1-5000", "2-5000", "3-5000", "4-5000", "5-5000"],
+    "institutions": ["client1"],
     "y_val_name": "disease-5000",
     "analysis_type": "logistic",
     "enclave_path": "../enclave/gwasenc.signed",
     "register_server_info": {
-        "hostname": "20.84.58.113",
+        "hostname": "20.245.60.185",
         "port": 6401
     }
 }

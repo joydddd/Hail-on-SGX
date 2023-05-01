@@ -43,6 +43,7 @@ ComputeServer::~ComputeServer() {
 }
 
 void ComputeServer::init(const std::string& config_file) {
+    std::this_thread::sleep_for(std::chrono::milliseconds(10000));
     num_threads = 1;//boost::thread::hardware_concurrency();
 
     std::ifstream compute_config_file(config_file);

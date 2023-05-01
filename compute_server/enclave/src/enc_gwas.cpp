@@ -6,8 +6,8 @@ Row::Row(size_t _size, ImputePolicy _impute_policy) : n(_size), impute_policy(_i
     //data.push_back(new uint8_t[_size]);
     length.push_back(_size);
     it_count = 0;
-    read_row_len = n;
-    //read_row_len = ((n / 4) + (n % 4 == 0 ? 0 : 1));
+    //read_row_len = n;
+    read_row_len = ((n / 4) + (n % 4 == 0 ? 0 : 1));
 }
 
 void Row::reset() { 

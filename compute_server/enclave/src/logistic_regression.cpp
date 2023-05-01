@@ -94,7 +94,7 @@ void Log_row::update_estimate() {
     size_t client_idx = 0, data_idx = 0;
     double x;
     for (size_t i = 0; i < n; i++) {
-        //two_bit_arr += input[input_idx] << (2 * two_bit_arr_count++);
+        //double x = data[i];
         double x = (data[i / 4] >> ((i % 4) * 2) ) & 0b11;
         // data[i / 4] >>= 2;
         // std::cout << x << "   ";
