@@ -22,10 +22,6 @@ size_t Row::read(const char line[]) {
     int tabs_found = 0;
     int idx = 0;
 
-    // Used to average genotype values for a SNP
-    genotype_sum = 0;
-    genotype_count = 0;
-
     while(tabs_found < 2) {
         char curr_char = line[idx++];
         if (curr_char == '\t') {
@@ -199,7 +195,7 @@ int Covar::read(const char* input, int res_size) {
 
     int read_size = 0;
     for (int i = 1; i < res_size + 1; ++i) {
-        data.push_back(std::stoi(parts[i]));
+        data.push_back(std::stod(parts[i]));
         read_size++;
     }
 

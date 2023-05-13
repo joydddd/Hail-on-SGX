@@ -24,8 +24,10 @@ inline bool is_NA(T a) {
     if (std::is_same<T, unsigned int>::value) return (a == NA_uint);
     if (std::is_same<T, double>::value) return (a == NA_double);
     return true;
-    // std::cout << a << " " << (a == NA_uint8) << " " << (a == NA_double) << std::endl;
-    // return true;
+}
+
+inline uint8_t is_not_NA_oblivious(uint8_t val) {
+    return !(((val & 2) >> 1) & (val & 1));
 }
 
 // utilities
@@ -60,11 +62,12 @@ class Row {
      Loci getloci() { return loci; }
      Alleles getalleles() { return alleles; }
      size_t size() { return n; }
-     virtual bool fit(size_t max_iteration = 25, double sig = 1e-6) { return false; }
+     virtual bool fit(size_t max_iteration = 15, double sig = 1e-6) { std::cout << "generic fit!?!"; return false; }
      virtual double get_beta() { return -1; }
      virtual double get_t_stat() { return -1; }
      virtual double get_standard_error() { return -1; }
      size_t get_iterations() { return it_count; }
+
 
 
      /* setup */
@@ -73,6 +76,7 @@ class Row {
      void combine(Row *other);
      void append_invalid_elts(size_t size);
      void reset();
+    
 
 #ifdef DEBUG
      void print();
@@ -81,7 +85,7 @@ class Row {
      /* destructor */
      virtual ~Row() {
         //  for (uint8_t *array : data) delete[] array;
-     }
+     } 
 };
 
 
@@ -116,6 +120,8 @@ inline size_t split_delim(const char* line, std::vector<std::string> &parts, cha
 class Covar {
     friend class Log_row;
     friend class Lin_row;
+    friend class Oblivious_lin_row;
+    friend class Oblivious_log_row;
     friend class GWAS;
     std::vector<double> data;
     size_t n;
@@ -155,6 +161,12 @@ class GWAS {
                 break;
             case EncAnalysis::linear:
                 name = _y->name() + "_linear_gwas";
+                break;
+            case EncAnalysis::logistic_oblivious:
+                name = _y->name() + "_logistic_oblivious_gwas";
+                break;
+            case EncAnalysis::linear_oblivious:
+                name = _y->name() + "_linear_oblivious_gwas";
                 break;
         }
 

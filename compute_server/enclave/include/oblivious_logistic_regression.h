@@ -1,5 +1,5 @@
-#ifndef __LOG_REG_H_
-#define __LOG_REG_H_
+#ifndef __OBLIV_LOG_REG_H_
+#define __OBLIV_LOG_REG_H_
 
 #include "enc_gwas.h"
 #include "Matrix.h"
@@ -10,7 +10,7 @@
 #endif
 /* for logistic regression */
 
-class Log_row : public Row {
+class Oblivious_log_row : public Row {
     const GWAS *gwas;
 
     /* model data */
@@ -30,7 +30,7 @@ class Log_row : public Row {
 
    public:
     /* setup */
-    Log_row(size_t _size, GWAS* _gwas, ImputePolicy _impute_policy);
+    Oblivious_log_row(size_t _size, GWAS* _gwas, ImputePolicy _impute_policy);
 
     /* fitting */
     bool fit(size_t max_iteration = 15, double sig = 1e-6);

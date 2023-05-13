@@ -1,5 +1,5 @@
-#ifndef __LIN_REG_H_
-#define __LIN_REG_H_
+#ifndef __OBLIV_LIN_REG_H_
+#define __OBLIV_LIN_REG_H_
 /* For linear regression (aggregate on client approach)*/
 
 #include "enc_gwas.h"
@@ -10,7 +10,7 @@
 #include "gwas_t.h"
 #endif
 
-class Lin_row : public Row {
+class Oblivious_lin_row : public Row {
     const GWAS *gwas;
 
     /* model data */
@@ -24,7 +24,7 @@ class Lin_row : public Row {
 
    public:
    /* setup */
-    Lin_row(size_t size, GWAS* _gwas, ImputePolicy _impute_policy);
+    Oblivious_lin_row(size_t size, GWAS* _gwas, ImputePolicy _impute_policy);
 
     /* fitting */
     bool fit(size_t max_iteration = 15, double sig = 1e-6);

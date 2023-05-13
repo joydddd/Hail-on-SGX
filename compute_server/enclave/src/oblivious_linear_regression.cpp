@@ -2,12 +2,12 @@
 
 #include <limits>
 
-#include "linear_regression.h"
+#include "oblivious_linear_regression.h"
 
 // DEBUG:
 #include <iostream>
 
-Lin_row::Lin_row(size_t _size, GWAS* _gwas, ImputePolicy _impute_policy)
+Oblivious_lin_row::Oblivious_lin_row(size_t _size, GWAS* _gwas, ImputePolicy _impute_policy)
     : Row(_size, _impute_policy), gwas(_gwas), XTX(gwas->dim(), 2), XTX_og(gwas->dim(), 2) {
     beta.resize(gwas->dim());
     XTY.resize(gwas->dim());
@@ -40,9 +40,9 @@ Lin_row::Lin_row(size_t _size, GWAS* _gwas, ImputePolicy _impute_policy)
     }
 }
 
-void Lin_row::init() {}
+void Oblivious_lin_row::init() {}
 
-bool Lin_row::fit(size_t max_iteration, double sig) {
+bool Oblivious_lin_row::fit(size_t max_iteration, double sig) {
     for (int i = 0; i < gwas->dim(); i++) {
         beta[i] = 0;
         XTY[i] = XTY_og[i];
@@ -51,47 +51,36 @@ bool Lin_row::fit(size_t max_iteration, double sig) {
         }
     }
 
-    if (impute_policy == ImputePolicy::Hail) {
-        double sum = 0;
-        double count = 0;
-        uint8_t val;
-        for (int i = 0 ; i < n; ++i) {
-            val = (data[i / 4] >> ((i % 4) * 2)) & 0b11;
-            if (!is_NA(val)) {
-                sum += val;
-                count++;
-            }
-        }
+    double sum = 0;
+    double count = 0;
+    uint8_t val;
+    uint8_t not_NA_oblivious;
+    for (int i = 0 ; i < n; ++i) {
+        val = (data[i / 4] >> ((i % 4) * 2)) & 0b11;
+        not_NA_oblivious = is_not_NA_oblivious(val);
+        sum += val * not_NA_oblivious;
+        count += not_NA_oblivious;
+    } 
 
-        if (count) {
-            genotype_average = sum / count;
-        }
-    }
+    // TODO: figure out if this is what we want?
+    // if count > 0: count = count
+    // if count == 0: count = 0
+    // avoids divide by 0 issue!
+    genotype_average = sum / (count + !count);
 
     /* calculate XTX & XTY*/
     size_t client_idx = 0, data_idx = 0;
     for (int i = 0; i < n; ++i) {
-        //double x = data[i];
-        double x = (data[i / 4] >> ((i % 4) * 2) ) & 0b11;
-        x = (impute_policy == ImputePolicy::Hail) && is_NA(x) ? genotype_average : x;
+        double x = (data[i / 4] >> ((i % 4) * 2)) & 0b11;
+        not_NA_oblivious = is_not_NA_oblivious(x);
+        x = (not_NA_oblivious * x) + (!not_NA_oblivious * genotype_average);
+        
         double y = gwas->y->data[i];
-
-        if (!is_NA(x)) {
-            XTY[0] += x * y;
-            for (int j = 0; j < gwas->dim(); ++j) {
-                double x1 = (j == 0) ? x : gwas->covariants[j - 1]->data[i];
-                XTX[j][0] += x1 * x;
-            }
-        } else { // adjust the part non valid
-        // TODO: some optimization here: whether to precalculate Xcov * Y and Xocv * Xcov for each patient
-            //std::cout << "???" << std::endl;
-            for (int j = 1; j < gwas->dim(); ++j){
-                XTY[j] -= gwas->covariants[j - 1]->data[i] * y;
-                for (int k = 1; k <= j; ++k){
-                    XTX[j][k] -= gwas->covariants[j - 1]->data[i] *
-                                 gwas->covariants[k - 1]->data[i];
-                }
-            }
+        
+        XTY[0] += x * y;
+        for (int j = 0; j < gwas->dim(); ++j) {
+            double x1 = (j == 0) ? x : gwas->covariants[j - 1]->data[i];
+            XTX[j][0] += x1 * x;
         }
 
         /* update data index */
@@ -117,17 +106,16 @@ bool Lin_row::fit(size_t max_iteration, double sig) {
     client_idx = 0;
     data_idx = 0;
     for (int i = 0; i < n; ++i) {
-        //double x = data[i];
-        double x = (data[i / 4] >> ((i % 4) * 2) ) & 0b11;
-        x = (impute_policy == ImputePolicy::Hail) && is_NA(x) ? genotype_average : x;
+        double x = (data[i / 4] >> ((i % 4) * 2)) & 0b11;
+        not_NA_oblivious = is_not_NA_oblivious(x);
+        x = (not_NA_oblivious * x) + (!not_NA_oblivious * genotype_average);
+
         double y = gwas->y->data[i];
-        if (!is_NA(x)) {
-            double y_est = beta[0] * x;
-            for (int j = 1; j < gwas->dim(); j++){
-                y_est += gwas->covariants[j - 1]->data[i] * beta[j];
-            }
-            sse += (y - y_est) * (y - y_est);
+        double y_est = beta[0] * x;
+        for (int j = 1; j < gwas->dim(); j++){
+            y_est += gwas->covariants[j - 1]->data[i] * beta[j];
         }
+        sse += (y - y_est) * (y - y_est);
 
         /* update data index */
     }
@@ -139,14 +127,14 @@ bool Lin_row::fit(size_t max_iteration, double sig) {
     return true;
 }
 
-double Lin_row::get_beta() {
+double Oblivious_lin_row::get_beta() {
     return beta[0];
 }
 
-double Lin_row::get_standard_error() {
+double Oblivious_lin_row::get_standard_error() {
     return sqrt(SSE[0]);
 }
 
-double Lin_row::get_t_stat() {
+double Oblivious_lin_row::get_t_stat() {
     return beta[0] / sqrt(SSE[0]);
 }

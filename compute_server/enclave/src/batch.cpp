@@ -7,17 +7,23 @@
 #include "gwas_t.h"
 #endif
 
-Batch::Batch(size_t _row_size, Row_T row_type, ImputePolicy impute_policy, GWAS* _gwas, char *plaintxt_buffer)
-    : row_size(_row_size), type(row_type) {
-    switch (type) {
-        case LOG_t:
+Batch::Batch(size_t _row_size, EncAnalysis analysis_type, ImputePolicy impute_policy, GWAS* _gwas, char *plaintxt_buffer)
+    : row_size(_row_size), type(analysis_type) {
+    switch (analysis_type) {
+        case EncAnalysis::logistic:
             row = new Log_row(row_size, _gwas, impute_policy);
             break;
-        case Lin_t:
+        case EncAnalysis::linear:
             row = new Lin_row(row_size, _gwas, impute_policy);
             break;
+        case EncAnalysis::logistic_oblivious:
+            row = new Oblivious_log_row(row_size, _gwas, impute_policy);
+            break;
+        case EncAnalysis::linear_oblivious:
+            row = new Oblivious_lin_row(row_size, _gwas, impute_policy);
+            break;
         default:
-            row = new Row(row_size, impute_policy);
+            throw std::runtime_error("No valid analysis type provided.");
             break;
     }
     plaintxt = plaintxt_buffer;

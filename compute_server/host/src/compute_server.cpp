@@ -87,6 +87,12 @@ void ComputeServer::init(const std::string& config_file) {
         enc_analysis = EncAnalysis::linear;
     } else if (compute_config["analysis_type"] == "logistic") {
         enc_analysis = EncAnalysis::logistic;
+    } else if (compute_config["analysis_type"] == "linear-oblivious") {
+        enc_analysis = EncAnalysis::linear_oblivious;
+    } else if (compute_config["analysis_type"] == "logistic-oblivious") {
+        enc_analysis = EncAnalysis::logistic_oblivious;
+    } else {
+        throw std::runtime_error("Invalid enclave analysis selected.");
     }
 
     impute_policy = ImputePolicy::EPACTS;

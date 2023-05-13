@@ -4,6 +4,8 @@
 #include "buffer.h"
 #include "logistic_regression.h"
 #include "linear_regression.h"
+#include "oblivious_logistic_regression.h"
+#include "oblivious_linear_regression.h"
 #include "enc_gwas.h"
 
 #ifdef NON_OE
@@ -18,7 +20,7 @@ class Batch {
     /* data members */
     char* plaintxt;
     size_t txt_size;
-    Row_T type;
+    EncAnalysis type;
     char outtxt[ENCLAVE_READ_BUFFER_SIZE];
 
     /* status */
@@ -32,7 +34,7 @@ class Batch {
 
    public:
     size_t batch_head;
-    Batch(size_t _row_size, Row_T row_type, ImputePolicy impute_policy, GWAS* _gwas, char *plaintxt_buffer);
+    Batch(size_t _row_size, EncAnalysis analysis_type, ImputePolicy impute_policy, GWAS* _gwas, char *plaintxt_buffer);
     ~Batch() { 
         delete row; 
         delete plaintxt;

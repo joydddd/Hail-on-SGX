@@ -26,7 +26,7 @@ void two_bit_decompress(uint8_t* input, uint8_t* decompressed, unsigned int size
 class Buffer {
     /* meta data */
     size_t row_size;
-    Row_T type;
+    EncAnalysis analysis_type;
     size_t output_tail;
 
     /* data member */
@@ -46,7 +46,7 @@ class Buffer {
     void decrypt_line(char* plaintxt, size_t* plaintxt_length, unsigned int num_lines, const std::vector<ClientInfo>& client_info_list, const int thread_id);
 
 public:
-    Buffer(size_t _row_size, Row_T row_type, int num_clients, int thread_id);
+    Buffer(size_t _row_size, EncAnalysis type, int num_clients, int thread_id);
     ~Buffer();
     void add_gwas(GWAS* _gwas, ImputePolicy impute_policy);
     void finish();

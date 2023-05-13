@@ -1,14 +1,15 @@
 {
     "compute_server_bind_port": 6701,
-    "covariants": ["1", "isFemale"],
+    "covariants": [],
     "institutions": ["client1"],
-    "y_val_name": "PurpleHair",
+    "y_val_name": "disease-200",
     "analysis_type": "logistic",
     "enclave_path": "../enclave/gwasenc.signed",
     "register_server_info": {
-        "hostname": "102.37.153.209",
+        "hostname": "localhost",
         "port": 6401
-    }
+    },
+    "impute_policy": "Hail"
 }
 // Add "flag": "simulate" or "flag": "debug" to the config to run the enclave in simulation/debugging mode!
 // Add "impute_policy": "EPACTS" or "impute_policy": "Hail" to the config to modify the imputation policy to either EPACTS or Hail

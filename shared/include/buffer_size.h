@@ -24,7 +24,7 @@ The Makefile will copy that header to another location for the build process.
 
 #define EOFSeperator "~EOF~" // mark end of dataset
 
-enum EncAnalysis { linear, logistic };
+enum EncAnalysis { linear, logistic, linear_oblivious, logistic_oblivious };
 enum ImputePolicy { EPACTS, Hail };
 
 #endif

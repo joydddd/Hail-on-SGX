@@ -117,7 +117,7 @@ int getbatch(char batch[ENCLAVE_READ_BUFFER_SIZE], const int thread_id) {
     return res;
 }
 
-void writebatch(Row_T type, char buffer[ENCLAVE_READ_BUFFER_SIZE], const int buffer_size, const int thread_id) {
+void writebatch(char buffer[ENCLAVE_READ_BUFFER_SIZE], const int buffer_size, const int thread_id) {
     ComputeServer::write_allele_data(buffer, buffer_size, thread_id);
 }
 

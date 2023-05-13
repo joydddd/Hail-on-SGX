@@ -134,7 +134,7 @@ void setup_enclave_phenotypes(const int num_threads, EncAnalysis analysis_type, 
     try {
         for (int thread_id = 0; thread_id < num_threads; ++thread_id) {
             // TODO: set buffer type accordingly
-            buffer_list[thread_id] = new Buffer(total_row_size, (Row_T)analysis_type, num_clients, thread_id);
+            buffer_list[thread_id] = new Buffer(total_row_size, analysis_type, num_clients, thread_id);
         }
     } catch (const std::exception &e) { 
         std::cout << "Crash in buffer malloc with " << e.what() << std::endl;
@@ -292,6 +292,12 @@ void regression(const int thread_id, EncAnalysis analysis_type) {
                 case EncAnalysis::logistic:
                     if (!(row = (Log_row*)batch->get_row(buffer))) continue;
                     break;
+                case EncAnalysis::linear_oblivious:
+                    if (!(row = (Oblivious_lin_row*)batch->get_row(buffer))) continue;
+                    break;
+                case EncAnalysis::logistic_oblivious:
+                    if (!(row = (Oblivious_log_row*)batch->get_row(buffer))) continue;
+                    break;
                 default:
                     throw std::runtime_error("Invalid analysis type");
             }
@@ -317,7 +323,7 @@ void regression(const int thread_id, EncAnalysis analysis_type) {
                              "\t" + std::to_string(row->get_standard_error()) +
                              "\t" + std::to_string(row->get_t_stat());
 
-            if (analysis_type == EncAnalysis::logistic) {
+            if (analysis_type == EncAnalysis::logistic || analysis_type == EncAnalysis::logistic_oblivious) {
                 output_string += + "\t" + std::to_string(row->get_iterations()) + "\t";
                 // wanted to use a ternary, but the compiler doesn't like it?
                 if (converge) {

@@ -110,20 +110,20 @@ void Buffer::decrypt_line(char* plaintxt, size_t* plaintxt_length, unsigned int 
     *plaintxt_length = plaintxt_head - plaintxt;
 }
 
-Buffer::Buffer(size_t _row_size, Row_T row_type, int num_clients, int _thread_id)
-    : row_size(_row_size), type(row_type), thread_id(_thread_id) {
+Buffer::Buffer(size_t _row_size, EncAnalysis type, int num_clients, int _thread_id)
+    : row_size(_row_size), analysis_type(type), thread_id(_thread_id) {
     crypttxt = new char[ENCLAVE_READ_BUFFER_SIZE];
     plain_txt_compressed = new uint8_t[ENCLAVE_READ_BUFFER_SIZE];
     client_list = new int[num_clients];
     client_crypto_map = new char* [num_clients];
     // I now remember why we do this! Because we do batching, we can load in ENCLAVE_READ_BUFFER_SIZE
     // amount of data in at a time, BUT this data when decompressed can actually be up to 4 * ENCLAVE_READ_BUFFER_SIZE large
-    plaintxt_buffer = new char[ENCLAVE_READ_BUFFER_SIZE * 4];
+    plaintxt_buffer = new char[ENCLAVE_READ_BUFFER_SIZE];
     output_tail = 0;
 
     memset(crypttxt, 0, ENCLAVE_READ_BUFFER_SIZE);
     memset(plain_txt_compressed, 0, ENCLAVE_READ_BUFFER_SIZE);
-    memset(plaintxt_buffer, 0, ENCLAVE_READ_BUFFER_SIZE * 4);
+    memset(plaintxt_buffer, 0, ENCLAVE_READ_BUFFER_SIZE);
 }
 
 Buffer::~Buffer() {
@@ -133,12 +133,12 @@ Buffer::~Buffer() {
 }
 
 void Buffer::add_gwas(GWAS* _gwas, ImputePolicy impute_policy) {
-    free_batch = new Batch(row_size, type, impute_policy, _gwas, plaintxt_buffer);
+    free_batch = new Batch(row_size, analysis_type, impute_policy, _gwas, plaintxt_buffer);
 }
 
 void Buffer::output(const char* out, const size_t& length) {
     if (output_tail + length >= ENCLAVE_READ_BUFFER_SIZE) {
-        writebatch(type, output_buffer, output_tail, thread_id);
+        writebatch(output_buffer, output_tail, thread_id);
         memset(output_buffer, 0, ENCLAVE_READ_BUFFER_SIZE);
         output_tail = 0;
     }
@@ -148,7 +148,7 @@ void Buffer::output(const char* out, const size_t& length) {
 
 void Buffer:: clean_up() {
     if (output_tail > 0) {
-        writebatch(type, output_buffer, output_tail, thread_id);
+        writebatch(output_buffer, output_tail, thread_id);
     }
 }
 
