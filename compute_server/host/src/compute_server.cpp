@@ -463,7 +463,6 @@ void ComputeServer::allele_matcher() {
                     min_locus = block->locus;
                 }
             }
-            //std::cout << min_locus << std::endl;
             // if we did not find a min locus, all data has been received and we have processed all of it.
             // enqueue EOF for all enclave threads then shut down the matcher, its work is done.
             if (min_locus == "~") {
