@@ -43,7 +43,7 @@ ComputeServer::~ComputeServer() {
 }
 
 void ComputeServer::init(const std::string& config_file) {
-    //std::this_thread::sleep_for(std::chrono::milliseconds(10000));
+    std::this_thread::sleep_for(std::chrono::milliseconds(10000));
     num_threads = 1;//boost::thread::hardware_concurrency();
 
     std::ifstream compute_config_file(config_file);
@@ -759,6 +759,7 @@ int ComputeServer::get_allele_data(char* batch_data, const int thread_id) {
         //get_instance()->eof_read_list[thread_id] = false;
         memset(batch_data, 0, ENCLAVE_READ_BUFFER_SIZE);
         memcpy(batch_data, EOFSeperator, strlen(EOFSeperator));
+        //guarded_cout(std::to_string(thread_id), cout_lock);
         return 1;
     }
 
