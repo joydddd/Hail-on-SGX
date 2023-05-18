@@ -1,9 +1,9 @@
 {
     "compute_server_bind_port": 6701,
-    "covariants": [],
+    "covariants": ["1", "1-1313", "2-1313"],
     "institutions": ["client1"],
-    "y_val_name": "disease-200",
-    "analysis_type": "logistic",
+    "y_val_name": "disease-1313",
+    "analysis_type": "linear",
     "enclave_path": "../enclave/gwasenc.signed",
     "register_server_info": {
         "hostname": "localhost",

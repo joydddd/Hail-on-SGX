@@ -30,7 +30,7 @@ class Log_row : public Row {
 
    public:
     /* setup */
-    Log_row(size_t _size, GWAS* _gwas, ImputePolicy _impute_policy);
+    Log_row(size_t _size, const std::vector<int>& sizes, GWAS* _gwas, ImputePolicy _impute_policy);
 
     /* fitting */
     bool fit(size_t max_iteration = 15, double sig = 1e-6);

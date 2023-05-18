@@ -97,11 +97,10 @@ void Buffer::decrypt_line(char* plaintxt, size_t* plaintxt_length, unsigned int 
             if (!client_found) {
                 // this client does have target allele
                 for (int j = 0; j < client_info_list[client].size; j++) {
-                    *(plaintxt_head + j) = NA_uint8;
+                    *(plaintxt_head + j) = NA_byte; // set whole byte to 0b11111111
                 }
             }
             plaintxt_head += client_info_list[client].size;
-            //plaintxt_head += (client_info_list[client].size / 4) + (client_info_list[client].size % 4 == 0 ? 0 : 1);
         }
         *plaintxt_head = '\n';
         plaintxt_head++;
@@ -132,8 +131,8 @@ Buffer::~Buffer() {
     delete [] client_crypto_map;
 }
 
-void Buffer::add_gwas(GWAS* _gwas, ImputePolicy impute_policy) {
-    free_batch = new Batch(row_size, analysis_type, impute_policy, _gwas, plaintxt_buffer);
+void Buffer::add_gwas(GWAS* _gwas, ImputePolicy impute_policy, const std::vector<int>& sizes) {
+    free_batch = new Batch(row_size, analysis_type, impute_policy, _gwas, plaintxt_buffer, sizes);
 }
 
 void Buffer::output(const char* out, const size_t& length) {
@@ -161,6 +160,9 @@ Batch* Buffer::launch(std::vector<ClientInfo>& client_info_list, const int threa
     int num_lines = 0;
     while (!num_lines) {
         getbatch(&num_lines, crypttxt, thread_id);
+        // if (!num_lines) {
+
+        // }
     }
     if (!strcmp(crypttxt, EOFSeperator)) return nullptr;
     if (!free_batch) return nullptr;

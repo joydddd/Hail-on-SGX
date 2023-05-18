@@ -48,7 +48,7 @@ class Buffer {
 public:
     Buffer(size_t _row_size, EncAnalysis type, int num_clients, int thread_id);
     ~Buffer();
-    void add_gwas(GWAS* _gwas, ImputePolicy impute_policy);
+    void add_gwas(GWAS* _gwas, ImputePolicy impute_policy, const std::vector<int>& sizes);
     void finish();
     void clean_up();
 

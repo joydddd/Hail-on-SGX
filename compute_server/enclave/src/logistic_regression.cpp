@@ -9,7 +9,8 @@
 //////////              Log_row             /////////////////
 /////////////////////////////////////////////////////////////
 
-Log_row::Log_row(size_t _size, GWAS* _gwas, ImputePolicy _impute_policy) : Row(_size, _impute_policy), gwas(_gwas) {
+Log_row::Log_row(size_t _size, const std::vector<int>& sizes, GWAS* _gwas, ImputePolicy _impute_policy) : 
+    Row(_size, sizes, _impute_policy), gwas(_gwas) {
     beta_delta.resize(gwas->dim());
     // 2 is a magic number that helps with SqrMatrix construction, "highest level matrix"
     H = SqrMatrix(gwas->dim(), 2);
@@ -81,13 +82,13 @@ void Log_row::init() {
         beta_delta[i] = 1;
     }
 
-    if (impute_policy == ImputePolicy::Hail) {
+    if (impute_average) {
         double sum = 0;
         double count = 0;
         uint8_t val;
         for (int i = 0 ; i < n; ++i) {
             val = (data[i / 4] >> ((i % 4) * 2)) & 0b11;
-            if (!is_NA(val)) {
+            if (is_NA_uint8(val)) {
                 sum += val;
                 count++;
             }
@@ -109,15 +110,17 @@ void Log_row::update_estimate() {
         }
     }
     double y_est;
-    size_t client_idx = 0, data_idx = 0;
+    unsigned int data_idx = 0, client_offset = 0, client_idx = 0;
     double x;
+    bool is_NA;
     for (size_t i = 0; i < n; i++) {
         //double x = data[i];
-        double x = (data[i / 4] >> ((i % 4) * 2) ) & 0b11;
+        double x = (data[(i + client_offset) / 4] >> (((i + client_offset) % 4) * 2) ) & 0b11;
+        is_NA = is_NA_uint8(x);
         // data[i / 4] >>= 2;
         // std::cout << x << "   ";
-        x = (impute_policy == ImputePolicy::Hail) && is_NA(x) ? genotype_average : x;
-        if (!is_NA(x)) {
+        x = (impute_average) && is_NA ? genotype_average : x;
+        if (!is_NA) {
             y_est = b[0] * x;
             for (size_t j = 1; j < gwas->dim(); j++)
                 y_est += gwas->covariants[j - 1]->data[i] * b[j];
@@ -127,11 +130,12 @@ void Log_row::update_estimate() {
             update_Grad(y_est, x, i);
         }
         /* update data index */
-        // data_idx++;
-        // if (data_idx >= length[client_idx]) {
-        //     data_idx = 0;
-        //     client_idx++;
-        // }
+        data_idx++;
+        if (data_idx >= client_lengths[client_idx]) {
+            data_idx = 0;
+            client_idx++;
+            client_offset += (4 - ((1 + i + client_offset) % 4)) % 4; // how many pairs of bits do we need to skip?
+        }
     }
     /* build lower half of H */
     for (size_t j = 0; j < gwas->dim(); j++) {
