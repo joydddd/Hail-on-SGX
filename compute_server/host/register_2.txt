@@ -1,0 +1,23 @@
+
+ Running on port 6701
+
+
+**RUNNING REGRESSION**
+
+RSA Pub Key Set
+enclave running on 1 clients
+AES KEY and IV loaded
+Init finished
+Y value loaded
+Starting Enclave: 1684444071096
+Cov loaded
+Setup finished
+received first message: 1684444071091
+received last message: 1684444071662
+Enclave time total: 12351450
+
+ Running on port 6701
+
+
+**RUNNING REGRESSION**
+
