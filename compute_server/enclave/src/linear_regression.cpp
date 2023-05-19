@@ -7,8 +7,10 @@
 // DEBUG:
 #include <iostream>
 
-Lin_row::Lin_row(size_t _size, GWAS* _gwas, ImputePolicy _impute_policy)
-    : Row(_size, _impute_policy), gwas(_gwas), XTX(gwas->dim(), 2), XTX_og(gwas->dim(), 2) {
+Lin_row::Lin_row(size_t _size, const std::vector<int>& sizes, GWAS* _gwas, ImputePolicy _impute_policy)
+    : Row(_size, sizes, _impute_policy), gwas(_gwas), XTX(gwas->dim(), 2), XTX_og(gwas->dim(), 2) {
+
+    impute_average = impute_policy == ImputePolicy::Hail;
     beta.resize(gwas->dim());
     XTY.resize(gwas->dim());
     XTY_og.resize(gwas->dim());
@@ -51,13 +53,13 @@ bool Lin_row::fit(size_t max_iteration, double sig) {
         }
     }
 
-    if (impute_policy == ImputePolicy::Hail) {
+    if (impute_average) {
         double sum = 0;
         double count = 0;
         uint8_t val;
         for (int i = 0 ; i < n; ++i) {
             val = (data[i / 4] >> ((i % 4) * 2)) & 0b11;
-            if (!is_NA(val)) {
+            if (is_not_NA_oblivious(val)) {
                 sum += val;
                 count++;
             }
@@ -69,14 +71,16 @@ bool Lin_row::fit(size_t max_iteration, double sig) {
     }
 
     /* calculate XTX & XTY*/
-    size_t client_idx = 0, data_idx = 0;
+    unsigned int data_idx = 0, client_offset = 0, client_idx = 0;
+    bool is_NA;
     for (int i = 0; i < n; ++i) {
         //double x = data[i];
-        double x = (data[i / 4] >> ((i % 4) * 2) ) & 0b11;
-        x = (impute_policy == ImputePolicy::Hail) && is_NA(x) ? genotype_average : x;
+        double x = (data[(i + client_offset) / 4] >> (((i + client_offset) % 4) * 2) ) & 0b11;
+        is_NA = is_NA_uint8(x);
+        x = impute_average && is_NA ? genotype_average : x;
         double y = gwas->y->data[i];
 
-        if (!is_NA(x)) {
+        if (!is_NA) {
             XTY[0] += x * y;
             for (int j = 0; j < gwas->dim(); ++j) {
                 double x1 = (j == 0) ? x : gwas->covariants[j - 1]->data[i];
@@ -96,9 +100,9 @@ bool Lin_row::fit(size_t max_iteration, double sig) {
 
         /* update data index */
         data_idx++;
-        if (data_idx >= length[client_idx]) {
+        if (data_idx >= client_lengths[client_idx]) {
             data_idx = 0;
-            client_idx++;
+            client_offset += (4 - ((1 + i + client_offset) % 4)) % 4; // how many pairs of bits do we need to skip?
         }
     }
 
@@ -114,14 +118,17 @@ bool Lin_row::fit(size_t max_iteration, double sig) {
 
     /* calculate standard error */
     double sse = 0;
-    client_idx = 0;
+    client_offset = 0;
     data_idx = 0;
+    client_idx = 0;
+
     for (int i = 0; i < n; ++i) {
         //double x = data[i];
-        double x = (data[i / 4] >> ((i % 4) * 2) ) & 0b11;
-        x = (impute_policy == ImputePolicy::Hail) && is_NA(x) ? genotype_average : x;
+        double x = (data[(i + client_offset) / 4] >> (((i + client_offset) % 4) * 2) ) & 0b11;
+        is_NA = is_NA_uint8(x);
+        x = impute_average && is_NA ? genotype_average : x;
         double y = gwas->y->data[i];
-        if (!is_NA(x)) {
+        if (is_NA) {
             double y_est = beta[0] * x;
             for (int j = 1; j < gwas->dim(); j++){
                 y_est += gwas->covariants[j - 1]->data[i] * beta[j];
@@ -130,6 +137,11 @@ bool Lin_row::fit(size_t max_iteration, double sig) {
         }
 
         /* update data index */
+        data_idx++;
+        if (data_idx >= client_lengths[client_idx]) {
+            data_idx = 0;
+            client_offset += (4 - ((1 + i + client_offset) % 4)) % 4; // how many pairs of bits do we need to skip?
+        }
     }
 
     sse = sse / (n - gwas->dim() - 1);

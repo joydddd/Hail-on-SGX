@@ -7,8 +7,10 @@
 // DEBUG:
 #include <iostream>
 
+std::vector<int> babab;
+
 Oblivious_lin_row::Oblivious_lin_row(size_t _size, GWAS* _gwas, ImputePolicy _impute_policy)
-    : Row(_size, _impute_policy), gwas(_gwas), XTX(gwas->dim(), 2), XTX_og(gwas->dim(), 2) {
+    : Row(_size, babab, _impute_policy), gwas(_gwas), XTX(gwas->dim(), 2), XTX_og(gwas->dim(), 2) {
     beta.resize(gwas->dim());
     XTY.resize(gwas->dim());
     XTY_og.resize(gwas->dim());
@@ -83,12 +85,12 @@ bool Oblivious_lin_row::fit(size_t max_iteration, double sig) {
             XTX[j][0] += x1 * x;
         }
 
-        /* update data index */
-        data_idx++;
-        if (data_idx >= length[client_idx]) {
-            data_idx = 0;
-            client_idx++;
-        }
+        // /* update data index */
+        // data_idx++;
+        // if (data_idx >= length[client_idx]) {
+        //     data_idx = 0;
+        //     client_idx++;
+        // }
     }
 
     for (int j = 0; j < gwas->dim(); j++) {

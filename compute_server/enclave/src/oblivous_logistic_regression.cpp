@@ -9,7 +9,9 @@
 //////////              Oblivious_log_row             /////////////////
 /////////////////////////////////////////////////////////////
 
-Oblivious_log_row::Oblivious_log_row(size_t _size, GWAS* _gwas, ImputePolicy _impute_policy) : Row(_size, _impute_policy), gwas(_gwas) {
+std::vector<int> ababa;
+
+Oblivious_log_row::Oblivious_log_row(size_t _size, GWAS* _gwas, ImputePolicy _impute_policy) : Row(_size, ababa, _impute_policy), gwas(_gwas) {
     beta_delta.resize(gwas->dim());
     // 2 is a magic number that helps with SqrMatrix construction, "highest level matrix"
     H = SqrMatrix(gwas->dim(), 2);

@@ -12,18 +12,23 @@
 #include "gwas.h"
 /* provide Alleles & Loci */
 
+#define NA_byte 0xFF
 #define NA_uint8 0x3
 #define NA_uint UINT_MAX
 #define NA_double 3.0
 #define uint8_OFFSET 0
 
-template <typename T>
-inline bool is_NA(T a) {
-    if (std::isnan(a)) return true;
-    if (std::is_same<T, uint8_t>::value) return (a == NA_uint8);
-    if (std::is_same<T, unsigned int>::value) return (a == NA_uint);
-    if (std::is_same<T, double>::value) return (a == NA_double);
-    return true;
+// template <typename T>
+// inline bool is_NA(T a) {
+//     if (std::isnan(a)) return true;
+//     if (std::is_same<T, uint8_t>::value) return (a == NA_uint8);
+//     if (std::is_same<T, unsigned int>::value) return (a == NA_uint);
+//     if (std::is_same<T, double>::value) return (a == NA_double);
+//     return true;
+// }
+
+inline bool is_NA_uint8(uint8_t val) {
+    return val == NA_uint8;
 }
 
 inline uint8_t is_not_NA_oblivious(uint8_t val) {
@@ -46,7 +51,7 @@ class Row {
      size_t read_row_len;
     //  std::vector<uint8_t> data;
      uint8_t *data;
-     std::vector<size_t> length;
+     std::vector<int> client_lengths;
      size_t genotype_sum;
      size_t genotype_count;
      double genotype_average;
@@ -56,6 +61,8 @@ class Row {
      std::string alleles_str;
 
      ImputePolicy impute_policy;
+
+     bool impute_average;
 
     public:
      /* return metadata */
@@ -71,7 +78,7 @@ class Row {
 
 
      /* setup */
-     Row(size_t size, ImputePolicy _impute_policy);
+     Row(size_t size, const std::vector<int>& sizes, ImputePolicy _impute_policy);
      size_t read(const char line[]); // return the size of line consumed
      void combine(Row *other);
      void append_invalid_elts(size_t size);

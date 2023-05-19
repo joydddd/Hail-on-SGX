@@ -1,10 +1,15 @@
 #include "enc_gwas.h"
 #include "assert.h"
 
-Row::Row(size_t _size, ImputePolicy _impute_policy) : n(_size), impute_policy(_impute_policy) {
+Row::Row(size_t _size, const std::vector<int>& sizes, ImputePolicy _impute_policy) : n(_size), impute_policy(_impute_policy) {
+    impute_average = impute_policy == ImputePolicy::Hail;
     //data.resize(_size);
     //data.push_back(new uint8_t[_size]);
-    length.push_back(_size);
+    client_lengths.resize(sizes.size());
+    for (int i = 0; i < sizes.size(); ++i) {
+        client_lengths[i] = sizes[i];
+    }
+
     it_count = 0;
     //read_row_len = n;
     read_row_len = ((n / 4) + (n % 4 == 0 ? 0 : 1));
@@ -16,7 +21,8 @@ void Row::reset() {
 }
 
 size_t Row::read(const char line[]) {
-    static int once = 0;
+    //std::cout << line << std::endl;
+    static int count = 0;
     loci_str.clear();
     alleles_str.clear();
     int tabs_found = 0;
@@ -99,11 +105,11 @@ void Row::combine(Row *other) {
 }
 
 void Row::append_invalid_elts(size_t size) {
-    uint8_t *new_array = new uint8_t[size];
-    // data.push_back(new_array);
-    length.push_back(size);
-    n += size;
-    for (size_t i = 0; i < size; i++) new_array[i] = NA_uint8;
+    // uint8_t *new_array = new uint8_t[size];
+    // // data.push_back(new_array);
+    // length.push_back(size);
+    // n += size;
+    // for (size_t i = 0; i < size; i++) new_array[i] = NA_uint8;
 }
 
 #ifdef DEBUG

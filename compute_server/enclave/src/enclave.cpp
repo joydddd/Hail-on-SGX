@@ -241,7 +241,7 @@ void setup_enclave_phenotypes(const int num_threads, EncAnalysis analysis_type, 
     delete[] buffer_decrypt;
     try {
         for (int thread_id = 0; thread_id < num_threads; ++thread_id) {
-            buffer_list[thread_id]->add_gwas(gwas, impute_policy);
+            buffer_list[thread_id]->add_gwas(gwas, impute_policy, client_y_size);
         }
     } catch (const std::exception &e) { 
         std::cout << "Crash in add gwas with " << e.what() << std::endl;
