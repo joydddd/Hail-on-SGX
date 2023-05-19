@@ -1,0 +1,110 @@
+
+ Running on port 8601
+ID: -1rs Msg Type: 0
+ID: 0 Msg Type: 1
+ID: 0 Msg Type: 2
+ID: 0 Msg Type: 3
+Fill/encryption time total: 66427769
+Sending first message: 1684467254496
+Sending last message: 1684467289000
+Data send time total: 34504487
+ID: -1rs Msg Type: 4
+
+ Running on port 8601
+ID: -1rs Msg Type: 0
+ID: 0 Msg Type: 1
+ID: 0 Msg Type: 2
+ID: 0 Msg Type: 3
+Fill/encryption time total: 26339999
+Sending first message: 1684467722705
+Sending last message: 1684467730667
+Data send time total: 7961927
+ID: -1rs Msg Type: 4
+
+ Running on port 8601
+ID: -1rs Msg Type: 0
+ID: 0 Msg Type: 1
+ID: 0 Msg Type: 2
+ID: 0 Msg Type: 3
+Fill/encryption time total: 25371604
+Sending first message: 1684467822364
+Sending last message: 1684467829947
+Data send time total: 7583088
+ID: -1rs Msg Type: 4
+
+ Running on port 8601
+ID: -1rs Msg Type: 0
+ID: 0 Msg Type: 1
+ID: 0 Msg Type: 2
+ID: 0 Msg Type: 3
+Fill/encryption time total: 25478103
+Sending first message: 1684468282604
+Sending last message: 1684468291947
+Data send time total: 9342913
+ID: -1rs Msg Type: 4
+
+ Running on port 8601
+ID: -1rs Msg Type: 0
+ID: 0 Msg Type: 1
+ID: 0 Msg Type: 2
+ID: 0 Msg Type: 3
+Fill/encryption time total: 24021269
+Sending first message: 1684468380627
+Sending last message: 1684468388719
+Data send time total: 8092243
+ID: -1rs Msg Type: 4
+
+ Running on port 8601
+ID: -1rs Msg Type: 0
+ID: 0 Msg Type: 1
+ID: 0 Msg Type: 2
+ID: 0 Msg Type: 3
+Fill/encryption time total: 25586346
+Sending first message: 1684468837115
+Sending last message: 1684468845498
+Data send time total: 8383480
+ID: -1rs Msg Type: 4
+
+ Running on port 8601
+ID: -1rs Msg Type: 0
+ID: 0 Msg Type: 1
+ID: 0 Msg Type: 2
+ID: 0 Msg Type: 3
+Fill/encryption time total: 25372352
+Sending first message: 1684468936483
+Sending last message: 1684468944553
+Data send time total: 8070323
+ID: -1rs Msg Type: 4
+
+ Running on port 8601
+ID: -1rs Msg Type: 0
+ID: 0 Msg Type: 1
+ID: 0 Msg Type: 2
+ID: 0 Msg Type: 3
+Fill/encryption time total: 25216001
+Sending first message: 1684469394977
+Sending last message: 1684469402721
+Data send time total: 7743498
+ID: -1rs Msg Type: 4
+
+ Running on port 8601
+ID: -1rs Msg Type: 0
+ID: 0 Msg Type: 1
+ID: 0 Msg Type: 2
+ID: 0 Msg Type: 3
+Fill/encryption time total: 25052191
+Sending first message: 1684469493951
+Sending last message: 1684469502272
+Data send time total: 8320238
+ID: -1rs Msg Type: 4
+
+ Running on port 8601
+ID: -1rs Msg Type: 0
+ID: 0 Msg Type: 1
+ID: 0 Msg Type: 2
+ID: 0 Msg Type: 3
+Fill/encryption time total: 25692898
+Sending first message: 1684469962006
+Sending last message: 1684469971108
+Data send time total: 9101832
+ID: -1rs Msg Type: 4

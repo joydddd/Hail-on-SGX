@@ -5,6 +5,7 @@ import multiprocessing
 import subprocess
 import glob
 import os
+import math
 
 random.seed('0x8BADF00D')
 
@@ -12,7 +13,7 @@ rand_size = 100003
 
 rands = np.random.random(rand_size)
 
-ALLELE_COUNT =  125000
+ALLELE_COUNT =  math.ceil(250000 * 2)
 CLIENT_COUNT = 10000 if len(sys.argv) != 2 else int(sys.argv[1])
 print(CLIENT_COUNT)
 NUM_PROCS = multiprocessing.cpu_count() * 2

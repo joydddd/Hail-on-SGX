@@ -1,0 +1,14 @@
+
+ Running on port 6401
+ID/Client: client1 Msg Type: 1
+ID/Client: -1 Msg Type: 0
+13.64.173.72 0
+ID/Client: 0 Msg Type: 3
+Received last message: 1684474867446
+ID/Client: client1 Msg Type: 1
+
+ Running on port 6401
+ID/Client: -1 Msg Type: 0
+13.64.173.72 0
+ID/Client: 0 Msg Type: 3
+Received last message: 1684475179103

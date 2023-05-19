@@ -1,7 +1,7 @@
 {
     "client_name": "client1",
     "client_bind_port": 8601,
-    "allele_file": "client_data/generated_alleles_20000-125000.tsv",
+    "allele_file": "client_data/generated_alleles_10000-31250.tsv",
     "register_server_info": {
         "hostname": "20.55.51.45",
         "port": 6401
