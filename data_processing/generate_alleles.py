@@ -13,10 +13,10 @@ rand_size = 100003
 
 rands = np.random.random(rand_size)
 
-ALLELE_COUNT =  math.ceil(250000 / 8)
+ALLELE_COUNT =  math.ceil(250000 * 2)
 CLIENT_COUNT = 10000 if len(sys.argv) != 2 else int(sys.argv[1])
 print(CLIENT_COUNT)
-NUM_PROCS = multiprocessing.cpu_count() // 4
+NUM_PROCS = multiprocessing.cpu_count()
 OUTPUT_FILE = f"../client/client_data/generated_alleles_{CLIENT_COUNT}-{ALLELE_COUNT}.tsv"
 
 def run_bash_cmd(cmd):

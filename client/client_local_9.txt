@@ -1,0 +1,66 @@
+
+ Running on port 8601
+ID: -1rs Msg Type: 0
+ID: 0 Msg Type: 1
+ID: 0 Msg Type: 2
+ID: 0 Msg Type: 3
+Fill/encryption time total: 59475497
+Sending first message: 1684508306774
+Sending last message: 1684508312629
+Data send time total: 5854275
+ID: -1rs Msg Type: 4
+
+ Running on port 8601
+ID: -1rs Msg Type: 0
+ID: 0 Msg Type: 1
+ID: 0 Msg Type: 2
+ID: 0 Msg Type: 3
+Fill/encryption time total: 60275931
+Sending first message: 1684509973291
+Sending last message: 1684509978777
+Data send time total: 5485864
+Exception Socket recv failed
+
+
+
+ Running on port 8601
+ID: -1rs Msg Type: 0
+ID: 0 Msg Type: 1
+ID: 0 Msg Type: 2
+ID: 0 Msg Type: 3
+Fill/encryption time total: 59396372
+Sending first message: 1684526336560
+Sending last message: 1684526342064
+Data send time total: 5503461
+ID: -1rs Msg Type: 4
+
+ Running on port 8601
+ID: -1rs Msg Type: 0
+ID: 0 Msg Type: 1
+ID: 0 Msg Type: 2
+ID: 0 Msg Type: 3
+Fill/encryption time total: 59318813
+Sending first message: 1684528004472
+Sending last message: 1684528010204
+Data send time total: 5731434
+
+ Running on port 8601
+ID: -1rs Msg Type: 0
+ID: 0 Msg Type: 1
+ID: 0 Msg Type: 2
+ID: 0 Msg Type: 3
+Fill/encryption time total: 59330658
+Sending first message: 1684537412651
+Sending last message: 1684537418099
+Data send time total: 5448115
+ID: -1rs Msg Type: 4
+
+ Running on port 8601
+ID: -1rs Msg Type: 0
+ID: 0 Msg Type: 1
+ID: 0 Msg Type: 2
+ID: 0 Msg Type: 3
+Fill/encryption time total: 59316699
+Sending first message: 1684539078782
+Sending last message: 1684539084298
+Data send time total: 5516141

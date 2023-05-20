@@ -1,0 +1,42 @@
+
+ Running on port 6401
+ID/Client: client1 Msg Type: 1
+ID/Client: -1 Msg Type: 0
+13.64.173.72 0
+ID/Client: 0 Msg Type: 3
+Received last message: 1684509886084
+ID/Client: client1 Msg Type: 1
+
+ Running on port 6401
+ID/Client: -1 Msg Type: 0
+13.64.173.72 0
+ID/Client: 0 Msg Type: 3
+Received last message: 1684510152903
+
+ Running on port 6401
+ID/Client: client1 Msg Type: 1
+ID/Client: -1 Msg Type: 0
+13.64.173.72 0
+ID/Client: 0 Msg Type: 3
+Received last message: 1684527917818
+ID/Client: client1 Msg Type: 1
+
+ Running on port 6401
+ID/Client: -1 Msg Type: 0
+13.64.173.72 0
+ID/Client: 0 Msg Type: 3
+Received last message: 1684528183998
+
+ Running on port 6401
+ID/Client: client1 Msg Type: 1
+ID/Client: -1 Msg Type: 0
+13.64.173.72 0
+ID/Client: 0 Msg Type: 3
+Received last message: 1684538992086
+ID/Client: client1 Msg Type: 1
+
+ Running on port 6401
+ID/Client: -1 Msg Type: 0
+13.64.173.72 0
+ID/Client: 0 Msg Type: 3
+Received last message: 1684539258342
