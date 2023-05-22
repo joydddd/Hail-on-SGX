@@ -6,7 +6,7 @@ Only modify the buffer size header file in the shared directory!
 The Makefile will copy that header to another location for the build process.
 */
 
-#define ENCLAVE_READ_BUFFER 2000    // in KB
+#define ENCLAVE_READ_BUFFER 20000    // in KB
 #define ENCLAVE_SMALL_BUFFER 10 // in KB
 #define MAX_CLIENTNAME_LENGTH 30
 #define AES_KEY_LENGTH 16 // 128 bit enc

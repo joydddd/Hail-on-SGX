@@ -13,11 +13,11 @@ rand_size = 100003
 
 rands = np.random.random(rand_size)
 
-ALLELE_COUNT =  math.ceil(250000 * 2)
-CLIENT_COUNT = 10000 if len(sys.argv) != 2 else int(sys.argv[1])
+ALLELE_COUNT =  125000
+CLIENT_COUNT = 5000 if len(sys.argv) != 2 else int(sys.argv[1])
 print(CLIENT_COUNT)
-NUM_PROCS = multiprocessing.cpu_count()
-OUTPUT_FILE = f"../client/client_data/generated_alleles_{CLIENT_COUNT}-{ALLELE_COUNT}.tsv"
+NUM_PROCS = 1 #multiprocessing.cpu_count()
+OUTPUT_FILE = f"../client/client_data/generated_alleles_{CLIENT_COUNT}.tsv"
 
 def run_bash_cmd(cmd):
     process = subprocess.Popen(cmd.split(), stdout=subprocess.PIPE)
@@ -74,7 +74,7 @@ for key in alleles:
 for key in alleles:
     alleles[key] = alleles[key] / alleles_sum
 
-scale_up_factor =  (ALLELE_COUNT // num_alleles) + 1
+scale_up_factor = 1
 
 proc_div = num_alleles / NUM_PROCS
 

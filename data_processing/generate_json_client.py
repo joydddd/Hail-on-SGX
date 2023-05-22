@@ -5,7 +5,7 @@ for count in range(100000, 2100000, 100000):
             f.write('\t"client_name": "client1",\n')
             f.write(f'\t"client_bind_port": 8601,\n')
             f.write(f'\t"allele_file": "client_data/generated_alleles_{count}.tsv",\n')
-            f.write('\t"register_server_info": { "hostname": "20.42.86.216", "port": 6401 }\n')
+            f.write('\t"register_server_info": { "hostname": "localhost", "port": 6401 }\n')
             f.write('}')
 
 # {

@@ -1,0 +1,100 @@
+
+ Running on port 6701
+
+
+**RUNNING REGRESSION**
+
+RSA Pub Key Set
+enclave running on 1 clients
+AES KEY and IV loaded
+Init finished
+received first message: 1684712056334
+Y value loaded
+Starting Enclave: 1684712056342
+Cov loaded
+Setup finished
+received last message: 1684712057170
+Logistic regression finished!
+Enclave time total: 641843186
+Sending EOF message: 1684712683112
+Exiting enclave
+
+
+**RUNNING REGRESSION**
+
+
+ Running on port 6701
+RSA Pub Key Set
+enclave running on 1 clients
+AES KEY and IV loaded
+Init finished
+received first message: 1684712709341
+Y value loaded
+Starting Enclave: 1684712709344
+Cov loaded
+Setup finished
+received last message: 1684712710180
+Logistic regression finished!
+Enclave time total: 63809434
+Sending EOF message: 1684712758070
+Exiting enclave
+
+ Running on port 6701
+
+
+**RUNNING REGRESSION**
+
+RSA Pub Key Set
+enclave running on 1 clients
+AES KEY and IV loaded
+Init finished
+received first message: 1684714816399
+Y value loaded
+Starting Enclave: 1684714816407
+Cov loaded
+Setup finished
+received last message: 1684714817219
+Logistic regression finished!
+Enclave time total: 641936703
+Sending EOF message: 1684715443242
+Exiting enclave
+
+
+**RUNNING REGRESSION**
+
+
+ Running on port 6701
+RSA Pub Key Set
+enclave running on 1 clients
+AES KEY and IV loaded
+Init finished
+received first message: 1684715469462
+Y value loaded
+Starting Enclave: 1684715469468
+Cov loaded
+Setup finished
+received last message: 1684715470293
+Logistic regression finished!
+Enclave time total: 63367147
+Sending EOF message: 1684715517774
+Exiting enclave
+
+ Running on port 6701
+
+**RUNNING REGRESSION**
+
+
+RSA Pub Key Set
+enclave running on 1 clients
+AES KEY and IV loaded
+Init finished
+received first message: 1684717570866
+Y value loaded
+Starting Enclave: 1684717570871
+Cov loaded
+Setup finished
+received last message: 1684717571688
+Logistic regression finished!
+Enclave time total: 639409599
+Sending EOF message: 1684718195107
+Exiting enclave

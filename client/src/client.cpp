@@ -351,13 +351,15 @@ void Client::queue_helper(const int global_id, const int num_helpers) {
         if (getline(xval, line)) {
             line_num = current_line_num++;
             xval_file_lock.unlock();
-            if (global_id == 0 && !num_patients) {
+            // It's ok to have a benign data race here - each thread will do redundant writes of the same value.
+            // I used to eliminate this redundancy by only having thread with id 0 do this write, but it is
+            // theoretically (and practially...) possible for thread 0 to not get any lines causing
+            // num_patients to never be written. This seems like the best solution!
+            if (!num_patients) {
                 // Subtract 2 for locus->alleles tab and alleles->first value tab
                 std::vector<std::string> patients_split;
                 Parser::split(patients_split, line, '\t');
-                // This isn't very clean but I want to check the size of the encrypted/encoded line once
                 num_patients = patients_split.size() - 2;
-                
             }
 
             EncryptionBlock *block = new EncryptionBlock();
