@@ -51,12 +51,12 @@ Row* Batch::get_row(Buffer* buffer) {
     }
     //start_timer("parse_and_decrypt()");
     st = Working;
-    row->reset();
+    //row->reset();
     int res = row->read(plaintxt + batch_head);
     batch_head = batch_head + res;
-#ifdef DEBUG
-    // row->print();
-#endif
+// #ifdef DEBUG
+//     row->print();
+// #endif
     return row;
 }
 

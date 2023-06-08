@@ -73,7 +73,7 @@ void Buffer::decrypt_line(char* plaintxt, size_t* plaintxt_length, unsigned int 
             crypt_head++;
         }
         /* decrypt data */
-        for (size_t i = 0; i < client_count; i++){
+        for (int i = 0; i < client_count; i++){
             client_crypto_map[client_list[i]] = crypt_head;
             crypt_head += client_info_list[client_list[i]].crypto_size;
         }
@@ -145,7 +145,7 @@ void Buffer::output(const char* out, const size_t& length) {
     output_tail += length;
 }
 
-void Buffer:: clean_up() {
+void Buffer::clean_up() {
     if (output_tail > 0) {
         writebatch(output_buffer, output_tail, thread_id);
     }

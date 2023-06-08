@@ -20,10 +20,10 @@ class MathError{
 class SqrMatrix{
     private:
     std::vector<std::vector<double>> m;
-    size_t n;
+    int n;
     public: 
     SqrMatrix():n(0){}
-    SqrMatrix(size_t s, int opt):m(s, std::vector<double>(s, 0)), n(s) {
+    SqrMatrix(int s, int opt):m(s, std::vector<double>(s, 0)), n(s) {
         if (opt) {
             det = new SqrMatrix(s, 0);
         }
@@ -52,15 +52,15 @@ class SqrMatrix{
     SqrMatrix(SqrMatrix&&) = default;
     SqrMatrix& operator=(const SqrMatrix&) = default;
     SqrMatrix& operator=(SqrMatrix&) = default;
-    std::vector<double>& operator[](size_t index){return m[index];}
-    double at(size_t row, size_t col) const {return m[row][col];}
-    size_t size() const {return n;}
+    std::vector<double>& operator[](int index){return m[index];}
+    double at(int row, int col) const {return m[row][col];}
+    int size() const {return n;}
     bool is_empty() { return n == 0; }
     // friend SqrMatrix operator+(const SqrMatrix& me, const SqrMatrix &other) {
     //     if (me.n != other.n) throw MathError("SqrMatrix size mistmatch");
     //     SqrMatrix sum(me.n);
-    //     for (size_t i=0; i<me.n; i++){
-    //         for (size_t j=0; j<me.n; j++){
+    //     for (int i=0; i<me.n; i++){
+    //         for (int j=0; j<me.n; j++){
     //             sum.m[i][j] = me.m[i][j] + other.m[i][j];
     //         }
     //     }
@@ -68,8 +68,8 @@ class SqrMatrix{
     // }
     // friend SqrMatrix operator*(const SqrMatrix& me, double mult){
     //     SqrMatrix ans(me.n);
-    //     for (size_t i=0; i<me.n; i++){
-    //         for (size_t j=0; j<me.n; j++){
+    //     for (int i=0; i<me.n; i++){
+    //         for (int j=0; j<me.n; j++){
     //             ans[i][j] = me.m[i][j] * mult;
     //         }
     //     }
@@ -78,8 +78,8 @@ class SqrMatrix{
     // friend vector<double> operator*(const SqrMatrix& me, const vector<double>& mult){
     //     if (mult.size() != me.n) throw MathError("Matrix Vector dim mismatch");
     //     vector<double> ans(me.n, 0);
-    //     for (size_t i=0; i<me.n; i++){
-    //         for (size_t j=0; j<me.n; j++){
+    //     for (int i=0; i<me.n; i++){
+    //         for (int j=0; j<me.n; j++){
     //             ans[i] += me.m[i][j] * mult[j];
     //         }
     //     }
@@ -87,17 +87,17 @@ class SqrMatrix{
     // }
 
     void multiply_matrix(double mult){
-        for (size_t i = 0; i < n; i++){
-            for (size_t j = 0; j < n; j++){
+        for (int i = 0; i < n; i++){
+            for (int j = 0; j < n; j++){
                 m[i][j] *= mult;
             }
         }
     }
     void calculate_beta_delta(const std::vector<double>& mult, std::vector<double>& beta_delta) const {
         if (mult.size() != n) throw MathError("Matrix Vector dim mismatch");
-        for (size_t i = 0; i < n; i++){
+        for (int i = 0; i < n; i++){
             beta_delta[i] = 0;
-            for (size_t j = 0; j < n; j++){
+            for (int j = 0; j < n; j++){
                 beta_delta[i] += m[i][j] * mult[j];
             }
         }
@@ -105,9 +105,9 @@ class SqrMatrix{
 
     void calculate_matrix_times_vec(const std::vector<double>& mult, std::vector<double>& ans){
         if (mult.size() != n) throw MathError("Matrix Vector dim mismatch"); 
-        for (size_t i=0; i<n;i++){
+        for (int i=0; i<n;i++){
             ans[i] = 0;
-            for (size_t j = 0; j < n; j++) {
+            for (int j = 0; j < n; j++) {
                 ans[i] += m[i][j] * mult[j];
             }
         }
@@ -125,8 +125,8 @@ class SqrMatrix{
     }
     #endif
     void T() const{
-        for (size_t i = 0; i < n; i++){
-            for (size_t j = 0; j < n; j++){
+        for (int i = 0; i < n; i++){
+            for (int j = 0; j < n; j++){
                 (*t)[i][j] = (*cof)[j][i];
             }
         }
@@ -135,7 +135,7 @@ class SqrMatrix{
     // vector<double> DIAG()const{
     //     vector<double> ans;
     //     ans.resize(n);
-    //     for(size_t i=0; i<n; i++){
+    //     for(int i=0; i<n; i++){
     //         ans[i] = m[i][i];
     //     }
     //     return ans;
@@ -154,13 +154,13 @@ class SqrMatrix{
                 }
             } 
         }
-        for (size_t x = 0; x < n; x++){
-            for (size_t y = 0; y < n; y++){
-                size_t subi = 0;
-                for (size_t i = 0; i < n; i++){
+        for (int x = 0; x < n; x++){
+            for (int y = 0; y < n; y++){
+                int subi = 0;
+                for (int i = 0; i < n; i++){
                     if (i == x) continue;
-                    size_t subj = 0;
-                    for (size_t j = 0; j < n; j++){
+                    int subj = 0;
+                    for (int j = 0; j < n; j++){
                         if (j == y) continue;
                         (*sub)[subi][subj] = m[i][j];
                         subj++;
@@ -189,7 +189,7 @@ class SqrMatrix{
             if ((*det)[k][k] == 0) {
                 int l = 0;
                 for (l = k + 1; l < n; l++) {
-                    if ((*det)[l][k] != 0) {       
+                    if ((*det)[l][k] != 0) {
                         std::swap((*det)[l], (*det)[k]);
                         sign = -sign;
                         break;
@@ -207,7 +207,7 @@ class SqrMatrix{
                 for (int j = k + 1; j < n; j++) {
                     (*det)[i][j] = (*det)[k][k] * (*det)[i][j] - (*det)[i][k] * (*det)[k][j];
                     if (k != 0) {
-                        (*det)[i][j] /= (*det)[k-1][k-1];
+                        (*det)[i][j] /= (*det)[k - 1][k - 1];
                     }
                 }
             }

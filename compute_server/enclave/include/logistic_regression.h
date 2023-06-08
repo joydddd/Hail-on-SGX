@@ -18,22 +18,23 @@ class Log_row : public Row {
     std::vector<double> beta_delta;
     SqrMatrix H;
     std::vector<double> Grad;
+    std::vector<double> y_ests;
     double standard_error;
     bool fitted = false;
     void update_beta();
 
 
     void update_estimate();
-    inline void update_upperH(double y_est, uint8_t x, size_t i);
-    inline void update_Grad(double y_est, uint8_t x, size_t i);
+    inline void update_upperH_and_Grad(double y_est, double x, const std::vector<double>& patient_pnc);
+    inline void update_Grad(double y_est, uint8_t x, int i);
     void init();
 
    public:
     /* setup */
-    Log_row(size_t _size, const std::vector<int>& sizes, GWAS* _gwas, ImputePolicy _impute_policy);
+    Log_row(int _size, const std::vector<int>& sizes, GWAS* _gwas, ImputePolicy _impute_policy);
 
     /* fitting */
-    bool fit(size_t max_iteration = 15, double sig = 1e-6);
+    bool fit(int max_iteration = 15, double sig = 1e-6);
 
     /* output results */
     double get_beta();

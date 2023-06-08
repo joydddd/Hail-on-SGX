@@ -11,7 +11,8 @@
 
 std::vector<int> ababa;
 
-Oblivious_log_row::Oblivious_log_row(size_t _size, GWAS* _gwas, ImputePolicy _impute_policy) : Row(_size, ababa, _impute_policy), gwas(_gwas) {
+Oblivious_log_row::Oblivious_log_row(size_t _size, GWAS* _gwas, ImputePolicy _impute_policy) 
+    : Row(_size, ababa, _gwas->dim(), _impute_policy), gwas(_gwas) {
     beta_delta.resize(gwas->dim());
     // 2 is a magic number that helps with SqrMatrix construction, "highest level matrix"
     H = SqrMatrix(gwas->dim(), 2);
@@ -100,57 +101,57 @@ void Oblivious_log_row::init() {
 }
 
 void Oblivious_log_row::update_estimate() {
-    for (int i = 0; i < gwas->dim(); ++i) {
-        Grad[i] = 0;
-        for (int j = 0; j < gwas->dim(); ++j){
-            H[i][j] = 0;
-        }
-    }
-    double y_est;
-    size_t client_idx = 0, data_idx = 0;
-    double x;
-    uint8_t not_NA_oblivious;
-    for (size_t i = 0; i < n; i++) {
-        double x = (data[i / 4] >> ((i % 4) * 2)) & 0b11;
-        not_NA_oblivious = is_not_NA_oblivious(x);
-        x = (not_NA_oblivious * x) + (!not_NA_oblivious * genotype_average);
-        y_est = b[0] * x;
-        for (size_t j = 1; j < gwas->dim(); j++)
-            y_est += gwas->covariants[j - 1]->data[i] * b[j];
-        y_est = 1 / ((double)1 + exp(-y_est));
+    // for (int i = 0; i < gwas->dim(); ++i) {
+    //     Grad[i] = 0;
+    //     for (int j = 0; j < gwas->dim(); ++j){
+    //         H[i][j] = 0;
+    //     }
+    // }
+    // double y_est;
+    // size_t client_idx = 0, data_idx = 0;
+    // double x;
+    // uint8_t not_NA_oblivious;
+    // for (size_t i = 0; i < n; i++) {
+    //     double x = (data[i / 4] >> ((i % 4) * 2)) & 0b11;
+    //     not_NA_oblivious = is_not_NA_oblivious(x);
+    //     x = (not_NA_oblivious * x) + (!not_NA_oblivious * genotype_average);
+    //     y_est = b[0] * x;
+    //     for (size_t j = 1; j < gwas->dim(); j++)
+    //         y_est += gwas->covariants[j - 1]->data[i] * b[j];
+    //     y_est = 1 / ((double)1 + exp(-y_est));
 
-        update_upperH(y_est, x, i);
-        update_Grad(y_est, x, i);
-        /* update data index */
-        // data_idx++;
-        // if (data_idx >= length[client_idx]) {
-        //     data_idx = 0;
-        //     client_idx++;
-        // }
-    }
-    /* build lower half of H */
-    for (size_t j = 0; j < gwas->dim(); j++) {
-        for (size_t k = j + 1; k < gwas->dim(); k++) {
-            H[j][k] = H[k][j];
-        }
-    }
+    //     update_upperH(y_est, x, i);
+    //     update_Grad(y_est, x, i);
+    //     /* update data index */
+    //     // data_idx++;
+    //     // if (data_idx >= length[client_idx]) {
+    //     //     data_idx = 0;
+    //     //     client_idx++;
+    //     // }
+    // }
+    // /* build lower half of H */
+    // for (size_t j = 0; j < gwas->dim(); j++) {
+    //     for (size_t k = j + 1; k < gwas->dim(); k++) {
+    //         H[j][k] = H[k][j];
+    //     }
+    // }
 }
 
 void Oblivious_log_row::update_upperH(double y_est, uint8_t x, size_t i) {
-    double y_est_1_y = y_est * (1 - y_est);
-    for (size_t j = 0; j < gwas->dim(); j++) {
-        for (size_t k = 0; k <= j; k++) {
-            double x1 = (j == 0) ? x : gwas->covariants[j - 1]->data[i];
-            double x2 = (k == 0) ? x : gwas->covariants[k - 1]->data[i];
-            H[j][k] += x1 * x2 * y_est_1_y;
-        }
-    }
+    // double y_est_1_y = y_est * (1 - y_est);
+    // for (size_t j = 0; j < gwas->dim(); j++) {
+    //     for (size_t k = 0; k <= j; k++) {
+    //         double x1 = (j == 0) ? x : gwas->covariants[j - 1]->data[i];
+    //         double x2 = (k == 0) ? x : gwas->covariants[k - 1]->data[i];
+    //         H[j][k] += x1 * x2 * y_est_1_y;
+    //     }
+    // }
 }
 
 void Oblivious_log_row::update_Grad(double y_est, uint8_t x, size_t i) {
-    double y_delta = gwas->y->data[i] - y_est;
-    Grad[0] += y_delta * x;
-    for (size_t j = 1; j < gwas->dim(); j++) {
-        Grad[j] += y_delta * gwas->covariants[j - 1]->data[i];
-    }
+    // double y_delta = gwas->y->data[i] - y_est;
+    // Grad[0] += y_delta * x;
+    // for (size_t j = 1; j < gwas->dim(); j++) {
+    //     Grad[j] += y_delta * gwas->covariants[j - 1]->data[i];
+    // }
 }

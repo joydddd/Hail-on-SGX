@@ -37,7 +37,7 @@ inline uint8_t is_not_NA_oblivious(uint8_t val) {
 
 // utilities
 double read_entry_int(std::string &entry);
-double max(std::vector<double>& vec);
+double bd_max(const std::vector<double>& vec);
 bool read_entry_bool(std::string& entry);
 
 
@@ -47,15 +47,16 @@ class Row {
      /* meta data */
      Loci loci;
      Alleles alleles;
-     size_t n;
-     size_t read_row_len;
+     int n;
+     int num_dimensions;
+     int read_row_len;
     //  std::vector<uint8_t> data;
      uint8_t *data;
      std::vector<int> client_lengths;
-     size_t genotype_sum;
-     size_t genotype_count;
+     int genotype_sum;
+     int genotype_count;
      double genotype_average;
-     size_t it_count;
+     int it_count;
 
      std::string loci_str;
      std::string alleles_str;
@@ -68,20 +69,20 @@ class Row {
      /* return metadata */
      Loci getloci() { return loci; }
      Alleles getalleles() { return alleles; }
-     size_t size() { return n; }
-     virtual bool fit(size_t max_iteration = 15, double sig = 1e-6) { std::cout << "generic fit!?!"; return false; }
+     int size() { return n; }
+     virtual bool fit(int max_iteration = 15, double sig = 1e-6) { std::cout << "WARNING: GENERIC FIT!?!" << std::endl; return false; }
      virtual double get_beta() { return -1; }
      virtual double get_t_stat() { return -1; }
      virtual double get_standard_error() { return -1; }
-     size_t get_iterations() { return it_count; }
+     int get_iterations() { return it_count; }
 
 
 
      /* setup */
-     Row(size_t size, const std::vector<int>& sizes, ImputePolicy _impute_policy);
-     size_t read(const char line[]); // return the size of line consumed
+     Row(int size, const std::vector<int>& sizes, int _num_dimensions, ImputePolicy _impute_policy);
+     int read(const char line[]); // return the size of line consumed
      void combine(Row *other);
-     void append_invalid_elts(size_t size);
+     void append_invalid_elts(int size);
      void reset();
     
 
@@ -97,7 +98,7 @@ class Row {
 
 
 
-inline size_t split_delim(const char* line, std::vector<std::string> &parts, char delim='\t', int delim_to_parse=-1) {
+inline int split_delim(const char* line, std::vector<std::string> &parts, char delim='\t', int delim_to_parse=-1) {
     std::string part;
 
     int num_delim = 0;
@@ -130,62 +131,47 @@ class Covar {
     friend class Oblivious_lin_row;
     friend class Oblivious_log_row;
     friend class GWAS;
-    std::vector<double> data;
-    size_t n;
+    std::vector< std::vector<double> > data;
+    int n;
+    int m;
     std::string name_str;
 
    public:
     Covar() : n(0), name_str("NA") { }
     Covar(const char* input, int res_size = 0) { read(input, res_size); }
+    Covar(int _n, int _m) : n(_n), m(0) {data.resize(_n, std::vector<double>(_m));}
     int read(const char* input, int res_size = 0);
     void reserve(int total_row_size);
     void init_1_covar(int total_row_size);
-    size_t size() { return n; }
+    int size() { return n; }
     const std::string& name() { return name_str; }
 };
 
 
 /* gwas setup. contains information for covariant and meta data */
 class GWAS {
-    std::string name;
-    size_t m;  // dimension
-    size_t n;  // sample size
+    int m;  // dimension
+    int n;  // sample size
     EncAnalysis regtype;
 
    public:
-    std::vector<Covar*> covariants;
-    Covar* y;
+    Covar phenotype_and_covars;
     GWAS(EncAnalysis _regtype) : n(0), m(0), regtype(_regtype) {}
-    GWAS(Covar *_y, EncAnalysis _regtype) : n(_y->size()), m(1), regtype(_regtype) { add_y(_y); }
+    GWAS(EncAnalysis _regtype, int _n, int _m) : n(_n), m(_m), regtype(_regtype), phenotype_and_covars(_n, _m) {}
 
-    void add_y(Covar *_y) {
-        n = _y->size();
-        m = 1;
-        y = _y;
-        switch (regtype){
-            case EncAnalysis::logistic:
-                name = _y->name() + "_logistic_gwas";
-                break;
-            case EncAnalysis::linear:
-                name = _y->name() + "_linear_gwas";
-                break;
-            case EncAnalysis::logistic_oblivious:
-                name = _y->name() + "_logistic_oblivious_gwas";
-                break;
-            case EncAnalysis::linear_oblivious:
-                name = _y->name() + "_linear_oblivious_gwas";
-                break;
-        }
+    // void add_y(Covar *_y) {
+    //     n = _y->size();
+    //     m = 1;
+    //     y = _y;
+    // }
 
-    }
-
-    void add_covariant(Covar *cov) {
-        if (cov->size() != n) throw CombineERROR("Covariant size did not match n");
-        covariants.push_back(cov);
-        m++;
-    }
-    size_t dim() const { return m; }
-    size_t size() const { return n; }
+    // void add_covariant(Covar *cov) {
+    //     if (cov->size() != n) throw CombineERROR("Covariant size did not match n");
+    //     covariants.push_back(cov);
+    //     m++;
+    //}
+    int dim() const { return m; }
+    int size() const { return n; }
 #ifdef DEBUG
     void print() const;
 #endif

@@ -24,10 +24,10 @@ class Lin_row : public Row {
 
    public:
    /* setup */
-    Lin_row(size_t size, const std::vector<int>& sizes, GWAS* _gwas, ImputePolicy _impute_policy);
+    Lin_row(int size, const std::vector<int>& sizes, GWAS* _gwas, ImputePolicy _impute_policy);
 
     /* fitting */
-    bool fit(size_t max_iteration = 15, double sig = 1e-6);
+    bool fit(int max_iteration = 15, double sig = 1e-6);
     
     /* output results */
     double get_beta();

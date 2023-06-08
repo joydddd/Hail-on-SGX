@@ -1,7 +1,9 @@
 #include "enc_gwas.h"
 #include "assert.h"
+#include "float.h"
 
-Row::Row(size_t _size, const std::vector<int>& sizes, ImputePolicy _impute_policy) : n(_size), impute_policy(_impute_policy) {
+Row::Row(int _size, const std::vector<int>& sizes, int _num_dimensions, ImputePolicy _impute_policy) 
+    : n(_size), impute_policy(_impute_policy), num_dimensions(_num_dimensions) {
     impute_average = impute_policy == ImputePolicy::Hail;
     //data.resize(_size);
     //data.push_back(new uint8_t[_size]);
@@ -16,15 +18,15 @@ Row::Row(size_t _size, const std::vector<int>& sizes, ImputePolicy _impute_polic
 }
 
 void Row::reset() { 
-    loci = Loci();
-    alleles = Alleles();
+    // loci = Loci();
+    // alleles = Alleles();
 }
 
-size_t Row::read(const char line[]) {
+int Row::read(const char line[]) {
     //std::cout << line << std::endl;
     static int count = 0;
-    loci_str.clear();
-    alleles_str.clear();
+    // loci_str.clear();
+    // alleles_str.clear();
     int tabs_found = 0;
     int idx = 0;
 
@@ -35,34 +37,34 @@ size_t Row::read(const char line[]) {
             continue;
         }
         if (tabs_found == 0) {
-            loci_str.push_back(curr_char);
+            //loci_str.push_back(curr_char);
         } else {
-            alleles_str.push_back(curr_char);
+            //alleles_str.push_back(curr_char);
         }
     }
-    try {
-        loci = Loci(loci_str);
-        if (loci.chrom_str == "X") {
-            loci.chrom = LOCI_X;
-        } else {
-            loci.chrom = std::stoi(loci.chrom_str);
-        }
-        loci.loc = std::stoi(loci.loc_str);
-        alleles.read(alleles_str);
-    } catch (ReadtsvERROR &error) {
-        std::cout << line << std::endl;
-        throw ENC_ERROR("Invalid loci/alleles " + loci_str + "\t" + alleles_str
-#ifdef DEBUG
-                        + string("(loci)") + loci_str + " (alleles)" +
-                        alleles_str
-#endif
-        );
-    } catch (const std::invalid_argument& exception) {
-        std::cout << "Invalid chrom/loc " << loci.chrom << " " << loci.loc << " " << std::endl;
-        exit(0);
-    }
+//     try {
+//         loci = Loci(loci_str);
+//         if (loci.chrom_str == "X") {
+//             loci.chrom = LOCI_X;
+//         } else {
+//             loci.chrom = std::stoi(loci.chrom_str);
+//         }
+//         loci.loc = std::stoi(loci.loc_str);
+//         alleles.read(alleles_str);
+//     } catch (ReadtsvERROR &error) {
+//         std::cout << line << std::endl;
+//         throw ENC_ERROR("Invalid loci/alleles " + loci_str + "\t" + alleles_str
+// #ifdef DEBUG
+//                         + string("(loci)") + loci_str + " (alleles)" +
+//                         alleles_str
+// #endif
+//         );
+//     } catch (const std::invalid_argument& exception) {
+//         std::cout << "Invalid chrom/loc " << loci.chrom << " " << loci.loc << " " << std::endl;
+//         exit(0);
+//     }
     data = (uint8_t *)(line + loci_str.size() + alleles_str.size() + 2);
-    // for (size_t i = 0; i < n; i++) {
+    // for (int i = 0; i < n; i++) {
     //     data[i] = (uint8_t)line[i + data_offset]; 
     //     if (data[i] > NA_uint8) {
     //         std::cout << std::string(line) << std::endl;
@@ -96,7 +98,7 @@ void Row::combine(Row *other) {
 
     // this->n += other->n;
     // this->data.reserve(this->data.size() + other->data.size());
-    // for (size_t i = 0; i < other->data.size(); i++) {
+    // for (int i = 0; i < other->data.size(); i++) {
     //     data.push_back(other->data[i]);
     //     length.push_back(other->length[i]);
     // }
@@ -104,20 +106,20 @@ void Row::combine(Row *other) {
     // other->length.clear();
 }
 
-void Row::append_invalid_elts(size_t size) {
+void Row::append_invalid_elts(int size) {
     // uint8_t *new_array = new uint8_t[size];
     // // data.push_back(new_array);
     // length.push_back(size);
     // n += size;
-    // for (size_t i = 0; i < size; i++) new_array[i] = NA_uint8;
+    // for (int i = 0; i < size; i++) new_array[i] = NA_uint8;
 }
 
 #ifdef DEBUG
 #include <iostream>
 void Row::print() {
     cout << loci << " " << alleles << endl;
-    for (size_t j = 0; j < data.size(); j++) {
-        for (size_t i = 0; i < length[j]; i++) {
+    for (int j = 0; j < data.size(); j++) {
+        for (int i = 0; i < length[j]; i++) {
             printf("%02x ", data[j][i]);
         }
         printf("\n");
@@ -148,9 +150,10 @@ double read_entry_int(std::string &entry) {
     return ans;
 }
 
-double max(std::vector<double>& vec) {
-    double max = -std::numeric_limits<double>::infinity();
-    for (double x : vec) {
+double bd_max(const std::vector<double>& vec) {
+    double max = -DBL_MAX;
+    for (int i = 0; i < vec.size(); i++) {
+        double x = vec[i];
         if (x > max) max = x;
     }
     return max;
@@ -201,14 +204,14 @@ int Covar::read(const char* input, int res_size) {
 
     int read_size = 0;
     for (int i = 1; i < res_size + 1; ++i) {
-        data.push_back(std::stod(parts[i]));
+        data[i - 1][m] = std::stod(parts[i]);
         read_size++;
     }
 
-    if (read_size != res_size) {
+    if (read_size != res_size || read_size != n) {
         std::cout << "Covar size mismatch" << std::endl;
     }
-    n = data.size();
+    m++;
 
     return read_size;
 }
@@ -218,9 +221,14 @@ void Covar::reserve(int total_row_size) {
 }
 
 void Covar::init_1_covar(int total_row_size){
-    n = total_row_size;
-    name_str = "1";
-    for (int _ = 0; _ < total_row_size; _++) {
-        data.push_back(1);
+    if (total_row_size != n) {
+        std::cout << "Covar size mismatch" << std::endl;
     }
+    
+    for (int i = 0; i < total_row_size; i++) {
+        data[i][m] = 1;
+    }
+
+    m++;
+
 }

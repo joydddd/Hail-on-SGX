@@ -1,9 +1,7 @@
 #include <iostream>
 #include <thread>
 #include <map>
-#include <fstream>
 #include <atomic>
-#include <chrono>
 #include <condition_variable>
 #include <string.h>
 
@@ -18,7 +16,6 @@
 #endif
 
 static std::vector<Buffer*> buffer_list;
-static std::vector<Covar*> covar_ptr_list;
 static std::vector<ClientInfo> client_info_list;
 static std::vector<int> client_y_size;
 static int num_clients;
@@ -90,10 +87,9 @@ void setup_enclave_encryption(const int num_threads) {
 }
 
 void setup_enclave_phenotypes(const int num_threads, EncAnalysis analysis_type, ImputePolicy impute_policy) {
-    gwas = new GWAS(analysis_type);
     char* buffer_decrypt = new char[ENCLAVE_READ_BUFFER_SIZE];
     char* phenotype_buffer = new char[ENCLAVE_READ_BUFFER_SIZE];
-    Covar* gwas_y = new Covar();
+    // Covar* gwas_y = new Covar();
 
     // Read in covariants from each institution
     char covl[ENCLAVE_SMALL_BUFFER_SIZE];
@@ -124,12 +120,14 @@ void setup_enclave_phenotypes(const int num_threads, EncAnalysis analysis_type, 
         total_row_size += client_num_patients;
     }
 
-    gwas_y->reserve(total_row_size);
-    for (int _ = 0; _ < covariant_names.size(); ++_) {
-        Covar* cov_ptr = new Covar();
-        cov_ptr->reserve(total_row_size);
-        covar_ptr_list.push_back(cov_ptr);
-    }
+     gwas = new GWAS(analysis_type, total_row_size, covariant_names.size() + 1);
+
+    // gwas_y->reserve(total_row_size);
+    // for (int _ = 0; _ < covariant_names.size(); ++_) {
+    //     Covar* cov_ptr = new Covar();
+    //     cov_ptr->reserve(total_row_size);
+    //     covar_ptr_list.push_back(cov_ptr);
+    // }
 
     try {
         for (int thread_id = 0; thread_id < num_threads; ++thread_id) {
@@ -165,7 +163,6 @@ void setup_enclave_phenotypes(const int num_threads, EncAnalysis analysis_type, 
         exit(1);
     }
     setmaxbatchlines(max_batch_lines);
-    
 
     std::cout << "Init finished" << std::endl;
 
@@ -183,7 +180,7 @@ void setup_enclave_phenotypes(const int num_threads, EncAnalysis analysis_type, 
                              (const unsigned char*) phenotype_buffer,
                              y_buffer_size, 
                              (unsigned char*) buffer_decrypt);
-            int read_size = gwas_y->read(buffer_decrypt, client_y_size[client]);
+            int read_size = gwas->phenotype_and_covars.read(buffer_decrypt, client_y_size[client]);
             if (read_size != client_y_size[client]) {
                 throw ReadtsvERROR("y val size mismatch from client: " +
                                     std::to_string(client) + " size expected: " + 
@@ -196,16 +193,13 @@ void setup_enclave_phenotypes(const int num_threads, EncAnalysis analysis_type, 
         std::cerr << "ERROR: fail to get correct y values " << err.msg << std::endl;
     }
 
-    gwas->add_y(gwas_y);
     std::cout << "Y value loaded" << std::endl;
     std::cout << "Starting Enclave: "  << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count() << "\n";
     try{
         for (int i = 0; i < covariant_names.size(); ++i) {
             const std::string& cov_name = covariant_names[i];
-            Covar *cov_var = covar_ptr_list[i];
             if (cov_name == "1") {
-                cov_var->init_1_covar(total_row_size);
-                gwas->add_covariant(cov_var);
+                gwas->phenotype_and_covars.init_1_covar(total_row_size);
                 continue;
             }
             for (int client = 0; client < num_clients; ++client) {
@@ -220,15 +214,14 @@ void setup_enclave_phenotypes(const int num_threads, EncAnalysis analysis_type, 
                                 (const unsigned char*) phenotype_buffer,
                                 cov_buffer_size, 
                                 (unsigned char*) buffer_decrypt);
-                int read_size = cov_var->read(buffer_decrypt, client_y_size[client]);
+                int read_size = gwas->phenotype_and_covars.read(buffer_decrypt, client_y_size[client]);
                 if (read_size != client_y_size[client]) {
                     throw ReadtsvERROR("covariant size mismatch from client: " +
-                                       std::to_string(client) + " with cov: " + cov_var->name() + 
+                                       std::to_string(client) + 
                                        " size expected: " + std::to_string(client_y_size[client]) + 
                                        " got: " + std::to_string(read_size));
                 }
             }
-            gwas->add_covariant(cov_var);
         }
     } catch (ERROR_t& err) {
         std::cerr << "ERROR: fail to get correct covariant values: " << err.msg << std::endl;
@@ -260,6 +253,8 @@ void regression(const int thread_id, EncAnalysis analysis_type) {
     loci_string.reserve(50);
     alleles_string.reserve(20);
 
+    output_string = "abc\n";
+
     std::mutex useless_lock;
     std::unique_lock<std::mutex> useless_lock_wrapper(useless_lock);
     // experimental - checking to see if spinning up threads adds a noticable
@@ -275,8 +270,9 @@ void regression(const int thread_id, EncAnalysis analysis_type) {
     /* process rows */
     while (true) {
         //start_timer("input()");
-        if (!batch || batch->st != Batch::Working)
+        if (!batch || batch->st != Batch::Working) {
             batch = buffer->launch(client_info_list, thread_id);
+        }
         if (!batch) {
             // std::cout << "id " << thread_id << std::endl;
             buffer->clean_up();
@@ -287,16 +283,16 @@ void regression(const int thread_id, EncAnalysis analysis_type) {
         try {
             switch(analysis_type) {
                 case EncAnalysis::linear:
-                    if (!(row = (Lin_row*)batch->get_row(buffer))) continue;
+                    if (!(row = static_cast<Lin_row*>(batch->get_row(buffer)))) continue;
                     break;
                 case EncAnalysis::logistic:
-                    if (!(row = (Log_row*)batch->get_row(buffer))) continue;
+                    if (!(row = static_cast<Log_row*>(batch->get_row(buffer)))) continue;
                     break;
                 case EncAnalysis::linear_oblivious:
-                    if (!(row = (Oblivious_lin_row*)batch->get_row(buffer))) continue;
+                    if (!(row = static_cast<Oblivious_lin_row*>(batch->get_row(buffer)))) continue;
                     break;
                 case EncAnalysis::logistic_oblivious:
-                    if (!(row = (Oblivious_log_row*)batch->get_row(buffer))) continue;
+                    if (!(row = static_cast<Oblivious_log_row*>(batch->get_row(buffer)))) continue;
                     break;
                 default:
                     throw std::runtime_error("Invalid analysis type");
@@ -311,30 +307,30 @@ void regression(const int thread_id, EncAnalysis analysis_type) {
         }
         //stop_timer("parse_and_decrypt()");
         //  compute results
-        loci_to_str(row->getloci(), loci_string);
-        alleles_to_str(row->getalleles(), alleles_string);
-        output_string += loci_string + "\t" + alleles_string;
+        // loci_to_str(row->getloci(), loci_string);
+        // alleles_to_str(row->getalleles(), alleles_string);
+        //output_string += loci_string + "\t" + alleles_string;
         //start_timer("kernel()");
         bool converge;
         //std::cout << i++ << std::endl;
         try {
             converge = row->fit();
-            output_string += "\t" + std::to_string(row->get_beta()) +
-                             "\t" + std::to_string(row->get_standard_error()) +
-                             "\t" + std::to_string(row->get_t_stat());
+            // output_string += "\t" + std::to_string(row->get_beta()) +
+            //                  "\t" + std::to_string(row->get_standard_error()) +
+            //                  "\t" + std::to_string(row->get_t_stat());
 
-            if (analysis_type == EncAnalysis::logistic || analysis_type == EncAnalysis::logistic_oblivious) {
-                output_string += + "\t" + std::to_string(row->get_iterations()) + "\t";
-                // wanted to use a ternary, but the compiler doesn't like it?
-                if (converge) {
-                    output_string += "true";
-                } else {
-                    output_string += "false";
-                }
-            }
-            output_string += "\n";
+            // if (analysis_type == EncAnalysis::logistic || analysis_type == EncAnalysis::logistic_oblivious) {
+            //     output_string += + "\t" + std::to_string(row->get_iterations()) + "\t";
+            //     // wanted to use a ternary, but the compiler doesn't like it?
+            //     if (converge) {
+            //         output_string += "true";
+            //     } else {
+            //         output_string += "false";
+            //     }
+            // }
+            //output_string += "\n";
         } catch (MathError& err) {
-            output_string += "\tNA\tNA\tNA\t1\tfalse\n";
+            //output_string += "\tNA\tNA\tNA\t1\tfalse\n";
             // cerr << "MathError while fiting " << ss.str() << ": " << err.msg
             //      << std::endl;
             // ss << "\tNA\tNA\tNA" << std::endl;
@@ -344,7 +340,7 @@ void regression(const int thread_id, EncAnalysis analysis_type) {
             exit(1);
         }
         //stop_timer("kernel()");
-        batch->write(output_string);
+        //batch->write(output_string);
         output_string.clear();
     }
 }
