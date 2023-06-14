@@ -1,7 +1,0 @@
-Log 5000
-
- Running on port 6401
-ID/Client: client1 Msg Type: 1
-ID/Client: client2 Msg Type: 1
-ID/Client: client3 Msg Type: 1
-ID/Client: client4 Msg Type: 1

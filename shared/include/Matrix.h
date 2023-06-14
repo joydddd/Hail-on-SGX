@@ -105,7 +105,7 @@ class SqrMatrix{
 
     void calculate_matrix_times_vec(const std::vector<double>& mult, std::vector<double>& ans){
         if (mult.size() != n) throw MathError("Matrix Vector dim mismatch"); 
-        for (int i=0; i<n;i++){
+        for (int i = 0; i < n; i++){
             ans[i] = 0;
             for (int j = 0; j < n; j++) {
                 ans[i] += m[i][j] * mult[j];
@@ -197,7 +197,7 @@ class SqrMatrix{
                 }
 
                 // No entries != 0 found in column k -> det = 0
-                if(l == n) {
+                if (l == n) {
                     return 0;
                 }
             }

@@ -25,8 +25,8 @@ void Row::reset() {
 int Row::read(const char line[]) {
     //std::cout << line << std::endl;
     static int count = 0;
-    // loci_str.clear();
-    // alleles_str.clear();
+    loci_str.clear();
+    alleles_str.clear();
     int tabs_found = 0;
     int idx = 0;
 
@@ -37,51 +37,34 @@ int Row::read(const char line[]) {
             continue;
         }
         if (tabs_found == 0) {
-            //loci_str.push_back(curr_char);
+            loci_str.push_back(curr_char);
         } else {
-            //alleles_str.push_back(curr_char);
+            alleles_str.push_back(curr_char);
         }
     }
-//     try {
-//         loci = Loci(loci_str);
-//         if (loci.chrom_str == "X") {
-//             loci.chrom = LOCI_X;
-//         } else {
-//             loci.chrom = std::stoi(loci.chrom_str);
-//         }
-//         loci.loc = std::stoi(loci.loc_str);
-//         alleles.read(alleles_str);
-//     } catch (ReadtsvERROR &error) {
-//         std::cout << line << std::endl;
-//         throw ENC_ERROR("Invalid loci/alleles " + loci_str + "\t" + alleles_str
-// #ifdef DEBUG
-//                         + string("(loci)") + loci_str + " (alleles)" +
-//                         alleles_str
-// #endif
-//         );
-//     } catch (const std::invalid_argument& exception) {
-//         std::cout << "Invalid chrom/loc " << loci.chrom << " " << loci.loc << " " << std::endl;
-//         exit(0);
-//     }
+    try {
+        loci = Loci(loci_str);
+        if (loci.chrom_str == "X") {
+            loci.chrom = LOCI_X;
+        } else {
+            loci.chrom = std::stoi(loci.chrom_str);
+        }
+        loci.loc = std::stoi(loci.loc_str);
+        alleles.read(alleles_str);
+    } catch (ReadtsvERROR &error) {
+        std::cout << line << std::endl;
+        throw ENC_ERROR("Invalid loci/alleles " + loci_str + "\t" + alleles_str
+#ifdef DEBUG
+                        + string("(loci)") + loci_str + " (alleles)" +
+                        alleles_str
+#endif
+        );
+    } catch (const std::invalid_argument& exception) {
+        std::cout << "Invalid chrom/loc " << loci.chrom << " " << loci.loc << " " << std::endl;
+        exit(0);
+    }
     data = (uint8_t *)(line + loci_str.size() + alleles_str.size() + 2);
-    // for (int i = 0; i < n; i++) {
-    //     data[i] = (uint8_t)line[i + data_offset]; 
-    //     if (data[i] > NA_uint8) {
-    //         std::cout << std::string(line) << std::endl;
-    //         std::cout << i << " " << (int)data[i] << " " << n << std::endl;
-    //         throw ReadtsvERROR("Invalid row entry for " + loci_str + "\t" + alleles_str);
-    //     }
-    //     if (!is_NA(data[i])) {
-    //          genotype_sum += data[i];
-    //          genotype_count++;
-    //     }
-    // }
 
-    //genotype_average = (double)genotype_sum / (double)genotype_count;
-
-    // if (line[n + loci_str.size() + alleles_str.size() + 2] != '\n')
-    //     throw ReadtsvERROR("Invalid row terminator");
-    // return n + loci_str.size() + alleles_str.size() + 3;
     return read_row_len + loci_str.size() + alleles_str.size() + 3;
 }
 void Row::combine(Row *other) {

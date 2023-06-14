@@ -253,8 +253,6 @@ void regression(const int thread_id, EncAnalysis analysis_type) {
     loci_string.reserve(50);
     alleles_string.reserve(20);
 
-    output_string = "abc\n";
-
     std::mutex useless_lock;
     std::unique_lock<std::mutex> useless_lock_wrapper(useless_lock);
     // experimental - checking to see if spinning up threads adds a noticable
@@ -307,30 +305,30 @@ void regression(const int thread_id, EncAnalysis analysis_type) {
         }
         //stop_timer("parse_and_decrypt()");
         //  compute results
-        // loci_to_str(row->getloci(), loci_string);
-        // alleles_to_str(row->getalleles(), alleles_string);
-        //output_string += loci_string + "\t" + alleles_string;
+        loci_to_str(row->getloci(), loci_string);
+        alleles_to_str(row->getalleles(), alleles_string);
+        output_string += loci_string + "\t" + alleles_string;
         //start_timer("kernel()");
         bool converge;
         //std::cout << i++ << std::endl;
         try {
             converge = row->fit();
-            // output_string += "\t" + std::to_string(row->get_beta()) +
-            //                  "\t" + std::to_string(row->get_standard_error()) +
-            //                  "\t" + std::to_string(row->get_t_stat());
+            output_string += "\t" + std::to_string(row->get_beta()) +
+                             "\t" + std::to_string(row->get_standard_error()) +
+                             "\t" + std::to_string(row->get_t_stat());
 
-            // if (analysis_type == EncAnalysis::logistic || analysis_type == EncAnalysis::logistic_oblivious) {
-            //     output_string += + "\t" + std::to_string(row->get_iterations()) + "\t";
-            //     // wanted to use a ternary, but the compiler doesn't like it?
-            //     if (converge) {
-            //         output_string += "true";
-            //     } else {
-            //         output_string += "false";
-            //     }
-            // }
-            //output_string += "\n";
+            if (analysis_type == EncAnalysis::logistic || analysis_type == EncAnalysis::logistic_oblivious) {
+                output_string += + "\t" + std::to_string(row->get_iterations()) + "\t";
+                // wanted to use a ternary, but the compiler doesn't like it?
+                if (converge) {
+                    output_string += "true";
+                } else {
+                    output_string += "false";
+                }
+            }
+            output_string += "\n";
         } catch (MathError& err) {
-            //output_string += "\tNA\tNA\tNA\t1\tfalse\n";
+            output_string += "\tNA\tNA\tNA\t1\tfalse\n";
             // cerr << "MathError while fiting " << ss.str() << ": " << err.msg
             //      << std::endl;
             // ss << "\tNA\tNA\tNA" << std::endl;
@@ -340,7 +338,7 @@ void regression(const int thread_id, EncAnalysis analysis_type) {
             exit(1);
         }
         //stop_timer("kernel()");
-        //batch->write(output_string);
+        batch->write(output_string);
         output_string.clear();
     }
 }

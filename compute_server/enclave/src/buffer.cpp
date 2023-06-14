@@ -4,6 +4,7 @@
 #include "logistic_regression.h"
 #include "string.h"
 #include <map>
+#include <thread>
 
 void aes_decrypt_client(const unsigned char* crypto, unsigned char* plaintxt, const ClientInfo& client, const int thread_id) {
     aes_decrypt_data(client.aes_list[thread_id].aes_context,
@@ -160,9 +161,9 @@ Batch* Buffer::launch(std::vector<ClientInfo>& client_info_list, const int threa
     int num_lines = 0;
     while (!num_lines) {
         getbatch(&num_lines, crypttxt, thread_id);
-        // if (!num_lines) {
-
-        // }
+        if (!num_lines) {
+            std::this_thread::yield();
+        }
     }
     if (!strcmp(crypttxt, EOFSeperator)) return nullptr;
     if (!free_batch) return nullptr;

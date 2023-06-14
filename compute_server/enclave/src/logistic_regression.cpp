@@ -1,6 +1,5 @@
-#include <math.h>
-
-#include <limits>
+#include <cmath>
+#include "exp.h"
 
 #include "logistic_regression.h"
 #include "gwas.h"
@@ -8,6 +7,31 @@
 /////////////////////////////////////////////////////////////
 //////////              Log_row             /////////////////
 /////////////////////////////////////////////////////////////
+
+inline double exp7(double x) {
+    return (362880+x*(362880+x*(181440+x*(60480+x*(15120+x*(3024+x*(504+x*(72+x*(9+x)))))))))*2.75573192e-6;
+}
+
+inline double exp7_new(double x) {
+    return x * (x * (x * (x * (x * (((x/5040 + 1/720) * x) + 1/120) + 1/24) + 1/6) + 1/2) + 1) + 1;
+}
+
+inline double exp10(double x) {
+    return ((x * (x * (x * (x * (x + 10) + 90) + 720) + 5040) + 30240) * (x * x * x * x * x))/3628800 + (x * x * x * x)/24 + (x * x * x)/6 + (x * x)/2 + x + 1;
+}
+
+inline double pade_approx(double x) {
+    return ((x + 3) * (x + 3) + 3) / ((x - 3) * (x - 3) + 3);
+}
+
+uint32_t hash( uint32_t a) {
+    a = (a ^ 61) ^ (a >> 16);
+    a = a + (a << 3);
+    a = a ^ (a >> 4);
+    a = a * 0x27d4eb2d;
+    a = a ^ (a >> 15);
+    return a;
+}
 
 Log_row::Log_row(int _size, const std::vector<int>& sizes, GWAS* _gwas, ImputePolicy _impute_policy) : 
     Row(_size, sizes, _gwas->dim(), _impute_policy), gwas(_gwas) {
@@ -32,7 +56,6 @@ bool Log_row::fit(int max_it, double sig) {
     while (it_count < max_it && bd_max(beta_delta) >= sig) {
         update_beta();
         it_count++;
-        break;
     }
 
     if (it_count == max_it)
@@ -69,9 +92,10 @@ void Log_row::update_beta() {
     H.INV();
     H.t->calculate_beta_delta(Grad, beta_delta);
     for (int i = 0; i < num_dimensions; i++) {
-        b[i] += beta_delta[i];
+        double b_i = beta_delta[i];
+        b[i] += b_i;
         // take abs after adding beta delta so that we can determine if we have passed tolerance
-        beta_delta[i] = abs(beta_delta[i]);
+        beta_delta[i] = std::abs(b_i);
     }
 
     update_estimate();
@@ -114,7 +138,6 @@ void Log_row::update_estimate() {
     }
     double y_est;
     unsigned int data_idx = 0, client_offset = 0, client_idx = 0;
-    double x;
     bool is_NA;
     for (int i = 0; i < n; i++) {
         double x = (data[(i + client_offset) / 4] >> (((i + client_offset) % 4) * 2) ) & 0b11;
@@ -127,10 +150,9 @@ void Log_row::update_estimate() {
             for (int j = 1; j < num_dimensions; j++) {
                 y_est += patient_pnc[j] * b[j];
             }
-            y_est = 1 / (1 + exp(-y_est));
+            y_est = 1 / (1 + pade_approx(-y_est));
 
             update_upperH_and_Grad(y_est, x, patient_pnc);
-            //update_Grad(y_est, x, i);
         }
         /* update data index */
         data_idx++;
@@ -148,19 +170,81 @@ void Log_row::update_estimate() {
     }
 }
 
+//Good!
 void Log_row::update_upperH_and_Grad(double y_est, double x, const std::vector<double>& patient_pnc) {
     double y_est_1_y = y_est * (1 - y_est);
     double y_delta = patient_pnc[0] - y_est;
     Grad[0] += y_delta * x;
-    for (int j = 0; j < num_dimensions; j++) {
-        if (j > 0) {
-            Grad[j] += y_delta * patient_pnc[j];
-        }
-        for (int k = 0; k <= j; k++) {
-            double x1 = (j == 0) ? x : patient_pnc[j];
-            double x2 = (k == 0) ? x : patient_pnc[k];
-            H[j][k] += x1 * x2 * y_est_1_y;
+    H[0][0] += x * x * y_est_1_y;
+    for (int j = 1; j < num_dimensions; j++) {
+        double patient_pnc_j = patient_pnc[j];
+        double pnc_j_times_y_est = patient_pnc_j * y_est_1_y;
+        Grad[j] += y_delta * patient_pnc_j;
+        H[j][0] += x * pnc_j_times_y_est;
+        H[j][j] += patient_pnc_j * pnc_j_times_y_est;
+
+        for (int k = 1; k < j; k += 1) {
+            H[j][k] += patient_pnc[k] * pnc_j_times_y_est;
         }
     }
 }
 
+// //Good!
+// void Log_row::update_upperH_and_Grad(double y_est, double x, const std::vector<double>& patient_pnc) {
+//     double y_est_1_y = y_est * (1 - y_est);
+//     double y_delta = patient_pnc[0] - y_est;
+//     Grad[0] += y_delta * x;
+//     H[0][0] += x * x * y_est_1_y;
+
+//     for (int j = 1; j < num_dimensions; j++) {
+//         double patient_pnc_j = patient_pnc[j];
+//         Grad[j] += y_delta * patient_pnc_j;
+//         H[j][0] += x * patient_pnc_j * y_est_1_y;
+//         H[j][j] += patient_pnc_j * patient_pnc_j * y_est_1_y;
+
+//         for (int k = 1; k < j; k += 1) {
+//             H[j][k] += patient_pnc_j * patient_pnc[k] * y_est_1_y;
+//         }
+//     }
+// }
+
+
+
+// void Log_row::update_upperH_and_Grad(double y_est, double x, const std::vector<double>& patient_pnc) {
+//     double y_est_1_y = y_est * (1 - y_est);
+//     double y_delta = patient_pnc[0] - y_est;
+//     Grad[0] += y_delta * x;
+//     for (int j = 0; j < num_dimensions; j += 3) {
+//         double pat_j_pnc0 = patient_pnc[j];
+//         double pat_j_pnc1 = (j < num_dimensions) ? patient_pnc[j + 1] : 0;
+//         double pat_j_pnc2 = (j < num_dimensions) ? patient_pnc[j + 2] : 0;
+
+//         int j_is_not_0 = j != 0;
+//         Grad[j] += y_delta * ((pat_j_pnc0 * j_is_not_0) + pat_j_pnc1 + pat_j_pnc2);
+//         for (int k = 0; k <= j + 2; k++) {
+//             double x1_0 = (j == 0) ? x : pat_j_pnc0;
+//             double x1_1 = (j == 0) ? x : pat_j_pnc1;
+//             double x1_2 = (j == 0) ? x : pat_j_pnc2;
+//             double x2 = (k == 0) ? x : patient_pnc[k];
+//             H[j][k] += x1 * x2 * y_est_1_y;
+//         }
+//     }
+// }
+
+// OG:
+
+// void Log_row::update_upperH_and_Grad(double y_est, double x, const std::vector<double>& patient_pnc) {
+//     double y_est_1_y = y_est * (1 - y_est);
+//     double y_delta = patient_pnc[0] - y_est;
+//     Grad[0] += y_delta * x;
+//     for (int j = 0; j < num_dimensions; j++) {
+//         if (j > 0) {
+//             Grad[j] += y_delta * patient_pnc[j];
+//         }
+//         for (int k = 0; k <= j; k++) {
+//             double x1 = (j == 0) ? x : patient_pnc[j];
+//             double x2 = (k == 0) ? x : patient_pnc[k];
+//             H[j][k] += x1 * x2 * y_est_1_y;
+//         }
+//     }
+// }
