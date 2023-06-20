@@ -1,5 +1,5 @@
 #include <cmath>
-#include "exp.h"
+#include <cstring>
 
 #include "logistic_regression.h"
 #include "gwas.h"
@@ -8,29 +8,21 @@
 //////////              Log_row             /////////////////
 /////////////////////////////////////////////////////////////
 
-inline double exp7(double x) {
-    return (362880+x*(362880+x*(181440+x*(60480+x*(15120+x*(3024+x*(504+x*(72+x*(9+x)))))))))*2.75573192e-6;
+// Approximates e^-x from (-3, 3), and uses a step function after that. Good balance of accuracy and speed for our sigmoid function!
+// https://math.stackexchange.com/questions/71357/approximation-of-e-x
+inline double modified_pade_approx_oblivious(double x) {
+    double approx = ((x + 3) * (x + 3) + 3) / ((x - 3) * (x - 3) + 3);
+    int within_bounds = (x > -3) & (x < 3);
+    int pos = x > 0;
+    return approx * within_bounds + !within_bounds * ((pos << 7) * x);
 }
 
-inline double exp7_new(double x) {
-    return x * (x * (x * (x * (x * (((x/5040 + 1/720) * x) + 1/120) + 1/24) + 1/6) + 1/2) + 1) + 1;
-}
-
-inline double exp10(double x) {
-    return ((x * (x * (x * (x * (x + 10) + 90) + 720) + 5040) + 30240) * (x * x * x * x * x))/3628800 + (x * x * x * x)/24 + (x * x * x)/6 + (x * x)/2 + x + 1;
-}
-
-inline double pade_approx(double x) {
+// https://math.stackexchange.com/questions/71357/approximation-of-e-x
+inline double modified_pade_approx(double x) {
+    if (x < -3 || x > 3) {
+        return x > 0 ? 100 * x : 0;
+    }
     return ((x + 3) * (x + 3) + 3) / ((x - 3) * (x - 3) + 3);
-}
-
-uint32_t hash( uint32_t a) {
-    a = (a ^ 61) ^ (a >> 16);
-    a = a + (a << 3);
-    a = a ^ (a >> 4);
-    a = a * 0x27d4eb2d;
-    a = a ^ (a >> 15);
-    return a;
 }
 
 Log_row::Log_row(int _size, const std::vector<int>& sizes, GWAS* _gwas, ImputePolicy _impute_policy) : 
@@ -51,7 +43,7 @@ Log_row::Log_row(int _size, const std::vector<int>& sizes, GWAS* _gwas, ImputePo
 bool Log_row::fit(int max_it, double sig) {
     /* intialize beta to 0*/
     init();
-    it_count = 0;
+    it_count = 1;
 
     while (it_count < max_it && bd_max(beta_delta) >= sig) {
         update_beta();
@@ -63,7 +55,7 @@ bool Log_row::fit(int max_it, double sig) {
     else {
         fitted = true;
         H.INV();
-        standard_error = sqrt((*H.t)[0][0]);
+        standard_error = std::sqrt((*H.t)[0][0]);
         return true;
     }
 }
@@ -150,7 +142,7 @@ void Log_row::update_estimate() {
             for (int j = 1; j < num_dimensions; j++) {
                 y_est += patient_pnc[j] * b[j];
             }
-            y_est = 1 / (1 + pade_approx(-y_est));
+            y_est = 1 / (1 + modified_pade_approx_oblivious(-y_est));
 
             update_upperH_and_Grad(y_est, x, patient_pnc);
         }

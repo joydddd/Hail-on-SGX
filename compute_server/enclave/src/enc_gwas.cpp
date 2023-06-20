@@ -137,7 +137,9 @@ double bd_max(const std::vector<double>& vec) {
     double max = -DBL_MAX;
     for (int i = 0; i < vec.size(); i++) {
         double x = vec[i];
-        if (x > max) max = x;
+        if (x > max) {
+            max = x;
+        }
     }
     return max;
 }

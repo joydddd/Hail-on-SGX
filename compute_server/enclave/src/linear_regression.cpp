@@ -1,4 +1,4 @@
-#include <math.h>
+#include <cmath>
 
 #include <limits>
 
@@ -158,9 +158,9 @@ double Lin_row::get_beta() {
 }
 
 double Lin_row::get_standard_error() {
-    return sqrt(SSE[0]);
+    return std::sqrt(SSE[0]);
 }
 
 double Lin_row::get_t_stat() {
-    return beta[0] / sqrt(SSE[0]);
+    return beta[0] / std::sqrt(SSE[0]);
 }
