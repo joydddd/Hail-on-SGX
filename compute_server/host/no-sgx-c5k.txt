@@ -8,55 +8,15 @@ RSA Pub Key Set
 enclave running on 1 clients
 AES KEY and IV loaded
 Init finished
-received first message: 1684712777182
+received first message: 1687321555886
 Y value loaded
-Starting Enclave: 1684712777186
+Starting Enclave: 1687321555892
 Cov loaded
 Setup finished
-received last message: 1684712777682
+received last message: 1687321556397
 Logistic regression finished!
-Enclave time total: 131588275
-Sending EOF message: 1684712900819
-Exiting enclave
-
-
-**RUNNING REGRESSION**
-
-
- Running on port 6701
-RSA Pub Key Set
-enclave running on 1 clients
-AES KEY and IV loaded
-Init finished
-received first message: 1684712920296
-Y value loaded
-Starting Enclave: 1684712920300
-Cov loaded
-Setup finished
-received last message: 1684712920794
-Logistic regression finished!
-Enclave time total: 19224488
-Sending EOF message: 1684712931455
-Exiting enclave
-
-
-**RUNNING REGRESSION**
-
-
- Running on port 6701
-RSA Pub Key Set
-enclave running on 1 clients
-AES KEY and IV loaded
-Init finished
-received first message: 1684715536954
-Y value loaded
-Starting Enclave: 1684715536956
-Cov loaded
-Setup finished
-received last message: 1684715537444
-Logistic regression finished!
-Enclave time total: 129916425
-Sending EOF message: 1684715658847
+Enclave time total: 101872448
+Sending EOF message: 1687321649755
 Exiting enclave
 
  Running on port 6701
@@ -68,21 +28,21 @@ RSA Pub Key Set
 enclave running on 1 clients
 AES KEY and IV loaded
 Init finished
-received first message: 1684715677982
+received first message: 1687321668919
 Y value loaded
-Starting Enclave: 1684715677985
+Starting Enclave: 1687321668922
 Cov loaded
 Setup finished
-received last message: 1684715678481
+received last message: 1687321669427
 Logistic regression finished!
-Enclave time total: 19154519
-Sending EOF message: 1684715689200
+Enclave time total: 17729851
+Sending EOF message: 1687321678612
 Exiting enclave
+
+ Running on port 6701
 
 
 **RUNNING REGRESSION**
 
-
- Running on port 6701
 RSA Pub Key Set
 enclave running on 1 clients
