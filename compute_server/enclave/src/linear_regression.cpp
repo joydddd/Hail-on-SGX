@@ -7,15 +7,22 @@
 // DEBUG:
 #include <iostream>
 
-Lin_row::Lin_row(int _size, const std::vector<int>& sizes, GWAS* _gwas, ImputePolicy _impute_policy)
-    : Row(_size, sizes, _gwas->dim(), _impute_policy), gwas(_gwas), XTX(num_dimensions, 2), XTX_og(num_dimensions, 2) {
+Lin_row::Lin_row(int _size, const std::vector<int>& sizes, GWAS* _gwas, ImputePolicy _impute_policy, int thread_id)
+    : Row(_size, sizes, _gwas->dim(), _impute_policy), XTX(num_dimensions, 2) {
+
+    //size_of_thread_buffer = gwas->dim();
 
     impute_average = impute_policy == ImputePolicy::Hail;
+    int offset = thread_id * get_padded_buffer_len(num_dimensions);
 
-    beta.resize(num_dimensions);
-    XTY.resize(num_dimensions);
-    XTY_og.resize(num_dimensions);
-    SSE.resize(num_dimensions);
+    double *XTY_og = XTY_og_g + offset;
+    
+    XTX_og_list[offset] = new double*[num_dimensions];
+    for (int i = 0; i < num_dimensions; ++i) {
+        XTX_og_list[offset][i] = new double[num_dimensions];
+    }
+
+    double **XTX_og = XTX_og_list[offset];
 
     /* calculate XTX_og, XTY_og */
     for (int i = 0; i < num_dimensions; i++) {
@@ -45,12 +52,18 @@ Lin_row::Lin_row(int _size, const std::vector<int>& sizes, GWAS* _gwas, ImputePo
 
 void Lin_row::init() {}
 
-bool Lin_row::fit(int max_iteration, double sig) {
+bool Lin_row::fit(int thread_id, int max_iteration, double sig) {
+    int offset = thread_id * get_padded_buffer_len(num_dimensions);
+    double *beta = beta_g + offset;
+    double *XTY = XTY_g + offset;
+    double *XTY_og = XTY_og_g + offset;
+    double **XTX_og = XTX_og_list[offset];
+
     for (int i = 0; i < num_dimensions; i++) {
         beta[i] = 0;
         XTY[i] = XTY_og[i];
         for (int j = 0; j < num_dimensions; j++) {
-            XTX[i][j] = XTX_og[i][j];
+            XTX.assign(i, j, XTX_og[i][j]);
         }
     }
 
@@ -86,7 +99,7 @@ bool Lin_row::fit(int max_iteration, double sig) {
             XTY[0] += x * y;
             for (int j = 0; j < num_dimensions; ++j) {
                 double x1 = (j == 0) ? x : patient_pnc[j];
-                XTX[j][0] += x1 * x;
+                XTX.plus_equals(j, 0, x1 * x);
             }
         } else { // adjust the part non valid
         // TODO: some optimization here: whether to precalculate Xcov * Y and Xocv * Xcov for each patient
@@ -94,7 +107,7 @@ bool Lin_row::fit(int max_iteration, double sig) {
             for (int j = 1; j < num_dimensions; ++j){
                 XTY[j] -= patient_pnc[j] * y;
                 for (int k = 1; k <= j; ++k){
-                    XTX[j][k] -= patient_pnc[j] * patient_pnc[k];
+                    XTX.minus_equals(j, k, patient_pnc[j] * patient_pnc[k]);
                 }
             }
         }
@@ -109,13 +122,13 @@ bool Lin_row::fit(int max_iteration, double sig) {
 
     for (int j = 0; j < num_dimensions; j++) {
         for (int k = j + 1; k < num_dimensions; ++k) {
-            XTX[j][k] = XTX[k][j];
+            XTX.inner_assign(j, k, k, j);
         }
     }
 
     /* beta = (XTX)-1 XTY */
     XTX.INV();
-    XTX.t->calculate_matrix_times_vec(XTY, beta);
+    XTX.calculate_t_matrix_times_vec(XTY, beta);
 
     /* calculate standard error */
     double sse = 0;
@@ -147,20 +160,29 @@ bool Lin_row::fit(int max_iteration, double sig) {
     }
 
     sse = sse / (n - num_dimensions - 1);
-    for (int j = 0; j < num_dimensions; ++j){
-        SSE[j] = sse * (*XTX.t)[j][j];
-    }
+    // for (int j = 0; j < num_dimensions; ++j){
+    //     SSE[j] = sse * (*XTX.t)[j][j];
+    // }
+
+    //beta_ans = beta[0];
+    //sse_ans_list[thread_id] = std::sqrt(sse * XTX.t->at(0, 0));
+
+    // overwrite b1 with the standard error, helps with false sharing issue... if we need
+    // to report other betas in the future we need to change this!
+    beta[1] = std::sqrt(sse * XTX.t[0][0]);
+    
+
     return true;
 }
 
-double Lin_row::get_beta() {
-    return beta[0];
+double Lin_row::get_beta(int thread_id) {
+    return (beta_g + (thread_id * get_padded_buffer_len(num_dimensions)))[0];//return beta[0];
 }
 
-double Lin_row::get_standard_error() {
-    return std::sqrt(SSE[0]);
+double Lin_row::get_standard_error(int thread_id) {
+    return (beta_g + (thread_id * get_padded_buffer_len(num_dimensions)))[1];//return std::sqrt(SSE[0]);
 }
 
-double Lin_row::get_t_stat() {
-    return beta[0] / std::sqrt(SSE[0]);
+double Lin_row::get_t_stat(int thread_id) {
+    return (beta_g + (thread_id * get_padded_buffer_len(num_dimensions)))[0] / (beta_g + (thread_id * get_padded_buffer_len(num_dimensions)))[1];//return beta[0] / std::sqrt(SSE[0]);
 }

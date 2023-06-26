@@ -40,7 +40,7 @@ Log_row::Log_row(int _size, const std::vector<int>& sizes, GWAS* _gwas, ImputePo
 }
 
 /* fitting */
-bool Log_row::fit(int max_it, double sig) {
+bool Log_row::fit(int thread_id, int max_it, double sig) {
     /* intialize beta to 0*/
     init();
     it_count = 1;
@@ -55,7 +55,7 @@ bool Log_row::fit(int max_it, double sig) {
     else {
         fitted = true;
         H.INV();
-        standard_error = std::sqrt((*H.t)[0][0]);
+        standard_error = std::sqrt(H.t[0][0]);
         return true;
     }
 }
@@ -82,7 +82,7 @@ double Log_row::get_standard_error() {
 void Log_row::update_beta() {
     // calculate_beta
     H.INV();
-    H.t->calculate_beta_delta(Grad, beta_delta);
+    H.calculate_beta_delta(Grad, beta_delta);
     for (int i = 0; i < num_dimensions; i++) {
         double b_i = beta_delta[i];
         b[i] += b_i;

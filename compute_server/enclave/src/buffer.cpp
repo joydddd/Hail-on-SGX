@@ -133,7 +133,7 @@ Buffer::~Buffer() {
 }
 
 void Buffer::add_gwas(GWAS* _gwas, ImputePolicy impute_policy, const std::vector<int>& sizes) {
-    free_batch = new Batch(row_size, analysis_type, impute_policy, _gwas, plaintxt_buffer, sizes);
+    free_batch = new Batch(row_size, analysis_type, impute_policy, _gwas, plaintxt_buffer, sizes, thread_id);
 }
 
 void Buffer::output(const char* out, const size_t& length) {

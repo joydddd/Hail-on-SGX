@@ -202,7 +202,7 @@ int Covar::read(const char* input, int res_size) {
 }
 
 void Covar::reserve(int total_row_size) {
-    data.reserve(total_row_size);
+    //data.reserve(total_row_size);
 }
 
 void Covar::init_1_covar(int total_row_size){

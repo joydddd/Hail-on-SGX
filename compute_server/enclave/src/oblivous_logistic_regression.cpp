@@ -32,7 +32,7 @@ bool Oblivious_log_row::fit(size_t max_it, double sig) {
 
     fitted = true;
     H.INV();
-    standard_error = sqrt((*H.t)[0][0]);
+    //standard_error = sqrt((*H.t)[0][0]);
     return true;
 }
 
@@ -58,7 +58,7 @@ double Oblivious_log_row::get_standard_error() {
 void Oblivious_log_row::update_beta() {
     // calculate_beta
     H.INV();
-    H.t->calculate_beta_delta(Grad, beta_delta);
+    //H.t->calculate_beta_delta(Grad, beta_delta);
     for (size_t i = 0; i < gwas->dim(); i++) {
         b[i] += beta_delta[i];
         // take abs after adding beta delta so that we can determine if we have passed tolerance

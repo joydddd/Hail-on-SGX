@@ -34,7 +34,7 @@ class Log_row : public Row {
     Log_row(int _size, const std::vector<int>& sizes, GWAS* _gwas, ImputePolicy _impute_policy);
 
     /* fitting */
-    bool fit(int max_iteration = 15, double sig = 1e-6);
+    bool fit(int thread_id = -1, int max_iteration = 15, double sig = 1e-6);
 
     /* output results */
     double get_beta();

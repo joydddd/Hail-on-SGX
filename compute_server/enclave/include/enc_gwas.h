@@ -2,6 +2,7 @@
 #define GWAS_ENCLAVE_H
 #include <limits>
 #include <limits.h>
+#include <stdio.h>
 
 #include <cmath>
 #include <sstream>
@@ -9,6 +10,7 @@
 #include <vector>
 #include <iostream>
 
+#include "Matrix.h"
 #include "gwas.h"
 /* provide Alleles & Loci */
 
@@ -17,6 +19,12 @@
 #define NA_uint UINT_MAX
 #define NA_double 3.0
 #define uint8_OFFSET 0
+
+#define DOUBLE_CACHE_BLOCK (int)(64 / sizeof(double))
+
+inline int get_padded_buffer_len(int n) {
+    return (((n % DOUBLE_CACHE_BLOCK) != 0) + (n / DOUBLE_CACHE_BLOCK)) * DOUBLE_CACHE_BLOCK * 3;
+}
 
 // template <typename T>
 // inline bool is_NA(T a) {
@@ -70,10 +78,10 @@ class Row {
      Loci getloci() { return loci; }
      Alleles getalleles() { return alleles; }
      int size() { return n; }
-     virtual bool fit(int max_iteration = 15, double sig = 1e-6) { std::cout << "WARNING: GENERIC FIT!?!" << std::endl; return false; }
-     virtual double get_beta() { return -1; }
-     virtual double get_t_stat() { return -1; }
-     virtual double get_standard_error() { return -1; }
+     virtual bool fit(int thread_id = -1, int max_iteration = 15, double sig = 1e-6) { std::cout << "WARNING: GENERIC FIT!?!" << std::endl; return false; }
+     virtual double get_beta(int thread_id) { return -1; }
+     virtual double get_t_stat(int thread_id) { return -1; }
+     virtual double get_standard_error(int thread_id) { return -1; }
      int get_iterations() { return it_count; }
 
 

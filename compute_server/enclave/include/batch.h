@@ -34,7 +34,7 @@ class Batch {
 
    public:
     size_t batch_head;
-    Batch(size_t _row_size, EncAnalysis analysis_type, ImputePolicy impute_policy, GWAS* _gwas, char *plaintxt_buffer, const std::vector<int>& sizes);
+    Batch(size_t _row_size, EncAnalysis analysis_type, ImputePolicy impute_policy, GWAS* _gwas, char *plaintxt_buffer, const std::vector<int>& sizes, int thread_id);
     ~Batch() { 
         delete row; 
         delete plaintxt;

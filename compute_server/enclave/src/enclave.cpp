@@ -15,11 +15,18 @@
 #include "gwas_t.h"
 #endif
 
-static std::vector<Buffer*> buffer_list;
-static std::vector<ClientInfo> client_info_list;
-static std::vector<int> client_y_size;
-static int num_clients;
-static GWAS* gwas;
+std::vector<Buffer*> buffer_list;
+std::vector<ClientInfo> client_info_list;
+std::vector<int> client_y_size;
+int num_clients;
+GWAS *gwas;
+
+double *beta_g;
+double *XTY_g;
+double *XTY_og_g;
+double ***XTX_og_list;
+
+int size_of_thread_buffer;
 
 std::condition_variable start_thread_cv;
 volatile bool start_thread = false;
@@ -232,6 +239,21 @@ void setup_enclave_phenotypes(const int num_threads, EncAnalysis analysis_type, 
 
     delete[] phenotype_buffer;
     delete[] buffer_decrypt;
+
+    // Padding to avoid false sharing - for some reason false sharing can still happen unless we make
+    // this larger than a single cache block. Maybe prefetching/compiler optimizations cause invalidations?
+    size_of_thread_buffer = get_padded_buffer_len(gwas->dim());
+    std::cout << "size " << size_of_thread_buffer * sizeof(double) << std::endl;
+    beta_g = new double[num_threads * size_of_thread_buffer];
+    XTY_g = new double[num_threads * size_of_thread_buffer];
+    XTY_og_g = new double[num_threads * size_of_thread_buffer];
+    //sse_ans_list = new double[num_threads];
+    XTX_og_list = new double**[num_threads * size_of_thread_buffer];
+
+    // for (int i = 0; i < num_threads * size_of_thread_buffer; ++i) {
+    //     sse_ans_list[i] = 1;
+    // }
+
     try {
         for (int thread_id = 0; thread_id < num_threads; ++thread_id) {
             buffer_list[thread_id]->add_gwas(gwas, impute_policy, client_y_size);
@@ -312,10 +334,10 @@ void regression(const int thread_id, EncAnalysis analysis_type) {
         bool converge;
         //std::cout << i++ << std::endl;
         try {
-            converge = row->fit();
-            output_string += "\t" + std::to_string(row->get_beta()) +
-                             "\t" + std::to_string(row->get_standard_error()) +
-                             "\t" + std::to_string(row->get_t_stat());
+            converge = row->fit(thread_id);
+            output_string += "\t" + std::to_string(row->get_beta(thread_id)) +
+                             "\t" + std::to_string(row->get_standard_error(thread_id)) +
+                             "\t" + std::to_string(row->get_t_stat(thread_id));
 
             if (analysis_type == EncAnalysis::logistic || analysis_type == EncAnalysis::logistic_oblivious) {
                 output_string += + "\t" + std::to_string(row->get_iterations()) + "\t";
