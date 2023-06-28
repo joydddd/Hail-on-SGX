@@ -12,26 +12,21 @@
 
 // extern double beta_ans;
 // extern double sse_ans;
-extern GWAS *gwas;
 extern double **beta_list;
 extern double **XTY_list;
 
-extern double *beta_g;
 extern double *XTY_g;
 extern double *XTY_og_g;
 extern double ***XTX_og_list;
 
 class Lin_row : public Row {
-    //const GWAS *gwas;
+    const GWAS *gwas;
 
     /* model data */
     //std::vector<double> beta; // beta for results
-    //std::vector<double> SSE;
     //std::vector< std::vector<double> > XTX_og;
     SqrMatrix XTX;  // XTX_og contains the part of XTX not dependent on
                             // phenotype, assuming all samples are valid.
-
-    int tb;
 
     void init();
 
@@ -46,6 +41,7 @@ class Lin_row : public Row {
     double get_beta(int thread_id);
     double get_t_stat(int thread_id);
     double get_standard_error(int thread_id);
+    void get_outputs(int thread_id, std::string& output_string);
 
     int size() { return n; }
     /* reqires boost library. To avoid using boost:

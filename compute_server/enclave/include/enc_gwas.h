@@ -23,7 +23,7 @@
 #define DOUBLE_CACHE_BLOCK (int)(64 / sizeof(double))
 
 inline int get_padded_buffer_len(int n) {
-    return (((n % DOUBLE_CACHE_BLOCK) != 0) + (n / DOUBLE_CACHE_BLOCK)) * DOUBLE_CACHE_BLOCK * 3;
+    return (((n % DOUBLE_CACHE_BLOCK) != 0) + (n / DOUBLE_CACHE_BLOCK)) * DOUBLE_CACHE_BLOCK * 4;
 }
 
 // template <typename T>
@@ -45,6 +45,7 @@ inline uint8_t is_not_NA_oblivious(uint8_t val) {
 
 // utilities
 double read_entry_int(std::string &entry);
+double bd_max(const double *vec, int len);
 double bd_max(const std::vector<double>& vec);
 bool read_entry_bool(std::string& entry);
 
@@ -82,6 +83,7 @@ class Row {
      virtual double get_beta(int thread_id) { return -1; }
      virtual double get_t_stat(int thread_id) { return -1; }
      virtual double get_standard_error(int thread_id) { return -1; }
+     virtual void get_outputs(int thread_id, std::string& output_string) {};
      int get_iterations() { return it_count; }
 
 
@@ -185,5 +187,8 @@ class GWAS {
 #endif
 
 };  // Gwas class for logic regression
+
+extern double *beta_g;
+extern GWAS *gwas;
 
 #endif

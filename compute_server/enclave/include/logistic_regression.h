@@ -10,18 +10,21 @@
 #endif
 /* for logistic regression */
 
+extern double *beta_delta_g;
+extern double *Grad_g;
+
 class Log_row : public Row {
-    const GWAS *gwas;
+    //const GWAS *gwas;
 
     /* model data */
-    std::vector<double> b;
-    std::vector<double> beta_delta;
+    //std::vector<double> b;
+    //std::vector<double> beta_delta;
     SqrMatrix H;
-    std::vector<double> Grad;
-    std::vector<double> y_ests;
+    //std::vector<double> Grad;
     double standard_error;
-    bool fitted = false;
     void update_beta();
+    bool fitted;
+    int offset;
 
 
     void update_estimate();
@@ -31,15 +34,16 @@ class Log_row : public Row {
 
    public:
     /* setup */
-    Log_row(int _size, const std::vector<int>& sizes, GWAS* _gwas, ImputePolicy _impute_policy);
+    Log_row(int _size, const std::vector<int>& sizes, GWAS* _gwas, ImputePolicy _impute_policy, int thread_id);
 
     /* fitting */
     bool fit(int thread_id = -1, int max_iteration = 15, double sig = 1e-6);
 
     /* output results */
-    double get_beta();
-    double get_t_stat();
-    double get_standard_error();
+    double get_beta(int thread_id);
+    double get_t_stat(int thread_id);
+    double get_standard_error(int thread_id);
+    void get_outputs(int thread_id, std::string& output_string);
 };
 
 #endif

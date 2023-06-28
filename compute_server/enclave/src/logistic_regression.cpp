@@ -25,35 +25,40 @@ inline double modified_pade_approx(double x) {
     return ((x + 3) * (x + 3) + 3) / ((x - 3) * (x - 3) + 3);
 }
 
-Log_row::Log_row(int _size, const std::vector<int>& sizes, GWAS* _gwas, ImputePolicy _impute_policy) : 
-    Row(_size, sizes, _gwas->dim(), _impute_policy), gwas(_gwas) {
+Log_row::Log_row(int _size, const std::vector<int>& sizes, GWAS* _gwas, ImputePolicy _impute_policy, int thread_id) : 
+    Row(_size, sizes, _gwas->dim(), _impute_policy), H(num_dimensions, 2) {
+    fitted = true;
 
-    beta_delta.resize(num_dimensions);
+    offset = thread_id * get_padded_buffer_len(num_dimensions);
+
+    //beta_delta.resize(num_dimensions);
     // 2 is a magic number that helps with SqrMatrix construction, "highest level matrix"
-    H = SqrMatrix(num_dimensions, 2);
-    Grad.resize(num_dimensions);
+    //Grad.resize(num_dimensions);
+    //Grad = new double[num_dimensions];
 
     if (gwas->size() != n) throw CombineERROR("row length mismatch");
-    if (b.size() != n) {
-        b.resize(n);
-    }
+    // if (b.size() != n) {
+    //     b.resize(n);
+    // }
 }
 
 /* fitting */
 bool Log_row::fit(int thread_id, int max_it, double sig) {
     /* intialize beta to 0*/
+
     init();
     it_count = 1;
 
-    while (it_count < max_it && bd_max(beta_delta) >= sig) {
+    while (it_count < max_it && bd_max(beta_delta_g + offset, num_dimensions) >= sig) {
         update_beta();
         it_count++;
     }
 
-    if (it_count == max_it)
+    if (it_count == max_it) {
+        fitted = false;
         return false;
+    }
     else {
-        fitted = true;
         H.INV();
         standard_error = std::sqrt(H.t[0][0]);
         return true;
@@ -61,20 +66,38 @@ bool Log_row::fit(int thread_id, int max_it, double sig) {
 }
 
 /* output results*/
-double Log_row::get_beta() {
-    if (!fitted)
-        for (double &bn : b) bn = nan("");
-    return b.front();
+double Log_row::get_beta(int thread_id) {
+    if (!fitted) {
+        return nan("");
+    }
+    return beta_g[0];//.front();
 }
 
-double Log_row::get_t_stat() {
-    if (!fitted) return nan("");
-    return b.front() / standard_error;
+double Log_row::get_t_stat(int thread_id) {
+    if (!fitted) {
+        return nan("");
+    }
+    return beta_g[0] / standard_error;
 }
 
-double Log_row::get_standard_error() {
-    if (!fitted) return nan("");
+double Log_row::get_standard_error(int thread_id) {
+    if (!fitted) {
+        return nan("");
+        fitted = true;
+    }
     return standard_error;
+}
+
+void Log_row::get_outputs(int thread_id, std::string& output_string) {
+    if (!fitted) {
+        output_string += "\tNA\tNA\tNA";
+        fitted = true;
+        return;
+    }
+    output_string += "\t" + std::to_string((beta_g + offset)[0]) +
+                     "\t" + std::to_string(standard_error) +
+                     "\t" + std::to_string((beta_g + offset)[0] / standard_error);
+
 }
 
 /* fitting helper functions */
@@ -82,23 +105,21 @@ double Log_row::get_standard_error() {
 void Log_row::update_beta() {
     // calculate_beta
     H.INV();
-    H.calculate_beta_delta(Grad, beta_delta);
+    H.calculate_t_matrix_times_vec(Grad_g + offset, beta_delta_g + offset);
     for (int i = 0; i < num_dimensions; i++) {
-        double b_i = beta_delta[i];
-        b[i] += b_i;
+        double bd_i = (beta_delta_g + offset)[i];
+        (beta_g + offset)[i] += bd_i;
         // take abs after adding beta delta so that we can determine if we have passed tolerance
-        beta_delta[i] = std::abs(b_i);
+        (beta_delta_g + offset)[i] = std::abs(bd_i);
     }
 
     update_estimate();
 }
 
 void Log_row::init() {
-    for (int i = 0; i < n; ++i) {
-        b[i] = 0;
-    }
     for (int i = 0; i < num_dimensions; ++i) {
-        beta_delta[i] = 1;
+        (beta_delta_g + offset)[i] = 1;
+        (beta_g + offset)[i] = 0;
     }
 
     if (impute_average) {
@@ -123,9 +144,9 @@ void Log_row::init() {
 
 void Log_row::update_estimate() {
     for (int i = 0; i < num_dimensions; ++i) {
-        Grad[i] = 0;
+        (Grad_g + offset)[i] = 0;
         for (int j = 0; j < num_dimensions; ++j){
-            H[i][j] = 0;
+            H.assign(i, j, 0);
         }
     }
     double y_est;
@@ -138,9 +159,9 @@ void Log_row::update_estimate() {
         if (!is_NA) {
             const std::vector<double>& patient_pnc = gwas->phenotype_and_covars.data[i];
 
-            y_est = b[0] * x;
+            y_est = (beta_g + offset)[0] * x;
             for (int j = 1; j < num_dimensions; j++) {
-                y_est += patient_pnc[j] * b[j];
+                y_est += patient_pnc[j] * (beta_g + offset)[j];
             }
             y_est = 1 / (1 + modified_pade_approx_oblivious(-y_est));
 
@@ -157,7 +178,7 @@ void Log_row::update_estimate() {
     /* build lower half of H */
     for (int j = 0; j < num_dimensions; j++) {
         for (int k = j + 1; k < num_dimensions; k++) {
-            H[j][k] = H[k][j];
+            H.inner_assign(j, k, k, j);
         }
     }
 }
@@ -166,17 +187,17 @@ void Log_row::update_estimate() {
 void Log_row::update_upperH_and_Grad(double y_est, double x, const std::vector<double>& patient_pnc) {
     double y_est_1_y = y_est * (1 - y_est);
     double y_delta = patient_pnc[0] - y_est;
-    Grad[0] += y_delta * x;
-    H[0][0] += x * x * y_est_1_y;
+    (Grad_g + offset)[0] += y_delta * x;
+    H.plus_equals(0, 0, x * x * y_est_1_y);
     for (int j = 1; j < num_dimensions; j++) {
         double patient_pnc_j = patient_pnc[j];
         double pnc_j_times_y_est = patient_pnc_j * y_est_1_y;
-        Grad[j] += y_delta * patient_pnc_j;
-        H[j][0] += x * pnc_j_times_y_est;
-        H[j][j] += patient_pnc_j * pnc_j_times_y_est;
+        (Grad_g + offset)[j] += y_delta * patient_pnc_j;
+        H.plus_equals(j, 0, x * pnc_j_times_y_est);
+        H.plus_equals(j, j, patient_pnc_j * pnc_j_times_y_est);
 
         for (int k = 1; k < j; k += 1) {
-            H[j][k] += patient_pnc[k] * pnc_j_times_y_est;
+            H.plus_equals(j, k, patient_pnc[k] * pnc_j_times_y_est);
         }
     }
 }

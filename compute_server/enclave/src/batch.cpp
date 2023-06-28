@@ -11,7 +11,7 @@ Batch::Batch(size_t _row_size, EncAnalysis analysis_type, ImputePolicy impute_po
     : row_size(_row_size), type(analysis_type) {
     switch (analysis_type) {
         case EncAnalysis::logistic:
-            row = new Log_row(row_size, sizes, _gwas, impute_policy);
+            row = new Log_row(row_size, sizes, _gwas, impute_policy, thread_id);
             break;
         case EncAnalysis::linear:
             row = new Lin_row(row_size, sizes, _gwas, impute_policy, thread_id);

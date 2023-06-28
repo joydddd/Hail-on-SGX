@@ -133,6 +133,17 @@ double read_entry_int(std::string &entry) {
     return ans;
 }
 
+double bd_max(const double *vec, int len) {
+    double max = -DBL_MAX;
+    for (int i = 0; i < len; i++) {
+        double x = vec[i];
+        if (x > max) {
+            max = x;
+        }
+    }
+    return max;
+}
+
 double bd_max(const std::vector<double>& vec) {
     double max = -DBL_MAX;
     for (int i = 0; i < vec.size(); i++) {

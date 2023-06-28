@@ -21,7 +21,14 @@ std::vector<int> client_y_size;
 int num_clients;
 GWAS *gwas;
 
+// Both kernels
 double *beta_g;
+
+// Log reg
+double *beta_delta_g;
+double *Grad_g;
+
+// Lin reg
 double *XTY_g;
 double *XTY_og_g;
 double ***XTX_og_list;
@@ -243,7 +250,9 @@ void setup_enclave_phenotypes(const int num_threads, EncAnalysis analysis_type, 
     // Padding to avoid false sharing - for some reason false sharing can still happen unless we make
     // this larger than a single cache block. Maybe prefetching/compiler optimizations cause invalidations?
     size_of_thread_buffer = get_padded_buffer_len(gwas->dim());
-    std::cout << "size " << size_of_thread_buffer * sizeof(double) << std::endl;
+    //std::cout << "size " << size_of_thread_buffer * sizeof(double) << std::endl;
+    beta_delta_g = new double[num_threads * size_of_thread_buffer];
+    Grad_g = new double[num_threads * size_of_thread_buffer];
     beta_g = new double[num_threads * size_of_thread_buffer];
     XTY_g = new double[num_threads * size_of_thread_buffer];
     XTY_og_g = new double[num_threads * size_of_thread_buffer];
@@ -335,9 +344,7 @@ void regression(const int thread_id, EncAnalysis analysis_type) {
         //std::cout << i++ << std::endl;
         try {
             converge = row->fit(thread_id);
-            output_string += "\t" + std::to_string(row->get_beta(thread_id)) +
-                             "\t" + std::to_string(row->get_standard_error(thread_id)) +
-                             "\t" + std::to_string(row->get_t_stat(thread_id));
+            row->get_outputs(thread_id, output_string);
 
             if (analysis_type == EncAnalysis::logistic || analysis_type == EncAnalysis::logistic_oblivious) {
                 output_string += + "\t" + std::to_string(row->get_iterations()) + "\t";

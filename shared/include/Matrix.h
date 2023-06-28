@@ -129,6 +129,26 @@ class SqrMatrix{
             }
         }
 
+        void calculate_t_matrix_times_vec(const std::vector<double>& mult, double *ans) {
+            //if (mult.size() != n) throw MathError("Matrix Vector dim mismatch"); 
+            for (int i = 0; i < n; i++){
+                ans[i] = 0;
+                for (int j = 0; j < n; j++) {
+                    ans[i] += t[i][j] * mult[j];
+                }
+            }
+        }
+
+        void calculate_t_matrix_times_vec(const double *mult, std::vector<double>& ans) {
+            //if (mult.size() != n) throw MathError("Matrix Vector dim mismatch"); 
+            for (int i = 0; i < n; i++){
+                ans[i] = 0;
+                for (int j = 0; j < n; j++) {
+                    ans[i] += t[i][j] * mult[j];
+                }
+            }
+        }
+
         #ifdef DEBUG
         friend ostream& operator<<(ostream& os, const SqrMatrix& matrix){
             for (auto &row:matrix.m){

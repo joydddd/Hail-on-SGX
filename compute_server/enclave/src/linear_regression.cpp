@@ -10,8 +10,6 @@
 Lin_row::Lin_row(int _size, const std::vector<int>& sizes, GWAS* _gwas, ImputePolicy _impute_policy, int thread_id)
     : Row(_size, sizes, _gwas->dim(), _impute_policy), XTX(num_dimensions, 2) {
 
-    //size_of_thread_buffer = gwas->dim();
-
     impute_average = impute_policy == ImputePolicy::Hail;
     int offset = thread_id * get_padded_buffer_len(num_dimensions);
 
@@ -176,13 +174,20 @@ bool Lin_row::fit(int thread_id, int max_iteration, double sig) {
 }
 
 double Lin_row::get_beta(int thread_id) {
-    return (beta_g + (thread_id * get_padded_buffer_len(num_dimensions)))[0];//return beta[0];
+    return (beta_g + (thread_id * get_padded_buffer_len(num_dimensions)))[0];
 }
 
 double Lin_row::get_standard_error(int thread_id) {
-    return (beta_g + (thread_id * get_padded_buffer_len(num_dimensions)))[1];//return std::sqrt(SSE[0]);
+    return (beta_g + (thread_id * get_padded_buffer_len(num_dimensions)))[1];
 }
 
 double Lin_row::get_t_stat(int thread_id) {
-    return (beta_g + (thread_id * get_padded_buffer_len(num_dimensions)))[0] / (beta_g + (thread_id * get_padded_buffer_len(num_dimensions)))[1];//return beta[0] / std::sqrt(SSE[0]);
+    return (beta_g + (thread_id * get_padded_buffer_len(num_dimensions)))[0] / (beta_g + (thread_id * get_padded_buffer_len(num_dimensions)))[1];
+}
+
+void Lin_row::get_outputs(int thread_id, std::string& output_string) {
+    int offset = thread_id * get_padded_buffer_len(num_dimensions);
+    output_string += "\t" + std::to_string((beta_g + offset)[0]) +
+                     "\t" + std::to_string((beta_g + offset)[1]) +
+                     "\t" + std::to_string((beta_g + offset)[0] / (beta_g + offset)[1]);
 }
