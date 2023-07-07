@@ -9,7 +9,6 @@
 
 Lin_row::Lin_row(int _size, const std::vector<int>& sizes, GWAS* _gwas, ImputePolicy _impute_policy, int thread_id)
     : Row(_size, sizes, _gwas->dim(), _impute_policy), XTX(num_dimensions, 2) {
-
     impute_average = impute_policy == ImputePolicy::Hail;
     int offset = thread_id * get_padded_buffer_len(num_dimensions);
 

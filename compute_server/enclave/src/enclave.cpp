@@ -262,7 +262,6 @@ void setup_enclave_phenotypes(const int num_threads, EncAnalysis analysis_type, 
     // for (int i = 0; i < num_threads * size_of_thread_buffer; ++i) {
     //     sse_ans_list[i] = 1;
     // }
-
     try {
         for (int thread_id = 0; thread_id < num_threads; ++thread_id) {
             buffer_list[thread_id]->add_gwas(gwas, impute_policy, client_y_size);

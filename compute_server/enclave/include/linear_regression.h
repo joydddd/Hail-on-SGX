@@ -20,7 +20,6 @@ extern double *XTY_og_g;
 extern double ***XTX_og_list;
 
 class Lin_row : public Row {
-    const GWAS *gwas;
 
     /* model data */
     //std::vector<double> beta; // beta for results
