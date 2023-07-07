@@ -114,6 +114,7 @@ clean:
 
 # Generic rules for compiling a source file to an non oe object file
 ${BUILDDIR}/%_nonoe.o: ${SRCDIR}/%.cpp
+	@mkdir -p ${BUILDDIR}
 	${CXX} -DNON_OE ${CXX_NONENC_FLAGS} -c -o $@ $<
 
 

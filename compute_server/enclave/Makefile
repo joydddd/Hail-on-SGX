@@ -30,20 +30,20 @@ CXXFLAGS=$(shell pkg-config oeenclave-$(CXX_COMPILER) --cflags)
 LDFLAGS=$(shell pkg-config oeenclave-$(CXX_COMPILER) --libs)
 INCDIR=$(shell pkg-config oeenclave-$(C_COMPILER) --variable=includedir)
 CRYPTO_LDFLAGS=$(shell pkg-config oeenclave-$(COMPILER) --variable=${OE_CRYPTO_LIB}libs)
-CXX_NONENC_FLAGS = -std=c++14 -pedantic -lmbedtls -g
-
+#CXX_NONENC_FLAGS = -std=c++14 -pedantic -lmbedtls -g
+#-m64 -fPIE -ftls-model=local-exec -fvisibility=hidden -fstack-protector-strong -fno-omit-frame-pointer -ffunction-sections -fdata-sections -mllvm -x86-speculative-load-hardening -O3
 
 BOOST_ROOT = /usr/local/lib/boost_1_76_0/
 CXXFLAGS+= -O3 -I $(BOOST_ROOT)
 CXXFLAGS+= -I ../../shared/include/ -I .. -I include -I .
-CXX_NONENC_FLAGS += -O3 -I $(BOOST_ROOT)
-CXX_NONENC_FLAGS += -I ../../shared/include -I .. -I include -I .
+# CXX_NONENC_FLAGS += -O3 -I $(BOOST_ROOT)
+# CXX_NONENC_FLAGS += -I ../../shared/include -I .. -I include -I .
 # echo ${CXX_NONENC_FLAGS}
-# CXX_NONENC_FLAGS1=${subst -nostdinc,, $(CXXFLAGS)}
-# CXX_NONENC_FLAGS2=${subst -I/opt/openenclave/share/pkgconfig/../../include/openenclave/3rdparty/libcxx,, $(CXX_NONENC_FLAGS1)}
-# CXX_NONENC_FLAGS3=${subst -I/opt/openenclave/share/pkgconfig/../../include/openenclave/3rdparty/libc,, $(CXX_NONENC_FLAGS2)}
-# CXX_NONENC_FLAGS4=${subst -I/opt/openenclave/share/pkgconfig/../../include/openenclave/3rdparty,, $(CXX_NONENC_FLAGS3)}
-# CXX_NONENC_FLAGS=${subst -I/opt/openenclave/share/pkgconfig/../../include,, $(CXX_NONENC_FLAGS4)}
+CXX_NONENC_FLAGS1=${subst -nostdinc,, $(CXXFLAGS)}
+CXX_NONENC_FLAGS2=${subst -I/opt/openenclave/share/pkgconfig/../../include/openenclave/3rdparty/libcxx,, $(CXX_NONENC_FLAGS1)}
+CXX_NONENC_FLAGS3=${subst -I/opt/openenclave/share/pkgconfig/../../include/openenclave/3rdparty/libc,, $(CXX_NONENC_FLAGS2)}
+CXX_NONENC_FLAGS4=${subst -I/opt/openenclave/share/pkgconfig/../../include/openenclave/3rdparty,, $(CXX_NONENC_FLAGS3)}
+CXX_NONENC_FLAGS=${subst -I/opt/openenclave/share/pkgconfig/../../include,, $(CXX_NONENC_FLAGS4)}
 # CXX_NONENC_FLAGS=${subst -nostdinc,, $(CXXFLAGS)}
 
 all:
@@ -118,4 +118,7 @@ $(BUILDDIR)/%_nonoe.o: $(SRCDIR)/%.cpp
 	$(CXX) -c $(CXX_NONENC_FLAGS) -DNON_OE -o $@ $^
 
 nonoe: $(NONOEOBJECTS)
+	@echo "START"
+	@echo ${CXX_NONENC_FLAGS}
+	@echo "END"
 	$(CXX) $(NONOEOBJECTS) -c $(CXX_NONENC_FLAGS) -o $(BUILDDIR)/$(PROJECTNAME)_nonoe.o
