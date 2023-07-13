@@ -1,0 +1,87 @@
+0000000000170370 <_ULx86_64_sigreturn>:
+   1703d6:	0f 05                	syscall 
+
+0000000000181d20 <__lsysinfo>:
+   181d2d:	e9 4e 19 01 00       	jmp    193680 <__syscall_ret>
+
+0000000000182000 <getrlimit>:
+   18206a:	e8 11 16 01 00       	call   193680 <__syscall_ret>
+
+0000000000182000 <getrlimit>:
+   182105:	e8 76 15 01 00       	call   193680 <__syscall_ret>
+
+00000000001848b0 <__stdio_close>:
+   18492a:	e9 51 ed 00 00       	jmp    193680 <__syscall_ret>
+
+0000000000184930 <__stdio_read>:
+   1849de:	e8 9d ec 00 00       	call   193680 <__syscall_ret>
+
+0000000000184930 <__stdio_read>:
+   184a30:	e8 4b ec 00 00       	call   193680 <__syscall_ret>
+
+0000000000184b50 <__stdio_write>:
+   184beb:	e8 90 ea 00 00       	call   193680 <__syscall_ret>
+
+0000000000184b50 <__stdio_write>:
+   184caa:	e8 d1 e9 00 00       	call   193680 <__syscall_ret>
+
+000000000018ebf0 <__clock_gettime>:
+   18ec58:	e8 23 4a 00 00       	call   193680 <__syscall_ret>
+
+000000000018ed90 <nanosleep>:
+   18eda9:	e9 d2 48 00 00       	jmp    193680 <__syscall_ret>
+
+0000000000191f60 <__lseek>:
+   191f73:	e9 08 17 00 00       	jmp    193680 <__syscall_ret>
+
+0000000000193330 <__munmap>:
+   19333d:	e9 3e 03 00 00       	jmp    193680 <__syscall_ret>
+
+0000000000193680 <__syscall_ret>:
+ 0000000000193680 <__syscall_ret>:
+
+000000000019c680 <__map_file>:
+   19c6ec:	e8 8f 6f ff ff       	call   193680 <__syscall_ret>
+
+000000000019c680 <__map_file>:
+   19c75b:	e8 20 6f ff ff       	call   193680 <__syscall_ret>
+
+000000000019d960 <oe_nanosleep>:
+   19d99c:	e8 ff be ea ff       	call   498a0 <oe_syscall_nanosleep_ocall>
+
+000000000019da10 <oe_clock_nanosleep>:
+   19da50:	e8 9b d9 ea ff       	call   4b3f0 <oe_syscall_clock_nanosleep_ocall>
+
+00000000001a0e80 <oe_consolefs_create_file>:
+   1a0f62:	e8 89 51 ea ff       	call   460f0 <oe_syscall_dup_ocall>
+
+00000000001a0e80 <oe_consolefs_create_file>:
+   1a1051:	e8 9a 50 ea ff       	call   460f0 <oe_syscall_dup_ocall>
+
+00000000001a0e80 <oe_consolefs_create_file>:
+   1a1140:	e8 ab 4f ea ff       	call   460f0 <oe_syscall_dup_ocall>
+
+00000000001a1240 <_consolefs_read>:
+   1a12cb:	e8 20 fa e9 ff       	call   40cf0 <oe_syscall_read_ocall>
+
+00000000001a14d0 <_consolefs_write>:
+   1a155b:	e8 30 08 ea ff       	call   41d90 <oe_syscall_write_ocall>
+
+00000000001a1760 <_consolefs_readv>:
+   1a19e2:	e8 99 14 ea ff       	call   42e80 <oe_syscall_readv_ocall>
+
+00000000001a1c70 <_consolefs_writev>:
+   1a1efd:	e8 8e 25 ea ff       	call   44490 <oe_syscall_writev_ocall>
+
+00000000001a20d0 <_consolefs_dup>:
+   1a21f9:	e8 f2 3e ea ff       	call   460f0 <oe_syscall_dup_ocall>
+
+00000000001a24d0 <_consolefs_ioctl>:
+   1a261f:	e8 4c 5c ea ff       	call   48270 <oe_syscall_ioctl_ocall>
+
+00000000001a2770 <_consolefs_fcntl>:
+   1a2942:	e8 09 43 ea ff       	call   46c50 <oe_syscall_fcntl_ocall>
+
+00000000001a2ad0 <_consolefs_close>:
+   1a2b3e:	e8 4d 2a ea ff       	call   45590 <oe_syscall_close_ocall>
+

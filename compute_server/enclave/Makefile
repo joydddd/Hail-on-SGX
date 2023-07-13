@@ -36,15 +36,16 @@ CRYPTO_LDFLAGS=$(shell pkg-config oeenclave-$(COMPILER) --variable=${OE_CRYPTO_L
 BOOST_ROOT = /usr/local/lib/boost_1_76_0/
 CXXFLAGS+= -O3 -I $(BOOST_ROOT)
 CXXFLAGS+= -I ../../shared/include/ -I .. -I include -I .
-# CXX_NONENC_FLAGS += -O3 -I $(BOOST_ROOT)
-# CXX_NONENC_FLAGS += -I ../../shared/include -I .. -I include -I .
-# echo ${CXX_NONENC_FLAGS}
-CXX_NONENC_FLAGS1=${subst -nostdinc,, $(CXXFLAGS)}
-CXX_NONENC_FLAGS2=${subst -I/opt/openenclave/share/pkgconfig/../../include/openenclave/3rdparty/libcxx,, $(CXX_NONENC_FLAGS1)}
-CXX_NONENC_FLAGS3=${subst -I/opt/openenclave/share/pkgconfig/../../include/openenclave/3rdparty/libc,, $(CXX_NONENC_FLAGS2)}
-CXX_NONENC_FLAGS4=${subst -I/opt/openenclave/share/pkgconfig/../../include/openenclave/3rdparty,, $(CXX_NONENC_FLAGS3)}
-CXX_NONENC_FLAGS=${subst -I/opt/openenclave/share/pkgconfig/../../include,, $(CXX_NONENC_FLAGS4)}
-# CXX_NONENC_FLAGS=${subst -nostdinc,, $(CXXFLAGS)}
+
+TMP1=${subst -nostdinc,, $(CXXFLAGS)}
+TMP2=${subst -I/opt/openenclave/share/pkgconfig/../../include/openenclave/3rdparty/libcxx,, $(TMP1)}
+TMP3=${subst -I/opt/openenclave/share/pkgconfig/../../include/openenclave/3rdparty/libc,, $(TMP2)}
+TMP4=${subst -I/opt/openenclave/share/pkgconfig/../../include/openenclave/3rdparty,, $(TMP3)}
+TMP5=${subst -mllvm -x86-speculative-load-hardening,, $(TMP4)}
+CXX_NONENC_FLAGS=${subst -I/opt/openenclave/share/pkgconfig/../../include,, $(TMP5)}
+CXX_NONENC_FLAGS+= -lmbedtls -lmbedcrypto
+# CXX_NONENC_FLAGS+= -mllvm -x86-speculative-load-hardening
+
 
 all:
 	$(MAKE) build
@@ -98,27 +99,24 @@ keys:
 	openssl rsa -in $(KEYDIR)/private.pem -pubout -out $(KEYDIR)/public.pem
 
 # non-enclave tests
-define make_tests
-    $(1): CXX_NONENC_FLAGS += -g3 -DDEBUG
-    $(1): $$(TESTDIR)/$(1).cpp $$(SOURCES)
-	$$(CXX) $$(CXX_NONENC_FLAGS) $$(SOURCES) $$(TESTDIR)/$(1).cpp -o $(1)
-	# valgrind -s --leak-check=yes ./$(1)
-	gdb $(1)
-	# ./$(1)
-endef
-$(foreach test, $(TESTS), $(eval $(call make_tests,$(test))))
+# define make_tests
+#     $(1): CXX_NONENC_FLAGS += -g3 -DDEBUG
+#     $(1): $$(TESTDIR)/$(1).cpp $$(SOURCES)
+# 	$$(CXX) $$(CXX_NONENC_FLAGS) $$(SOURCES) $$(TESTDIR)/$(1).cpp -o $(1)
+# 	# valgrind -s --leak-check=yes ./$(1)
+# 	gdb $(1)
+# 	# ./$(1)
+# endef
+# $(foreach test, $(TESTS), $(eval $(call make_tests,$(test))))
 
-tests: $(TESTS)
+# tests: $(TESTS)
 
-test_logistic_stat: $(SRCDIR)/logistic_regression.cpp $(SRCDIR)/enc_gwas.cpp $(TESTDIR)/test_logistic_stat.cpp
-	$(CXX) $(CXX_NONENC_FLAGS) -DDEBUG -o $@ $^
+# test_logistic_stat: $(SRCDIR)/logistic_regression.cpp $(SRCDIR)/enc_gwas.cpp $(TESTDIR)/test_logistic_stat.cpp
+# 	$(CXX) $(CXX_NONENC_FLAGS) -DDEBUG -o $@ $^
 
 $(BUILDDIR)/%_nonoe.o: $(SRCDIR)/%.cpp
 	@mkdir -p ${BUILDDIR}
 	$(CXX) -c $(CXX_NONENC_FLAGS) -DNON_OE -o $@ $^
 
 nonoe: $(NONOEOBJECTS)
-	@echo "START"
-	@echo ${CXX_NONENC_FLAGS}
-	@echo "END"
 	$(CXX) $(NONOEOBJECTS) -c $(CXX_NONENC_FLAGS) -o $(BUILDDIR)/$(PROJECTNAME)_nonoe.o

@@ -10,6 +10,7 @@
 
 /* ECALL */
 void setup_enclave_encryption(const int num_threads);
+void setup_num_patients();
 void setup_enclave_phenotypes(const int num_threads, enum EncAnalysis analysis_type, enum ImputePolicy impute_policy);
 void regression(const int thread_id, EncAnalysis analysis_type);
 

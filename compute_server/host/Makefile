@@ -22,7 +22,6 @@ DEBUGOBJECTS := $(patsubst $(SRCDIR)/%,$(BUILDDIR)/%,$(SOURCES:.cpp=_debug.o))
 
 NONOEOBJECTS = $(patsubst $(SRCDIR)/%,$(BUILDDIR)/%,$(SOURCES:.cpp=_nonoe.o))
 NONOEOBJECTS += $(shell find $(SHAREDBUILDDIR) -type f -name *.o)
-CXX_NONENC_FLAGS = -O3 -std=c++14 -pedantic -lmbedtls -lmbedcrypto
 INC := -I ../../shared/include -I .. -pthread -I include -I .
 CRYPTFLAG := -lcryptopp
 CURLFLAG := -lcurl
@@ -44,9 +43,17 @@ LDFLAGS=$(shell pkg-config oehost-$(C_COMPILER) --libs)
 INCDIR=$(shell pkg-config oehost-$(C_COMPILER) --variable=includedir)
 
 CFLAGS+= $(INC) 
-CXXFLAGS+= -O3 $(INC) 
+CXXFLAGS+= -O3 $(INC)
 LDFLAGS+= $(INC) $(LIBTHREAD)
-CXX_NONENC_FLAGS += -O3 $(INC)
+
+TMP1=${subst -nostdinc,, $(CXXFLAGS)}
+TMP2=${subst -I/opt/openenclave/share/pkgconfig/../../include/openenclave/3rdparty/libcxx,, $(TMP1)}
+TMP3=${subst -I/opt/openenclave/share/pkgconfig/../../include/openenclave/3rdparty/libc,, $(TMP2)}
+TMP4=${subst -I/opt/openenclave/share/pkgconfig/../../include/openenclave/3rdparty,, $(TMP3)}
+TMP5=${subst -mllvm -x86-speculative-load-hardening,, $(TMP4)}
+CXX_NONENC_FLAGS=${subst -I/opt/openenclave/share/pkgconfig/../../include,, $(TMP5)}
+CXX_NONENC_FLAGS+= -lmbedtls -lmbedcrypto
+# CXX_NONENC_FLAGS+= -mllvm -x86-speculative-load-hardening
 
 all: build
 
@@ -60,7 +67,6 @@ pre:
 
 # Generic rules for compiling a source file to an object file
 ${BUILDDIR}/%.o: ${SRCDIR}/%.cpp
-	@mkdir -p ${BUILDDIR}
 	${CXX} ${CXXFLAGS} -c -o $@ $<
 
 build: pre $(OBJECTS)

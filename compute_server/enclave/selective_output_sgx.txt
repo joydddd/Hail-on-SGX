@@ -1,0 +1,334 @@
+0000000000181d40 <exp>:
+
+  181d40:	55                   	push   %rbp
+
+  181d41:	48 89 e5             	mov    %rsp,%rbp
+
+  181d44:	48 89 e0             	mov    %rsp,%rax
+
+  181d47:	49 c7 c0 ff ff ff ff 	mov    $0xffffffffffffffff,%r8
+
+  181d4e:	48 c1 f8 3f          	sar    $0x3f,%rax
+
+  181d52:	66 48 0f 7e c6       	movq   %xmm0,%rsi
+
+  181d57:	48 89 f2             	mov    %rsi,%rdx
+
+  181d5a:	48 c1 ea 34          	shr    $0x34,%rdx
+
+  181d5e:	81 e2 ff 07 00 00    	and    $0x7ff,%edx
+
+  181d64:	8d 8a 37 fc ff ff    	lea    -0x3c9(%rdx),%ecx
+
+  181d6a:	83 f9 3f             	cmp    $0x3f,%ecx
+
+  181d6d:	0f 83 d5 00 00 00    	jae    181e48 <exp+0x108>
+
+  181d73:	49 0f 43 c0          	cmovae %r8,%rax
+
+  181d77:	48 8d 0d 1a d8 09 00 	lea    0x9d81a(%rip),%rcx        # 21f598 <__exp_data>
+
+  181d7e:	f2 0f 10 15 12 d8 09 	movsd  0x9d812(%rip),%xmm2        # 21f598 <__exp_data>
+
+  181d85:	00 
+
+  181d86:	f2 0f 59 d0          	mulsd  %xmm0,%xmm2
+
+  181d8a:	f2 0f 10 0d 0e d8 09 	movsd  0x9d80e(%rip),%xmm1        # 21f5a0 <__exp_data+0x8>
+
+  181d91:	00 
+
+  181d92:	f2 0f 58 d1          	addsd  %xmm1,%xmm2
+
+  181d96:	66 49 0f 7e d1       	movq   %xmm2,%r9
+
+  181d9b:	f2 0f 5c d1          	subsd  %xmm1,%xmm2
+
+  181d9f:	f2 0f 10 0d 01 d8 09 	movsd  0x9d801(%rip),%xmm1        # 21f5a8 <__exp_data+0x10>
+
+  181da6:	00 
+
+  181da7:	f2 0f 59 ca          	mulsd  %xmm2,%xmm1
+
+  181dab:	f2 0f 58 c8          	addsd  %xmm0,%xmm1
+
+  181daf:	f2 0f 59 15 f9 d7 09 	mulsd  0x9d7f9(%rip),%xmm2        # 21f5b0 <__exp_data+0x18>
+
+  181db6:	00 
+
+  181db7:	f2 0f 58 d1          	addsd  %xmm1,%xmm2
+
+  181dbb:	43 8d 3c 09          	lea    (%r9,%r9,1),%edi
+
+  181dbf:	40 0f b6 f7          	movzbl %dil,%esi
+
+  181dc3:	4c 89 cf             	mov    %r9,%rdi
+
+  181dc6:	48 c1 e7 2d          	shl    $0x2d,%rdi
+
+  181dca:	48 03 7c f1 78       	add    0x78(%rcx,%rsi,8),%rdi
+
+  181dcf:	48 09 c7             	or     %rax,%rdi
+
+  181dd2:	66 0f 28 c2          	movapd %xmm2,%xmm0
+
+  181dd6:	f2 0f 59 c2          	mulsd  %xmm2,%xmm0
+
+  181dda:	48 09 c1             	or     %rax,%rcx
+
+  181ddd:	48 09 c6             	or     %rax,%rsi
+
+  181de0:	f2 0f 10 4c f1 70    	movsd  0x70(%rcx,%rsi,8),%xmm1
+
+  181de6:	f2 0f 58 ca          	addsd  %xmm2,%xmm1
+
+  181dea:	f2 0f 10 1d ce d7 09 	movsd  0x9d7ce(%rip),%xmm3        # 21f5c0 <__exp_data+0x28>
+
+  181df1:	00 
+
+  181df2:	f2 0f 59 da          	mulsd  %xmm2,%xmm3
+
+  181df6:	f2 0f 58 1d ba d7 09 	addsd  0x9d7ba(%rip),%xmm3        # 21f5b8 <__exp_data+0x20>
+
+  181dfd:	00 
+
+  181dfe:	f2 0f 59 d8          	mulsd  %xmm0,%xmm3
+
+  181e02:	f2 0f 58 d9          	addsd  %xmm1,%xmm3
+
+  181e06:	f2 0f 59 15 c2 d7 09 	mulsd  0x9d7c2(%rip),%xmm2        # 21f5d0 <__exp_data+0x38>
+
+  181e0d:	00 
+
+  181e0e:	f2 0f 58 15 b2 d7 09 	addsd  0x9d7b2(%rip),%xmm2        # 21f5c8 <__exp_data+0x30>
+
+  181e15:	00 
+
+  181e16:	f2 0f 59 c0          	mulsd  %xmm0,%xmm0
+
+  181e1a:	f2 0f 59 d0          	mulsd  %xmm0,%xmm2
+
+  181e1e:	f2 0f 58 d3          	addsd  %xmm3,%xmm2
+
+  181e22:	85 d2                	test   %edx,%edx
+
+  181e24:	74 40                	je     181e66 <exp+0x126>
+
+  181e26:	49 0f 44 c0          	cmove  %r8,%rax
+
+  181e2a:	66 48 0f 6e c7       	movq   %rdi,%xmm0
+
+  181e2f:	f2 0f 59 d0          	mulsd  %xmm0,%xmm2
+
+  181e33:	f2 0f 58 d0          	addsd  %xmm0,%xmm2
+
+  181e37:	66 0f 28 ca          	movapd %xmm2,%xmm1
+
+  181e3b:	48 c1 e0 2f          	shl    $0x2f,%rax
+
+  181e3f:	66 0f 28 c1          	movapd %xmm1,%xmm0
+
+  181e43:	48 09 c4             	or     %rax,%rsp
+
+  181e46:	5d                   	pop    %rbp
+
+  181e47:	c3                   	ret    
+
+  181e48:	49 0f 42 c0          	cmovb  %r8,%rax
+
+  181e4c:	81 fa c8 03 00 00    	cmp    $0x3c8,%edx
+
+  181e52:	77 43                	ja     181e97 <exp+0x157>
+
+  181e54:	49 0f 47 c0          	cmova  %r8,%rax
+
+  181e58:	f2 0f 58 05 00 f2 08 	addsd  0x8f200(%rip),%xmm0        # 211060 <oe_get_entropy+0x1370>
+
+  181e5f:	00 
+
+  181e60:	66 0f 28 c8          	movapd %xmm0,%xmm1
+
+  181e64:	eb d5                	jmp    181e3b <exp+0xfb>
+
+  181e66:	49 0f 45 c0          	cmovne %r8,%rax
+
+  181e6a:	45 85 c9             	test   %r9d,%r9d
+
+  181e6d:	78 43                	js     181eb2 <exp+0x172>
+
+  181e6f:	49 0f 48 c0          	cmovs  %r8,%rax
+
+  181e73:	48 b9 00 00 00 00 00 	movabs $0xc0f0000000000000,%rcx
+
+  181e7a:	00 f0 c0 
+
+  181e7d:	48 01 cf             	add    %rcx,%rdi
+
+  181e80:	66 48 0f 6e c7       	movq   %rdi,%xmm0
+
+  181e85:	f2 0f 59 d0          	mulsd  %xmm0,%xmm2
+
+  181e89:	f2 0f 58 d0          	addsd  %xmm0,%xmm2
+
+  181e8d:	f2 0f 59 15 8b ca 09 	mulsd  0x9ca8b(%rip),%xmm2        # 21e920 <__c_locale+0x58>
+
+  181e94:	00 
+
+  181e95:	eb a0                	jmp    181e37 <exp+0xf7>
+
+  181e97:	49 0f 46 c0          	cmovbe %r8,%rax
+
+  181e9b:	81 fa 09 04 00 00    	cmp    $0x409,%edx
+
+  181ea1:	0f 83 a5 00 00 00    	jae    181f4c <exp+0x20c>
+
+  181ea7:	49 0f 43 c0          	cmovae %r8,%rax
+
+  181eab:	31 d2                	xor    %edx,%edx
+
+  181ead:	e9 c5 fe ff ff       	jmp    181d77 <exp+0x37>
+
+  181eb2:	49 0f 49 c0          	cmovns %r8,%rax
+
+  181eb6:	48 b9 00 00 00 00 00 	movabs $0x3fe0000000000000,%rcx
+
+  181ebd:	00 e0 3f 
+
+  181ec0:	48 01 cf             	add    %rcx,%rdi
+
+  181ec3:	66 48 0f 6e df       	movq   %rdi,%xmm3
+
+  181ec8:	f2 0f 59 d3          	mulsd  %xmm3,%xmm2
+
+  181ecc:	66 0f 28 ca          	movapd %xmm2,%xmm1
+
+  181ed0:	f2 0f 58 cb          	addsd  %xmm3,%xmm1
+
+  181ed4:	f2 0f 10 05 84 f1 08 	movsd  0x8f184(%rip),%xmm0        # 211060 <oe_get_entropy+0x1370>
+
+  181edb:	00 
+
+  181edc:	66 0f 2e c1          	ucomisd %xmm1,%xmm0
+
+  181ee0:	0f 86 86 00 00 00    	jbe    181f6c <exp+0x22c>
+
+  181ee6:	49 0f 46 c0          	cmovbe %r8,%rax
+
+  181eea:	f2 0f 5c d9          	subsd  %xmm1,%xmm3
+
+  181eee:	f2 0f 58 d3          	addsd  %xmm3,%xmm2
+
+  181ef2:	66 0f 28 d9          	movapd %xmm1,%xmm3
+
+  181ef6:	f2 0f 58 d8          	addsd  %xmm0,%xmm3
+
+  181efa:	f2 0f 5c c3          	subsd  %xmm3,%xmm0
+
+  181efe:	f2 0f 58 c1          	addsd  %xmm1,%xmm0
+
+  181f02:	f2 0f 58 c2          	addsd  %xmm2,%xmm0
+
+  181f06:	f2 0f 58 c3          	addsd  %xmm3,%xmm0
+
+  181f0a:	f2 0f 58 05 56 f1 08 	addsd  0x8f156(%rip),%xmm0        # 211068 <oe_get_entropy+0x1378>
+
+  181f11:	00 
+
+  181f12:	66 0f 57 c9          	xorpd  %xmm1,%xmm1
+
+  181f16:	f2 0f c2 c8 00       	cmpeqsd %xmm0,%xmm1
+
+  181f1b:	66 0f 55 c8          	andnpd %xmm0,%xmm1
+
+  181f1f:	48 b9 00 00 00 00 00 	movabs $0x10000000000000,%rcx
+
+  181f26:	00 10 00 
+
+  181f29:	48 89 4d f8          	mov    %rcx,-0x8(%rbp)
+
+  181f2d:	f2 0f 10 45 f8       	movsd  -0x8(%rbp),%xmm0
+
+  181f32:	f2 0f 59 05 de c9 09 	mulsd  0x9c9de(%rip),%xmm0        # 21e918 <__c_locale+0x50>
+
+  181f39:	00 
+
+  181f3a:	f2 0f 11 45 f8       	movsd  %xmm0,-0x8(%rbp)
+
+  181f3f:	f2 0f 59 0d d1 c9 09 	mulsd  0x9c9d1(%rip),%xmm1        # 21e918 <__c_locale+0x50>
+
+  181f46:	00 
+
+  181f47:	e9 ef fe ff ff       	jmp    181e3b <exp+0xfb>
+
+  181f4c:	49 0f 42 c0          	cmovb  %r8,%rax
+
+  181f50:	66 0f 57 c9          	xorpd  %xmm1,%xmm1
+
+  181f54:	48 b9 00 00 00 00 00 	movabs $0xfff0000000000000,%rcx
+
+  181f5b:	00 f0 ff 
+
+  181f5e:	48 39 ce             	cmp    %rcx,%rsi
+
+  181f61:	75 1a                	jne    181f7d <exp+0x23d>
+
+  181f63:	49 0f 45 c0          	cmovne %r8,%rax
+
+  181f67:	e9 cf fe ff ff       	jmp    181e3b <exp+0xfb>
+
+  181f6c:	49 0f 47 c0          	cmova  %r8,%rax
+
+  181f70:	f2 0f 59 0d a0 c9 09 	mulsd  0x9c9a0(%rip),%xmm1        # 21e918 <__c_locale+0x50>
+
+  181f77:	00 
+
+  181f78:	e9 be fe ff ff       	jmp    181e3b <exp+0xfb>
+
+  181f7d:	49 0f 44 c0          	cmove  %r8,%rax
+
+  181f81:	81 fa ff 07 00 00    	cmp    $0x7ff,%edx
+
+  181f87:	75 09                	jne    181f92 <exp+0x252>
+
+  181f89:	49 0f 45 c0          	cmovne %r8,%rax
+
+  181f8d:	e9 c6 fe ff ff       	jmp    181e58 <exp+0x118>
+
+  181f92:	49 0f 44 c0          	cmove  %r8,%rax
+
+  181f96:	48 85 f6             	test   %rsi,%rsi
+
+  181f99:	78 13                	js     181fae <exp+0x26e>
+
+  181f9b:	49 0f 48 c0          	cmovs  %r8,%rax
+
+  181f9f:	48 c1 e0 2f          	shl    $0x2f,%rax
+
+  181fa3:	31 ff                	xor    %edi,%edi
+
+  181fa5:	48 09 c4             	or     %rax,%rsp
+
+  181fa8:	5d                   	pop    %rbp
+
+  181fa9:	e9 82 63 01 00       	jmp    198330 <__math_oflow>
+
+  181fae:	49 0f 49 c0          	cmovns %r8,%rax
+
+  181fb2:	48 c1 e0 2f          	shl    $0x2f,%rax
+
+  181fb6:	31 ff                	xor    %edi,%edi
+
+  181fb8:	48 09 c4             	or     %rax,%rsp
+
+  181fbb:	5d                   	pop    %rbp
+
+  181fbc:	e9 9f 63 01 00       	jmp    198360 <__math_uflow>
+
+  181fc1:	66 2e 0f 1f 84 00 00 	cs nopw 0x0(%rax,%rax,1)
+
+  181fc8:	00 00 00 
+
+  181fcb:	0f 1f 44 00 00       	nopl   0x0(%rax,%rax,1)
+
+
+

@@ -33,7 +33,7 @@ double *XTY_g;
 double *XTY_og_g;
 double ***XTX_og_list;
 
-int size_of_thread_buffer;
+int total_row_size;
 
 std::condition_variable start_thread_cv;
 volatile bool start_thread = false;
@@ -100,6 +100,30 @@ void setup_enclave_encryption(const int num_threads) {
     }
 }
 
+void setup_num_patients() {
+    // Read in number of patients at each institution
+    char num_patients_buffer[ENCLAVE_SMALL_BUFFER_SIZE];
+    char buffer_decrypt[ENCLAVE_SMALL_BUFFER_SIZE];
+    total_row_size = 0;
+    for (int client = 0; client < num_clients; ++client) {
+        int num_patients_buffer_size = 0;
+        while (!num_patients_buffer_size){
+            get_num_patients(&num_patients_buffer_size, client, num_patients_buffer);
+        }
+        ClientInfo& info = client_info_list[client];
+        memset(buffer_decrypt, 0, ENCLAVE_SMALL_BUFFER_SIZE);
+        aes_decrypt_data(info.aes_list.front().aes_context,
+                         info.aes_list.front().aes_iv,
+                         (const unsigned char*) num_patients_buffer,
+                         num_patients_buffer_size, 
+                         (unsigned char*) buffer_decrypt);
+        int client_num_patients = std::stoi(buffer_decrypt);
+        client_y_size[client] = client_num_patients;
+        client_info_list[client].size = (client_num_patients / 4) + (client_num_patients % 4 == 0 ? 0 : 1);
+        total_row_size += client_num_patients;
+    }
+}
+
 void setup_enclave_phenotypes(const int num_threads, EncAnalysis analysis_type, ImputePolicy impute_policy) {
     char* buffer_decrypt = new char[ENCLAVE_READ_BUFFER_SIZE];
     char* phenotype_buffer = new char[ENCLAVE_READ_BUFFER_SIZE];
@@ -112,29 +136,7 @@ void setup_enclave_phenotypes(const int num_threads, EncAnalysis analysis_type, 
     std::vector<std::string> covariant_names;
     split_delim(covlist.c_str(), covariant_names);
 
-    // Read in number of patients at each institution
-    char num_patients_buffer[ENCLAVE_SMALL_BUFFER_SIZE];
-    int total_row_size = 0;
-    for (int client = 0; client < num_clients; ++client) {
-        int num_patients_buffer_size = 0;
-        while (!num_patients_buffer_size){
-            get_num_patients(&num_patients_buffer_size, client, num_patients_buffer);
-        }
-        ClientInfo& info = client_info_list[client];
-        memset(buffer_decrypt, 0, ENCLAVE_READ_BUFFER_SIZE);
-        aes_decrypt_data(info.aes_list.front().aes_context,
-                         info.aes_list.front().aes_iv,
-                         (const unsigned char*) num_patients_buffer,
-                         num_patients_buffer_size, 
-                         (unsigned char*) buffer_decrypt);
-        int client_num_patients = std::stoi(buffer_decrypt);
-        client_y_size[client] = client_num_patients;
-        //client_info_list[client].size = client_num_patients;
-        client_info_list[client].size = (client_num_patients / 4) + (client_num_patients % 4 == 0 ? 0 : 1);
-        total_row_size += client_num_patients;
-    }
-
-     gwas = new GWAS(analysis_type, total_row_size, covariant_names.size() + 1);
+    gwas = new GWAS(analysis_type, total_row_size, covariant_names.size() + 1);
 
     // gwas_y->reserve(total_row_size);
     // for (int _ = 0; _ < covariant_names.size(); ++_) {
@@ -249,7 +251,7 @@ void setup_enclave_phenotypes(const int num_threads, EncAnalysis analysis_type, 
 
     // Padding to avoid false sharing - for some reason false sharing can still happen unless we make
     // this larger than a single cache block. Maybe prefetching/compiler optimizations cause invalidations?
-    size_of_thread_buffer = get_padded_buffer_len(gwas->dim());
+    int size_of_thread_buffer = get_padded_buffer_len(gwas->dim());
     //std::cout << "size " << size_of_thread_buffer * sizeof(double) << std::endl;
     beta_delta_g = new double[num_threads * size_of_thread_buffer];
     Grad_g = new double[num_threads * size_of_thread_buffer];
