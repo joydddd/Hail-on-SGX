@@ -42,7 +42,7 @@ TMP2=${subst -I/opt/openenclave/share/pkgconfig/../../include/openenclave/3rdpar
 TMP3=${subst -I/opt/openenclave/share/pkgconfig/../../include/openenclave/3rdparty/libc,, $(TMP2)}
 TMP4=${subst -I/opt/openenclave/share/pkgconfig/../../include/openenclave/3rdparty,, $(TMP3)}
 TMP5=${subst -mllvm -x86-speculative-load-hardening,, $(TMP4)}
-CXX_NONENC_FLAGS=${subst -I/opt/openenclave/share/pkgconfig/../../include,, $(TMP5)}
+CXX_NONENC_FLAGS=${subst -I/opt/openenclave/share/pkgconfig/../../include,, $(TMP4)}
 CXX_NONENC_FLAGS+= -lmbedtls -lmbedcrypto
 # CXX_NONENC_FLAGS+= -mllvm -x86-speculative-load-hardening
 
@@ -115,6 +115,8 @@ keys:
 # 	$(CXX) $(CXX_NONENC_FLAGS) -DDEBUG -o $@ $^
 
 $(BUILDDIR)/%_nonoe.o: $(SRCDIR)/%.cpp
+	@echo "START"
+	@echo ${CXX_NONENC_FLAGS}
 	@mkdir -p ${BUILDDIR}
 	$(CXX) -c $(CXX_NONENC_FLAGS) -DNON_OE -o $@ $^
 

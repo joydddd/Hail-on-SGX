@@ -9,13 +9,13 @@ enclave running on 1 clients
 AES KEY and IV loaded
 Init finished
 Y value loaded
-Starting Enclave: 1687311552720
+Starting Enclave: 1689310132712
 Cov loaded
 Setup finished
-received first message: 1687311552706
-received last message: 1687311554121
-Enclave time total: 639106360
-Sending EOF message: 1687312191849
+received first message: 1689310132698
+received last message: 1689310134134
+Enclave time total: 647796536
+Sending EOF message: 1689310763331
 Exiting enclave
 
  Running on port 6701
@@ -28,13 +28,13 @@ enclave running on 1 clients
 AES KEY and IV loaded
 Init finished
 Y value loaded
-Starting Enclave: 1687312220463
+Starting Enclave: 1689310800133
 Cov loaded
 Setup finished
-received first message: 1687312220453
-received last message: 1687312221857
-Enclave time total: 140321835
-Sending EOF message: 1687312360813
+received first message: 1689310800130
+received last message: 1689310801536
+Enclave time total: 116192432
+Sending EOF message: 1689310899207
 Exiting enclave
 
  Running on port 6701
@@ -47,13 +47,13 @@ enclave running on 1 clients
 AES KEY and IV loaded
 Init finished
 Y value loaded
-Starting Enclave: 1687314739705
+Starting Enclave: 1689313371525
 Cov loaded
 Setup finished
-received first message: 1687314739698
-received last message: 1687314741122
-Enclave time total: 638885893
-Sending EOF message: 1687315378614
+received first message: 1689313371507
+received last message: 1689313372900
+Enclave time total: 650609292
+Sending EOF message: 1689314004965
 Exiting enclave
 
  Running on port 6701
@@ -66,13 +66,13 @@ enclave running on 1 clients
 AES KEY and IV loaded
 Init finished
 Y value loaded
-Starting Enclave: 1687315407545
+Starting Enclave: 1689314041949
 Cov loaded
 Setup finished
-received first message: 1687315407533
-received last message: 1687315408958
-Enclave time total: 140429007
-Sending EOF message: 1687315547999
+received first message: 1689314041943
+received last message: 1689314043345
+Enclave time total: 116849888
+Sending EOF message: 1689314141502
 Exiting enclave
 
  Running on port 6701
@@ -85,13 +85,13 @@ enclave running on 1 clients
 AES KEY and IV loaded
 Init finished
 Y value loaded
-Starting Enclave: 1687318112599
+Starting Enclave: 1689316630807
 Cov loaded
 Setup finished
-received first message: 1687318112587
-received last message: 1687318114019
-Enclave time total: 639141180
-Sending EOF message: 1687318751763
+received first message: 1689316630792
+received last message: 1689316632213
+Enclave time total: 647656041
+Sending EOF message: 1689317261358
 Exiting enclave
 
  Running on port 6701
@@ -104,11 +104,11 @@ enclave running on 1 clients
 AES KEY and IV loaded
 Init finished
 Y value loaded
-Starting Enclave: 1687318780361
+Starting Enclave: 1689317298452
 Cov loaded
 Setup finished
-received first message: 1687318780352
-received last message: 1687318781756
-Enclave time total: 140440151
-Sending EOF message: 1687318920825
+received first message: 1689317298435
+received last message: 1689317299824
+Enclave time total: 116236682
+Sending EOF message: 1689317397525
 Exiting enclave

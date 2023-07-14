@@ -1,0 +1,120 @@
+
+ Running on port 6701
+
+
+**RUNNING REGRESSION**
+
+RSA Pub Key Set
+enclave running on 1 clients
+AES KEY and IV loaded
+Init finished
+received first message: 1689281850226
+Y value loaded
+Starting Enclave: 1689281850232
+Cov loaded
+Setup finished
+received last message: 1689281851783
+Logistic regression finished!
+Enclave time total: 401519967
+Sending EOF message: 1689282219200
+Exiting enclave
+
+ Running on port 6701
+
+
+**RUNNING REGRESSION**
+
+RSA Pub Key Set
+enclave running on 1 clients
+AES KEY and IV loaded
+Init finished
+received first message: 1689282263063
+Y value loaded
+Starting Enclave: 1689282263070
+Cov loaded
+Setup finished
+received last message: 1689282264616
+Logistic regression finished!
+Enclave time total: 62372370
+Sending EOF message: 1689282292775
+Exiting enclave
+
+ Running on port 6701
+
+
+**RUNNING REGRESSION**
+
+RSA Pub Key Set
+enclave running on 1 clients
+AES KEY and IV loaded
+Init finished
+received first message: 1689285352994
+Y value loaded
+Starting Enclave: 1689285352997
+Cov loaded
+Setup finished
+received last message: 1689285354614
+Logistic regression finished!
+Enclave time total: 394935280
+Sending EOF message: 1689285715473
+Exiting enclave
+
+ Running on port 6701
+
+
+**RUNNING REGRESSION**
+
+RSA Pub Key Set
+enclave running on 1 clients
+AES KEY and IV loaded
+Init finished
+received first message: 1689285759023
+Y value loaded
+Starting Enclave: 1689285759027
+Cov loaded
+Setup finished
+received last message: 1689285760577
+Logistic regression finished!
+Enclave time total: 62645409
+Sending EOF message: 1689285789318
+Exiting enclave
+
+
+**RUNNING REGRESSION**
+
+
+ Running on port 6701
+RSA Pub Key Set
+enclave running on 1 clients
+AES KEY and IV loaded
+Init finished
+received first message: 1689287545105
+Y value loaded
+Starting Enclave: 1689287545112
+Cov loaded
+Setup finished
+received last message: 1689287546694
+Logistic regression finished!
+Enclave time total: 392570932
+Sending EOF message: 1689287905165
+Exiting enclave
+
+ Running on port 6701
+
+
+**RUNNING REGRESSION**
+
+RSA Pub Key Set
+enclave running on 1 clients
+AES KEY and IV loaded
+Init finished
+received first message: 1689287948868
+Y value loaded
+Starting Enclave: 1689287948871
+Cov loaded
+Setup finished
+received last message: 1689287950447
+Logistic regression finished!
+Enclave time total: 62766774
+Sending EOF message: 1689287979114
+Exiting enclave

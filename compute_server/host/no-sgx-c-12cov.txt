@@ -8,83 +8,33 @@ RSA Pub Key Set
 enclave running on 1 clients
 AES KEY and IV loaded
 Init finished
-received first message: 1687321055567
+received first message: 1689278477516
 Y value loaded
-Starting Enclave: 1687321055574
+Starting Enclave: 1689278477521
 Cov loaded
 Setup finished
-received last message: 1687321056405
+received last message: 1689278478442
 Logistic regression finished!
-Enclave time total: 431404039
-Sending EOF message: 1687321471781
-Exiting enclave
-
- Running on port 6701
-
-
-**RUNNING REGRESSION**
-
-RSA Pub Key Set
-enclave running on 1 clients
-AES KEY and IV loaded
-Init finished
-received first message: 1687321498156
-Y value loaded
-Starting Enclave: 1687321498162
-Cov loaded
-Setup finished
-received last message: 1687321499075
-Logistic regression finished!
-Enclave time total: 53761018
-Sending EOF message: 1687321536723
-Exiting enclave
-
- Running on port 6701
-
-
-**RUNNING REGRESSION**
-
-RSA Pub Key Set
-enclave running on 1 clients
-AES KEY and IV loaded
-Init finished
-received first message: 1687323161540
-Y value loaded
-Starting Enclave: 1687323161550
-Cov loaded
-Setup finished
-received last message: 1687323162377
-Logistic regression finished!
-Enclave time total: 430405192
-Sending EOF message: 1687323576665
+Enclave time total: 430797763
+Sending EOF message: 1689278891037
 Exiting enclave
 
 
 **RUNNING REGRESSION**
 
- Running on port 6701
 
+ Running on port 6701
 RSA Pub Key Set
 enclave running on 1 clients
 AES KEY and IV loaded
 Init finished
-received first message: 1687323595826
+received first message: 1689278919431
 Y value loaded
-Starting Enclave: 1687323595832
+Starting Enclave: 1689278919440
 Cov loaded
 Setup finished
-
- Running on port 6701
-
-
-**RUNNING REGRESSION**
-
-RSA Pub Key Set
-enclave running on 1 clients
-AES KEY and IV loaded
-Init finished
-received first message: 1687362258543
-Y value loaded
-Starting Enclave: 1687362258552
-Cov loaded
-Setup finished
+received last message: 1689278920296
+Logistic regression finished!
+Enclave time total: 54073824
+Sending EOF message: 1689278956327
+Exiting enclave
