@@ -1,0 +1,105 @@
+
+ Running on port 6701
+
+
+**RUNNING REGRESSION**
+
+RSA Pub Key Set
+enclave running on 1 clients
+AES KEY and IV loaded
+Init finished
+Y value loaded
+Starting Enclave: 1689608292260
+Cov loaded
+Setup finished
+received first message: 1689608292248
+received last message: 1689608293638
+Enclave time total: 291110468
+Sending EOF message: 1689608566292
+Exiting enclave
+
+ Running on port 6701
+
+
+**RUNNING REGRESSION**
+
+RSA Pub Key Set
+enclave running on 1 clients
+AES KEY and IV loaded
+Init finished
+Y value loaded
+Starting Enclave: 1689608603836
+Cov loaded
+Setup finished
+received first message: 1689608603829
+received last message: 1689608605302
+Enclave time total: 72012547
+Sending EOF message: 1689608658598
+Exiting enclave
+
+ Running on port 6701
+
+
+**RUNNING REGRESSION**
+
+RSA Pub Key Set
+enclave running on 1 clients
+AES KEY and IV loaded
+Init finished
+Y value loaded
+Starting Enclave: 1689618088507
+Cov loaded
+Setup finished
+received first message: 1689618088497
+received last message: 1689618089919
+Enclave time total: 286430645
+Sending EOF message: 1689618357466
+Exiting enclave
+
+ Running on port 6701
+
+
+**RUNNING REGRESSION**
+
+RSA Pub Key Set
+enclave running on 1 clients
+AES KEY and IV loaded
+Init finished
+Y value loaded
+Starting Enclave: 1689618394455
+Cov loaded
+Setup finished
+received first message: 1689618394444
+received last message: 1689618395965
+Enclave time total: 72443102
+Sending EOF message: 1689618449544
+Exiting enclave
+
+ Running on port 6701
+
+
+**RUNNING REGRESSION**
+
+RSA Pub Key Set
+enclave running on 1 clients
+AES KEY and IV loaded
+Init finished
+Y value loaded
+Starting Enclave: 1689623102079
+Cov loaded
+Setup finished
+received first message: 1689623102070
+received last message: 1689623103482
+Enclave time total: 279592700
+Sending EOF message: 1689623364564
+Exiting enclave
+
+ Running on port 6701
+
+
+**RUNNING REGRESSION**
+
+RSA Pub Key Set
+enclave running on 1 clients
+AES KEY and IV loaded
+Init finished

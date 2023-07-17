@@ -1,0 +1,114 @@
+
+ Running on port 6701
+
+
+**RUNNING REGRESSION**
+
+RSA Pub Key Set
+enclave running on 1 clients
+AES KEY and IV loaded
+Init finished
+Y value loaded
+Starting Enclave: 1689394638944
+Cov loaded
+Setup finished
+received first message: 1689394638937
+received last message: 1689394639727
+Enclave time total: 214075546
+Sending EOF message: 1689394853027
+Exiting enclave
+
+ Running on port 6701
+
+
+**RUNNING REGRESSION**
+
+RSA Pub Key Set
+enclave running on 1 clients
+AES KEY and IV loaded
+Init finished
+Y value loaded
+Starting Enclave: 1689394882328
+Cov loaded
+Setup finished
+received first message: 1689394882316
+received last message: 1689394883127
+Enclave time total: 28121207
+Sending EOF message: 1689394910457
+Exiting enclave
+
+ Running on port 6701
+
+
+**RUNNING REGRESSION**
+
+RSA Pub Key Set
+enclave running on 1 clients
+AES KEY and IV loaded
+Init finished
+Y value loaded
+Starting Enclave: 1689399245822
+Cov loaded
+Setup finished
+received first message: 1689399245818
+received last message: 1689399246621
+Enclave time total: 208961227
+Sending EOF message: 1689399454791
+Exiting enclave
+
+ Running on port 6701
+
+
+**RUNNING REGRESSION**
+
+RSA Pub Key Set
+enclave running on 1 clients
+AES KEY and IV loaded
+Init finished
+Y value loaded
+Starting Enclave: 1689399484087
+Cov loaded
+Setup finished
+received first message: 1689399484079
+received last message: 1689399484858
+Enclave time total: 28146586
+Sending EOF message: 1689399512241
+Exiting enclave
+
+ Running on port 6701
+
+
+**RUNNING REGRESSION**
+
+RSA Pub Key Set
+enclave running on 1 clients
+AES KEY and IV loaded
+Init finished
+Y value loaded
+Starting Enclave: 1689403854073
+Cov loaded
+Setup finished
+received first message: 1689403854066
+received last message: 1689403854838
+Enclave time total: 208999612
+Sending EOF message: 1689404063088
+Exiting enclave
+
+ Running on port 6701
+
+
+**RUNNING REGRESSION**
+
+RSA Pub Key Set
+enclave running on 1 clients
+AES KEY and IV loaded
+Init finished
+Y value loaded
+Starting Enclave: 1689404092088
+Cov loaded
+Setup finished
+received first message: 1689404092061
+received last message: 1689404092830
+Enclave time total: 28169520
+Sending EOF message: 1689404120265
+Exiting enclave

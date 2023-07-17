@@ -1,0 +1,201 @@
+
+ Running on port 6701
+
+
+**RUNNING REGRESSION**
+
+RSA Pub Key Set
+enclave running on 1 clients
+AES KEY and IV loaded
+Init finished
+Y value loaded
+Starting Enclave: 1689354565103
+Cov loaded
+Setup finished
+received first message: 1689354565095
+received last message: 1689354565990
+Enclave time total: 497348690
+Sending EOF message: 1689355045234
+Exiting enclave
+
+ Running on port 6701
+
+
+**RUNNING REGRESSION**
+
+RSA Pub Key Set
+enclave running on 1 clients
+AES KEY and IV loaded
+Init finished
+Y value loaded
+Starting Enclave: 1689355082069
+Cov loaded
+Setup finished
+received first message: 1689355082053
+received last message: 1689355082924
+Enclave time total: 98966636
+Sending EOF message: 1689355163981
+Exiting enclave
+
+ Running on port 6701
+
+
+**RUNNING REGRESSION**
+
+RSA Pub Key Set
+enclave running on 1 clients
+AES KEY and IV loaded
+Init finished
+Y value loaded
+Starting Enclave: 1689357226978
+Cov loaded
+Setup finished
+received first message: 1689357226964
+received last message: 1689357227854
+Enclave time total: 491372442
+Sending EOF message: 1689357701242
+Exiting enclave
+
+ Running on port 6701
+
+
+**RUNNING REGRESSION**
+
+RSA Pub Key Set
+enclave running on 1 clients
+AES KEY and IV loaded
+Init finished
+Y value loaded
+Starting Enclave: 1689357730117
+Cov loaded
+Setup finished
+received first message: 1689357730093
+2023-07-14T18:02:10+0000.142073Z [(H)ERROR] tid(0x7ff316f1f700) | Backtrace:
+2023-07-14T18:02:10+0000.145209Z [(H)ERROR] tid(0x7ff316f1f700) | <unknown>(): 0x7ff280188168
+2023-07-14T18:02:10+0000.145213Z [(H)ERROR] tid(0x7ff316f1f700) | _Z16aes_decrypt_dataP19mbedtls_aes_contextPhPKhiS1_(): 0x7ff28006d010
+2023-07-14T18:02:10+0000.145214Z [(H)ERROR] tid(0x7ff316f1f700) | _ZN6Buffer12decrypt_lineEPcPmjRKNSt3__16vectorI10ClientInfoNS2_9allocatorIS4_EEEEi(): 0x7ff28006f106
+2023-07-14T18:02:10+0000.145215Z [(H)ERROR] tid(0x7ff316f1f700) | _ZN6Buffer6launchERNSt3__16vectorI10ClientInfoNS0_9allocatorIS2_EEEEi(): 0x7ff28006f49c
+2023-07-14T18:02:10+0000.145216Z [(H)ERROR] tid(0x7ff316f1f700) | regression(): 0x7ff280069c2b
+2023-07-14T18:02:10+0000.145217Z [(H)ERROR] tid(0x7ff316f1f700) | ecall_regression(): 0x7ff2800330d2
+2023-07-14T18:02:10+0000.145217Z [(H)ERROR] tid(0x7ff316f1f700) | oe_handle_call_enclave_function(): 0x7ff2801a0450
+2023-07-14T18:02:10+0000.145218Z [(H)ERROR] tid(0x7ff316f1f700) | _handle_ecall(): 0x7ff2801a24db
+2023-07-14T18:02:10+0000.145219Z [(H)ERROR] tid(0x7ff316f1f700) | oe_enter(): 0x7ff2801a31fe
+2023-07-14T18:02:10+0000.145245Z [(H)ERROR] tid(0x7ff316f1f700) | :OE_ENCLAVE_ABORTING [/source/openenclave/host/calls.c:_call_enclave_function_impl:56]
+Enclave time total: 9098685
+Sending EOF message: 1689357730145
+received last message: 1689357730625
+Exiting enclave
+
+ Running on port 6701
+
+
+**RUNNING REGRESSION**
+
+RSA Pub Key Set
+enclave running on 1 clients
+AES KEY and IV loaded
+Init finished
+Y value loaded
+Starting Enclave: 1689371849287
+Cov loaded
+Setup finished
+received first message: 1689371849277
+received last message: 1689371850185
+Enclave time total: 491404726
+Sending EOF message: 1689372323574
+Exiting enclave
+
+ Running on port 6701
+
+
+**RUNNING REGRESSION**
+
+RSA Pub Key Set
+enclave running on 1 clients
+AES KEY and IV loaded
+Init finished
+Y value loaded
+Starting Enclave: 1689372360580
+Cov loaded
+Setup finished
+received first message: 1689372360566
+received last message: 1689372361503
+Enclave time total: 99748650
+Sending EOF message: 1689372443105
+Exiting enclave
+
+ Running on port 6701
+
+
+**RUNNING REGRESSION**
+
+RSA Pub Key Set
+enclave running on 1 clients
+AES KEY and IV loaded
+Init finished
+Y value loaded
+Starting Enclave: 1689374513191
+Cov loaded
+Setup finished
+received first message: 1689374513178
+received last message: 1689374514105
+Enclave time total: 491446371
+Sending EOF message: 1689374987396
+Exiting enclave
+
+ Running on port 6701
+
+
+**RUNNING REGRESSION**
+
+RSA Pub Key Set
+enclave running on 1 clients
+AES KEY and IV loaded
+Init finished
+Y value loaded
+Starting Enclave: 1689375024510
+Cov loaded
+Setup finished
+received first message: 1689375024492
+received last message: 1689375025384
+Enclave time total: 99677148
+Sending EOF message: 1689375107025
+Exiting enclave
+
+ Running on port 6701
+
+
+**RUNNING REGRESSION**
+
+RSA Pub Key Set
+enclave running on 1 clients
+AES KEY and IV loaded
+Init finished
+Y value loaded
+Starting Enclave: 1689377169196
+Cov loaded
+Setup finished
+received first message: 1689377169188
+received last message: 1689377170043
+Enclave time total: 491568505
+Sending EOF message: 1689377643447
+Exiting enclave
+
+ Running on port 6701
+
+
+**RUNNING REGRESSION**
+
+RSA Pub Key Set
+enclave running on 1 clients
+AES KEY and IV loaded
+Init finished
+Y value loaded
+Starting Enclave: 1689377680293
+Cov loaded
+Setup finished
+received first message: 1689377680279
+received last message: 1689377681219
+Enclave time total: 99007538
+Sending EOF message: 1689377762184
+Exiting enclave
