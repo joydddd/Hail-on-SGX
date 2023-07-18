@@ -25,19 +25,20 @@ class SqrMatrix{
         SqrMatrix():n(0){}
         SqrMatrix(int _n, int opt):m(_n, std::vector<double>(_n, 0)), n(_n) {
             if (opt) {
-                det.resize(n);
+                //det.resize(n);
+                det = new double*[n];
                 for (int i = 0; i < n; i++) {
-                    det[i].resize(n);
+                    det[i] = new double[n];
+                    //det[i].resize(n);
                 }
             }
             if (opt == 2) {
                 sub = new SqrMatrix(n - 1, 1);
-                cof.resize(n);
-                // t = SqrMatrix(n, 0);
-                t.resize(n);
+                cof = new double*[n];
+                t = new double*[n];
                 for (int i = 0; i < n; i++) {
-                    t[i].resize(n);
-                    cof[i].resize(n);
+                    cof[i] = new double[n];
+                    t[i] = new double[n];
                 }
             }
             
@@ -54,9 +55,9 @@ class SqrMatrix{
         }
         SqrMatrix* sub;
 
-        std::vector< std::vector<double> > cof;
-        std::vector< std::vector<double> > t;
-        std::vector< std::vector<double> > det;
+        double **cof;
+        double **t;
+        double **det;
 
         SqrMatrix(const SqrMatrix&) = default;
         SqrMatrix(SqrMatrix&&) = default;
