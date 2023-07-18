@@ -164,7 +164,7 @@ bool Lin_row::fit(int thread_id, int max_iteration, double sig) {
     //beta_ans = beta[0];
     //sse_ans_list[thread_id] = std::sqrt(sse * XTX.t->at(0, 0));
 
-    // overwrite b1 with the standard error, helps with false sharing issue... if we need
+    // overwrite b[1] with the standard error, helps with false sharing issue... if we need
     // to report other betas in the future we need to change this!
     beta[1] = std::sqrt(sse * XTX.t[0][0]);
     
