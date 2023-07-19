@@ -196,7 +196,6 @@ int start_enclave() {
             goto exit;
         }
 
-        auto start = std::chrono::high_resolution_clock::now();
         result = setup_enclave_phenotypes(enclave, num_threads, enc_analysis_type, ComputeServer::get_impute_policy());
         if (result != OE_OK) {
             fprintf(stderr,
@@ -204,6 +203,7 @@ int start_enclave() {
                     result, oe_result_str(result));
             goto exit;
         }
+        auto start = std::chrono::high_resolution_clock::now();
         thread_group.join_all();
         auto stop = std::chrono::high_resolution_clock::now();
 
@@ -246,8 +246,8 @@ int start_enclave() {
 
         setup_enclave_encryption(num_threads);
         setup_num_patients();
-        auto start = std::chrono::high_resolution_clock::now();
         setup_enclave_phenotypes(num_threads, enc_analysis_type, ComputeServer::get_impute_policy());
+        auto start = std::chrono::high_resolution_clock::now();
         thread_group.join_all();
         auto stop = std::chrono::high_resolution_clock::now();
 

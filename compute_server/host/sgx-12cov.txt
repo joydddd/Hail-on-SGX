@@ -1,0 +1,127 @@
+
+ Running on port 6701
+
+
+**RUNNING REGRESSION**
+
+RSA Pub Key Set
+enclave running on 1 clients
+AES KEY and IV loaded
+Init finished
+Y value loaded
+Starting Enclave: 1689709375351
+Cov loaded
+Setup finished
+received first message: 1689709375340
+received last message: 1689709376741
+Enclave time total: 621215460
+Sending EOF message: 1689709996590
+Exiting enclave
+
+ Running on port 6701
+
+
+**RUNNING REGRESSION**
+
+RSA Pub Key Set
+enclave running on 1 clients
+AES KEY and IV loaded
+Init finished
+Y value loaded
+Starting Enclave: 1689710033775
+Cov loaded
+Setup finished
+received first message: 1689710033765
+received last message: 1689710035158
+Enclave time total: 97932264
+Sending EOF message: 1689710131732
+Exiting enclave
+
+ Running on port 6701
+
+
+**RUNNING REGRESSION**
+
+RSA Pub Key Set
+enclave running on 1 clients
+AES KEY and IV loaded
+Init finished
+Y value loaded
+Starting Enclave: 1689712597780
+Cov loaded
+Setup finished
+received first message: 1689712597768
+received last message: 1689712599172
+Enclave time total: 621282223
+Sending EOF message: 1689713219087
+Exiting enclave
+
+ Running on port 6701
+
+
+**RUNNING REGRESSION**
+
+RSA Pub Key Set
+enclave running on 1 clients
+AES KEY and IV loaded
+Init finished
+Y value loaded
+Starting Enclave: 1689713256100
+Cov loaded
+Setup finished
+received first message: 1689713256083
+received last message: 1689713257493
+Enclave time total: 97898832
+Sending EOF message: 1689713354023
+Exiting enclave
+
+ Running on port 6701
+
+
+**RUNNING REGRESSION**
+
+RSA Pub Key Set
+enclave running on 1 clients
+AES KEY and IV loaded
+Init finished
+Y value loaded
+Starting Enclave: 1689715805753
+Cov loaded
+Setup finished
+received first message: 1689715805743
+received last message: 1689715807188
+Exception User already registered
+
+Enclave time total: 621406796
+Sending EOF message: 1689716427183
+Exiting enclave
+
+ Running on port 6701
+
+
+**RUNNING REGRESSION**
+
+RSA Pub Key Set
+enclave running on 1 clients
+AES KEY and IV loaded
+Init finished
+Y value loaded
+Starting Enclave: 1689716456180
+Cov loaded
+Setup finished
+received first message: 1689716456165
+2023-07-18T21:40:56+0000.211192Z [(H)ERROR] tid(0x7f98abfff700) | Backtrace:
+2023-07-18T21:40:56+0000.214281Z [(H)ERROR] tid(0x7f98abfff700) | <unknown>(): 0x7f9800195328
+2023-07-18T21:40:56+0000.214285Z [(H)ERROR] tid(0x7f98abfff700) | _Z16aes_decrypt_dataP19mbedtls_aes_contextPhPKhiS1_(): 0x7f9800077c36
+2023-07-18T21:40:56+0000.214286Z [(H)ERROR] tid(0x7f98abfff700) | _ZN6Buffer12decrypt_lineEPcPmjRKNSt3__16vectorI10ClientInfoNS2_9allocatorIS4_EEEEi(): 0x7f980007b9a3
+2023-07-18T21:40:56+0000.214286Z [(H)ERROR] tid(0x7f98abfff700) | _ZN6Buffer6launchERNSt3__16vectorI10ClientInfoNS0_9allocatorIS2_EEEEi(): 0x7f980007c076
+2023-07-18T21:40:56+0000.214287Z [(H)ERROR] tid(0x7f98abfff700) | regression(): 0x7f980006fc30
+2023-07-18T21:40:56+0000.214288Z [(H)ERROR] tid(0x7f98abfff700) | ecall_regression(): 0x7f9800033a12
+2023-07-18T21:40:56+0000.214289Z [(H)ERROR] tid(0x7f98abfff700) | oe_handle_call_enclave_function(): 0x7f98001ad610
+2023-07-18T21:40:56+0000.214289Z [(H)ERROR] tid(0x7f98abfff700) | _handle_ecall(): 0x7f98001af69b
+2023-07-18T21:40:56+0000.214290Z [(H)ERROR] tid(0x7f98abfff700) | oe_enter(): 0x7f98001b03be
+2023-07-18T21:40:56+0000.214311Z [(H)ERROR] tid(0x7f98abfff700) | :OE_ENCLAVE_ABORTING [/source/openenclave/host/calls.c:_call_enclave_function_impl:56]
+Enclave time total: 5640
+Sending EOF message: 1689716456214
+received last message: 1689716456954
+Exiting enclave
