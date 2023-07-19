@@ -122,8 +122,14 @@ bool Client::start_thread(int connFD) {
             throw std::runtime_error("Didn't read in a null terminating char");
         }
         std::string header(header_buffer, header_size);
-        unsigned int body_size = std::stoi(header);
-
+        unsigned int body_size;
+        try {
+            body_size = std::stoi(header);
+        } catch(const std::invalid_argument &e) {
+            std::cout << "Error in handling header: " << header << std::endl;
+            throw e;
+        }
+        
         if (body_size != 0) {
             // read in encrypted body
             int rval = recv(connFD, body_buffer, body_size, MSG_WAITALL);
