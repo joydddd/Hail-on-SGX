@@ -156,7 +156,7 @@ void Log_row::update_estimate() {
         double x = (data[(i + client_offset) / 4] >> (((i + client_offset) % 4) * 2) ) & 0b11;
         is_NA = is_NA_uint8(x);
         x = impute_average && is_NA ? genotype_average : x;
-        if (!is_NA) {
+        if (!is_NA && !impute_average) {
             const std::vector<double>& patient_pnc = gwas->phenotype_and_covars.data[i];
 
             y_est = (beta_g + offset)[0] * x;

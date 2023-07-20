@@ -76,10 +76,9 @@ bool Lin_row::fit(int thread_id, int max_iteration, double sig) {
             }
         }
 
-        if (count) {
-            genotype_average = sum / count;
-        }
+        genotype_average = sum / (count + !count);
     }
+
 
     /* calculate XTX & XTY*/
     unsigned int data_idx = 0, client_offset = 0, client_idx = 0;
@@ -92,7 +91,7 @@ bool Lin_row::fit(int thread_id, int max_iteration, double sig) {
         x = impute_average && is_NA ? genotype_average : x;
         double y = patient_pnc[0];
 
-        if (!is_NA) {
+        if (!is_NA && !impute_average) {
             XTY[0] += x * y;
             for (int j = 0; j < num_dimensions; ++j) {
                 double x1 = (j == 0) ? x : patient_pnc[j];
@@ -111,10 +110,17 @@ bool Lin_row::fit(int thread_id, int max_iteration, double sig) {
 
         /* update data index */
         data_idx++;
-        if (data_idx >= client_lengths[client_idx]) {
-            data_idx = 0;
-            client_offset += (4 - ((1 + i + client_offset) % 4)) % 4; // how many pairs of bits do we need to skip?
-        }
+        int data_idx_lt_lengths = data_idx < client_lengths[client_idx];
+        // if data_idx >= lengths, data_idx = 0 - otherwise multiply by 1
+        data_idx *= data_idx_lt_lengths;
+        // if data_idx >= lengths, increment client_offset, otherwise multiply by 0
+        client_offset += (~data_idx_lt_lengths + 2) * ((4 - ((1 + i + client_offset) % 4)) % 4);
+
+
+        // if (data_idx >= client_lengths[client_idx]) {
+        //     data_idx = 0;
+        //     client_offset += (4 - ((1 + i + client_offset) % 4)) % 4; // how many pairs of bits do we need to skip?
+        // }
     }
 
     for (int j = 0; j < num_dimensions; j++) {
@@ -140,7 +146,7 @@ bool Lin_row::fit(int thread_id, int max_iteration, double sig) {
         is_NA = is_NA_uint8(x);
         x = impute_average && is_NA ? genotype_average : x;
         double y = patient_pnc[0];
-        if (is_NA) {
+        if (!is_NA && !impute_average) {
             double y_est = beta[0] * x;
             for (int j = 1; j < num_dimensions; j++){
                 y_est += patient_pnc[j] * beta[j];
@@ -150,10 +156,11 @@ bool Lin_row::fit(int thread_id, int max_iteration, double sig) {
 
         /* update data index */
         data_idx++;
-        if (data_idx >= client_lengths[client_idx]) {
-            data_idx = 0;
-            client_offset += (4 - ((1 + i + client_offset) % 4)) % 4; // how many pairs of bits do we need to skip?
-        }
+        int data_idx_lt_lengths = data_idx < client_lengths[client_idx];
+        // if data_idx >= lengths, data_idx = 0 - otherwise multiply by 1
+        data_idx *= data_idx_lt_lengths;
+        // if data_idx >= lengths, increment client_offset, otherwise multiply by 0
+        client_offset += (~data_idx_lt_lengths + 2) * ((4 - ((1 + i + client_offset) % 4)) % 4);
     }
 
     sse = sse / (n - num_dimensions - 1);
