@@ -8,7 +8,6 @@
     "register_server_info": {
         "hostname": "localhost",
         "port": 6401
-    },
-    "impute_policy": "Hail"
+    }
 }
 // You can add "flag": "simulate" or "flag": "debug" to the config to run the enclave in simulation/debugging mode!

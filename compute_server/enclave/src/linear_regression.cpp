@@ -64,7 +64,7 @@ bool Lin_row::fit(int thread_id, int max_iteration, double sig) {
         }
     }
 
-    if (impute_average) {
+    // if (impute_average) {
         double sum = 0;
         double count = 0;
         uint8_t val;
@@ -77,7 +77,7 @@ bool Lin_row::fit(int thread_id, int max_iteration, double sig) {
         }
 
         genotype_average = sum / (count + !count);
-    }
+    //}
 
 
     /* calculate XTX & XTY*/
@@ -87,40 +87,42 @@ bool Lin_row::fit(int thread_id, int max_iteration, double sig) {
         const std::vector<double>& patient_pnc = gwas->phenotype_and_covars.data[i];
 
         double x = (data[(i + client_offset) / 4] >> (((i + client_offset) % 4) * 2) ) & 0b11;
-        is_NA = is_NA_uint8(x);
-        x = impute_average && is_NA ? genotype_average : x;
+        // is_NA = is_NA_uint8(x);
+        // x = impute_average && is_NA ? genotype_average : x;
         double y = patient_pnc[0];
 
-        if (!is_NA && !impute_average) {
-            XTY[0] += x * y;
-            for (int j = 0; j < num_dimensions; ++j) {
-                double x1 = (j == 0) ? x : patient_pnc[j];
-                XTX.plus_equals(j, 0, x1 * x);
-            }
-        } else { // adjust the part non valid
-        // TODO: some optimization here: whether to precalculate Xcov * Y and Xocv * Xcov for each patient
-            //std::cout << "???" << std::endl;
-            for (int j = 1; j < num_dimensions; ++j){
-                XTY[j] -= patient_pnc[j] * y;
-                for (int k = 1; k <= j; ++k){
-                    XTX.minus_equals(j, k, patient_pnc[j] * patient_pnc[k]);
-                }
-            }
+        //if (!is_NA && !impute_average) {
+        XTY[0] += x * y;
+        double x1 = x;
+        XTX.plus_equals(0, 0, x1 * x);
+        for (int j = 1; j < num_dimensions; ++j) {
+            x1 = patient_pnc[j];
+            XTX.plus_equals(j, 0, x1 * x);
         }
+        // } else { // adjust the part non valid
+        // // TODO: some optimization here: whether to precalculate Xcov * Y and Xocv * Xcov for each patient
+        //     //std::cout << "???" << std::endl;
+        //     for (int j = 1; j < num_dimensions; ++j){
+        //         XTY[j] -= patient_pnc[j] * y;
+        //         for (int k = 1; k <= j; ++k){
+        //             XTX.minus_equals(j, k, patient_pnc[j] * patient_pnc[k]);
+        //         }
+        //     }
+        // }
 
         /* update data index */
         data_idx++;
-        int data_idx_lt_lengths = data_idx < client_lengths[client_idx];
-        // if data_idx >= lengths, data_idx = 0 - otherwise multiply by 1
-        data_idx *= data_idx_lt_lengths;
-        // if data_idx >= lengths, increment client_offset, otherwise multiply by 0
-        client_offset += (~data_idx_lt_lengths + 2) * ((4 - ((1 + i + client_offset) % 4)) % 4);
+        // int data_idx_lt_lengths = data_idx < client_lengths[client_idx];
+        // // if data_idx >= lengths, data_idx = 0 - otherwise multiply by 1
+        // data_idx *= data_idx_lt_lengths;
+        // // if data_idx >= lengths, increment client_offset, otherwise multiply by 0
+        // client_offset += (~data_idx_lt_lengths + 2) * ((4 - ((1 + i + client_offset) % 4)) % 4);
 
 
-        // if (data_idx >= client_lengths[client_idx]) {
-        //     data_idx = 0;
-        //     client_offset += (4 - ((1 + i + client_offset) % 4)) % 4; // how many pairs of bits do we need to skip?
-        // }
+        if (data_idx >= client_lengths[client_idx]) {
+            data_idx = 0;
+            client_offset += (4 - ((1 + i + client_offset) % 4)) % 4; // how many pairs of bits do we need to skip?
+        }
     }
 
     for (int j = 0; j < num_dimensions; j++) {
@@ -143,24 +145,28 @@ bool Lin_row::fit(int thread_id, int max_iteration, double sig) {
         const std::vector<double>& patient_pnc = gwas->phenotype_and_covars.data[i];
 
         double x = (data[(i + client_offset) / 4] >> (((i + client_offset) % 4) * 2) ) & 0b11;
-        is_NA = is_NA_uint8(x);
-        x = impute_average && is_NA ? genotype_average : x;
+        // is_NA = is_NA_uint8(x);
+        // x = impute_average && is_NA ? genotype_average : x;
         double y = patient_pnc[0];
-        if (!is_NA && !impute_average) {
+        //if (!is_NA && !impute_average) {
             double y_est = beta[0] * x;
             for (int j = 1; j < num_dimensions; j++){
                 y_est += patient_pnc[j] * beta[j];
             }
             sse += (y - y_est) * (y - y_est);
-        }
+        //}
 
         /* update data index */
         data_idx++;
-        int data_idx_lt_lengths = data_idx < client_lengths[client_idx];
-        // if data_idx >= lengths, data_idx = 0 - otherwise multiply by 1
-        data_idx *= data_idx_lt_lengths;
-        // if data_idx >= lengths, increment client_offset, otherwise multiply by 0
-        client_offset += (~data_idx_lt_lengths + 2) * ((4 - ((1 + i + client_offset) % 4)) % 4);
+        // int data_idx_lt_lengths = data_idx < client_lengths[client_idx];
+        // // if data_idx >= lengths, data_idx = 0 - otherwise multiply by 1
+        // data_idx *= data_idx_lt_lengths;
+        // // if data_idx >= lengths, increment client_offset, otherwise multiply by 0
+        // client_offset += (~data_idx_lt_lengths + 2) * ((4 - ((1 + i + client_offset) % 4)) % 4);
+        if (data_idx >= client_lengths[client_idx]) {
+            data_idx = 0;
+            client_offset += (4 - ((1 + i + client_offset) % 4)) % 4; // how many pairs of bits do we need to skip?
+        }
     }
 
     sse = sse / (n - num_dimensions - 1);

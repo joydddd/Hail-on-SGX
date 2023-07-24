@@ -122,7 +122,7 @@ void Log_row::init() {
         (beta_g + offset)[i] = 0;
     }
 
-    if (impute_average) {
+    //if (impute_average) {
         double sum = 0;
         double count = 0;
         uint8_t val;
@@ -134,10 +134,8 @@ void Log_row::init() {
             }
         }
 
-        if (count) {
-            genotype_average = sum / count;
-        }
-    }
+        genotype_average = sum / (count + !count);
+    //}
 
     update_estimate();
 }
@@ -154,9 +152,9 @@ void Log_row::update_estimate() {
     bool is_NA;
     for (int i = 0; i < n; i++) {
         double x = (data[(i + client_offset) / 4] >> (((i + client_offset) % 4) * 2) ) & 0b11;
-        is_NA = is_NA_uint8(x);
-        x = impute_average && is_NA ? genotype_average : x;
-        if (!is_NA && !impute_average) {
+        // is_NA = is_NA_uint8(x);
+        // x = impute_average && is_NA ? genotype_average : x;
+        // if (!is_NA && !impute_average) {
             const std::vector<double>& patient_pnc = gwas->phenotype_and_covars.data[i];
 
             y_est = (beta_g + offset)[0] * x;
@@ -166,9 +164,14 @@ void Log_row::update_estimate() {
             y_est = 1 / (1 + modified_pade_approx_oblivious(-y_est));
 
             update_upperH_and_Grad(y_est, x, patient_pnc);
-        }
+        //}
         /* update data index */
         data_idx++;
+        // int data_idx_lt_lengths = data_idx < client_lengths[client_idx];
+        // // if data_idx >= lengths, data_idx = 0 - otherwise multiply by 1
+        // data_idx *= data_idx_lt_lengths;
+        // // if data_idx >= lengths, increment client_offset, otherwise multiply by 0
+        // client_offset += (~data_idx_lt_lengths + 2) * ((4 - ((1 + i + client_offset) % 4)) % 4);
         if (data_idx >= client_lengths[client_idx]) {
             data_idx = 0;
             client_idx++;

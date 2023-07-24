@@ -251,7 +251,6 @@ int start_enclave() {
         thread_group.join_all();
         auto stop = std::chrono::high_resolution_clock::now();
 
-        std::cout << "Logistic regression finished!" << std::endl;
         auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
         std::cout << "Enclave time total: " << duration.count() << std::endl;
         ComputeServer::print_timings();
