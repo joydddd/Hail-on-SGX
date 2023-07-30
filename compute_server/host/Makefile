@@ -39,6 +39,7 @@ endif
 
 CFLAGS=$(shell pkg-config oehost-$(C_COMPILER) --cflags)
 CXXFLAGS=$(shell pkg-config oehost-$(CXX_COMPILER) --cflags)
+# CXXFLAGS=${subst -mllvm -x86-speculative-load-hardening,, $(CXXFLAGS1)}
 LDFLAGS=$(shell pkg-config oehost-$(C_COMPILER) --libs)
 INCDIR=$(shell pkg-config oehost-$(C_COMPILER) --variable=includedir)
 

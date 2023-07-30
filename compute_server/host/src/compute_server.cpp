@@ -774,6 +774,9 @@ int ComputeServer::get_allele_data(char* batch_data, const int thread_id) {
         batch_data_str += tmp;
     }
     if (num_lines) {
+        if (batch_data_str.length() > ENCLAVE_READ_BUFFER_SIZE) {
+            throw std::runtime_error("Batch larger than buffer");
+        }
         memset(batch_data, 0, ENCLAVE_READ_BUFFER_SIZE);
         memcpy(batch_data, &batch_data_str[0], batch_data_str.length());
         batch_data[batch_data_str.length()] = '\0';

@@ -64,20 +64,18 @@ bool Lin_row::fit(int thread_id, int max_iteration, double sig) {
         }
     }
 
-    // if (impute_average) {
-        double sum = 0;
-        double count = 0;
-        uint8_t val;
-        for (int i = 0 ; i < n; ++i) {
-            val = (data[i / 4] >> ((i % 4) * 2)) & 0b11;
-            if (is_not_NA_oblivious(val)) {
-                sum += val;
-                count++;
-            }
+    double sum = 0;
+    double count = 0;
+    uint8_t val;
+    for (int i = 0 ; i < n; ++i) {
+        val = (data[i / 4] >> ((i % 4) * 2)) & 0b11;
+        if (!is_NA_uint8(val)) {
+            sum += val;
+            count++;
         }
+    }
 
-        genotype_average = sum / (count + !count);
-    //}
+    genotype_average = sum / (count + !count);
 
 
     /* calculate XTX & XTY*/
@@ -87,8 +85,9 @@ bool Lin_row::fit(int thread_id, int max_iteration, double sig) {
         const std::vector<double>& patient_pnc = gwas->phenotype_and_covars.data[i];
 
         double x = (data[(i + client_offset) / 4] >> (((i + client_offset) % 4) * 2) ) & 0b11;
-        // is_NA = is_NA_uint8(x);
-        // x = impute_average && is_NA ? genotype_average : x;
+        is_NA = is_NA_uint8(x);
+        //x = is_NA ? genotype_average : x;
+        x = (!is_NA * x) + (is_NA * genotype_average);
         double y = patient_pnc[0];
 
         //if (!is_NA && !impute_average) {
@@ -112,17 +111,15 @@ bool Lin_row::fit(int thread_id, int max_iteration, double sig) {
 
         /* update data index */
         data_idx++;
-        // int data_idx_lt_lengths = data_idx < client_lengths[client_idx];
-        // // if data_idx >= lengths, data_idx = 0 - otherwise multiply by 1
-        // data_idx *= data_idx_lt_lengths;
-        // // if data_idx >= lengths, increment client_offset, otherwise multiply by 0
-        // client_offset += (~data_idx_lt_lengths + 2) * ((4 - ((1 + i + client_offset) % 4)) % 4);
-
-
-        if (data_idx >= client_lengths[client_idx]) {
-            data_idx = 0;
-            client_offset += (4 - ((1 + i + client_offset) % 4)) % 4; // how many pairs of bits do we need to skip?
-        }
+        int data_idx_lt_lengths = data_idx < client_lengths[client_idx];
+        // if data_idx >= lengths, data_idx = 0 - otherwise multiply by 1
+        data_idx *= data_idx_lt_lengths;
+        // if data_idx >= lengths, increment client_offset, otherwise multiply by 0
+        client_offset += (!data_idx_lt_lengths) * ((4 - ((1 + i + client_offset) % 4)) % 4);
+        // if (data_idx >= client_lengths[client_idx]) {
+        //     data_idx = 0;
+        //     client_offset += (4 - ((1 + i + client_offset) % 4)) % 4; // how many pairs of bits do we need to skip?
+        // }
     }
 
     for (int j = 0; j < num_dimensions; j++) {
@@ -145,37 +142,32 @@ bool Lin_row::fit(int thread_id, int max_iteration, double sig) {
         const std::vector<double>& patient_pnc = gwas->phenotype_and_covars.data[i];
 
         double x = (data[(i + client_offset) / 4] >> (((i + client_offset) % 4) * 2) ) & 0b11;
-        // is_NA = is_NA_uint8(x);
-        // x = impute_average && is_NA ? genotype_average : x;
+        is_NA = is_NA_uint8(x);
+        //x = is_NA ? genotype_average : x;
+        x = (!is_NA * x) + (is_NA * genotype_average);
         double y = patient_pnc[0];
         //if (!is_NA && !impute_average) {
-            double y_est = beta[0] * x;
-            for (int j = 1; j < num_dimensions; j++){
-                y_est += patient_pnc[j] * beta[j];
-            }
-            sse += (y - y_est) * (y - y_est);
+        double y_est = beta[0] * x;
+        for (int j = 1; j < num_dimensions; j++){
+            y_est += patient_pnc[j] * beta[j];
+        }
+        sse += (y - y_est) * (y - y_est);
         //}
 
         /* update data index */
         data_idx++;
-        // int data_idx_lt_lengths = data_idx < client_lengths[client_idx];
-        // // if data_idx >= lengths, data_idx = 0 - otherwise multiply by 1
-        // data_idx *= data_idx_lt_lengths;
-        // // if data_idx >= lengths, increment client_offset, otherwise multiply by 0
-        // client_offset += (~data_idx_lt_lengths + 2) * ((4 - ((1 + i + client_offset) % 4)) % 4);
-        if (data_idx >= client_lengths[client_idx]) {
-            data_idx = 0;
-            client_offset += (4 - ((1 + i + client_offset) % 4)) % 4; // how many pairs of bits do we need to skip?
-        }
+        int data_idx_lt_lengths = data_idx < client_lengths[client_idx];
+        // if data_idx >= lengths, data_idx = 0 - otherwise multiply by 1
+        data_idx *= data_idx_lt_lengths;
+        // if data_idx >= lengths, increment client_offset, otherwise multiply by 0
+        client_offset += (!data_idx_lt_lengths) * ((4 - ((1 + i + client_offset) % 4)) % 4);
+        // if (data_idx >= client_lengths[client_idx]) {
+        //     data_idx = 0;
+        //     client_offset += (4 - ((1 + i + client_offset) % 4)) % 4; // how many pairs of bits do we need to skip?
+        // }
     }
 
     sse = sse / (n - num_dimensions - 1);
-    // for (int j = 0; j < num_dimensions; ++j){
-    //     SSE[j] = sse * (*XTX.t)[j][j];
-    // }
-
-    //beta_ans = beta[0];
-    //sse_ans_list[thread_id] = std::sqrt(sse * XTX.t->at(0, 0));
 
     // overwrite b[1] with the standard error, helps with false sharing issue... if we need
     // to report other betas in the future we need to change this!

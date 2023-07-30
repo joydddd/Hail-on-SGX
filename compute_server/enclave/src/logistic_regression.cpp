@@ -128,7 +128,7 @@ void Log_row::init() {
         uint8_t val;
         for (int i = 0 ; i < n; ++i) {
             val = (data[i / 4] >> ((i % 4) * 2)) & 0b11;
-            if (is_NA_uint8(val)) {
+            if (!is_NA_uint8(val)) {
                 sum += val;
                 count++;
             }
@@ -152,8 +152,9 @@ void Log_row::update_estimate() {
     bool is_NA;
     for (int i = 0; i < n; i++) {
         double x = (data[(i + client_offset) / 4] >> (((i + client_offset) % 4) * 2) ) & 0b11;
-        // is_NA = is_NA_uint8(x);
-        // x = impute_average && is_NA ? genotype_average : x;
+        is_NA = is_NA_uint8(x);
+        //x = is_NA ? genotype_average : x;
+        x = (!is_NA * x) + (is_NA * genotype_average);
         // if (!is_NA && !impute_average) {
             const std::vector<double>& patient_pnc = gwas->phenotype_and_covars.data[i];
 
@@ -167,16 +168,16 @@ void Log_row::update_estimate() {
         //}
         /* update data index */
         data_idx++;
-        // int data_idx_lt_lengths = data_idx < client_lengths[client_idx];
-        // // if data_idx >= lengths, data_idx = 0 - otherwise multiply by 1
-        // data_idx *= data_idx_lt_lengths;
-        // // if data_idx >= lengths, increment client_offset, otherwise multiply by 0
-        // client_offset += (~data_idx_lt_lengths + 2) * ((4 - ((1 + i + client_offset) % 4)) % 4);
-        if (data_idx >= client_lengths[client_idx]) {
-            data_idx = 0;
-            client_idx++;
-            client_offset += (4 - ((1 + i + client_offset) % 4)) % 4; // how many pairs of bits do we need to skip?
-        }
+        int data_idx_lt_lengths = data_idx < client_lengths[client_idx];
+        // if data_idx >= lengths, data_idx = 0 - otherwise multiply by 1
+        data_idx *= data_idx_lt_lengths;
+        // if data_idx >= lengths, increment client_offset, otherwise multiply by 0
+        client_offset += (!data_idx_lt_lengths) * ((4 - ((1 + i + client_offset) % 4)) % 4);
+        // if (data_idx >= client_lengths[client_idx]) {
+        //     data_idx = 0;
+        //     client_idx++;
+        //     client_offset += (4 - ((1 + i + client_offset) % 4)) % 4; // how many pairs of bits do we need to skip?
+        // }
     }
     /* build lower half of H */
     for (int j = 0; j < num_dimensions; j++) {
