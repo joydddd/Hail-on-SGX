@@ -122,6 +122,11 @@ bool Client::start_thread(int connFD) {
             throw std::runtime_error("Didn't read in a null terminating char");
         }
         std::string header(header_buffer, header_size);
+        if (header.find("GET / HTTP/1.1") != std::string::npos) {
+            std::cout << "Strange get request? Ignoring for now." << std::endl;
+            delete[] body_buffer;
+            return true;
+        }
         unsigned int body_size;
         try {
             body_size = std::stoi(header);
@@ -396,7 +401,7 @@ void Client::queue_helper(const int global_id, const int num_helpers) {
     std::vector<uint8_t> compressed_vals;
     vals.resize(num_patients);
     compressed_vals.resize((num_patients / TWO_BIT_INT_ARR_SIZE) + (num_patients % TWO_BIT_INT_ARR_SIZE ? 1 : 0));
-    while(encryption_queue_list[global_id].size()) {
+    while (encryption_queue_list[global_id].size()) {
         EncryptionBlock *block = encryption_queue_list[global_id].top();
         encryption_queue_list[global_id].pop();
         line = block->line;
@@ -410,6 +415,14 @@ void Client::queue_helper(const int global_id, const int num_helpers) {
         allele_queue_list[global_id]->push(line);
     }
     if (++filled_count == allele_queue_list.size()) {
+        // Make sure we read in at least one value
+        int any = 0;
+        for (int id = 0; id < compute_server_info.size(); ++id){
+            any ^= allele_queue_list[id]->size();
+        }
+        if (!any) {
+            throw std::runtime_error("Empty allele file provided");
+        }
         start_sender_cv.notify_all();
     }
     auto stop = std::chrono::high_resolution_clock::now();

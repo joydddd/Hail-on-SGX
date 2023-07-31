@@ -3,8 +3,8 @@ for count in range(100000, 2100000, 100000):
         with open(f'../client/client_config-{count}.json', 'w') as f:
             f.write('{\n')
             f.write('\t"client_name": "client1",\n')
-            f.write(f'\t"client_bind_port": 8601,\n')
-            f.write(f'\t"allele_file": "client_data/generated_alleles_{count}.tsv",\n')
+            f.write(f'\t"client_bind_port": 18601,\n')
+            f.write(f'\t"allele_file": "client_data/generated_alleles_{count}-125000.tsv",\n')
             f.write('\t"register_server_info": { "hostname": "localhost", "port": 6401 }\n')
             f.write('}')
 
