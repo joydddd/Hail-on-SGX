@@ -1,2 +1,10 @@
 
  Running on port 6401
+ID/Client: -1 Msg Type: 0
+104.210.51.154 0
+ID/Client: -1 Msg Type: 0
+104.210.48.196 1
+ID/Client: -1 Msg Type: 0
+104.42.77.154 2
+ID/Client: -1 Msg Type: 0
+104.42.74.238 3

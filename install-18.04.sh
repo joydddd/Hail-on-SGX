@@ -35,6 +35,6 @@ make clean; make
 make clean; make
 # make clean; make nonoe
 
-sudo apt install python3-pip -y
-pip3 install numpy
-pip3 install scipy
+# sudo apt install python3-pip -y
+# pip3 install numpy
+# pip3 install scipy

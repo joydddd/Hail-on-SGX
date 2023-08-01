@@ -14,7 +14,7 @@ rand_size = 100003
 rands = np.random.random(rand_size)
 
 ALLELE_COUNT =  1000000
-CLIENT_COUNT = 10000 if len(sys.argv) != 2 else int(sys.argv[1])
+CLIENT_COUNT = 5000 if len(sys.argv) != 2 else int(sys.argv[1])
 print(CLIENT_COUNT)
 NUM_PROCS = multiprocessing.cpu_count()
 OUTPUT_FILE = f"../client/client_data/generated_alleles_{CLIENT_COUNT}-{ALLELE_COUNT}.tsv"
