@@ -1,0 +1,19 @@
+
+ Running on port 8601
+ID: -1rs Msg Type: 0
+ID: 0 Msg Type: 1
+ID: 1 Msg Type: 1
+ID: 2 Msg Type: 1
+ID: 0 Msg Type: 2
+ID: 3 Msg Type: 1
+ID: 0 Msg Type: 3
+ID: 1 Msg Type: 2
+ID: 2 Msg Type: 2
+ID: 1 Msg Type: 3
+ID: 3 Msg Type: 2
+ID: 2 Msg Type: 3
+ID: 3 Msg Type: 3
+Fill/encryption time total: 6125
+
+ Running on port 8601
+ID: -1rs Msg Type: 0
