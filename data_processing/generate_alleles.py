@@ -88,7 +88,7 @@ def helper(pid, locuses):
         if pid == 0:
             f.write(f'locus\talleles {top_line[:-1]}\n')
 
-        for loc_idx, locus in enumerate((locuses[:ALLELE_COUNT] if len(sys.argv) != 2 else locuses[:1])):
+        for loc_idx, locus in enumerate((locuses[:ALLELE_COUNT])): #if len(sys.argv) != 2 else locuses[:1])):
             if int(loc_idx / proc_div) != pid:
                 continue 
             locus_split = locus.split(':')
