@@ -227,17 +227,6 @@ bool RegisterServer::handle_message(int connFD, RegisterServerMessageType mtype,
             
             if (++eof_messages_received == compute_server_count) {
                 std::cout << "Received last message: "  << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count() << std::endl;
-                
-                // sometimes there is a race condition where messages get delayed, waiting a second can help
-                std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-
-                // These aren't necesary for program correctness, but they help with iterative testing!
-                for (ConnectionInfo institution_info : institution_info_list) {
-                    send_msg(institution_info.hostname, institution_info.port, ClientMessageType::END_CLIENT, "");
-                }
-                for (ConnectionInfo compute_info : compute_info_list) {
-                    send_msg(compute_info.hostname, compute_info.port, ComputeServerMessageType::END_COMPUTE, "");
-                }
 
                 for (std::mutex& mux : tmp_file_mutex_list) {
                     mux.lock();
@@ -260,6 +249,17 @@ bool RegisterServer::handle_message(int connFD, RegisterServerMessageType mtype,
 
                 for (std::mutex& mux : tmp_file_mutex_list) {
                     mux.unlock();
+                }
+
+                // sometimes there is a race condition where messages get delayed, waiting a second can help
+                std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+
+                // These aren't necesary for program correctness, but they help with iterative testing!
+                for (ConnectionInfo institution_info : institution_info_list) {
+                    send_msg(institution_info.hostname, institution_info.port, ClientMessageType::END_CLIENT, "");
+                }
+                for (ConnectionInfo compute_info : compute_info_list) {
+                    send_msg(compute_info.hostname, compute_info.port, ComputeServerMessageType::END_COMPUTE, "");
                 }
 
                 // All files recieved, all shutdown messages sent, we can exit now
