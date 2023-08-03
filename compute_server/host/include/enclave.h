@@ -7,6 +7,8 @@
 #include "gwas_u.h"
 #endif
 
+void mark_eof_wrapper(const int thread_id);
+
 int start_enclave();
 
 #endif

@@ -4,6 +4,8 @@ enclave {
     include "buffer_size.h"
 
     trusted {
+        public void mark_eof(const int thread_id);
+
         public void setup_enclave_encryption(const int num_threads);
 
         public void setup_num_patients();

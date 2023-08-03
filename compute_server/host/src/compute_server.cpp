@@ -12,6 +12,7 @@
 #include <stdint.h>
 #include <sys/types.h>
 #include <sys/socket.h>
+#include <future>
 #include <netdb.h>
 #include "enclave.h"
 #include "hashing.h"
@@ -33,6 +34,8 @@ std::mutex cout_lock;
 bool terminating = false;
 
 const int MIN_BLOCK_COUNT = 50;
+
+//extern oe_enclave_t* enclave;
 
 ComputeServer::ComputeServer(const std::string& config_file) {
     init(config_file);
@@ -757,10 +760,14 @@ int ComputeServer::get_allele_data(char* batch_data, const int thread_id) {
     if (get_instance()->eof_read_list[thread_id]) {
         // Set this back to false so that later function calls return 0!
         //get_instance()->eof_read_list[thread_id] = false;
-        memset(batch_data, 0, ENCLAVE_READ_BUFFER_SIZE);
-        memcpy(batch_data, EOFSeperator, strlen(EOFSeperator));
-        //guarded_cout(std::to_string(thread_id), cout_lock);
-        return 1;
+        // memset(batch_data, 0, ENCLAVE_READ_BUFFER_SIZE);
+        // memcpy(batch_data, EOFSeperator, strlen(EOFSeperator));
+
+        // Why do I use async here? Good question! The mark_eof ECall can't be triggered by the same context of the OCall or else it gives me a "re-entrant" error
+        // so here's a workaround that calls mark_eof not in this function and without the need for threads
+        std::async(mark_eof_wrapper, thread_id);
+
+        return -1;
     }
 
     int num_lines = 0;
