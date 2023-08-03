@@ -758,11 +758,6 @@ int ComputeServer::get_allele_data(char* batch_data, const int thread_id) {
     // Currently the enclave expects the ~EOF~ to be by itself (not in a batch).
     // This is not very clean code, but searching for ~EOF~ in the enclave is slow!
     if (get_instance()->eof_read_list[thread_id]) {
-        // Set this back to false so that later function calls return 0!
-        //get_instance()->eof_read_list[thread_id] = false;
-        // memset(batch_data, 0, ENCLAVE_READ_BUFFER_SIZE);
-        // memcpy(batch_data, EOFSeperator, strlen(EOFSeperator));
-
         // Why do I use async here? Good question! The mark_eof ECall can't be triggered by the same context of the OCall or else it gives me a "re-entrant" error
         // so here's a workaround that calls mark_eof not in this function and without the need for threads
         std::async(mark_eof_wrapper, thread_id);

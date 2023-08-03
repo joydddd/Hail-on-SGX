@@ -173,9 +173,9 @@ Batch* Buffer::launch(std::vector<ClientInfo>& client_info_list, const int threa
             std::this_thread::yield();
         }
     }
-    // if (num_lines == -1) {
-    //     return nullptr;
-    // }
+    if (num_lines == -1) {
+        return nullptr;
+    }
     //if (!strcmp(crypttxt, EOFSeperator)) return nullptr;
     if (!free_batch) return nullptr;
     *free_batch->plaintxt_size() = 0;
