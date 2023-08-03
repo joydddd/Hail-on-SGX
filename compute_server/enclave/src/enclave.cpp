@@ -38,6 +38,10 @@ int total_row_size;
 std::condition_variable start_thread_cv;
 volatile bool start_thread = false;
 
+void mark_eof(const int thread_id) {
+    buffer_list[thread_id]->mark_eof();
+}
+
 void setup_enclave_encryption(const int num_threads) {
     RSACrypto rsa = RSACrypto();
     if (!rsa.m_initialized) {

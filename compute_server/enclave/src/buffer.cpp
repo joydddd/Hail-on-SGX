@@ -120,6 +120,7 @@ Buffer::Buffer(size_t _row_size, EncAnalysis type, int num_clients, int _thread_
     // amount of data in at a time, BUT this data when decompressed can actually be up to 4 * ENCLAVE_READ_BUFFER_SIZE large
     plaintxt_buffer = new char[ENCLAVE_READ_BUFFER_SIZE];
     output_tail = 0;
+    eof = false;
 
     memset(crypttxt, 0, ENCLAVE_READ_BUFFER_SIZE);
     memset(plain_txt_compressed, 0, ENCLAVE_READ_BUFFER_SIZE);
@@ -130,6 +131,10 @@ Buffer::~Buffer() {
     delete free_batch;
     delete [] client_list;
     delete [] client_crypto_map;
+}
+
+void Buffer::mark_eof() {
+    eof = true;
 }
 
 void Buffer::add_gwas(GWAS* _gwas, ImputePolicy impute_policy, const std::vector<int>& sizes) {
@@ -161,11 +166,17 @@ Batch* Buffer::launch(std::vector<ClientInfo>& client_info_list, const int threa
     int num_lines = 0;
     while (!num_lines) {
         getbatch(&num_lines, crypttxt, thread_id);
+        if (eof) {
+            return nullptr;
+        }
         if (!num_lines) {
             std::this_thread::yield();
         }
     }
-    if (!strcmp(crypttxt, EOFSeperator)) return nullptr;
+    // if (num_lines == -1) {
+    //     return nullptr;
+    // }
+    //if (!strcmp(crypttxt, EOFSeperator)) return nullptr;
     if (!free_batch) return nullptr;
     *free_batch->plaintxt_size() = 0;
     decrypt_line(free_batch->load_plaintxt(), free_batch->plaintxt_size(), num_lines, client_info_list, thread_id);

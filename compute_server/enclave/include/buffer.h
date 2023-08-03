@@ -38,6 +38,7 @@ class Buffer {
     int* client_list;
     char** client_crypto_map;
     int client_count;
+    bool eof;
 
     int thread_id;
 
@@ -51,6 +52,7 @@ public:
     void add_gwas(GWAS* _gwas, ImputePolicy impute_policy, const std::vector<int>& sizes);
     void finish();
     void clean_up();
+    void mark_eof();
 
     Batch* launch(std::vector<ClientInfo>& client_info_list, const int thread_id);  // return nullptr if there is no free batches
 };

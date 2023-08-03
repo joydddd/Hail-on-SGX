@@ -25,9 +25,6 @@
 #endif
 
 
-// index -1 is reserved for intercept
-
-
 void setrsapubkey(uint8_t enc_rsa_pub_key[RSA_PUB_KEY_SIZE]) {
     std::memcpy(ComputeServer::get_rsa_pub_key(), enc_rsa_pub_key, RSA_PUB_KEY_SIZE);
     
@@ -147,7 +144,11 @@ bool check_debug_opt(int* argc, const char* argv[]) {
 
 #ifndef NON_OE
 
-static oe_enclave_t* enclave;
+oe_enclave_t* enclave;
+
+void mark_eof_wrapper(const int thread_id) {
+    mark_eof(enclave, thread_id);
+}
 
 int start_enclave() {
     oe_result_t result;
