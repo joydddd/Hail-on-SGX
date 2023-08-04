@@ -1,35 +1,8 @@
- Running on port 16401
-ID/Client: client1 Msg Type: 1
-ID/Client: -1 Msg Type: 0
-138.91.153.210 0
-ID/Client: -1 Msg Type: 0
-138.91.153.216 1
-ID/Client: -1 Msg Type: 0
-138.91.153.158 2
-ID/Client: -1 Msg Type: 0
-138.91.153.175 3
-ID/Client: -1 Msg Type: 0
-138.91.153.196 4
-ID/Client: -1 Msg Type: 0
-104.40.11.18 5
-ID/Client: -1 Msg Type: 0
-138.91.153.209 6
-ID/Client: -1 Msg Type: 0
-138.91.153.202 7
-ID/Client: 2 Msg Type: 3
-ID/Client: 7 Msg Type: 3
-ID/Client: 0 Msg Type: 3
-ID/Client: 5 Msg Type: 3
-ID/Client: 3 Msg Type: 3
-ID/Client: 6 Msg Type: 3
-ID/Client: 4 Msg Type: 3
-ID/Client: 1 Msg Type: 3
-Received last message: 1691119230245
 
  Running on port 16401
 ID/Client: client1 Msg Type: 1
 ID/Client: -1 Msg Type: 0
-138.91.153.210 0
+138.91.153.216 0
 ID/Client: -1 Msg Type: 0
 ID/Client: -1 Msg Type: 0
 ID/Client: -1 Msg Type: 0
@@ -37,19 +10,45 @@ ID/Client: -1 Msg Type: 0
 ID/Client: -1 Msg Type: 0
 104.40.11.18 2
 ID/Client: -1 Msg Type: 0
-138.91.153.175 3
 ID/Client: -1 Msg Type: 0
-138.91.153.216 4
+138.91.153.202 3
+138.91.153.209 4
+138.91.153.210 5
+138.91.153.175 6
 ID/Client: -1 Msg Type: 0
-138.91.153.202 5
-138.91.153.209 6
 138.91.153.196 7
+ID/Client: 7 Msg Type: 3
+ID/Client: 1 Msg Type: 3
+ID/Client: 2 Msg Type: 3
 ID/Client: 6 Msg Type: 3
 ID/Client: 4 Msg Type: 3
 ID/Client: 0 Msg Type: 3
-ID/Client: 2 Msg Type: 3
-ID/Client: 5 Msg Type: 3
 ID/Client: 3 Msg Type: 3
-ID/Client: 7 Msg Type: 3
+ID/Client: 5 Msg Type: 3
+Received last message: 1691119463208
+
+ Running on port 16401
+ID/Client: client1 Msg Type: 1
+ID/Client: -1 Msg Type: 0
+138.91.153.216 0
+ID/Client: -1 Msg Type: 0
+138.91.153.158 1
+ID/Client: -1 Msg Type: 0
+138.91.153.202 2
+ID/Client: -1 Msg Type: 0
+138.91.153.209 3
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+138.91.153.196 4
+ID/Client: -1 Msg Type: 0
+104.40.11.18 5
+138.91.153.175 6
+138.91.153.210 7
+ID/Client: 2 Msg Type: 3
+ID/Client: 0 Msg Type: 3
+ID/Client: 4 Msg Type: 3
+ID/Client: 3 Msg Type: 3
 ID/Client: 1 Msg Type: 3
-Received last message: 1691119323701
+ID/Client: 5 Msg Type: 3
+ID/Client: 6 Msg Type: 3
