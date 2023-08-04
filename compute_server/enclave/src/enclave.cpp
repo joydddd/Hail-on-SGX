@@ -121,7 +121,13 @@ void setup_num_patients() {
                          (const unsigned char*) num_patients_buffer,
                          num_patients_buffer_size, 
                          (unsigned char*) buffer_decrypt);
-        int client_num_patients = std::stoi(buffer_decrypt);
+        int client_num_patients;
+        try {
+            client_num_patients = std::stoi(buffer_decrypt);
+        } catch(const std::invalid_argument& e) {
+            std::cout << "Failed setup num patients" << std::endl;
+            throw e;
+        }
         client_y_size[client] = client_num_patients;
         client_info_list[client].size = (client_num_patients / 4) + (client_num_patients % 4 == 0 ? 0 : 1);
         total_row_size += client_num_patients;

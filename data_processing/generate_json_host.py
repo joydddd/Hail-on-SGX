@@ -2,7 +2,7 @@ for count in range(100000, 2100000, 100000):
     for cov in range(1, 17, 1):
         with open(f'../compute_server/host/compute_server_config-{cov}-{count}.json', 'w') as f:
             f.write('{\n')
-            f.write('\t"compute_server_bind_port": 6701,\n')
+            f.write('\t"compute_server_bind_port": 16701,\n')
             cov_str = ""
             for i in range(cov):
                 cov_str += f'"{i+1}-{count}", '

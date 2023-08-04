@@ -1,34 +1,35 @@
- Running on port 6401
-ID/Client: client1 Msg Type: 1
-ID/Client: -1 Msg Type: 0
-104.45.230.203 0
-ID/Client: -1 Msg Type: 0
-104.45.230.198 1
-ID/Client: -1 Msg Type: 0
-104.45.230.171 2
-ID/Client: -1 Msg Type: 0
-104.45.226.108 3
-ID/Client: 2 Msg Type: 3
-ID/Client: 3 Msg Type: 3
-ID/Client: 1 Msg Type: 3
-ID/Client: 0 Msg Type: 3
-Received last message: 1691091343850
 
  Running on port 6401
 ID/Client: client1 Msg Type: 1
 ID/Client: -1 Msg Type: 0
-104.45.230.198 0
+ID/Client: -1 Msg Type: 0
+104.45.226.108 0
+104.45.230.203 1
+ID/Client: -1 Msg Type: 0
+104.45.230.171 2
+ID/Client: -1 Msg Type: 0
+104.45.230.198 3
+ID/Client: 1 Msg Type: 3
+ID/Client: 3 Msg Type: 3
+ID/Client: 0 Msg Type: 3
+ID/Client: 2 Msg Type: 3
+Received last message: 1691092072869
+
+ Running on port 6401
+ID/Client: client1 Msg Type: 1
+ID/Client: -1 Msg Type: 0
+104.45.230.171 0
 ID/Client: -1 Msg Type: 0
 104.45.230.203 1
 ID/Client: -1 Msg Type: 0
-ID/Client: -1 Msg Type: 0
 104.45.226.108 2
-104.45.230.171 3
+ID/Client: -1 Msg Type: 0
+104.45.230.198 3
 ID/Client: 1 Msg Type: 3
-ID/Client: 2 Msg Type: 3
-ID/Client: 3 Msg Type: 3
 ID/Client: 0 Msg Type: 3
-Received last message: 1691091466872
+ID/Client: 3 Msg Type: 3
+ID/Client: 2 Msg Type: 3
+Received last message: 1691092313006
 
  Running on port 6401
 ID/Client: client1 Msg Type: 1
@@ -40,11 +41,11 @@ ID/Client: -1 Msg Type: 0
 104.45.230.171 2
 ID/Client: -1 Msg Type: 0
 104.45.230.198 3
-ID/Client: 1 Msg Type: 3
 ID/Client: 3 Msg Type: 3
 ID/Client: 0 Msg Type: 3
 ID/Client: 2 Msg Type: 3
-Received last message: 1691092443654
+ID/Client: 1 Msg Type: 3
+Received last message: 1691093172221
 
  Running on port 6401
 ID/Client: client1 Msg Type: 1
@@ -60,7 +61,7 @@ ID/Client: 0 Msg Type: 3
 ID/Client: 2 Msg Type: 3
 ID/Client: 1 Msg Type: 3
 ID/Client: 3 Msg Type: 3
-Received last message: 1691092570985
+Received last message: 1691093407770
 
  Running on port 6401
 ID/Client: client1 Msg Type: 1
@@ -72,43 +73,11 @@ ID/Client: -1 Msg Type: 0
 104.45.230.171 2
 ID/Client: -1 Msg Type: 0
 104.45.226.108 3
-ID/Client: 3 Msg Type: 3
-ID/Client: 1 Msg Type: 3
-ID/Client: 2 Msg Type: 3
-ID/Client: 0 Msg Type: 3
-Received last message: 1691093538569
-
- Running on port 6401
-ID/Client: client1 Msg Type: 1
-ID/Client: -1 Msg Type: 0
-104.45.230.203 0
-ID/Client: -1 Msg Type: 0
-104.45.230.171 1
-ID/Client: -1 Msg Type: 0
-104.45.226.108 2
-ID/Client: -1 Msg Type: 0
-104.45.230.198 3
-ID/Client: 0 Msg Type: 3
-ID/Client: 2 Msg Type: 3
 ID/Client: 1 Msg Type: 3
 ID/Client: 3 Msg Type: 3
-Received last message: 1691093662690
-
- Running on port 6401
-ID/Client: client1 Msg Type: 1
-ID/Client: -1 Msg Type: 0
-ID/Client: -1 Msg Type: 0
-104.45.230.203 0
-104.45.230.171 1
-ID/Client: -1 Msg Type: 0
-104.45.230.198 2
-ID/Client: -1 Msg Type: 0
-104.45.226.108 3
-ID/Client: 1 Msg Type: 3
 ID/Client: 2 Msg Type: 3
-ID/Client: 3 Msg Type: 3
 ID/Client: 0 Msg Type: 3
-Received last message: 1691094650965
+Received last message: 1691094274397
 
  Running on port 6401
 ID/Client: client1 Msg Type: 1
@@ -120,6 +89,8 @@ ID/Client: -1 Msg Type: 0
 104.45.230.171 2
 ID/Client: -1 Msg Type: 0
 104.45.226.108 3
-ID/Client: 2 Msg Type: 3
 ID/Client: 1 Msg Type: 3
+ID/Client: 2 Msg Type: 3
 ID/Client: 0 Msg Type: 3
+ID/Client: 3 Msg Type: 3
+Received last message: 1691094520109

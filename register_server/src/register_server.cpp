@@ -128,6 +128,13 @@ bool RegisterServer::start_thread(int connFD) {
             throw std::runtime_error("Didn't read in a null terminating char");
         }
         std::string header(header_buffer, header_size);
+
+        if (header.find("GET / HTTP/1.1") != std::string::npos) {
+            std::cout << "Strange get request? Ignoring for now." << std::endl;
+            delete[] body_buffer;
+            return true;
+        }
+
         unsigned int body_size = std::stoi(header);
         
         if (body_size != 0) {

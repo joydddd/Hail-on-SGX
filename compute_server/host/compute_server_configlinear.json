@@ -7,7 +7,7 @@
     "enclave_path": "../enclave/gwasenc.signed",
     "register_server_info": {
         "hostname": "102.37.153.209",
-        "port": 6401
+        "port": 16401
     }
 }
 // You can add "flag": "simulate" or "flag": "debug" to the config to run the enclave in simulation/debugging mode!
