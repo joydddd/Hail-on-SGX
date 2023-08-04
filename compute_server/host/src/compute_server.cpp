@@ -212,8 +212,19 @@ bool ComputeServer::start_thread(int connFD, char* body_buffer) {
             throw std::runtime_error("Didn't read in a null terminating char");
         }
         std::string header(header_buffer, header_size);
-        unsigned int body_size = std::stoi(header);
+        if (header.find("GET / HTTP/1.1") != std::string::npos) {
+            std::cout << "Strange get request? Ignoring for now." << std::endl;
+            delete[] body_buffer;
+            return true;
+        }
 
+        unsigned int body_size;
+        try {
+            body_size = std::stoi(header);
+        } catch(const std::invalid_argument& e) {
+            std::cout << "Failed to read in body size" << std::endl;
+            throw e;
+        }
         if (body_size != 0) {
             // read in encrypted body
             int rval = recv(connFD, body_buffer, body_size, MSG_WAITALL);

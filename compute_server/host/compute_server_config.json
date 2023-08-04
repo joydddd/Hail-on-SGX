@@ -1,5 +1,5 @@
 {
-    "compute_server_bind_port": 6701,
+    "compute_server_bind_port": 16701,
     "covariants": ["1", "1-1313", "2-1313"],
     "institutions": ["client1"],
     "y_val_name": "disease-1313",
@@ -7,7 +7,7 @@
     "enclave_path": "../enclave/gwasenc.signed",
     "register_server_info": {
         "hostname": "20.55.39.16",
-        "port": 6401
+        "port": 16401
     },
     "impute_policy": "Hail"
 }

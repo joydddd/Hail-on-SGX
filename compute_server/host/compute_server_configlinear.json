@@ -1,5 +1,5 @@
 {
-    "compute_server_bind_port": 6701,
+    "compute_server_bind_port": 16701,
     "covariants": ["1", "isFemale", "age", "BMI", "rand_binary", "rand_discrete"],
     "institutions": ["client1"],
     "y_val_name": "pancCancer",
