@@ -2,732 +2,626 @@
  Running on port 16401
 ID/Client: client1 Msg Type: 1
 ID/Client: -1 Msg Type: 0
-138.91.153.216 0
-ID/Client: -1 Msg Type: 0
-ID/Client: -1 Msg Type: 0
-ID/Client: -1 Msg Type: 0
-138.91.153.158 1
-ID/Client: -1 Msg Type: 0
-104.40.11.18 2
-ID/Client: -1 Msg Type: 0
-ID/Client: -1 Msg Type: 0
-138.91.153.202 3
-138.91.153.209 4
-138.91.153.210 5
-138.91.153.175 6
-ID/Client: -1 Msg Type: 0
-138.91.153.196 7
-ID/Client: 7 Msg Type: 3
-ID/Client: 1 Msg Type: 3
-ID/Client: 2 Msg Type: 3
-ID/Client: 6 Msg Type: 3
-ID/Client: 4 Msg Type: 3
-ID/Client: 0 Msg Type: 3
-ID/Client: 3 Msg Type: 3
-ID/Client: 5 Msg Type: 3
-Received last message: 1691119463208
-
- Running on port 16401
-ID/Client: client1 Msg Type: 1
-ID/Client: -1 Msg Type: 0
-138.91.153.216 0
-ID/Client: -1 Msg Type: 0
-138.91.153.158 1
-ID/Client: -1 Msg Type: 0
-138.91.153.202 2
-ID/Client: -1 Msg Type: 0
-138.91.153.209 3
-ID/Client: -1 Msg Type: 0
-ID/Client: -1 Msg Type: 0
-ID/Client: -1 Msg Type: 0
-138.91.153.196 4
-ID/Client: -1 Msg Type: 0
-104.40.11.18 5
-138.91.153.175 6
-138.91.153.210 7
-ID/Client: 2 Msg Type: 3
-ID/Client: 0 Msg Type: 3
-ID/Client: 4 Msg Type: 3
-ID/Client: 3 Msg Type: 3
-ID/Client: 1 Msg Type: 3
-ID/Client: 5 Msg Type: 3
-ID/Client: 6 Msg Type: 3
-
- Running on port 16401
-ID/Client: client1 Msg Type: 1
-ID/Client: -1 Msg Type: 0
-20.59.124.211 0
-ID/Client: -1 Msg Type: 0
-ID/Client: -1 Msg Type: 0
-20.59.124.246 1
-ID/Client: -1 Msg Type: 0
-20.59.124.101 2
-ID/Client: -1 Msg Type: 0
-20.59.124.22 3
-ID/Client: -1 Msg Type: 0
-20.59.124.118 4
-20.59.124.136 5
-ID/Client: -1 Msg Type: 0
-20.59.124.222 6
-ID/Client: -1 Msg Type: 0
-ID/Client: -1 Msg Type: 0
-20.59.124.202 7
-20.59.124.179 8
-ID/Client: -1 Msg Type: 0
-ID/Client: -1 Msg Type: 0
-20.59.126.213 9
-ID/Client: -1 Msg Type: 0
-20.59.126.236 10
-20.59.126.174 11
-ID/Client: -1 Msg Type: 0
-ID/Client: -1 Msg Type: 0
-20.59.126.180 12
-ID/Client: -1 Msg Type: 0
-20.59.124.91 13
-20.59.124.206 14
-ID/Client: -1 Msg Type: 0
-20.59.126.185 15
-ID/Client: 6 Msg Type: 3
-ID/Client: 3 Msg Type: 3
-ID/Client: 13 Msg Type: 3
-ID/Client: 7 Msg Type: 3
-ID/Client: 14 Msg Type: 3
-ID/Client: 4 Msg Type: 3
-ID/Client: 8 Msg Type: 3
-ID/Client: 9 Msg Type: 3
-ID/Client: 2 Msg Type: 3
-ID/Client: 11 Msg Type: 3
-ID/Client: 12 Msg Type: 3
-ID/Client: 0 Msg Type: 3
-ID/Client: 5 Msg Type: 3
-ID/Client: 10 Msg Type: 3
-ID/Client: 15 Msg Type: 3
-ID/Client: 1 Msg Type: 3
-Received last message: 1691187589935
-
- Running on port 16401
-ID/Client: client1 Msg Type: 1
-ID/Client: -1 Msg Type: 0
 20.59.124.211 0
 ID/Client: -1 Msg Type: 0
 20.59.124.246 1
 ID/Client: -1 Msg Type: 0
-20.59.124.136 2
 ID/Client: -1 Msg Type: 0
-20.59.124.222 3
-ID/Client: -1 Msg Type: 0
-ID/Client: -1 Msg Type: 0
-20.59.124.179 4
-ID/Client: -1 Msg Type: 0
-ID/Client: -1 Msg Type: 0
-20.59.124.118 5
-ID/Client: -1 Msg Type: 0
-20.59.124.202 6
-ID/Client: -1 Msg Type: 0
-20.59.126.213 7
-ID/Client: -1 Msg Type: 0
-20.59.124.22 8
-ID/Client: -1 Msg Type: 0
-ID/Client: -1 Msg Type: 0
-20.59.126.180 9
-ID/Client: -1 Msg Type: 0
-20.59.126.236 10
-20.59.124.101 11
-20.59.124.91 12
-ID/Client: -1 Msg Type: 0
-20.59.126.174 13
-20.59.124.206 14
-ID/Client: -1 Msg Type: 0
-20.59.126.185 15
-ID/Client: 3 Msg Type: 3
-ID/Client: 15 Msg Type: 3
-ID/Client: 5 Msg Type: 3
-ID/Client: 9 Msg Type: 3
-ID/Client: 4 Msg Type: 3
-ID/Client: 0 Msg Type: 3
-ID/Client: 13 Msg Type: 3
-ID/Client: 7 Msg Type: 3
-ID/Client: 2 Msg Type: 3
-ID/Client: 10 Msg Type: 3
-ID/Client: 6 Msg Type: 3
-ID/Client: 12 Msg Type: 3
-ID/Client: 11 Msg Type: 3
-ID/Client: 1 Msg Type: 3
-ID/Client: 14 Msg Type: 3
-ID/Client: 8 Msg Type: 3
-Received last message: 1691187696126
-
- Running on port 16401
-ID/Client: client1 Msg Type: 1
-ID/Client: -1 Msg Type: 0
-ID/Client: -1 Msg Type: 0
-ID/Client: -1 Msg Type: 0
-20.59.124.202 0
-20.59.124.246 1
-20.59.124.118 2
-ID/Client: -1 Msg Type: 0
-ID/Client: -1 Msg Type: 0
-ID/Client: -1 Msg Type: 0
-20.59.124.22 3
-20.59.124.136 4
-ID/Client: -1 Msg Type: 0
-20.59.126.213 5
-ID/Client: -1 Msg Type: 0
-20.59.124.179 6
-ID/Client: -1 Msg Type: 0
-20.59.124.206 7
-20.59.124.101 8
-ID/Client: -1 Msg Type: 0
-20.59.126.185 9
-ID/Client: -1 Msg Type: 0
-ID/Client: -1 Msg Type: 0
-20.59.124.91 10
-ID/Client: -1 Msg Type: 0
-20.59.126.180 11
-20.59.124.211 12
-ID/Client: -1 Msg Type: 0
-20.59.126.236 13
-ID/Client: -1 Msg Type: 0
-ID/Client: -1 Msg Type: 0
-20.59.124.222 14
-20.59.126.174 15
-ID/Client: 7 Msg Type: 3
-ID/Client: 13 Msg Type: 3
-ID/Client: 15 Msg Type: 3
-ID/Client: 14 Msg Type: 3
-ID/Client: 11 Msg Type: 3
-ID/Client: 10 Msg Type: 3
-ID/Client: 0 Msg Type: 3
-ID/Client: 2 Msg Type: 3
-ID/Client: 9 Msg Type: 3
-ID/Client: 3 Msg Type: 3
-ID/Client: 8 Msg Type: 3
-ID/Client: 5 Msg Type: 3
-ID/Client: 12 Msg Type: 3
-ID/Client: 6 Msg Type: 3
-ID/Client: 1 Msg Type: 3
-ID/Client: 4 Msg Type: 3
-Received last message: 1691188316286
-
- Running on port 16401
-ID/Client: client1 Msg Type: 1
-ID/Client: -1 Msg Type: 0
-ID/Client: -1 Msg Type: 0
-20.59.124.118 0
-ID/Client: -1 Msg Type: 0
-20.59.124.202 1
-ID/Client: -1 Msg Type: 0
-20.59.124.22 2
-20.59.124.246 3
-ID/Client: -1 Msg Type: 0
-ID/Client: -1 Msg Type: 0
-20.59.126.213 4
-ID/Client: -1 Msg Type: 0
-20.59.124.136 5
-ID/Client: -1 Msg Type: 0
-20.59.126.185 6
-ID/Client: -1 Msg Type: 0
-20.59.124.206 7
-20.59.124.179 8
-ID/Client: -1 Msg Type: 0
-ID/Client: -1 Msg Type: 0
-20.59.124.101 9
-ID/Client: -1 Msg Type: 0
-ID/Client: -1 Msg Type: 0
-20.59.124.91 10
-20.59.124.211 11
-20.59.126.180 12
-ID/Client: -1 Msg Type: 0
-ID/Client: -1 Msg Type: 0
-20.59.126.174 13
-20.59.124.222 14
-ID/Client: -1 Msg Type: 0
-20.59.126.236 15
-ID/Client: 14 Msg Type: 3
-ID/Client: 11 Msg Type: 3
-ID/Client: 1 Msg Type: 3
-ID/Client: 2 Msg Type: 3
-ID/Client: 4 Msg Type: 3
-ID/Client: 12 Msg Type: 3
-ID/Client: 7 Msg Type: 3
-ID/Client: 3 Msg Type: 3
-ID/Client: 9 Msg Type: 3
-ID/Client: 10 Msg Type: 3
-ID/Client: 0 Msg Type: 3
-ID/Client: 15 Msg Type: 3
-ID/Client: 8 Msg Type: 3
-ID/Client: 5 Msg Type: 3
-ID/Client: 6 Msg Type: 3
-ID/Client: 13 Msg Type: 3
-Received last message: 1691188415486
-
- Running on port 16401
-ID/Client: client1 Msg Type: 1
-ID/Client: -1 Msg Type: 0
-ID/Client: -1 Msg Type: 0
-20.59.126.185 0
-ID/Client: -1 Msg Type: 0
-20.59.124.246 1
-20.59.124.22 2
-ID/Client: -1 Msg Type: 0
+20.59.124.222 2
 20.59.124.136 3
 ID/Client: -1 Msg Type: 0
-ID/Client: -1 Msg Type: 0
-ID/Client: -1 Msg Type: 0
 20.59.124.202 4
 ID/Client: -1 Msg Type: 0
-20.59.124.206 5
-20.59.124.222 6
+20.59.124.179 5
 ID/Client: -1 Msg Type: 0
 ID/Client: -1 Msg Type: 0
-20.59.124.118 7
-20.59.126.174 8
-20.59.124.179 9
-ID/Client: -1 Msg Type: 0
-ID/Client: -1 Msg Type: 0
-ID/Client: -1 Msg Type: 0
-20.59.126.213 10
-20.59.124.91 11
-ID/Client: -1 Msg Type: 0
-20.59.124.211 12
-ID/Client: -1 Msg Type: 0
-20.59.126.180 13
-ID/Client: -1 Msg Type: 0
-20.59.124.101 14
-20.59.126.236 15
-ID/Client: 11 Msg Type: 3
-ID/Client: 5 Msg Type: 3
-ID/Client: 13 Msg Type: 3
-ID/Client: 10 Msg Type: 3
-ID/Client: 3 Msg Type: 3
-ID/Client: 2 Msg Type: 3
-ID/Client: 15 Msg Type: 3
-ID/Client: 14 Msg Type: 3
-ID/Client: 8 Msg Type: 3
-ID/Client: 9 Msg Type: 3
-ID/Client: 7 Msg Type: 3
-ID/Client: 0 Msg Type: 3
-ID/Client: 12 Msg Type: 3
-ID/Client: 6 Msg Type: 3
-ID/Client: 1 Msg Type: 3
-ID/Client: 4 Msg Type: 3
-Received last message: 1691189028453
-
- Running on port 16401
-ID/Client: client1 Msg Type: 1
-ID/Client: -1 Msg Type: 0
-ID/Client: -1 Msg Type: 0
-ID/Client: -1 Msg Type: 0
-20.59.124.246 0
-20.59.126.185 1
-ID/Client: -1 Msg Type: 0
-20.59.124.22 2
-ID/Client: -1 Msg Type: 0
-20.59.124.206 3
-ID/Client: -1 Msg Type: 0
-20.59.124.202 4
-ID/Client: -1 Msg Type: 0
-20.59.124.118 5
-20.59.124.136 6
-ID/Client: -1 Msg Type: 0
-ID/Client: -1 Msg Type: 0
-20.59.126.174 7
-20.59.124.91 8
-ID/Client: -1 Msg Type: 0
-ID/Client: -1 Msg Type: 0
-ID/Client: -1 Msg Type: 0
-ID/Client: -1 Msg Type: 0
-20.59.124.222 9
-ID/Client: -1 Msg Type: 0
-ID/Client: -1 Msg Type: 0
-20.59.124.211 10
-20.59.124.179 11
-ID/Client: -1 Msg Type: 0
-20.59.126.213 12
-20.59.126.236 13
-20.59.126.180 14
-20.59.124.101 15
-ID/Client: 8 Msg Type: 3
-ID/Client: 10 Msg Type: 3
-ID/Client: 9 Msg Type: 3
-ID/Client: 5 Msg Type: 3
-ID/Client: 1 Msg Type: 3
-ID/Client: 4 Msg Type: 3
-ID/Client: 6 Msg Type: 3
-ID/Client: 0 Msg Type: 3
-ID/Client: 11 Msg Type: 3
-ID/Client: 13 Msg Type: 3
-ID/Client: 7 Msg Type: 3
-ID/Client: 3 Msg Type: 3
-ID/Client: 14 Msg Type: 3
-ID/Client: 2 Msg Type: 3
-ID/Client: 12 Msg Type: 3
-ID/Client: 15 Msg Type: 3
-Received last message: 1691189127343
-
- Running on port 16401
-ID/Client: client1 Msg Type: 1
-ID/Client: -1 Msg Type: 0
-20.59.124.206 0
-ID/Client: -1 Msg Type: 0
-20.59.124.202 1
-ID/Client: -1 Msg Type: 0
-ID/Client: -1 Msg Type: 0
-ID/Client: -1 Msg Type: 0
-20.59.124.91 2
-20.59.126.185 3
-20.59.124.246 4
-ID/Client: -1 Msg Type: 0
-ID/Client: -1 Msg Type: 0
-ID/Client: -1 Msg Type: 0
-ID/Client: -1 Msg Type: 0
-20.59.124.22 5
-ID/Client: -1 Msg Type: 0
-20.59.124.136 6
-20.59.124.211 7
-ID/Client: -1 Msg Type: 0
-20.59.124.222 8
-ID/Client: -1 Msg Type: 0
-ID/Client: -1 Msg Type: 0
-20.59.126.174 9
-ID/Client: -1 Msg Type: 0
-20.59.124.118 10
-20.59.124.101 11
-20.59.124.179 12
-20.59.126.213 13
-ID/Client: -1 Msg Type: 0
-20.59.126.180 14
-ID/Client: -1 Msg Type: 0
-20.59.126.236 15
-ID/Client: 4 Msg Type: 3
-ID/Client: 2 Msg Type: 3
-ID/Client: 13 Msg Type: 3
-ID/Client: 1 Msg Type: 3
-ID/Client: 3 Msg Type: 3
-ID/Client: 7 Msg Type: 3
-ID/Client: 9 Msg Type: 3
-ID/Client: 8 Msg Type: 3
-ID/Client: 15 Msg Type: 3
-ID/Client: 14 Msg Type: 3
-ID/Client: 5 Msg Type: 3
-ID/Client: 11 Msg Type: 3
-ID/Client: 10 Msg Type: 3
-ID/Client: 0 Msg Type: 3
-ID/Client: 12 Msg Type: 3
-ID/Client: 6 Msg Type: 3
-Received last message: 1691189742092
-
- Running on port 16401
-ID/Client: client1 Msg Type: 1
-ID/Client: -1 Msg Type: 0
-20.59.124.202 0
-ID/Client: -1 Msg Type: 0
-20.59.124.206 1
-ID/Client: -1 Msg Type: 0
-ID/Client: -1 Msg Type: 0
-ID/Client: -1 Msg Type: 0
-20.59.124.91 2
-ID/Client: -1 Msg Type: 0
-20.59.124.222 3
-ID/Client: -1 Msg Type: 0
-20.59.124.246 4
-20.59.124.22 5
-ID/Client: -1 Msg Type: 0
-20.59.126.185 6
+20.59.126.213 6
 ID/Client: -1 Msg Type: 0
 20.59.124.118 7
-20.59.124.101 8
-ID/Client: -1 Msg Type: 0
-ID/Client: -1 Msg Type: 0
-ID/Client: -1 Msg Type: 0
-ID/Client: -1 Msg Type: 0
-ID/Client: -1 Msg Type: 0
-20.59.126.180 9
-ID/Client: -1 Msg Type: 0
-20.59.124.211 10
-ID/Client: -1 Msg Type: 0
-20.59.124.136 11
-20.59.126.174 12
-20.59.124.179 13
-20.59.126.236 14
-20.59.126.213 15
-ID/Client: 9 Msg Type: 3
-ID/Client: 12 Msg Type: 3
-ID/Client: 2 Msg Type: 3
-ID/Client: 10 Msg Type: 3
-ID/Client: 4 Msg Type: 3
-ID/Client: 1 Msg Type: 3
-ID/Client: 3 Msg Type: 3
-ID/Client: 6 Msg Type: 3
-ID/Client: 11 Msg Type: 3
-ID/Client: 14 Msg Type: 3
-ID/Client: 0 Msg Type: 3
-ID/Client: 5 Msg Type: 3
-ID/Client: 13 Msg Type: 3
-ID/Client: 8 Msg Type: 3
-ID/Client: 7 Msg Type: 3
-ID/Client: 15 Msg Type: 3
-Received last message: 1691189842496
-
- Running on port 16401
-ID/Client: client1 Msg Type: 1
-ID/Client: -1 Msg Type: 0
-20.59.124.246 0
-ID/Client: -1 Msg Type: 0
-20.59.124.206 1
-ID/Client: -1 Msg Type: 0
-20.59.126.185 2
-ID/Client: -1 Msg Type: 0
-ID/Client: -1 Msg Type: 0
-ID/Client: -1 Msg Type: 0
-ID/Client: -1 Msg Type: 0
-ID/Client: -1 Msg Type: 0
-20.59.124.222 3
-ID/Client: -1 Msg Type: 0
-20.59.124.118 4
-20.59.126.180 5
-20.59.124.22 6
-ID/Client: -1 Msg Type: 0
-ID/Client: -1 Msg Type: 0
-20.59.124.211 7
-20.59.124.179 8
-20.59.126.213 9
-20.59.124.202 10
-ID/Client: -1 Msg Type: 0
-ID/Client: -1 Msg Type: 0
-20.59.124.91 11
-ID/Client: -1 Msg Type: 0
-ID/Client: -1 Msg Type: 0
-20.59.126.174 12
-20.59.124.136 13
-20.59.124.101 14
-ID/Client: -1 Msg Type: 0
-20.59.126.236 15
-ID/Client: 6 Msg Type: 3
-ID/Client: 3 Msg Type: 3
-ID/Client: 13 Msg Type: 3
-ID/Client: 8 Msg Type: 3
-ID/Client: 9 Msg Type: 3
-ID/Client: 14 Msg Type: 3
-ID/Client: 2 Msg Type: 3
-ID/Client: 15 Msg Type: 3
-ID/Client: 7 Msg Type: 3
-ID/Client: 0 Msg Type: 3
-ID/Client: 11 Msg Type: 3
-ID/Client: 5 Msg Type: 3
-ID/Client: 10 Msg Type: 3
-ID/Client: 12 Msg Type: 3
-ID/Client: 4 Msg Type: 3
-ID/Client: 1 Msg Type: 3
-Received last message: 1691190460995
-
- Running on port 16401
-ID/Client: client1 Msg Type: 1
-ID/Client: -1 Msg Type: 0
-20.59.124.246 0
-ID/Client: -1 Msg Type: 0
-ID/Client: -1 Msg Type: 0
-20.59.124.206 1
-ID/Client: -1 Msg Type: 0
-20.59.126.185 2
-20.59.124.222 3
-ID/Client: -1 Msg Type: 0
-ID/Client: -1 Msg Type: 0
-20.59.126.180 4
-ID/Client: -1 Msg Type: 0
-20.59.124.118 5
-20.59.124.211 6
-ID/Client: -1 Msg Type: 0
-20.59.124.179 7
-ID/Client: -1 Msg Type: 0
-ID/Client: -1 Msg Type: 0
-20.59.124.202 8
+20.59.126.180 8
 ID/Client: -1 Msg Type: 0
 20.59.124.22 9
 ID/Client: -1 Msg Type: 0
 ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
 20.59.126.174 10
 ID/Client: -1 Msg Type: 0
-20.59.124.91 11
-20.59.124.101 12
-20.59.126.213 13
+20.59.124.101 11
 ID/Client: -1 Msg Type: 0
-20.59.124.136 14
+20.59.124.91 12
+20.59.126.185 13
+20.59.124.206 14
 ID/Client: -1 Msg Type: 0
 20.59.126.236 15
 ID/Client: 14 Msg Type: 3
-ID/Client: 4 Msg Type: 3
-ID/Client: 9 Msg Type: 3
-ID/Client: 3 Msg Type: 3
-ID/Client: 0 Msg Type: 3
-ID/Client: 5 Msg Type: 3
-ID/Client: 8 Msg Type: 3
-ID/Client: 2 Msg Type: 3
-ID/Client: 10 Msg Type: 3
-ID/Client: 11 Msg Type: 3
-ID/Client: 12 Msg Type: 3
 ID/Client: 13 Msg Type: 3
+ID/Client: 2 Msg Type: 3
+ID/Client: 3 Msg Type: 3
+ID/Client: 8 Msg Type: 3
+ID/Client: 9 Msg Type: 3
+ID/Client: 11 Msg Type: 3
+ID/Client: 10 Msg Type: 3
 ID/Client: 7 Msg Type: 3
-ID/Client: 1 Msg Type: 3
 ID/Client: 15 Msg Type: 3
+ID/Client: 5 Msg Type: 3
+ID/Client: 12 Msg Type: 3
+ID/Client: 0 Msg Type: 3
 ID/Client: 6 Msg Type: 3
-Received last message: 1691190560091
+ID/Client: 4 Msg Type: 3
+ID/Client: 1 Msg Type: 3
+Received last message: 1691187885621
 
  Running on port 16401
 ID/Client: client1 Msg Type: 1
 ID/Client: -1 Msg Type: 0
 ID/Client: -1 Msg Type: 0
-20.59.126.180 0
-20.59.124.118 1
 ID/Client: -1 Msg Type: 0
 ID/Client: -1 Msg Type: 0
-20.59.124.246 2
+20.59.124.246 0
+20.59.124.222 1
+20.59.124.136 2
+ID/Client: -1 Msg Type: 0
+20.59.124.202 3
+20.59.124.211 4
 ID/Client: -1 Msg Type: 0
 ID/Client: -1 Msg Type: 0
-20.59.126.185 3
+20.59.124.179 5
 ID/Client: -1 Msg Type: 0
-20.59.124.222 4
+20.59.124.118 6
+ID/Client: -1 Msg Type: 0
+20.59.126.213 7
+ID/Client: -1 Msg Type: 0
+20.59.124.22 8
+20.59.124.91 9
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.126.174 10
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.124.101 11
+20.59.126.180 12
+ID/Client: -1 Msg Type: 0
+20.59.124.206 13
+20.59.126.185 14
+20.59.126.236 15
+ID/Client: 10 Msg Type: 3
+ID/Client: 13 Msg Type: 3
+ID/Client: 0 Msg Type: 3
+ID/Client: 8 Msg Type: 3
+ID/Client: 6 Msg Type: 3
+ID/Client: 2 Msg Type: 3
+ID/Client: 11 Msg Type: 3
+ID/Client: 3 Msg Type: 3
+ID/Client: 5 Msg Type: 3
+ID/Client: 14 Msg Type: 3
+ID/Client: 9 Msg Type: 3
+ID/Client: 12 Msg Type: 3
+ID/Client: 4 Msg Type: 3
+ID/Client: 15 Msg Type: 3
+ID/Client: 7 Msg Type: 3
+ID/Client: 1 Msg Type: 3
+Received last message: 1691188022004
+
+ Running on port 16401
+ID/Client: client1 Msg Type: 1
+ID/Client: -1 Msg Type: 0
+20.59.124.22 0
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.126.185 1
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.126.213 2
+ID/Client: -1 Msg Type: 0
+20.59.124.136 3
+ID/Client: -1 Msg Type: 0
+20.59.124.202 4
+20.59.124.206 5
+20.59.124.118 6
+20.59.124.246 7
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.124.91 8
+20.59.124.101 9
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.124.179 10
+ID/Client: -1 Msg Type: 0
+20.59.126.174 11
+20.59.126.180 12
+20.59.124.211 13
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.124.222 14
+20.59.126.236 15
+ID/Client: 8 Msg Type: 3
+ID/Client: 15 Msg Type: 3
+ID/Client: 13 Msg Type: 3
+ID/Client: 14 Msg Type: 3
+ID/Client: 9 Msg Type: 3
+ID/Client: 12 Msg Type: 3
+ID/Client: 3 Msg Type: 3
+ID/Client: 2 Msg Type: 3
+ID/Client: 7 Msg Type: 3
+ID/Client: 0 Msg Type: 3
+ID/Client: 11 Msg Type: 3
+ID/Client: 5 Msg Type: 3
+ID/Client: 10 Msg Type: 3
+ID/Client: 1 Msg Type: 3
+ID/Client: 4 Msg Type: 3
+ID/Client: 6 Msg Type: 3
+Received last message: 1691188603712
+
+ Running on port 16401
+ID/Client: client1 Msg Type: 1
+ID/Client: -1 Msg Type: 0
+20.59.124.22 0
+ID/Client: -1 Msg Type: 0
+20.59.126.185 1
+ID/Client: -1 Msg Type: 0
+20.59.124.206 2
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.124.246 3
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.124.202 4
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.126.213 5
+ID/Client: -1 Msg Type: 0
+20.59.124.136 6
+20.59.124.118 7
+ID/Client: -1 Msg Type: 0
+20.59.124.91 8
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.124.179 9
+20.59.126.174 10
+20.59.124.211 11
+20.59.126.180 12
+ID/Client: -1 Msg Type: 0
+20.59.124.222 13
+20.59.124.101 14
+ID/Client: -1 Msg Type: 0
+20.59.126.236 15
+ID/Client: 12 Msg Type: 3
+ID/Client: 13 Msg Type: 3
+ID/Client: 2 Msg Type: 3
+ID/Client: 5 Msg Type: 3
+ID/Client: 8 Msg Type: 3
+ID/Client: 10 Msg Type: 3
+ID/Client: 11 Msg Type: 3
+ID/Client: 14 Msg Type: 3
+ID/Client: 0 Msg Type: 3
+ID/Client: 9 Msg Type: 3
+ID/Client: 15 Msg Type: 3
+ID/Client: 6 Msg Type: 3
+ID/Client: 4 Msg Type: 3
+ID/Client: 1 Msg Type: 3
+ID/Client: 3 Msg Type: 3
+ID/Client: 7 Msg Type: 3
+Received last message: 1691188736109
+
+ Running on port 16401
+ID/Client: client1 Msg Type: 1
+ID/Client: -1 Msg Type: 0
+20.59.124.246 0
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.126.185 1
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.124.22 2
+20.59.124.206 3
+20.59.124.202 4
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.124.136 5
+20.59.124.91 6
+20.59.126.174 7
+20.59.124.118 8
+ID/Client: -1 Msg Type: 0
+20.59.124.222 9
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.126.180 10
+20.59.124.179 11
+20.59.124.211 12
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.126.213 13
+ID/Client: -1 Msg Type: 0
+20.59.124.101 14
+20.59.126.236 15
+ID/Client: 13 Msg Type: 3
+ID/Client: 14 Msg Type: 3
+ID/Client: 3 Msg Type: 3
+ID/Client: 9 Msg Type: 3
+ID/Client: 8 Msg Type: 3
+ID/Client: 2 Msg Type: 3
+ID/Client: 15 Msg Type: 3
+ID/Client: 5 Msg Type: 3
+ID/Client: 7 Msg Type: 3
+ID/Client: 10 Msg Type: 3
+ID/Client: 11 Msg Type: 3
+ID/Client: 12 Msg Type: 3
+ID/Client: 4 Msg Type: 3
+ID/Client: 0 Msg Type: 3
+ID/Client: 6 Msg Type: 3
+ID/Client: 1 Msg Type: 3
+Received last message: 1691189316055
+
+ Running on port 16401
+ID/Client: client1 Msg Type: 1
+ID/Client: -1 Msg Type: 0
+20.59.124.246 0
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.126.185 1
+20.59.124.22 2
+ID/Client: -1 Msg Type: 0
+20.59.124.206 3
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.124.91 4
+ID/Client: -1 Msg Type: 0
+20.59.124.136 5
+ID/Client: -1 Msg Type: 0
+20.59.126.174 6
+ID/Client: -1 Msg Type: 0
+20.59.124.202 7
+ID/Client: -1 Msg Type: 0
+20.59.124.118 8
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.126.180 9
+20.59.124.211 10
+20.59.124.179 11
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.126.236 12
+20.59.124.222 13
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.124.101 14
+20.59.126.213 15
+ID/Client: 9 Msg Type: 3
+ID/Client: 10 Msg Type: 3
+ID/Client: 6 Msg Type: 3
+ID/Client: 12 Msg Type: 3
+ID/Client: 13 Msg Type: 3
+ID/Client: 0 Msg Type: 3
+ID/Client: 2 Msg Type: 3
+ID/Client: 5 Msg Type: 3
+ID/Client: 14 Msg Type: 3
+ID/Client: 4 Msg Type: 3
+ID/Client: 3 Msg Type: 3
+ID/Client: 7 Msg Type: 3
+ID/Client: 1 Msg Type: 3
+ID/Client: 11 Msg Type: 3
+ID/Client: 15 Msg Type: 3
+ID/Client: 8 Msg Type: 3
+Received last message: 1691189448727
+
+ Running on port 16401
+ID/Client: client1 Msg Type: 1
+ID/Client: -1 Msg Type: 0
+20.59.124.202 0
+ID/Client: -1 Msg Type: 0
+20.59.124.222 1
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.124.91 2
+ID/Client: -1 Msg Type: 0
+20.59.124.246 3
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.126.185 4
 ID/Client: -1 Msg Type: 0
 20.59.124.206 5
 ID/Client: -1 Msg Type: 0
 20.59.124.22 6
-20.59.124.91 7
-20.59.124.211 8
+20.59.126.180 7
+20.59.124.101 8
 ID/Client: -1 Msg Type: 0
 ID/Client: -1 Msg Type: 0
-ID/Client: -1 Msg Type: 0
-20.59.126.213 9
-ID/Client: -1 Msg Type: 0
-20.59.126.236 10
+20.59.124.118 9
+20.59.124.136 10
 ID/Client: -1 Msg Type: 0
 ID/Client: -1 Msg Type: 0
+20.59.124.179 11
 ID/Client: -1 Msg Type: 0
-20.59.124.136 11
-20.59.124.202 12
-20.59.124.179 13
-20.59.126.174 14
-20.59.124.101 15
-ID/Client: 13 Msg Type: 3
+20.59.126.174 12
+20.59.124.211 13
+20.59.126.213 14
+ID/Client: -1 Msg Type: 0
+20.59.126.236 15
+ID/Client: 10 Msg Type: 3
 ID/Client: 3 Msg Type: 3
-ID/Client: 9 Msg Type: 3
-ID/Client: 2 Msg Type: 3
+ID/Client: 13 Msg Type: 3
 ID/Client: 14 Msg Type: 3
-ID/Client: 11 Msg Type: 3
-ID/Client: 15 Msg Type: 3
+ID/Client: 9 Msg Type: 3
 ID/Client: 8 Msg Type: 3
+ID/Client: 2 Msg Type: 3
+ID/Client: 15 Msg Type: 3
 ID/Client: 5 Msg Type: 3
 ID/Client: 12 Msg Type: 3
-ID/Client: 0 Msg Type: 3
 ID/Client: 7 Msg Type: 3
-ID/Client: 10 Msg Type: 3
+ID/Client: 11 Msg Type: 3
+ID/Client: 0 Msg Type: 3
+ID/Client: 6 Msg Type: 3
 ID/Client: 1 Msg Type: 3
 ID/Client: 4 Msg Type: 3
-ID/Client: 6 Msg Type: 3
-Received last message: 1691191174935
+Received last message: 1691190032797
 
  Running on port 16401
 ID/Client: client1 Msg Type: 1
 ID/Client: -1 Msg Type: 0
 ID/Client: -1 Msg Type: 0
-20.59.126.180 0
-20.59.124.118 1
+ID/Client: -1 Msg Type: 0
+20.59.124.246 0
+ID/Client: -1 Msg Type: 0
+20.59.124.206 1
+20.59.124.202 2
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.126.185 3
+20.59.124.22 4
+ID/Client: -1 Msg Type: 0
+20.59.124.222 5
+ID/Client: -1 Msg Type: 0
+20.59.124.91 6
+ID/Client: -1 Msg Type: 0
+20.59.126.180 7
+ID/Client: -1 Msg Type: 0
+20.59.124.179 8
+ID/Client: -1 Msg Type: 0
+20.59.124.118 9
+20.59.124.211 10
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.124.101 11
+20.59.124.136 12
 ID/Client: -1 Msg Type: 0
 ID/Client: -1 Msg Type: 0
 ID/Client: -1 Msg Type: 0
-20.59.124.222 2
-20.59.124.246 3
-20.59.126.185 4
-ID/Client: -1 Msg Type: 0
-20.59.124.22 5
-ID/Client: -1 Msg Type: 0
-20.59.124.211 6
-ID/Client: -1 Msg Type: 0
-ID/Client: -1 Msg Type: 0
-20.59.126.213 7
-ID/Client: -1 Msg Type: 0
-20.59.126.236 8
-20.59.124.206 9
-ID/Client: -1 Msg Type: 0
-ID/Client: -1 Msg Type: 0
-ID/Client: -1 Msg Type: 0
-ID/Client: -1 Msg Type: 0
-ID/Client: -1 Msg Type: 0
-20.59.124.179 10
-20.59.124.91 11
-20.59.124.202 12
-20.59.126.174 13
-20.59.124.136 14
-ID/Client: -1 Msg Type: 0
-20.59.124.101 15
-ID/Client: 14 Msg Type: 3
-ID/Client: 0 Msg Type: 3
-ID/Client: 1 Msg Type: 3
-ID/Client: 5 Msg Type: 3
-ID/Client: 9 Msg Type: 3
-ID/Client: 3 Msg Type: 3
-ID/Client: 8 Msg Type: 3
+20.59.126.213 13
+20.59.126.174 14
+20.59.126.236 15
+ID/Client: 10 Msg Type: 3
+ID/Client: 7 Msg Type: 3
 ID/Client: 13 Msg Type: 3
+ID/Client: 1 Msg Type: 3
+ID/Client: 9 Msg Type: 3
+ID/Client: 14 Msg Type: 3
+ID/Client: 12 Msg Type: 3
+ID/Client: 5 Msg Type: 3
+ID/Client: 8 Msg Type: 3
+ID/Client: 15 Msg Type: 3
+ID/Client: 3 Msg Type: 3
+ID/Client: 0 Msg Type: 3
 ID/Client: 6 Msg Type: 3
 ID/Client: 4 Msg Type: 3
-ID/Client: 12 Msg Type: 3
 ID/Client: 2 Msg Type: 3
-ID/Client: 15 Msg Type: 3
-ID/Client: 7 Msg Type: 3
-ID/Client: 10 Msg Type: 3
 ID/Client: 11 Msg Type: 3
-Received last message: 1691191273765
+Received last message: 1691190166299
+
+ Running on port 16401
+ID/Client: client1 Msg Type: 1
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.124.246 0
+ID/Client: -1 Msg Type: 0
+20.59.126.185 1
+20.59.124.206 2
+ID/Client: -1 Msg Type: 0
+20.59.126.180 3
+20.59.124.118 4
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.124.179 5
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.124.222 6
+ID/Client: -1 Msg Type: 0
+20.59.124.211 7
+20.59.124.202 8
+ID/Client: -1 Msg Type: 0
+20.59.124.91 9
+ID/Client: -1 Msg Type: 0
+20.59.124.22 10
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.126.174 11
+20.59.126.213 12
+20.59.124.101 13
+20.59.124.136 14
+ID/Client: -1 Msg Type: 0
+20.59.126.236 15
+ID/Client: 11 Msg Type: 3
+ID/Client: 12 Msg Type: 3
+ID/Client: 13 Msg Type: 3
+ID/Client: 3 Msg Type: 3
+ID/Client: 2 Msg Type: 3
+ID/Client: 8 Msg Type: 3
+ID/Client: 14 Msg Type: 3
+ID/Client: 9 Msg Type: 3
+ID/Client: 7 Msg Type: 3
+ID/Client: 15 Msg Type: 3
+ID/Client: 10 Msg Type: 3
+ID/Client: 0 Msg Type: 3
+ID/Client: 5 Msg Type: 3
+ID/Client: 6 Msg Type: 3
+ID/Client: 1 Msg Type: 3
+ID/Client: 4 Msg Type: 3
+Received last message: 1691190747000
 
  Running on port 16401
 ID/Client: client1 Msg Type: 1
 ID/Client: -1 Msg Type: 0
 20.59.126.185 0
 ID/Client: -1 Msg Type: 0
-ID/Client: -1 Msg Type: 0
 20.59.124.246 1
-20.59.124.211 2
+ID/Client: -1 Msg Type: 0
+20.59.124.206 2
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
 ID/Client: -1 Msg Type: 0
 20.59.126.180 3
+20.59.124.222 4
 ID/Client: -1 Msg Type: 0
-ID/Client: -1 Msg Type: 0
-20.59.124.118 4
-20.59.124.22 5
-ID/Client: -1 Msg Type: 0
+20.59.124.118 5
 ID/Client: -1 Msg Type: 0
 20.59.124.179 6
 ID/Client: -1 Msg Type: 0
+20.59.124.22 7
 ID/Client: -1 Msg Type: 0
-20.59.126.174 7
+20.59.124.91 8
 ID/Client: -1 Msg Type: 0
-20.59.124.222 8
-20.59.124.136 9
+20.59.124.202 9
+20.59.126.174 10
+ID/Client: -1 Msg Type: 0
+20.59.124.211 11
+ID/Client: -1 Msg Type: 0
+20.59.126.213 12
+20.59.126.236 13
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.124.136 14
+20.59.124.101 15
+ID/Client: 3 Msg Type: 3
+ID/Client: 0 Msg Type: 3
+ID/Client: 6 Msg Type: 3
+ID/Client: 13 Msg Type: 3
+ID/Client: 9 Msg Type: 3
+ID/Client: 10 Msg Type: 3
+ID/Client: 12 Msg Type: 3
+ID/Client: 7 Msg Type: 3
+ID/Client: 5 Msg Type: 3
+ID/Client: 11 Msg Type: 3
+ID/Client: 2 Msg Type: 3
+ID/Client: 14 Msg Type: 3
+ID/Client: 4 Msg Type: 3
+ID/Client: 8 Msg Type: 3
+ID/Client: 15 Msg Type: 3
+ID/Client: 1 Msg Type: 3
+Received last message: 1691190880122
+
+ Running on port 16401
+ID/Client: client1 Msg Type: 1
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.126.180 0
+ID/Client: -1 Msg Type: 0
+20.59.126.185 1
+20.59.124.118 2
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.124.246 3
+ID/Client: -1 Msg Type: 0
+20.59.124.222 4
+ID/Client: -1 Msg Type: 0
+20.59.124.22 5
+20.59.124.211 6
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.124.206 7
+20.59.126.213 8
+ID/Client: -1 Msg Type: 0
+20.59.124.179 9
 ID/Client: -1 Msg Type: 0
 ID/Client: -1 Msg Type: 0
 20.59.124.202 10
 ID/Client: -1 Msg Type: 0
-20.59.124.206 11
-20.59.124.91 12
-20.59.126.213 13
+20.59.126.174 11
+ID/Client: -1 Msg Type: 0
+20.59.124.136 12
+20.59.124.91 13
+ID/Client: -1 Msg Type: 0
 ID/Client: -1 Msg Type: 0
 20.59.124.101 14
-ID/Client: -1 Msg Type: 0
 20.59.126.236 15
 ID/Client: 10 Msg Type: 3
-ID/Client: 13 Msg Type: 3
 ID/Client: 3 Msg Type: 3
-ID/Client: 8 Msg Type: 3
-ID/Client: 15 Msg Type: 3
+ID/Client: 13 Msg Type: 3
 ID/Client: 14 Msg Type: 3
+ID/Client: 8 Msg Type: 3
 ID/Client: 9 Msg Type: 3
+ID/Client: 2 Msg Type: 3
+ID/Client: 0 Msg Type: 3
+ID/Client: 11 Msg Type: 3
 ID/Client: 12 Msg Type: 3
 ID/Client: 7 Msg Type: 3
-ID/Client: 2 Msg Type: 3
-ID/Client: 11 Msg Type: 3
-ID/Client: 0 Msg Type: 3
 ID/Client: 5 Msg Type: 3
 ID/Client: 6 Msg Type: 3
-ID/Client: 4 Msg Type: 3
 ID/Client: 1 Msg Type: 3
-Received last message: 1691191895709
+ID/Client: 4 Msg Type: 3
+ID/Client: 15 Msg Type: 3
+Received last message: 1691191468487
+
+ Running on port 16401
+ID/Client: client1 Msg Type: 1
+ID/Client: -1 Msg Type: 0
+20.59.126.180 0
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.124.246 1
+20.59.126.185 2
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.124.22 3
+20.59.124.206 4
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.124.211 5
+20.59.124.118 6
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.124.179 7
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.126.213 8
+20.59.124.136 9
+20.59.124.91 10
+20.59.126.174 11
+20.59.124.222 12
+ID/Client: -1 Msg Type: 0
+20.59.124.202 13
+20.59.126.236 14
+ID/Client: -1 Msg Type: 0
+20.59.124.101 15
+ID/Client: 3 Msg Type: 3
+ID/Client: 0 Msg Type: 3
+ID/Client: 10 Msg Type: 3
+ID/Client: 14 Msg Type: 3
+ID/Client: 6 Msg Type: 3
+ID/Client: 1 Msg Type: 3
+ID/Client: 11 Msg Type: 3
+ID/Client: 2 Msg Type: 3
+ID/Client: 15 Msg Type: 3
+ID/Client: 9 Msg Type: 3
+ID/Client: 4 Msg Type: 3
+ID/Client: 12 Msg Type: 3
+ID/Client: 5 Msg Type: 3
+ID/Client: 8 Msg Type: 3
+ID/Client: 13 Msg Type: 3
+ID/Client: 7 Msg Type: 3
+Received last message: 1691191601203
 
  Running on port 16401
 ID/Client: client1 Msg Type: 1
@@ -738,256 +632,360 @@ ID/Client: -1 Msg Type: 0
 ID/Client: -1 Msg Type: 0
 20.59.124.246 2
 ID/Client: -1 Msg Type: 0
-20.59.124.22 3
+20.59.124.118 3
 ID/Client: -1 Msg Type: 0
 ID/Client: -1 Msg Type: 0
-20.59.124.118 4
+20.59.124.22 4
 ID/Client: -1 Msg Type: 0
-20.59.124.179 5
-20.59.126.174 6
+20.59.126.174 5
 ID/Client: -1 Msg Type: 0
-20.59.126.180 7
+20.59.126.180 6
 ID/Client: -1 Msg Type: 0
-ID/Client: -1 Msg Type: 0
+20.59.124.179 7
 ID/Client: -1 Msg Type: 0
 20.59.124.136 8
+20.59.124.202 9
 ID/Client: -1 Msg Type: 0
-20.59.124.222 9
 ID/Client: -1 Msg Type: 0
-20.59.124.202 10
+20.59.124.206 10
+ID/Client: -1 Msg Type: 0
 20.59.124.91 11
 ID/Client: -1 Msg Type: 0
-20.59.124.206 12
-20.59.126.213 13
 ID/Client: -1 Msg Type: 0
+20.59.126.213 12
+20.59.124.222 13
 20.59.124.101 14
 ID/Client: -1 Msg Type: 0
 20.59.126.236 15
-ID/Client: 5 Msg Type: 3
-ID/Client: 4 Msg Type: 3
-ID/Client: 12 Msg Type: 3
-ID/Client: 8 Msg Type: 3
-ID/Client: 7 Msg Type: 3
-ID/Client: 14 Msg Type: 3
-ID/Client: 11 Msg Type: 3
 ID/Client: 3 Msg Type: 3
+ID/Client: 13 Msg Type: 3
 ID/Client: 15 Msg Type: 3
 ID/Client: 9 Msg Type: 3
+ID/Client: 8 Msg Type: 3
+ID/Client: 14 Msg Type: 3
+ID/Client: 12 Msg Type: 3
 ID/Client: 2 Msg Type: 3
+ID/Client: 11 Msg Type: 3
 ID/Client: 10 Msg Type: 3
+ID/Client: 5 Msg Type: 3
+ID/Client: 7 Msg Type: 3
+ID/Client: 0 Msg Type: 3
 ID/Client: 1 Msg Type: 3
 ID/Client: 6 Msg Type: 3
+ID/Client: 4 Msg Type: 3
+Received last message: 1691192182795
+
+ Running on port 16401
+ID/Client: client1 Msg Type: 1
+ID/Client: -1 Msg Type: 0
+20.59.124.246 0
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.126.185 1
+ID/Client: -1 Msg Type: 0
+20.59.124.118 2
+20.59.124.211 3
+ID/Client: -1 Msg Type: 0
+20.59.124.22 4
+ID/Client: -1 Msg Type: 0
+20.59.126.174 5
+ID/Client: -1 Msg Type: 0
+20.59.124.179 6
+ID/Client: -1 Msg Type: 0
+20.59.126.180 7
+20.59.124.206 8
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.124.136 9
+ID/Client: -1 Msg Type: 0
+20.59.126.213 10
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.124.222 11
+ID/Client: -1 Msg Type: 0
+20.59.124.91 12
+20.59.124.202 13
+20.59.124.101 14
+ID/Client: -1 Msg Type: 0
+20.59.126.236 15
+ID/Client: 3 Msg Type: 3
+ID/Client: 7 Msg Type: 3
+ID/Client: 12 Msg Type: 3
 ID/Client: 0 Msg Type: 3
+ID/Client: 5 Msg Type: 3
 ID/Client: 13 Msg Type: 3
-Received last message: 1691191994114
+ID/Client: 10 Msg Type: 3
+ID/Client: 2 Msg Type: 3
+ID/Client: 15 Msg Type: 3
+ID/Client: 1 Msg Type: 3
+ID/Client: 11 Msg Type: 3
+ID/Client: 14 Msg Type: 3
+ID/Client: 8 Msg Type: 3
+ID/Client: 4 Msg Type: 3
+ID/Client: 6 Msg Type: 3
+ID/Client: 9 Msg Type: 3
+Received last message: 1691192315245
 
  Running on port 16401
 ID/Client: client1 Msg Type: 1
 ID/Client: -1 Msg Type: 0
 20.59.124.118 0
 ID/Client: -1 Msg Type: 0
+20.59.124.211 1
 ID/Client: -1 Msg Type: 0
-20.59.126.185 1
+20.59.126.185 2
 ID/Client: -1 Msg Type: 0
 ID/Client: -1 Msg Type: 0
-20.59.124.246 2
-20.59.124.211 3
-ID/Client: -1 Msg Type: 0
+20.59.124.22 3
 20.59.126.180 4
 ID/Client: -1 Msg Type: 0
-20.59.124.22 5
-20.59.126.213 6
+20.59.124.246 5
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.124.222 6
 ID/Client: -1 Msg Type: 0
 ID/Client: -1 Msg Type: 0
 20.59.126.174 7
-ID/Client: -1 Msg Type: 0
-20.59.124.202 8
-ID/Client: -1 Msg Type: 0
-ID/Client: -1 Msg Type: 0
-20.59.124.91 9
-20.59.124.222 10
-20.59.124.136 11
+20.59.126.213 8
 ID/Client: -1 Msg Type: 0
 ID/Client: -1 Msg Type: 0
-20.59.124.206 12
+20.59.124.206 9
+20.59.124.91 10
 ID/Client: -1 Msg Type: 0
-20.59.126.236 13
-20.59.124.179 14
-ID/Client: -1 Msg Type: 0
-20.59.124.101 15
-ID/Client: 3 Msg Type: 3
-ID/Client: 13 Msg Type: 3
-ID/Client: 2 Msg Type: 3
-ID/Client: 8 Msg Type: 3
-ID/Client: 9 Msg Type: 3
-ID/Client: 5 Msg Type: 3
-ID/Client: 10 Msg Type: 3
-ID/Client: 14 Msg Type: 3
-ID/Client: 12 Msg Type: 3
-ID/Client: 7 Msg Type: 3
-ID/Client: 15 Msg Type: 3
-ID/Client: 11 Msg Type: 3
-ID/Client: 6 Msg Type: 3
-ID/Client: 4 Msg Type: 3
-ID/Client: 1 Msg Type: 3
-ID/Client: 0 Msg Type: 3
-Received last message: 1691192613612
-
- Running on port 16401
-ID/Client: client1 Msg Type: 1
-ID/Client: -1 Msg Type: 0
-20.59.124.118 0
-ID/Client: -1 Msg Type: 0
-20.59.126.185 1
-ID/Client: -1 Msg Type: 0
-ID/Client: -1 Msg Type: 0
-ID/Client: -1 Msg Type: 0
-20.59.124.211 2
-20.59.126.180 3
-ID/Client: -1 Msg Type: 0
-20.59.124.246 4
-ID/Client: -1 Msg Type: 0
-20.59.124.22 5
-20.59.126.213 6
-ID/Client: -1 Msg Type: 0
-20.59.124.202 7
-ID/Client: -1 Msg Type: 0
-ID/Client: -1 Msg Type: 0
-20.59.126.174 8
-ID/Client: -1 Msg Type: 0
-20.59.124.222 9
-ID/Client: -1 Msg Type: 0
-20.59.124.206 10
-20.59.124.91 11
-ID/Client: -1 Msg Type: 0
-ID/Client: -1 Msg Type: 0
+20.59.124.202 11
 ID/Client: -1 Msg Type: 0
 20.59.124.179 12
 20.59.126.236 13
+ID/Client: -1 Msg Type: 0
 20.59.124.136 14
 ID/Client: -1 Msg Type: 0
 20.59.124.101 15
-ID/Client: 4 Msg Type: 3
-ID/Client: 5 Msg Type: 3
-ID/Client: 11 Msg Type: 3
-ID/Client: 10 Msg Type: 3
-ID/Client: 8 Msg Type: 3
-ID/Client: 0 Msg Type: 3
-ID/Client: 1 Msg Type: 3
+ID/Client: 13 Msg Type: 3
 ID/Client: 3 Msg Type: 3
-ID/Client: 6 Msg Type: 3
-ID/Client: 12 Msg Type: 3
-ID/Client: 2 Msg Type: 3
+ID/Client: 14 Msg Type: 3
+ID/Client: 8 Msg Type: 3
 ID/Client: 15 Msg Type: 3
 ID/Client: 9 Msg Type: 3
-ID/Client: 14 Msg Type: 3
-ID/Client: 13 Msg Type: 3
 ID/Client: 7 Msg Type: 3
-Received last message: 1691192716801
+ID/Client: 0 Msg Type: 3
+ID/Client: 12 Msg Type: 3
+ID/Client: 2 Msg Type: 3
+ID/Client: 5 Msg Type: 3
+ID/Client: 10 Msg Type: 3
+ID/Client: 11 Msg Type: 3
+ID/Client: 6 Msg Type: 3
+ID/Client: 1 Msg Type: 3
+ID/Client: 4 Msg Type: 3
+Received last message: 1691192905350
 
  Running on port 16401
 ID/Client: client1 Msg Type: 1
 ID/Client: -1 Msg Type: 0
 ID/Client: -1 Msg Type: 0
-20.59.124.222 0
-20.59.124.206 1
 ID/Client: -1 Msg Type: 0
-20.59.124.22 2
+20.59.124.211 0
+20.59.126.185 1
 ID/Client: -1 Msg Type: 0
-20.59.126.185 3
-ID/Client: -1 Msg Type: 0
-ID/Client: -1 Msg Type: 0
-ID/Client: -1 Msg Type: 0
-20.59.124.211 4
-ID/Client: -1 Msg Type: 0
-20.59.124.118 5
-ID/Client: -1 Msg Type: 0
-20.59.126.213 6
-ID/Client: -1 Msg Type: 0
-20.59.124.202 7
-ID/Client: -1 Msg Type: 0
-20.59.126.236 8
+20.59.124.118 2
+20.59.124.22 3
 ID/Client: -1 Msg Type: 0
 ID/Client: -1 Msg Type: 0
-20.59.124.91 9
-20.59.124.246 10
+20.59.124.222 4
 ID/Client: -1 Msg Type: 0
-20.59.126.174 11
-20.59.126.180 12
+20.59.126.180 5
 ID/Client: -1 Msg Type: 0
-20.59.124.179 13
+20.59.124.246 6
+20.59.124.206 7
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.124.202 8
+ID/Client: -1 Msg Type: 0
+20.59.126.174 9
+ID/Client: -1 Msg Type: 0
+20.59.126.213 10
+20.59.124.179 11
+ID/Client: -1 Msg Type: 0
+20.59.126.236 12
+20.59.124.91 13
 20.59.124.136 14
 ID/Client: -1 Msg Type: 0
 20.59.124.101 15
+ID/Client: 14 Msg Type: 3
 ID/Client: 3 Msg Type: 3
+ID/Client: 0 Msg Type: 3
+ID/Client: 4 Msg Type: 3
+ID/Client: 12 Msg Type: 3
+ID/Client: 11 Msg Type: 3
+ID/Client: 10 Msg Type: 3
+ID/Client: 6 Msg Type: 3
 ID/Client: 13 Msg Type: 3
+ID/Client: 7 Msg Type: 3
+ID/Client: 8 Msg Type: 3
+ID/Client: 5 Msg Type: 3
 ID/Client: 15 Msg Type: 3
 ID/Client: 9 Msg Type: 3
-ID/Client: 8 Msg Type: 3
-ID/Client: 12 Msg Type: 3
-ID/Client: 0 Msg Type: 3
 ID/Client: 2 Msg Type: 3
-ID/Client: 10 Msg Type: 3
-ID/Client: 11 Msg Type: 3
-ID/Client: 7 Msg Type: 3
-ID/Client: 14 Msg Type: 3
 ID/Client: 1 Msg Type: 3
-ID/Client: 5 Msg Type: 3
-ID/Client: 4 Msg Type: 3
-ID/Client: 6 Msg Type: 3
-Received last message: 1691193335513
+Received last message: 1691193037699
 
  Running on port 16401
 ID/Client: client1 Msg Type: 1
-ID/Client: -1 Msg Type: 0
 ID/Client: -1 Msg Type: 0
 20.59.124.22 0
 ID/Client: -1 Msg Type: 0
-20.59.124.222 1
 ID/Client: -1 Msg Type: 0
-20.59.124.211 2
+20.59.124.211 1
+20.59.124.222 2
 ID/Client: -1 Msg Type: 0
-20.59.126.185 3
 ID/Client: -1 Msg Type: 0
-20.59.124.206 4
+ID/Client: -1 Msg Type: 0
+20.59.124.206 3
+20.59.126.185 4
+ID/Client: -1 Msg Type: 0
 20.59.126.213 5
 ID/Client: -1 Msg Type: 0
 20.59.124.118 6
 ID/Client: -1 Msg Type: 0
 ID/Client: -1 Msg Type: 0
+20.59.124.91 7
+20.59.126.180 8
 ID/Client: -1 Msg Type: 0
-20.59.124.246 7
-20.59.124.91 8
-ID/Client: -1 Msg Type: 0
-20.59.124.202 9
-ID/Client: -1 Msg Type: 0
-20.59.126.180 10
+20.59.124.246 9
+20.59.124.202 10
 ID/Client: -1 Msg Type: 0
 ID/Client: -1 Msg Type: 0
-20.59.126.174 11
-20.59.124.136 12
+20.59.124.136 11
 ID/Client: -1 Msg Type: 0
+20.59.126.236 12
+20.59.126.174 13
 ID/Client: -1 Msg Type: 0
-20.59.126.236 13
 20.59.124.179 14
+ID/Client: -1 Msg Type: 0
 20.59.124.101 15
-ID/Client: 15 Msg Type: 3
-ID/Client: 3 Msg Type: 3
-ID/Client: 8 Msg Type: 3
 ID/Client: 6 Msg Type: 3
 ID/Client: 14 Msg Type: 3
+ID/Client: 3 Msg Type: 3
+ID/Client: 2 Msg Type: 3
+ID/Client: 13 Msg Type: 3
+ID/Client: 9 Msg Type: 3
+ID/Client: 15 Msg Type: 3
+ID/Client: 8 Msg Type: 3
+ID/Client: 7 Msg Type: 3
+ID/Client: 11 Msg Type: 3
 ID/Client: 0 Msg Type: 3
 ID/Client: 10 Msg Type: 3
-ID/Client: 2 Msg Type: 3
-ID/Client: 1 Msg Type: 3
 ID/Client: 12 Msg Type: 3
-ID/Client: 9 Msg Type: 3
-ID/Client: 11 Msg Type: 3
-ID/Client: 13 Msg Type: 3
 ID/Client: 5 Msg Type: 3
 ID/Client: 4 Msg Type: 3
+ID/Client: 1 Msg Type: 3
+Received last message: 1691193622102
+
+ Running on port 16401
+ID/Client: client1 Msg Type: 1
+ID/Client: -1 Msg Type: 0
+20.59.124.222 0
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.124.22 1
+20.59.124.211 2
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.126.213 3
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.126.185 4
+ID/Client: -1 Msg Type: 0
+20.59.124.246 5
+ID/Client: -1 Msg Type: 0
+20.59.124.206 6
+ID/Client: -1 Msg Type: 0
+20.59.126.180 7
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.124.91 8
+20.59.124.202 9
+ID/Client: -1 Msg Type: 0
+20.59.126.236 10
+20.59.124.118 11
+ID/Client: -1 Msg Type: 0
+20.59.124.136 12
+ID/Client: -1 Msg Type: 0
+20.59.126.174 13
+20.59.124.179 14
+ID/Client: -1 Msg Type: 0
+20.59.124.101 15
+ID/Client: 14 Msg Type: 3
 ID/Client: 7 Msg Type: 3
-Received last message: 1691193433615
+ID/Client: 9 Msg Type: 3
+ID/Client: 5 Msg Type: 3
+ID/Client: 0 Msg Type: 3
+ID/Client: 15 Msg Type: 3
+ID/Client: 6 Msg Type: 3
+ID/Client: 4 Msg Type: 3
+ID/Client: 3 Msg Type: 3
+ID/Client: 10 Msg Type: 3
+ID/Client: 2 Msg Type: 3
+ID/Client: 8 Msg Type: 3
+ID/Client: 13 Msg Type: 3
+ID/Client: 12 Msg Type: 3
+ID/Client: 1 Msg Type: 3
+ID/Client: 11 Msg Type: 3
+Received last message: 1691193754731
+
+ Running on port 16401
+ID/Client: client1 Msg Type: 1
+ID/Client: -1 Msg Type: 0
+20.59.124.246 0
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.124.22 1
+20.59.124.211 2
+ID/Client: -1 Msg Type: 0
+20.59.126.185 3
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.124.91 4
+ID/Client: -1 Msg Type: 0
+20.59.126.213 5
+ID/Client: -1 Msg Type: 0
+20.59.124.202 6
+ID/Client: -1 Msg Type: 0
+20.59.126.174 7
+20.59.124.206 8
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.126.236 9
+20.59.124.222 10
+20.59.124.118 11
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.124.136 12
+20.59.124.101 13
+20.59.124.179 14
+ID/Client: -1 Msg Type: 0
+20.59.126.180 15
+ID/Client: 3 Msg Type: 3
+ID/Client: 7 Msg Type: 3
+ID/Client: 11 Msg Type: 3
+ID/Client: 13 Msg Type: 3
+ID/Client: 9 Msg Type: 3
+ID/Client: 15 Msg Type: 3
+ID/Client: 2 Msg Type: 3
+ID/Client: 8 Msg Type: 3
+ID/Client: 14 Msg Type: 3
+ID/Client: 5 Msg Type: 3
+ID/Client: 0 Msg Type: 3
+ID/Client: 12 Msg Type: 3
+ID/Client: 10 Msg Type: 3
+ID/Client: 4 Msg Type: 3
+ID/Client: 1 Msg Type: 3
+ID/Client: 6 Msg Type: 3
+Received last message: 1691194336705
 
  Running on port 16401
 ID/Client: client1 Msg Type: 1
@@ -997,98 +995,46 @@ ID/Client: -1 Msg Type: 0
 20.59.124.246 1
 ID/Client: -1 Msg Type: 0
 ID/Client: -1 Msg Type: 0
-ID/Client: -1 Msg Type: 0
 20.59.124.211 2
-20.59.126.185 3
-ID/Client: -1 Msg Type: 0
-20.59.124.222 4
-ID/Client: -1 Msg Type: 0
-20.59.126.213 5
-ID/Client: -1 Msg Type: 0
-20.59.124.91 6
-ID/Client: -1 Msg Type: 0
-20.59.126.236 7
-20.59.124.202 8
-ID/Client: -1 Msg Type: 0
-20.59.124.206 9
+20.59.124.91 3
 ID/Client: -1 Msg Type: 0
 ID/Client: -1 Msg Type: 0
-20.59.124.179 10
+20.59.124.202 4
 ID/Client: -1 Msg Type: 0
-ID/Client: -1 Msg Type: 0
-20.59.126.174 11
-20.59.124.101 12
-ID/Client: -1 Msg Type: 0
-20.59.126.180 13
-20.59.124.118 14
-ID/Client: -1 Msg Type: 0
-20.59.124.136 15
-ID/Client: 9 Msg Type: 3
-ID/Client: 0 Msg Type: 3
-ID/Client: 14 Msg Type: 3
-ID/Client: 2 Msg Type: 3
-ID/Client: 13 Msg Type: 3
-ID/Client: 3 Msg Type: 3
-ID/Client: 12 Msg Type: 3
-ID/Client: 8 Msg Type: 3
-ID/Client: 15 Msg Type: 3
-ID/Client: 11 Msg Type: 3
-ID/Client: 10 Msg Type: 3
-ID/Client: 7 Msg Type: 3
-ID/Client: 5 Msg Type: 3
-ID/Client: 1 Msg Type: 3
-ID/Client: 6 Msg Type: 3
-ID/Client: 4 Msg Type: 3
-Received last message: 1691194048486
-
- Running on port 16401
-ID/Client: client1 Msg Type: 1
-ID/Client: -1 Msg Type: 0
-ID/Client: -1 Msg Type: 0
-20.59.124.246 0
-ID/Client: -1 Msg Type: 0
-20.59.124.211 1
-20.59.124.22 2
-ID/Client: -1 Msg Type: 0
-ID/Client: -1 Msg Type: 0
-20.59.126.185 3
-ID/Client: -1 Msg Type: 0
-20.59.124.91 4
-20.59.126.213 5
+20.59.126.174 5
 ID/Client: -1 Msg Type: 0
 ID/Client: -1 Msg Type: 0
 ID/Client: -1 Msg Type: 0
 ID/Client: -1 Msg Type: 0
 20.59.126.236 6
 ID/Client: -1 Msg Type: 0
-20.59.124.202 7
-20.59.126.174 8
-20.59.124.179 9
+20.59.124.118 7
+20.59.124.206 8
 ID/Client: -1 Msg Type: 0
-20.59.124.206 10
+ID/Client: -1 Msg Type: 0
+20.59.124.136 9
+20.59.126.185 10
 ID/Client: -1 Msg Type: 0
 20.59.124.222 11
+20.59.126.213 12
 ID/Client: -1 Msg Type: 0
-ID/Client: -1 Msg Type: 0
-20.59.124.118 12
-ID/Client: -1 Msg Type: 0
-20.59.124.101 13
-20.59.124.136 14
+20.59.124.179 13
+20.59.124.101 14
 20.59.126.180 15
-ID/Client: 11 Msg Type: 3
-ID/Client: 10 Msg Type: 3
-ID/Client: 4 Msg Type: 3
-ID/Client: 2 Msg Type: 3
+ID/Client: 13 Msg Type: 3
+ID/Client: 14 Msg Type: 3
+ID/Client: 1 Msg Type: 3
+ID/Client: 8 Msg Type: 3
 ID/Client: 3 Msg Type: 3
 ID/Client: 12 Msg Type: 3
-ID/Client: 13 Msg Type: 3
-ID/Client: 8 Msg Type: 3
+ID/Client: 2 Msg Type: 3
 ID/Client: 15 Msg Type: 3
-ID/Client: 14 Msg Type: 3
-ID/Client: 9 Msg Type: 3
-ID/Client: 1 Msg Type: 3
+ID/Client: 11 Msg Type: 3
+ID/Client: 10 Msg Type: 3
 ID/Client: 7 Msg Type: 3
-ID/Client: 5 Msg Type: 3
 ID/Client: 6 Msg Type: 3
+ID/Client: 5 Msg Type: 3
 ID/Client: 0 Msg Type: 3
-Received last message: 1691194148450
+ID/Client: 9 Msg Type: 3
+ID/Client: 4 Msg Type: 3
+Received last message: 1691194469026
