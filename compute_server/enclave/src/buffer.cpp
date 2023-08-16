@@ -90,8 +90,8 @@ void Buffer::decrypt_line(char* plaintxt, size_t* plaintxt_length, unsigned int 
                     // two_bit_decompress(plain_txt_compressed, 
                     //                    (uint8_t*)plaintxt_head, 
                     //                    client_info_list[client].size);
-                    memset(plain_txt_compressed, 0, ENCLAVE_READ_BUFFER_SIZE);
-                    memset(client_crypto_map[list_id], 0, client_info_list[client].crypto_size);
+                    // memset(plain_txt_compressed, 0, ENCLAVE_READ_BUFFER_SIZE);
+                    // memset(client_crypto_map[list_id], 0, client_info_list[client].crypto_size);
                     client_found = true;
                 }
             }
