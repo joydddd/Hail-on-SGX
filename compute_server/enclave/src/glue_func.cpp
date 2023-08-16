@@ -28,3 +28,7 @@ void getbatch(int* _retval, char batch[ENCLAVE_READ_BUFFER_SIZE],
               const int thread_id){
     *_retval = getbatch(batch, thread_id);
 }
+
+void mark_eof_wrapper(const int thread_id) {
+
+}

@@ -144,17 +144,22 @@ class Covar {
     std::vector< std::vector<double> > data;
     int n;
     int m;
+    int covar_idx;
     std::string name_str;
 
    public:
     Covar() : n(0), name_str("NA") { }
     Covar(const char* input, int res_size = 0) { read(input, res_size); }
-    Covar(int _n, int _m) : n(_n), m(0) {data.resize(_n, std::vector<double>(_m));}
+    Covar(int _n, int _m) : n(_n), m(0), covar_idx(0) {data.resize(_n, std::vector<double>(_m));}
     int read(const char* input, int res_size = 0);
     void reserve(int total_row_size);
     void init_1_covar(int total_row_size);
     int size() { return n; }
     const std::string& name() { return name_str; }
+    void after_covar() {
+        m++;
+        covar_idx = 0;
+    }
 };
 
 

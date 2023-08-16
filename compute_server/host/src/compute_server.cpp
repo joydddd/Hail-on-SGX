@@ -513,7 +513,7 @@ void ComputeServer::allele_matcher() {
             allele_line.push_back(' ');
 
             allele_line.append(data);
-            
+
             // For the first line we want to calculate the max number of lines per batch
             if (first) {
                 std::cout << "received first message: "  << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count() << "\n";

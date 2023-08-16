@@ -218,6 +218,7 @@ void setup_enclave_phenotypes(const int num_threads, EncAnalysis analysis_type, 
     catch (ERROR_t& err) {
         std::cerr << "ERROR: fail to get correct y values " << err.msg << std::endl;
     }
+    gwas->phenotype_and_covars.after_covar();
 
     std::cout << "Y value loaded" << std::endl;
     std::cout << "Starting Enclave: "  << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count() << "\n";
@@ -226,6 +227,7 @@ void setup_enclave_phenotypes(const int num_threads, EncAnalysis analysis_type, 
             const std::string& cov_name = covariant_names[i];
             if (cov_name == "1") {
                 gwas->phenotype_and_covars.init_1_covar(total_row_size);
+                gwas->phenotype_and_covars.after_covar();
                 continue;
             }
             for (int client = 0; client < num_clients; ++client) {
@@ -248,6 +250,7 @@ void setup_enclave_phenotypes(const int num_threads, EncAnalysis analysis_type, 
                                        " got: " + std::to_string(read_size));
                 }
             }
+            gwas->phenotype_and_covars.after_covar();
         }
     } catch (ERROR_t& err) {
         std::cerr << "ERROR: fail to get correct covariant values: " << err.msg << std::endl;

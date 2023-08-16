@@ -8,13 +8,13 @@ Row::Row(int _size, const std::vector<int>& sizes, int _num_dimensions, ImputePo
     //data.resize(_size);
     //data.push_back(new uint8_t[_size]);
     client_lengths.resize(sizes.size());
+    read_row_len = 0;
     for (int i = 0; i < sizes.size(); ++i) {
         client_lengths[i] = sizes[i];
+        read_row_len += (sizes[i] + 3) / 4;
     }
 
     it_count = 0;
-    //read_row_len = n;
-    read_row_len = ((n / 4) + (n % 4 == 0 ? 0 : 1));
 }
 
 void Row::reset() { 
@@ -200,14 +200,13 @@ int Covar::read(const char* input, int res_size) {
 
     int read_size = 0;
     for (int i = 1; i < res_size + 1; ++i) {
-        data[i - 1][m] = std::stod(parts[i]);
+        data[covar_idx++][m] = std::stod(parts[i]);
         read_size++;
     }
 
     if (read_size != res_size || read_size != n) {
-        std::cout << "Covar size mismatch" << std::endl;
+        //std::cout << "Covar size mismatch " << n << " " << read_size << " " << read_size << std::endl;
     }
-    m++;
 
     return read_size;
 }
@@ -216,15 +215,13 @@ void Covar::reserve(int total_row_size) {
     //data.reserve(total_row_size);
 }
 
-void Covar::init_1_covar(int total_row_size){
+void Covar::init_1_covar(int total_row_size) {
     if (total_row_size != n) {
-        std::cout << "Covar size mismatch" << std::endl;
+        std::cout << "1 Covar size mismatch " << n << " " << total_row_size << std::endl;
     }
     
     for (int i = 0; i < total_row_size; i++) {
-        data[i][m] = 1;
+        data[covar_idx++][m] = 1;
     }
-
-    m++;
 
 }

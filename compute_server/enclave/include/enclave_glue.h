@@ -13,6 +13,7 @@ void setup_enclave_encryption(const int num_threads);
 void setup_num_patients();
 void setup_enclave_phenotypes(const int num_threads, enum EncAnalysis analysis_type, enum ImputePolicy impute_policy);
 void regression(const int thread_id, EncAnalysis analysis_type);
+void mark_eof_wrapper(const int thread_id);
 
 /* OCALLs */
 void start_timer(const char func_name[ENCLAVE_READ_BUFFER_SIZE]);
