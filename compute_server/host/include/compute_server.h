@@ -102,7 +102,8 @@ class ComputeServer {
     void output_sender();
 
     void parse_header_compute_server_header(const std::string& header, std::string& msg,
-                                            std::string& client_name, ComputeServerMessageType& mtype);
+                                            std::string& client_name, ComputeServerMessageType& mtype,
+                                            int connFD);
 
   public:
 

@@ -199,6 +199,7 @@ bool ComputeServer::start_thread(int connFD, char* body_buffer) {
             if (rval == -1) {
                 throw std::runtime_error("Socket recv failed\n");
             } else if (rval == 0) {
+                std::cout << "rval was 0" << std::endl;
                 return false;
             }
             // Stop if we received a deliminating character
@@ -237,7 +238,7 @@ bool ComputeServer::start_thread(int connFD, char* body_buffer) {
         std::string msg;
         std::string client_name;
         ComputeServerMessageType mtype;
-        parse_header_compute_server_header(body, msg, client_name, mtype);
+        parse_header_compute_server_header(body, msg, client_name, mtype, connFD);
 
         //guarded_cout("Msg type: " + std::to_string(mtype) + " client: " + client_name, cout_lock);
 
@@ -419,9 +420,6 @@ void ComputeServer::check_in(const std::string& name) {
             send_msg(it.first, Y_AND_COV, covariant_list + y_val_name);
 
             institutions[it.first]->request_conn = send_msg(it.first, DATA_REQUEST, std::to_string(MIN_BLOCK_COUNT), institutions[it.first]->request_conn);
-            // start listener thread for data!
-            boost::thread data_listener_thread(&ComputeServer::data_listener, this, institutions[it.first]->request_conn);
-            data_listener_thread.detach();
         }
 
 
@@ -555,7 +553,8 @@ void ComputeServer::output_sender() {
 } 
 
 void ComputeServer::parse_header_compute_server_header(const std::string& header, std::string& msg, 
-                                                       std::string& client_name, ComputeServerMessageType& mtype) {
+                                                       std::string& client_name, ComputeServerMessageType& mtype,
+                                                       int connFD) {
     int header_idx = 0;
     // Parse client name
     while(header[header_idx] != ' ') {
@@ -577,6 +576,15 @@ void ComputeServer::parse_header_compute_server_header(const std::string& header
             msg.push_back(header[header_idx]);
         }
         return;
+    }
+
+    static bool first = true;
+    if (first) {
+        // start listener thread for data!
+        boost::thread data_listener_thread(&ComputeServer::data_listener, this, connFD);
+        data_listener_thread.detach();
+
+        first = false;
     }
 
     DataBlockBatch* batch = new DataBlockBatch;
