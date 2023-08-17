@@ -67,7 +67,6 @@ int send_message(const char *hostname, int port, const char *message, const int 
 		hints.ai_family = AF_INET; 
 		hints.ai_socktype = SOCK_STREAM;
 		hints.ai_protocol = IPPROTO_TCP;
-
 		sprintf(port_str, "%d", port);
 
 		if (getaddrinfo(hostname, port_str, &hints, &addrs) != 0) {

@@ -86,7 +86,7 @@ class Client {
 
     // construct response header, encrypt response body, and send
     void send_msg(const unsigned int global_id, const unsigned int mtype, const std::string& msg, int connFD=-1);
-    void send_msg(const std::string& hostname, unsigned int port, unsigned int mtype, const std::string& msg, int connFD=-1);
+    int send_msg(const std::string& hostname, unsigned int port, unsigned int mtype, const std::string& msg, int connFD=-1);
 
     // start a thread that will handle a message and exit properly if it finds an error
     bool start_thread(int connFD);

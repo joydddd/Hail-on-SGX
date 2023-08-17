@@ -286,6 +286,7 @@ void Client::handle_message(int connFD, const unsigned int global_id, const Clie
 
             std::string line;
             std::string line_length;
+            int data_conn = -1;
             while (!allele_queue->empty()) {
                 line = allele_queue->front();
                 allele_queue->pop();
@@ -296,7 +297,7 @@ void Client::handle_message(int connFD, const unsigned int global_id, const Clie
                 if ((prospective_length > (1 << 16) - 1) && block.length()) {
                     // msg format: blocks sent \t lengths (tab delimited) \n (terminating char) blocks of data w no delimiters
                     std::string block_msg = std::to_string(blocks_sent++) + lengths + "\n" + block;
-                    send_msg(info.hostname, info.port, DATA, block_msg, connFD);
+                    data_conn = send_msg(info.hostname, info.port, DATA, block_msg, data_conn);
 
                     // Reset block
                     block.clear(); 
@@ -348,10 +349,10 @@ void Client::send_msg(const unsigned int global_id, const unsigned int mtype, co
     send_message(info.hostname.c_str(), info.port, message.data(), message.length(), connFD);
 }
 
-void Client::send_msg(const std::string& hostname, unsigned int port, unsigned int mtype, const std::string& msg, int connFD) {
+int Client::send_msg(const std::string& hostname, unsigned int port, unsigned int mtype, const std::string& msg, int connFD) {
     std::string message = client_name + " " + std::to_string(mtype) + " ";
     message = std::to_string(message.length() + msg.length()) + "\n" + message + msg;
-    send_message(hostname.c_str(), port, message.data(), message.length(), connFD);
+    return send_message(hostname.c_str(), port, message.data(), message.length(), connFD);
 }
 
 void Client::queue_helper(const int global_id, const int num_helpers) {
