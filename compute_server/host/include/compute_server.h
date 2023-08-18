@@ -51,6 +51,7 @@ class ComputeServer {
 
     std::unordered_set<std::string> expected_institutions;
     std::unordered_set<std::string> expected_covariants;
+    std::unordered_set<int> seen_fds;
     std::vector<std::string> institution_list;
     std::vector<moodycamel::ReaderWriterQueue<std::string>> allele_queue_list;
     std::queue<std::string> output_queue;

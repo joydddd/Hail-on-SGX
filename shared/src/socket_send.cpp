@@ -1,6 +1,7 @@
 #include "socket_send.h"
 #include <iostream>
 #include <curl/curl.h>
+#include "errno.h"
 
 int make_server_sockaddr(struct sockaddr_in *addr, int port) {
 	// Step (1): specify socket family.
@@ -87,6 +88,9 @@ int send_message(const char *hostname, int port, const char *message, const int 
 		freeaddrinfo(addrs);
 
 		if (sock == -1) {
+			char buffer[ 256 ];
+			char * errorMsg = strerror_r( errno, buffer, 256 ); // GNU-specific version, Linux default
+			printf("Error %s\n", errorMsg); //return value has to be used since buffer might not be modified
 			throw std::runtime_error("Failed to connect\n");
 		}
 	}

@@ -200,7 +200,7 @@ bool ComputeServer::start_thread(int connFD, char* body_buffer) {
             if (rval == -1) {
                 char buffer[ 256 ];
                 char * errorMsg = strerror_r( errno, buffer, 256 ); // GNU-specific version, Linux default
-                printf("Error %s", errorMsg); //return value has to be used since buffer might not be modified
+                printf("Error %s\n", errorMsg); //return value has to be used since buffer might not be modified
                 throw std::runtime_error("Socket recv failed\n");
             } else if (rval == 0) {
                 std::cout << "rval was 0" << std::endl;
@@ -582,13 +582,10 @@ void ComputeServer::parse_header_compute_server_header(const std::string& header
         return;
     }
 
-    static bool first = true;
-    if (first) {
-        // start listener thread for data!
-        // boost::thread data_listener_thread(&ComputeServer::data_listener, this, connFD);
-        // data_listener_thread.detach();
-
-        first = false;
+    if (!seen_fds.count(connFD)) {
+        seen_fds.insert(connFD);
+        boost::thread data_listener_thread(&ComputeServer::data_listener, this, connFD);
+        data_listener_thread.detach();
     }
 
     DataBlockBatch* batch = new DataBlockBatch;
