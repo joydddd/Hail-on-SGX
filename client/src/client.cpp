@@ -297,6 +297,9 @@ void Client::handle_message(int connFD, const unsigned int global_id, const Clie
                 if ((prospective_length > (1 << 16) - 1) && block.length()) {
                     // msg format: blocks sent \t lengths (tab delimited) \n (terminating char) blocks of data w no delimiters
                     std::string block_msg = std::to_string(blocks_sent++) + lengths + "\n" + block;
+                    if (blocks_sent % 1000) {
+                        std::cout << "Blocks " << blocks_sent << std::endl;
+                    }
                     data_conn = send_msg(info.hostname, info.port, DATA, block_msg, data_conn);
 
                     // Reset block
