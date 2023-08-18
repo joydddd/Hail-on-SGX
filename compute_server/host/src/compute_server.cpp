@@ -16,6 +16,7 @@
 #include <netdb.h>
 #include "enclave.h"
 #include "hashing.h"
+#include "errno.h"
 
 #ifdef NON_OE
 #define AVERAGE_OCALL_OVERHEAD_MICROSECONDS 0.00003534999965
@@ -197,6 +198,9 @@ bool ComputeServer::start_thread(int connFD, char* body_buffer) {
             // Receive exactly one byte
             int rval = recv(connFD, header_buffer + header_size, 1, MSG_WAITALL);
             if (rval == -1) {
+                char buffer[ 256 ];
+                char * errorMsg = strerror_r( errno, buffer, 256 ); // GNU-specific version, Linux default
+                printf("Error %s", errorMsg); //return value has to be used since buffer might not be modified
                 throw std::runtime_error("Socket recv failed\n");
             } else if (rval == 0) {
                 std::cout << "rval was 0" << std::endl;
@@ -581,8 +585,8 @@ void ComputeServer::parse_header_compute_server_header(const std::string& header
     static bool first = true;
     if (first) {
         // start listener thread for data!
-        boost::thread data_listener_thread(&ComputeServer::data_listener, this, connFD);
-        data_listener_thread.detach();
+        // boost::thread data_listener_thread(&ComputeServer::data_listener, this, connFD);
+        // data_listener_thread.detach();
 
         first = false;
     }
