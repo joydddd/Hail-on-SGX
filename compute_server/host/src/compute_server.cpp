@@ -228,7 +228,8 @@ bool ComputeServer::start_thread(int connFD, char* body_buffer) {
             body_size = std::stoi(header);
         } catch(const std::invalid_argument& e) {
             std::cout << "Failed to read in body size" << std::endl;
-            throw e;
+            std::cout << header << std::endl;
+            return true;
         }
         if (body_size != 0) {
             // read in encrypted body

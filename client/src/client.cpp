@@ -131,8 +131,9 @@ bool Client::start_thread(int connFD) {
         try {
             body_size = std::stoi(header);
         } catch(const std::invalid_argument &e) {
-            std::cout << "Error in handling header: " << header << std::endl;
-            throw e;
+            std::cout << "Failed to read body size: " << header << std::endl;
+            std::cout << header << std::endl;
+            return true;
         }
         
         if (body_size != 0) {
