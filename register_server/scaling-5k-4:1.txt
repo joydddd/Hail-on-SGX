@@ -1,0 +1,85 @@
+ Running on port 16401
+ID/Client: client1 Msg Type: 1
+ID/Client: client2 Msg Type: 1
+ID/Client: client3 Msg Type: 1
+ID/Client: client4 Msg Type: 1
+ID/Client: -1 Msg Type: 0
+23.99.9.117 0
+ID/Client: -1 Msg Type: 0
+138.91.251.193 1
+ID/Client: 0 Msg Type: 3
+ID/Client: 1 Msg Type: 3
+Received last message: 1692579662484
+
+ Running on port 16401
+ID/Client: client2 Msg Type: 1
+ID/Client: client4 Msg Type: 1
+ID/Client: client3 Msg Type: 1
+ID/Client: client1 Msg Type: 1
+ID/Client: -1 Msg Type: 0
+23.99.9.117 0
+ID/Client: -1 Msg Type: 0
+138.91.251.193 1
+ID/Client: 0 Msg Type: 3
+ID/Client: 1 Msg Type: 3
+Received last message: 1692579788315
+
+ Running on port 16401
+ID/Client: client4 Msg Type: 1
+ID/Client: client2 Msg Type: 1
+ID/Client: client3 Msg Type: 1
+ID/Client: client1 Msg Type: 1
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+138.91.251.193 0
+23.99.9.117 1
+ID/Client: 0 Msg Type: 3
+ID/Client: 1 Msg Type: 3
+Received last message: 1692581709746
+
+ Running on port 16401
+ID/Client: client4 Msg Type: 1
+ID/Client: client1 Msg Type: 1
+ID/Client: client2 Msg Type: 1
+ID/Client: client3 Msg Type: 1
+ID/Client: -1 Msg Type: 0
+138.91.251.193 0
+ID/Client: -1 Msg Type: 0
+23.99.9.117 1
+ID/Client: 0 Msg Type: 3
+ID/Client: 1 Msg Type: 3
+Received last message: 1692581836371
+
+ Running on port 16401
+ID/Client: client2 Msg Type: 1
+ID/Client: client3 Msg Type: 1
+ID/Client: client1 Msg Type: 1
+ID/Client: client4 Msg Type: 1
+ID/Client: -1 Msg Type: 0
+23.99.9.117 0
+ID/Client: -1 Msg Type: 0
+138.91.251.193 1
+ID/Client: 0 Msg Type: 3
+ID/Client: 1 Msg Type: 3
+Received last message: 1692583781101
+
+ Running on port 16401
+ID/Client: client4 Msg Type: 1
+ID/Client: client2 Msg Type: 1
+ID/Client: client1 Msg Type: 1
+ID/Client: client3 Msg Type: 1
+ID/Client: -1 Msg Type: 0
+23.99.9.117 0
+ID/Client: -1 Msg Type: 0
+138.91.251.193 1
+ID/Client: 1 Msg Type: 3
+ID/Client: 0 Msg Type: 3
+Received last message: 1692583907446
+
+ Running on port 16401
+ID/Client: client3 Msg Type: 1
+ID/Client: client4 Msg Type: 1
+ID/Client: client2 Msg Type: 1
+ID/Client: client1 Msg Type: 1
+
+ Running on port 16401

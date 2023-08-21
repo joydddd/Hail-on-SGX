@@ -1,0 +1,66 @@
+
+ Running on port 18601
+ID: -1rs Msg Type: 0
+ID: 0 Msg Type: 1
+ID: 0 Msg Type: 2
+ID: 0 Msg Type: 3
+Fill/encryption time total: 150623425
+Sending first message: 1692569194152
+Sending last message: 1692569254329
+Data send time total: 60176439
+ID: -1rs Msg Type: 4
+
+ Running on port 18601
+ID: -1rs Msg Type: 0
+ID: 0 Msg Type: 1
+ID: 0 Msg Type: 2
+ID: 0 Msg Type: 3
+Fill/encryption time total: 150340648
+Sending first message: 1692569836259
+Sending last message: 1692569896714
+Data send time total: 60455277
+ID: -1rs Msg Type: 4
+
+ Running on port 18601
+ID: -1rs Msg Type: 0
+ID: 0 Msg Type: 1
+ID: 0 Msg Type: 2
+ID: 0 Msg Type: 3
+Fill/encryption time total: 149712272
+Sending first message: 1692572694812
+Sending last message: 1692572755651
+Data send time total: 60838922
+ID: -1rs Msg Type: 4
+
+ Running on port 18601
+ID: -1rs Msg Type: 0
+ID: 0 Msg Type: 1
+ID: 0 Msg Type: 2
+ID: 0 Msg Type: 3
+Fill/encryption time total: 151095868
+Sending first message: 1692573336906
+Sending last message: 1692573396177
+Data send time total: 59271454
+ID: -1rs Msg Type: 4
+
+ Running on port 18601
+ID: -1rs Msg Type: 0
+ID: 0 Msg Type: 1
+ID: 0 Msg Type: 2
+ID: 0 Msg Type: 3
+Fill/encryption time total: 151197988
+Sending first message: 1692576179753
+Sending last message: 1692576239302
+Data send time total: 59548359
+ID: -1rs Msg Type: 4
+
+ Running on port 18601
+ID: -1rs Msg Type: 0
+ID: 0 Msg Type: 1
+ID: 0 Msg Type: 2
+ID: 0 Msg Type: 3
+Fill/encryption time total: 151504400
+Sending first message: 1692576833986
+Sending last message: 1692576895655
+Data send time total: 61669708
+ID: -1rs Msg Type: 4
