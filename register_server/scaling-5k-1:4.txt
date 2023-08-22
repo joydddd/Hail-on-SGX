@@ -1,0 +1,98 @@
+
+ Running on port 16401
+ID/Client: client1 Msg Type: 1
+ID/Client: client2 Msg Type: 1
+ID/Client: client3 Msg Type: 1
+ID/Client: client4 Msg Type: 1
+ID/Client: -1 Msg Type: 0
+40.78.126.149 0
+ID/Client: -1 Msg Type: 0
+40.78.126.74 1
+ID/Client: -1 Msg Type: 0
+40.78.123.227 2
+ID/Client: -1 Msg Type: 0
+40.78.126.83 3
+ID/Client: -1 Msg Type: 0
+40.78.127.77 4
+ID/Client: -1 Msg Type: 0
+40.78.126.171 5
+ID/Client: -1 Msg Type: 0
+40.83.131.162 6
+ID/Client: -1 Msg Type: 0
+40.78.126.76 7
+ID/Client: -1 Msg Type: 0
+40.78.66.143 8
+ID/Client: -1 Msg Type: 0
+40.78.127.72 9
+ID/Client: -1 Msg Type: 0
+40.78.127.127 10
+ID/Client: -1 Msg Type: 0
+13.64.239.147 11
+ID/Client: -1 Msg Type: 0
+104.42.42.99 12
+ID/Client: -1 Msg Type: 0
+13.64.232.16 13
+ID/Client: -1 Msg Type: 0
+40.78.65.105 14
+ID/Client: -1 Msg Type: 0
+13.64.239.158 15
+ID/Client: -1 Msg Type: 0
+13.64.233.6 16
+ID/Client: -1 Msg Type: 0
+13.64.239.135 17
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+13.64.239.138 18
+13.64.232.18 19
+ID/Client: -1 Msg Type: 0
+13.64.239.165 20
+ID/Client: -1 Msg Type: 0
+13.64.235.178 21
+ID/Client: -1 Msg Type: 0
+13.64.233.250 22
+ID/Client: -1 Msg Type: 0
+13.64.232.79 23
+ID/Client: -1 Msg Type: 0
+13.64.235.101 24
+ID/Client: -1 Msg Type: 0
+13.64.236.6 25
+ID/Client: -1 Msg Type: 0
+13.64.232.179 26
+ID/Client: -1 Msg Type: 0
+13.64.232.229 27
+ID/Client: -1 Msg Type: 0
+13.64.232.209 28
+ID/Client: -1 Msg Type: 0
+13.64.232.172 29
+ID/Client: -1 Msg Type: 0
+13.64.232.177 30
+ID/Client: -1 Msg Type: 0
+13.64.232.203 31
+ID/Client: -1 Msg Type: 0
+13.64.232.172 32
+ID/Client: 11 Msg Type: 3
+ID/Client: 20 Msg Type: 3
+ID/Client: 15 Msg Type: 3
+ID/Client: 28 Msg Type: 3
+ID/Client: 30 Msg Type: 3
+ID/Client: 9 Msg Type: 3
+ID/Client: 3 Msg Type: 3
+ID/Client: 13 Msg Type: 3
+ID/Client: 16 Msg Type: 3
+ID/Client: 8 Msg Type: 3
+ID/Client: 14 Msg Type: 3
+ID/Client: 17 Msg Type: 3
+ID/Client: 27 Msg Type: 3
+ID/Client: 1 Msg Type: 3
+ID/Client: 19 Msg Type: 3
+ID/Client: 31 Msg Type: 3
+ID/Client: 0 Msg Type: 3
+ID/Client: 10 Msg Type: 3
+ID/Client: 23 Msg Type: 3
+ID/Client: 25 Msg Type: 3
+ID/Client: 26 Msg Type: 3
+ID/Client: 24 Msg Type: 3
+ID/Client: 12 Msg Type: 3
+ID/Client: 7 Msg Type: 3
+ID/Client: 5 Msg Type: 3
+ID/Client: 22 Msg Type: 3

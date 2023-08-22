@@ -63,10 +63,10 @@ ID: 0 Msg Type: 2
 ID: 0 Msg Type: 3
 ID: 1 Msg Type: 2
 ID: 1 Msg Type: 3
-Fill/encryption time total: 155076397
-Sending first message: 1692584713025
-Sending last message: 1692584769365
-Data send time total: 56340728
+Fill/encryption time total: 164018356
+Sending first message: 1692673541136
+Sending last message: 1692673600036
+Data send time total: 58899703
 ID: -1rs Msg Type: 4
 
  Running on port 18601
@@ -77,8 +77,8 @@ ID: 0 Msg Type: 2
 ID: 0 Msg Type: 3
 ID: 1 Msg Type: 2
 ID: 1 Msg Type: 3
-Fill/encryption time total: 154910370
-Sending first message: 1692585720150
-Sending last message: 1692585776965
-Data send time total: 56815238
+Fill/encryption time total: 164740341
+Sending first message: 1692674327666
+Sending last message: 1692674384251
+Data send time total: 56584434
 ID: -1rs Msg Type: 4

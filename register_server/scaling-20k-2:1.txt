@@ -36,3 +36,155 @@ ID/Client: 0 Msg Type: 3
 ID/Client: 3 Msg Type: 3
 ID/Client: 2 Msg Type: 3
 Received last message: 1692588095970
+
+ Running on port 16401
+ID/Client: client1 Msg Type: 1
+ID/Client: client3 Msg Type: 1
+ID/Client: client2 Msg Type: 1
+ID/Client: client4 Msg Type: 1
+ID/Client: -1 Msg Type: 0
+40.83.243.224 0
+ID/Client: -1 Msg Type: 0
+52.160.46.134 1
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+40.83.243.221 2
+40.83.243.220 3
+ID/Client: 3 Msg Type: 3
+ID/Client: 0 Msg Type: 3
+ID/Client: 1 Msg Type: 3
+ID/Client: 2 Msg Type: 3
+Received last message: 1692632071522
+
+ Running on port 16401
+ID/Client: client3 Msg Type: 1
+ID/Client: client1 Msg Type: 1
+ID/Client: client2 Msg Type: 1
+ID/Client: client4 Msg Type: 1
+ID/Client: -1 Msg Type: 0
+40.83.243.224 0
+ID/Client: -1 Msg Type: 0
+40.83.243.221 1
+ID/Client: -1 Msg Type: 0
+52.160.46.134 2
+ID/Client: -1 Msg Type: 0
+40.83.243.220 3
+ID/Client: 3 Msg Type: 3
+ID/Client: 2 Msg Type: 3
+ID/Client: 0 Msg Type: 3
+ID/Client: 1 Msg Type: 3
+Received last message: 1692632299202
+
+ Running on port 16401
+ID/Client: client3 Msg Type: 1
+ID/Client: client1 Msg Type: 1
+ID/Client: client2 Msg Type: 1
+ID/Client: client4 Msg Type: 1
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+40.83.243.220 0
+40.83.243.224 1
+ID/Client: -1 Msg Type: 0
+52.160.46.134 2
+ID/Client: -1 Msg Type: 0
+40.83.243.221 3
+ID/Client: 1 Msg Type: 3
+ID/Client: 2 Msg Type: 3
+ID/Client: 3 Msg Type: 3
+ID/Client: 0 Msg Type: 3
+Received last message: 1692633792909
+
+ Running on port 16401
+ID/Client: client1 Msg Type: 1
+ID/Client: client4 Msg Type: 1
+ID/Client: client3 Msg Type: 1
+ID/Client: client2 Msg Type: 1
+ID/Client: -1 Msg Type: 0
+40.83.243.220 0
+ID/Client: -1 Msg Type: 0
+52.160.46.134 1
+ID/Client: -1 Msg Type: 0
+40.83.243.224 2
+ID/Client: -1 Msg Type: 0
+40.83.243.221 3
+ID/Client: 3 Msg Type: 3
+ID/Client: 0 Msg Type: 3
+ID/Client: 2 Msg Type: 3
+ID/Client: 1 Msg Type: 3
+Received last message: 1692634016973
+
+ Running on port 16401
+ID/Client: client3 Msg Type: 1
+ID/Client: client4 Msg Type: 1
+ID/Client: client1 Msg Type: 1
+ID/Client: client2 Msg Type: 1
+ID/Client: -1 Msg Type: 0
+40.83.243.220 0
+ID/Client: -1 Msg Type: 0
+52.160.46.134 1
+ID/Client: -1 Msg Type: 0
+40.83.243.224 2
+ID/Client: -1 Msg Type: 0
+40.83.243.221 3
+ID/Client: 0 Msg Type: 3
+ID/Client: 3 Msg Type: 3
+ID/Client: 2 Msg Type: 3
+ID/Client: 1 Msg Type: 3
+Received last message: 1692635513534
+
+ Running on port 16401
+ID/Client: client1 Msg Type: 1
+ID/Client: client3 Msg Type: 1
+ID/Client: client4 Msg Type: 1
+ID/Client: client2 Msg Type: 1
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+40.83.243.224 0
+ID/Client: -1 Msg Type: 0
+52.160.46.134 1
+ID/Client: -1 Msg Type: 0
+40.83.243.221 2
+40.83.243.220 3
+ID/Client: 0 Msg Type: 3
+ID/Client: 3 Msg Type: 3
+ID/Client: 2 Msg Type: 3
+ID/Client: 1 Msg Type: 3
+Received last message: 1692635738997
+
+ Running on port 16401
+ID/Client: client3 Msg Type: 1
+ID/Client: client1 Msg Type: 1
+ID/Client: client4 Msg Type: 1
+ID/Client: client2 Msg Type: 1
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+40.83.243.224 0
+ID/Client: -1 Msg Type: 0
+40.83.243.221 1
+52.160.46.134 2
+ID/Client: -1 Msg Type: 0
+40.83.243.220 3
+ID/Client: 0 Msg Type: 3
+ID/Client: 2 Msg Type: 3
+ID/Client: 3 Msg Type: 3
+ID/Client: 1 Msg Type: 3
+Received last message: 1692637233199
+
+ Running on port 16401
+ID/Client: client1 Msg Type: 1
+ID/Client: client3 Msg Type: 1
+ID/Client: client2 Msg Type: 1
+ID/Client: client4 Msg Type: 1
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+52.160.46.134 0
+40.83.243.224 1
+ID/Client: -1 Msg Type: 0
+40.83.243.221 2
+ID/Client: -1 Msg Type: 0
+40.83.243.220 3
+ID/Client: 2 Msg Type: 3
+ID/Client: 3 Msg Type: 3
+ID/Client: 1 Msg Type: 3
+ID/Client: 0 Msg Type: 3
+Received last message: 1692637458920
