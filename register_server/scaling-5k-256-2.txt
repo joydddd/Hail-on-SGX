@@ -5,392 +5,3518 @@ ID/Client: client2 Msg Type: 1
 ID/Client: client3 Msg Type: 1
 ID/Client: client4 Msg Type: 1
 ID/Client: -1 Msg Type: 0
-20.253.214.86 0
+20.59.127.137 0
 ID/Client: -1 Msg Type: 0
-20.253.214.47 1
+20.59.127.137 1
 ID/Client: -1 Msg Type: 0
-20.253.214.44 2
+20.59.127.137 2
 ID/Client: -1 Msg Type: 0
-20.253.214.34 3
+20.59.127.137 3
 ID/Client: -1 Msg Type: 0
-20.253.214.79 4
+20.59.127.88 4
 ID/Client: -1 Msg Type: 0
-20.253.214.54 5
+20.59.127.88 5
 ID/Client: -1 Msg Type: 0
-20.253.214.101 6
+20.59.127.88 6
 ID/Client: -1 Msg Type: 0
-20.253.214.42 7
+20.59.127.88 7
 ID/Client: -1 Msg Type: 0
-20.253.214.96 8
 ID/Client: -1 Msg Type: 0
-20.253.214.103 9
+20.59.127.55 8
 ID/Client: -1 Msg Type: 0
-20.253.214.70 10
+20.59.127.55 9
 ID/Client: -1 Msg Type: 0
-20.228.118.222 11
+20.59.127.55 10
+20.59.127.55 11
 ID/Client: -1 Msg Type: 0
-20.228.118.246 12
+20.59.127.72 12
 ID/Client: -1 Msg Type: 0
-20.228.118.216 13
+20.59.127.72 13
 ID/Client: -1 Msg Type: 0
-20.228.118.225 14
+20.59.127.72 14
 ID/Client: -1 Msg Type: 0
-20.228.118.229 15
+20.59.127.72 15
 ID/Client: -1 Msg Type: 0
-20.228.118.253 16
 ID/Client: -1 Msg Type: 0
-20.228.119.17 17
+20.59.127.94 16
+20.59.127.94 17
 ID/Client: -1 Msg Type: 0
+20.59.127.94 18
 ID/Client: -1 Msg Type: 0
-20.228.119.5 18
-20.228.118.248 19
+20.59.127.94 19
 ID/Client: -1 Msg Type: 0
-20.228.119.12 20
 ID/Client: -1 Msg Type: 0
-20.228.118.242 21
 ID/Client: -1 Msg Type: 0
-20.253.211.42 22
+20.59.126.143 20
+20.59.126.143 21
+20.59.126.143 22
 ID/Client: -1 Msg Type: 0
-20.253.211.68 23
+20.59.126.143 23
 ID/Client: -1 Msg Type: 0
-20.253.211.36 24
 ID/Client: -1 Msg Type: 0
-20.253.213.153 25
+20.59.126.122 24
 ID/Client: -1 Msg Type: 0
-20.253.211.70 26
+20.59.126.122 25
+20.59.126.122 26
 ID/Client: -1 Msg Type: 0
-20.253.211.41 27
+20.59.126.122 27
 ID/Client: -1 Msg Type: 0
-20.253.211.73 28
 ID/Client: -1 Msg Type: 0
-20.253.211.92 29
+20.59.127.182 28
 ID/Client: -1 Msg Type: 0
-20.253.213.134 30
+20.59.127.182 29
 ID/Client: -1 Msg Type: 0
-20.253.213.227 31
+20.59.127.182 30
+20.59.127.182 31
 ID/Client: -1 Msg Type: 0
-20.253.213.135 32
 ID/Client: -1 Msg Type: 0
-20.253.212.217 33
+20.59.126.217 32
+20.59.126.217 33
 ID/Client: -1 Msg Type: 0
-20.253.211.74 34
+20.59.126.217 34
 ID/Client: -1 Msg Type: 0
-20.253.212.241 35
+20.59.126.217 35
 ID/Client: -1 Msg Type: 0
-20.253.212.240 36
 ID/Client: -1 Msg Type: 0
-20.253.215.149 37
+20.59.127.46 36
+20.59.127.46 37
 ID/Client: -1 Msg Type: 0
-20.253.214.65 38
 ID/Client: -1 Msg Type: 0
-20.253.214.93 39
+20.59.127.46 38
+20.59.127.46 39
 ID/Client: -1 Msg Type: 0
-20.253.214.64 40
+20.59.127.149 40
 ID/Client: -1 Msg Type: 0
-20.253.215.148 41
 ID/Client: -1 Msg Type: 0
-20.245.218.17 42
+20.59.127.149 41
 ID/Client: -1 Msg Type: 0
-20.245.218.94 43
+20.59.127.149 42
+20.59.127.149 43
 ID/Client: -1 Msg Type: 0
-20.253.211.55 44
 ID/Client: -1 Msg Type: 0
-20.253.211.65 45
 ID/Client: -1 Msg Type: 0
-20.245.218.188 46
+20.59.126.175 44
+20.59.126.175 45
 ID/Client: -1 Msg Type: 0
-20.245.218.122 47
+20.59.126.175 46
+20.59.126.175 47
 ID/Client: -1 Msg Type: 0
-20.245.219.238 48
+20.253.241.75 48
 ID/Client: -1 Msg Type: 0
-20.245.218.119 49
+20.253.241.75 49
 ID/Client: -1 Msg Type: 0
-20.245.218.13 50
+20.253.241.75 50
 ID/Client: -1 Msg Type: 0
-20.245.219.220 51
+20.253.241.75 51
 ID/Client: -1 Msg Type: 0
-20.245.218.102 52
 ID/Client: -1 Msg Type: 0
-20.245.218.44 53
+20.253.241.38 52
+20.253.241.38 53
 ID/Client: -1 Msg Type: 0
-20.245.218.147 54
+20.253.241.38 54
 ID/Client: -1 Msg Type: 0
-20.245.218.167 55
+20.253.241.38 55
 ID/Client: -1 Msg Type: 0
-20.245.218.152 56
 ID/Client: -1 Msg Type: 0
-20.245.219.167 57
 ID/Client: -1 Msg Type: 0
-20.245.219.200 58
+20.253.241.129 56
+20.253.241.129 57
+20.253.241.129 58
 ID/Client: -1 Msg Type: 0
-20.245.219.97 59
+20.253.241.129 59
 ID/Client: -1 Msg Type: 0
-20.253.215.197 60
 ID/Client: -1 Msg Type: 0
 ID/Client: -1 Msg Type: 0
-20.245.219.56 61
-20.253.215.189 62
+20.253.241.162 60
 ID/Client: -1 Msg Type: 0
+20.253.241.148 61
+20.253.241.148 62
 ID/Client: -1 Msg Type: 0
-20.245.219.193 63
-20.245.219.175 64
 ID/Client: -1 Msg Type: 0
-20.245.219.209 65
+20.253.241.162 63
 ID/Client: -1 Msg Type: 0
-20.245.219.214 66
+20.253.241.162 64
 ID/Client: -1 Msg Type: 0
-20.245.219.195 67
+20.253.241.148 65
+20.253.241.148 66
+20.253.241.162 67
 ID/Client: -1 Msg Type: 0
-20.253.215.150 68
 ID/Client: -1 Msg Type: 0
-20.228.118.168 69
 ID/Client: -1 Msg Type: 0
-20.253.215.177 70
+20.253.241.10 68
 ID/Client: -1 Msg Type: 0
-20.228.116.51 71
+20.253.241.10 69
+20.253.241.10 70
+20.253.241.10 71
 ID/Client: -1 Msg Type: 0
-20.253.215.136 72
 ID/Client: -1 Msg Type: 0
-20.228.115.51 73
 ID/Client: -1 Msg Type: 0
-20.253.215.167 74
+20.253.241.71 72
 ID/Client: -1 Msg Type: 0
-20.253.212.123 75
+20.253.241.71 73
+20.253.241.71 74
+20.253.241.71 75
 ID/Client: -1 Msg Type: 0
-20.228.119.196 76
 ID/Client: -1 Msg Type: 0
-20.253.213.165 77
+20.253.241.210 76
+20.253.241.210 77
 ID/Client: -1 Msg Type: 0
-20.253.208.32 78
+20.253.241.210 78
 ID/Client: -1 Msg Type: 0
-20.245.223.183 79
+20.253.241.210 79
 ID/Client: -1 Msg Type: 0
-20.245.116.138 80
 ID/Client: -1 Msg Type: 0
-20.245.223.120 81
 ID/Client: -1 Msg Type: 0
-20.245.117.32 82
+20.253.241.52 80
+20.253.241.52 81
 ID/Client: -1 Msg Type: 0
-20.245.223.166 83
+20.253.241.52 82
+20.253.241.52 83
 ID/Client: -1 Msg Type: 0
-20.245.223.246 84
+20.253.241.203 84
 ID/Client: -1 Msg Type: 0
-20.228.118.181 85
 ID/Client: -1 Msg Type: 0
-20.245.223.187 86
+20.253.241.203 85
+20.253.241.203 86
 ID/Client: -1 Msg Type: 0
-20.245.115.42 87
+20.253.241.203 87
 ID/Client: -1 Msg Type: 0
 ID/Client: -1 Msg Type: 0
-20.228.119.227 88
-20.228.118.180 89
+20.253.241.207 88
 ID/Client: -1 Msg Type: 0
-20.228.116.50 90
+20.253.241.207 89
+20.253.241.207 90
 ID/Client: -1 Msg Type: 0
-20.253.208.54 91
+20.253.241.207 91
 ID/Client: -1 Msg Type: 0
-20.228.119.226 92
 ID/Client: -1 Msg Type: 0
-20.245.115.43 93
 ID/Client: -1 Msg Type: 0
-20.245.223.225 94
+20.253.241.201 92
+20.253.241.201 93
 ID/Client: -1 Msg Type: 0
-20.245.115.195 95
+20.253.241.201 94
+20.253.241.201 95
 ID/Client: -1 Msg Type: 0
-20.245.223.129 96
 ID/Client: -1 Msg Type: 0
-20.245.219.181 97
 ID/Client: -1 Msg Type: 0
-20.245.219.255 98
+20.253.245.34 96
+20.253.245.34 97
+20.253.245.34 98
 ID/Client: -1 Msg Type: 0
-20.245.116.93 99
+20.253.245.34 99
 ID/Client: -1 Msg Type: 0
-20.245.219.227 100
+20.253.245.134 100
 ID/Client: -1 Msg Type: 0
-20.245.219.254 101
+20.253.245.134 101
 ID/Client: -1 Msg Type: 0
-20.245.219.226 102
+20.253.245.134 102
 ID/Client: -1 Msg Type: 0
+20.253.245.134 103
 ID/Client: -1 Msg Type: 0
-20.245.217.183 103
-20.245.220.14 104
 ID/Client: -1 Msg Type: 0
-20.253.209.110 105
 ID/Client: -1 Msg Type: 0
-20.245.220.68 106
+20.253.244.197 104
 ID/Client: -1 Msg Type: 0
-20.253.208.126 107
+20.253.244.197 105
+20.253.244.197 106
+20.253.244.197 107
 ID/Client: -1 Msg Type: 0
-20.245.220.69 108
 ID/Client: -1 Msg Type: 0
-20.253.210.8 109
+20.245.0.77 108
 ID/Client: -1 Msg Type: 0
-20.253.213.146 110
 ID/Client: -1 Msg Type: 0
-20.253.213.7 111
+20.245.0.77 109
+20.245.0.77 110
+20.245.0.77 111
 ID/Client: -1 Msg Type: 0
-20.253.212.176 112
+20.253.245.238 112
 ID/Client: -1 Msg Type: 0
-20.245.219.207 113
 ID/Client: -1 Msg Type: 0
-20.253.208.141 114
 ID/Client: -1 Msg Type: 0
-20.228.114.221 115
+20.253.245.35 113
+20.253.245.35 114
 ID/Client: -1 Msg Type: 0
-20.253.209.175 116
+20.253.245.238 115
 ID/Client: -1 Msg Type: 0
-20.253.209.126 117
 ID/Client: -1 Msg Type: 0
-20.253.209.217 118
+20.253.245.238 116
+20.253.245.238 117
+20.253.245.35 118
 ID/Client: -1 Msg Type: 0
+20.253.245.35 119
 ID/Client: -1 Msg Type: 0
-20.253.208.135 119
-20.253.209.145 120
 ID/Client: -1 Msg Type: 0
-20.253.208.145 121
 ID/Client: -1 Msg Type: 0
-20.228.114.192 122
+20.253.245.254 120
+20.253.245.254 121
 ID/Client: -1 Msg Type: 0
-20.228.114.88 123
+20.253.245.254 122
+20.253.245.254 123
 ID/Client: -1 Msg Type: 0
-20.228.114.230 124
+20.253.245.239 124
 ID/Client: -1 Msg Type: 0
-20.237.140.153 125
 ID/Client: -1 Msg Type: 0
-20.253.215.156 126
+20.253.245.239 125
 ID/Client: -1 Msg Type: 0
-20.253.215.163 127
-ID/Client: -1 Msg Type: 0
-20.253.215.114 128
-ID/Client: 11 Msg Type: 3
-ID/Client: 42 Msg Type: 3
-ID/Client: 59 Msg Type: 3
-ID/Client: 17 Msg Type: 3
-ID/Client: 16 Msg Type: 3
-ID/Client: 112 Msg Type: 3
-ID/Client: 19 Msg Type: 3
-ID/Client: 79 Msg Type: 3
-ID/Client: 20 Msg Type: 3
-ID/Client: 116 Msg Type: 3
-ID/Client: 85 Msg Type: 3
-ID/Client: 108 Msg Type: 3
-ID/Client: 87 Msg Type: 3
-ID/Client: 13 Msg Type: 3
-ID/Client: 52 Msg Type: 3
-ID/Client: 31 Msg Type: 3
-ID/Client: 2 Msg Type: 3
-ID/Client: 104 Msg Type: 3
-ID/Client: 92 Msg Type: 3
-ID/Client: 33 Msg Type: 3
-ID/Client: 75 Msg Type: 3
-ID/Client: 119 Msg Type: 3
-ID/Client: 3 Msg Type: 3
-ID/Client: 98 Msg Type: 3
-ID/Client: 27 Msg Type: 3
-ID/Client: 127 Msg Type: 3
-ID/Client: 73 Msg Type: 3
-ID/Client: 100 Msg Type: 3
-ID/Client: 126 Msg Type: 3
-ID/Client: 45 Msg Type: 3
-ID/Client: 28 Msg Type: 3
-ID/Client: 35 Msg Type: 3
-ID/Client: 54 Msg Type: 3
-ID/Client: 84 Msg Type: 3
-ID/Client: 1 Msg Type: 3
-ID/Client: 22 Msg Type: 3
-ID/Client: 41 Msg Type: 3
-ID/Client: 71 Msg Type: 3
-ID/Client: 66 Msg Type: 3
-ID/Client: 0 Msg Type: 3
-ID/Client: 91 Msg Type: 3
-ID/Client: 15 Msg Type: 3
-ID/Client: 67 Msg Type: 3
-ID/Client: 117 Msg Type: 3
-ID/Client: 50 Msg Type: 3
-ID/Client: 48 Msg Type: 3
-ID/Client: 4 Msg Type: 3
-ID/Client: 69 Msg Type: 3
-ID/Client: 6 Msg Type: 3
-ID/Client: 40 Msg Type: 3
-ID/Client: 43 Msg Type: 3
-ID/Client: 18 Msg Type: 3
-ID/Client: 49 Msg Type: 3
-ID/Client: 62 Msg Type: 3
-ID/Client: 29 Msg Type: 3
-ID/Client: 114 Msg Type: 3
-ID/Client: 125 Msg Type: 3
-ID/Client: 103 Msg Type: 3
-ID/Client: 97 Msg Type: 3
-ID/Client: 74 Msg Type: 3
-ID/Client: 30 Msg Type: 3
-ID/Client: 99 Msg Type: 3
-ID/Client: 39 Msg Type: 3
-ID/Client: 36 Msg Type: 3
-ID/Client: 101 Msg Type: 3
-ID/Client: 47 Msg Type: 3
-ID/Client: 82 Msg Type: 3
-ID/Client: 60 Msg Type: 3
-ID/Client: 38 Msg Type: 3
-ID/Client: 24 Msg Type: 3
-ID/Client: 120 Msg Type: 3
-ID/Client: 111 Msg Type: 3
-ID/Client: 51 Msg Type: 3
-ID/Client: 102 Msg Type: 3
-ID/Client: 21 Msg Type: 3
-ID/Client: 63 Msg Type: 3
-ID/Client: 8 Msg Type: 3
-ID/Client: 58 Msg Type: 3
-ID/Client: 107 Msg Type: 3
-ID/Client: 55 Msg Type: 3
-ID/Client: 44 Msg Type: 3
-ID/Client: 96 Msg Type: 3
-ID/Client: 5 Msg Type: 3
-ID/Client: 89 Msg Type: 3
-ID/Client: 23 Msg Type: 3
-ID/Client: 65 Msg Type: 3
-ID/Client: 78 Msg Type: 3
-ID/Client: 68 Msg Type: 3
-ID/Client: 94 Msg Type: 3
-ID/Client: 14 Msg Type: 3
-ID/Client: 81 Msg Type: 3
-ID/Client: 123 Msg Type: 3
-ID/Client: 115 Msg Type: 3
+20.253.245.239 126
+20.253.245.239 127
 ID/Client: 106 Msg Type: 3
-ID/Client: 53 Msg Type: 3
-ID/Client: 46 Msg Type: 3
-ID/Client: 70 Msg Type: 3
-ID/Client: 118 Msg Type: 3
-ID/Client: 113 Msg Type: 3
-ID/Client: 76 Msg Type: 3
-ID/Client: 12 Msg Type: 3
-ID/Client: 37 Msg Type: 3
-ID/Client: 88 Msg Type: 3
-ID/Client: 10 Msg Type: 3
-ID/Client: 80 Msg Type: 3
-ID/Client: 34 Msg Type: 3
-ID/Client: 56 Msg Type: 3
-ID/Client: 61 Msg Type: 3
-ID/Client: 90 Msg Type: 3
-ID/Client: 72 Msg Type: 3
-ID/Client: 124 Msg Type: 3
-ID/Client: 25 Msg Type: 3
-ID/Client: 105 Msg Type: 3
-ID/Client: 86 Msg Type: 3
+ID/Client: 16 Msg Type: 3
 ID/Client: 26 Msg Type: 3
+ID/Client: 13 Msg Type: 3
+ID/Client: 97 Msg Type: 3
+ID/Client: 113 Msg Type: 3
+ID/Client: 75 Msg Type: 3
+ID/Client: 42 Msg Type: 3
+ID/Client: 126 Msg Type: 3
+ID/Client: 52 Msg Type: 3
+ID/Client: 50 Msg Type: 3
+ID/Client: 85 Msg Type: 3
+ID/Client: 17 Msg Type: 3
+ID/Client: 66 Msg Type: 3
+ID/Client: 24 Msg Type: 3
+ID/Client: 4 Msg Type: 3
+ID/Client: 3 Msg Type: 3
+ID/Client: 103 Msg Type: 3
+ID/Client: 100 Msg Type: 3
+ID/Client: 98 Msg Type: 3
+ID/Client: 87 Msg Type: 3
+ID/Client: 59 Msg Type: 3
+ID/Client: 127 Msg Type: 3
 ID/Client: 121 Msg Type: 3
-ID/Client: 7 Msg Type: 3
+ID/Client: 22 Msg Type: 3
+ID/Client: 116 Msg Type: 3
+ID/Client: 94 Msg Type: 3
+ID/Client: 78 Msg Type: 3
+ID/Client: 77 Msg Type: 3
+ID/Client: 11 Msg Type: 3
+ID/Client: 108 Msg Type: 3
+ID/Client: 88 Msg Type: 3
+ID/Client: 114 Msg Type: 3
+ID/Client: 20 Msg Type: 3
+ID/Client: 112 Msg Type: 3
+ID/Client: 117 Msg Type: 3
+ID/Client: 48 Msg Type: 3
+ID/Client: 18 Msg Type: 3
+ID/Client: 27 Msg Type: 3
+ID/Client: 83 Msg Type: 3
+ID/Client: 0 Msg Type: 3
+ID/Client: 10 Msg Type: 3
+ID/Client: 93 Msg Type: 3
+ID/Client: 123 Msg Type: 3
+ID/Client: 44 Msg Type: 3
+ID/Client: 5 Msg Type: 3
+ID/Client: 14 Msg Type: 3
+ID/Client: 2 Msg Type: 3
+ID/Client: 31 Msg Type: 3
+ID/Client: 45 Msg Type: 3
+ID/Client: 119 Msg Type: 3
+ID/Client: 125 Msg Type: 3
 ID/Client: 109 Msg Type: 3
 ID/Client: 122 Msg Type: 3
-ID/Client: 110 Msg Type: 3
-ID/Client: 32 Msg Type: 3
-ID/Client: 93 Msg Type: 3
+ID/Client: 29 Msg Type: 3
+ID/Client: 74 Msg Type: 3
+ID/Client: 104 Msg Type: 3
+ID/Client: 82 Msg Type: 3
 ID/Client: 57 Msg Type: 3
-ID/Client: 95 Msg Type: 3
-ID/Client: 9 Msg Type: 3
-ID/Client: 83 Msg Type: 3
+ID/Client: 35 Msg Type: 3
+ID/Client: 40 Msg Type: 3
+ID/Client: 73 Msg Type: 3
+ID/Client: 118 Msg Type: 3
+ID/Client: 39 Msg Type: 3
+ID/Client: 111 Msg Type: 3
+ID/Client: 115 Msg Type: 3
+ID/Client: 60 Msg Type: 3
+ID/Client: 43 Msg Type: 3
+ID/Client: 53 Msg Type: 3
+ID/Client: 6 Msg Type: 3
+ID/Client: 47 Msg Type: 3
+ID/Client: 81 Msg Type: 3
+ID/Client: 124 Msg Type: 3
+ID/Client: 19 Msg Type: 3
+ID/Client: 46 Msg Type: 3
+ID/Client: 61 Msg Type: 3
+ID/Client: 107 Msg Type: 3
+ID/Client: 90 Msg Type: 3
+ID/Client: 58 Msg Type: 3
+ID/Client: 62 Msg Type: 3
+ID/Client: 56 Msg Type: 3
+ID/Client: 67 Msg Type: 3
+ID/Client: 54 Msg Type: 3
+ID/Client: 34 Msg Type: 3
+ID/Client: 99 Msg Type: 3
+ID/Client: 101 Msg Type: 3
+ID/Client: 91 Msg Type: 3
+ID/Client: 49 Msg Type: 3
+ID/Client: 55 Msg Type: 3
+ID/Client: 36 Msg Type: 3
+ID/Client: 25 Msg Type: 3
+ID/Client: 84 Msg Type: 3
+ID/Client: 79 Msg Type: 3
+ID/Client: 28 Msg Type: 3
+ID/Client: 8 Msg Type: 3
+ID/Client: 38 Msg Type: 3
+ID/Client: 7 Msg Type: 3
+ID/Client: 72 Msg Type: 3
+ID/Client: 76 Msg Type: 3
+ID/Client: 1 Msg Type: 3
+ID/Client: 23 Msg Type: 3
+ID/Client: 30 Msg Type: 3
+ID/Client: 12 Msg Type: 3
+ID/Client: 63 Msg Type: 3
+ID/Client: 37 Msg Type: 3
+ID/Client: 89 Msg Type: 3
+ID/Client: 105 Msg Type: 3
+ID/Client: 65 Msg Type: 3
+ID/Client: 86 Msg Type: 3
+ID/Client: 32 Msg Type: 3
+ID/Client: 96 Msg Type: 3
+ID/Client: 21 Msg Type: 3
+ID/Client: 102 Msg Type: 3
+ID/Client: 120 Msg Type: 3
+ID/Client: 80 Msg Type: 3
+ID/Client: 41 Msg Type: 3
+ID/Client: 51 Msg Type: 3
 ID/Client: 64 Msg Type: 3
+ID/Client: 9 Msg Type: 3
+ID/Client: 95 Msg Type: 3
+ID/Client: 92 Msg Type: 3
+ID/Client: 110 Msg Type: 3
+ID/Client: 69 Msg Type: 3
+ID/Client: 70 Msg Type: 3
+ID/Client: 68 Msg Type: 3
+ID/Client: 71 Msg Type: 3
+ID/Client: 33 Msg Type: 3
+ID/Client: 15 Msg Type: 3
+Received last message: 1692822827034
+
+ Running on port 16401
+ID/Client: client3 Msg Type: 1
+ID/Client: client1 Msg Type: 1
+ID/Client: client4 Msg Type: 1
+ID/Client: client2 Msg Type: 1
+ID/Client: -1 Msg Type: 0
+20.59.127.137 0
+ID/Client: -1 Msg Type: 0
+20.59.127.137 1
+ID/Client: -1 Msg Type: 0
+20.59.127.88 2
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.127.137 3
+20.59.127.88 4
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.127.137 5
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.127.55 6
+ID/Client: -1 Msg Type: 0
+20.59.127.55 7
+ID/Client: -1 Msg Type: 0
+20.59.127.88 8
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.127.55 9
+20.59.127.88 10
+20.59.127.72 11
+20.59.127.55 12
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.127.72 13
+ID/Client: -1 Msg Type: 0
+20.59.127.94 14
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.127.72 15
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.127.72 16
+ID/Client: -1 Msg Type: 0
+20.59.126.143 17
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.127.94 18
+20.59.127.94 19
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.127.94 20
+20.59.126.143 21
+20.59.126.143 22
+20.59.126.122 23
+20.59.126.143 24
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.126.122 25
+20.59.126.122 26
+20.59.126.122 27
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.127.182 28
+ID/Client: -1 Msg Type: 0
+20.59.127.182 29
+20.59.126.217 30
+ID/Client: -1 Msg Type: 0
+20.59.127.182 31
+20.59.126.217 32
+20.59.126.217 33
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.126.217 34
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.127.182 35
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.127.46 36
+ID/Client: -1 Msg Type: 0
+20.59.127.46 37
+20.59.127.46 38
+ID/Client: -1 Msg Type: 0
+20.59.127.149 39
+ID/Client: -1 Msg Type: 0
+20.59.127.149 40
+20.59.127.149 41
+ID/Client: -1 Msg Type: 0
+20.59.127.46 42
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.126.175 43
+ID/Client: -1 Msg Type: 0
+20.59.126.175 44
+ID/Client: -1 Msg Type: 0
+20.59.126.175 45
+ID/Client: -1 Msg Type: 0
+20.253.241.75 46
+ID/Client: -1 Msg Type: 0
+20.59.127.149 47
+20.59.126.175 48
+20.253.241.75 49
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.241.75 50
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.241.75 51
+ID/Client: -1 Msg Type: 0
+20.253.241.38 52
+20.253.241.38 53
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.241.38 54
+20.253.241.38 55
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.241.129 56
+20.253.241.129 57
+ID/Client: -1 Msg Type: 0
+20.253.241.162 58
+20.253.241.129 59
+ID/Client: -1 Msg Type: 0
+20.253.241.129 60
+ID/Client: -1 Msg Type: 0
+20.253.241.148 61
+20.253.241.162 62
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.241.148 63
+ID/Client: -1 Msg Type: 0
+20.253.241.148 64
+ID/Client: -1 Msg Type: 0
+20.253.241.162 65
+ID/Client: -1 Msg Type: 0
+20.253.241.162 66
+20.253.241.148 67
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.241.10 68
+20.253.241.10 69
+20.253.241.10 70
+ID/Client: -1 Msg Type: 0
+20.253.241.71 71
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.241.71 72
+ID/Client: -1 Msg Type: 0
+20.253.241.71 73
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.241.10 74
+20.253.241.210 75
+ID/Client: -1 Msg Type: 0
+20.253.241.210 76
+ID/Client: -1 Msg Type: 0
+20.253.241.71 77
+ID/Client: -1 Msg Type: 0
+20.253.241.210 78
+20.253.241.210 79
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.241.52 80
+20.253.241.52 81
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.241.52 82
+20.253.241.52 83
+ID/Client: -1 Msg Type: 0
+20.253.241.203 84
+ID/Client: -1 Msg Type: 0
+20.253.241.203 85
+ID/Client: -1 Msg Type: 0
+20.253.241.203 86
+ID/Client: -1 Msg Type: 0
+20.253.241.203 87
+20.253.241.207 88
+20.253.241.207 89
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.241.207 90
+ID/Client: -1 Msg Type: 0
+20.253.241.201 91
+ID/Client: -1 Msg Type: 0
+20.253.241.201 92
+ID/Client: -1 Msg Type: 0
+20.253.245.34 93
+ID/Client: -1 Msg Type: 0
+20.253.241.201 94
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.241.201 95
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.241.207 96
+20.253.245.34 97
+ID/Client: -1 Msg Type: 0
+20.253.245.134 98
+20.253.245.34 99
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.245.34 100
+20.253.245.134 101
+20.253.245.134 102
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.245.134 103
+ID/Client: -1 Msg Type: 0
+20.253.244.197 104
+20.245.0.77 105
+20.253.244.197 106
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.245.0.77 107
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.244.197 108
+ID/Client: -1 Msg Type: 0
+20.245.0.77 109
+ID/Client: -1 Msg Type: 0
+20.253.244.197 110
+ID/Client: -1 Msg Type: 0
+20.253.245.238 111
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.245.0.77 112
+20.253.245.35 113
+ID/Client: -1 Msg Type: 0
+20.253.245.35 114
+20.253.245.238 115
+ID/Client: -1 Msg Type: 0
+20.253.245.35 116
+ID/Client: -1 Msg Type: 0
+20.253.245.238 117
+20.253.245.35 118
+20.253.245.238 119
+ID/Client: -1 Msg Type: 0
+20.253.245.254 120
+20.253.245.254 121
+ID/Client: -1 Msg Type: 0
+20.253.245.239 122
+20.253.245.254 123
+ID/Client: -1 Msg Type: 0
+20.253.245.239 124
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.245.239 125
+20.253.245.239 126
+ID/Client: -1 Msg Type: 0
+20.253.245.254 127
+ID/Client: 45 Msg Type: 3
+ID/Client: 66 Msg Type: 3
+ID/Client: 59 Msg Type: 3
+ID/Client: 27 Msg Type: 3
+ID/Client: 52 Msg Type: 3
+ID/Client: 16 Msg Type: 3
+ID/Client: 42 Msg Type: 3
+ID/Client: 94 Msg Type: 3
+ID/Client: 15 Msg Type: 3
+ID/Client: 122 Msg Type: 3
+ID/Client: 33 Msg Type: 3
+ID/Client: 113 Msg Type: 3
+ID/Client: 24 Msg Type: 3
+ID/Client: 100 Msg Type: 3
+ID/Client: 125 Msg Type: 3
+ID/Client: 70 Msg Type: 3
+ID/Client: 98 Msg Type: 3
+ID/Client: 26 Msg Type: 3
+ID/Client: 127 Msg Type: 3
+ID/Client: 106 Msg Type: 3
+ID/Client: 114 Msg Type: 3
+ID/Client: 116 Msg Type: 3
+ID/Client: 78 Msg Type: 3
+ID/Client: 68 Msg Type: 3
+ID/Client: 2 Msg Type: 3
+ID/Client: 10 Msg Type: 3
+ID/Client: 30 Msg Type: 3
 ID/Client: 77 Msg Type: 3
-Received last message: 1692751654344
+ID/Client: 19 Msg Type: 3
+ID/Client: 6 Msg Type: 3
+ID/Client: 87 Msg Type: 3
+ID/Client: 67 Msg Type: 3
+ID/Client: 75 Msg Type: 3
+ID/Client: 13 Msg Type: 3
+ID/Client: 41 Msg Type: 3
+ID/Client: 85 Msg Type: 3
+ID/Client: 90 Msg Type: 3
+ID/Client: 9 Msg Type: 3
+ID/Client: 20 Msg Type: 3
+ID/Client: 40 Msg Type: 3
+ID/Client: 103 Msg Type: 3
+ID/Client: 123 Msg Type: 3
+ID/Client: 57 Msg Type: 3
+ID/Client: 97 Msg Type: 3
+ID/Client: 22 Msg Type: 3
+ID/Client: 74 Msg Type: 3
+ID/Client: 18 Msg Type: 3
+ID/Client: 96 Msg Type: 3
+ID/Client: 34 Msg Type: 3
+ID/Client: 80 Msg Type: 3
+ID/Client: 126 Msg Type: 3
+ID/Client: 86 Msg Type: 3
+ID/Client: 48 Msg Type: 3
+ID/Client: 79 Msg Type: 3
+ID/Client: 83 Msg Type: 3
+ID/Client: 88 Msg Type: 3
+ID/Client: 32 Msg Type: 3
+ID/Client: 101 Msg Type: 3
+ID/Client: 50 Msg Type: 3
+ID/Client: 38 Msg Type: 3
+ID/Client: 14 Msg Type: 3
+ID/Client: 73 Msg Type: 3
+ID/Client: 121 Msg Type: 3
+ID/Client: 51 Msg Type: 3
+ID/Client: 63 Msg Type: 3
+ID/Client: 54 Msg Type: 3
+ID/Client: 53 Msg Type: 3
+ID/Client: 62 Msg Type: 3
+ID/Client: 49 Msg Type: 3
+ID/Client: 12 Msg Type: 3
+ID/Client: 39 Msg Type: 3
+ID/Client: 105 Msg Type: 3
+ID/Client: 31 Msg Type: 3
+ID/Client: 0 Msg Type: 3
+ID/Client: 81 Msg Type: 3
+ID/Client: 47 Msg Type: 3
+ID/Client: 3 Msg Type: 3
+ID/Client: 37 Msg Type: 3
+ID/Client: 55 Msg Type: 3
+ID/Client: 29 Msg Type: 3
+ID/Client: 17 Msg Type: 3
+ID/Client: 82 Msg Type: 3
+ID/Client: 28 Msg Type: 3
+ID/Client: 8 Msg Type: 3
+ID/Client: 99 Msg Type: 3
+ID/Client: 119 Msg Type: 3
+ID/Client: 84 Msg Type: 3
+ID/Client: 1 Msg Type: 3
+ID/Client: 60 Msg Type: 3
+ID/Client: 92 Msg Type: 3
+ID/Client: 64 Msg Type: 3
+ID/Client: 25 Msg Type: 3
+ID/Client: 4 Msg Type: 3
+ID/Client: 46 Msg Type: 3
+ID/Client: 65 Msg Type: 3
+ID/Client: 124 Msg Type: 3
+ID/Client: 23 Msg Type: 3
+ID/Client: 58 Msg Type: 3
+ID/Client: 110 Msg Type: 3
+ID/Client: 112 Msg Type: 3
+ID/Client: 72 Msg Type: 3
+ID/Client: 117 Msg Type: 3
+ID/Client: 93 Msg Type: 3
+ID/Client: 69 Msg Type: 3
+ID/Client: 76 Msg Type: 3
+ID/Client: 91 Msg Type: 3
+ID/Client: 35 Msg Type: 3
+ID/Client: 104 Msg Type: 3
+ID/Client: 108 Msg Type: 3
+ID/Client: 21 Msg Type: 3
+ID/Client: 5 Msg Type: 3
+ID/Client: 102 Msg Type: 3
+ID/Client: 71 Msg Type: 3
+ID/Client: 120 Msg Type: 3
+ID/Client: 107 Msg Type: 3
+ID/Client: 61 Msg Type: 3
+ID/Client: 109 Msg Type: 3
+ID/Client: 118 Msg Type: 3
+ID/Client: 56 Msg Type: 3
+ID/Client: 43 Msg Type: 3
+ID/Client: 89 Msg Type: 3
+ID/Client: 95 Msg Type: 3
+ID/Client: 36 Msg Type: 3
+ID/Client: 44 Msg Type: 3
+ID/Client: 11 Msg Type: 3
+ID/Client: 111 Msg Type: 3
+ID/Client: 115 Msg Type: 3
+ID/Client: 7 Msg Type: 3
+Received last message: 1692822895342
+
+ Running on port 16401
+ID/Client: client3 Msg Type: 1
+ID/Client: client1 Msg Type: 1
+ID/Client: client4 Msg Type: 1
+ID/Client: client2 Msg Type: 1
+ID/Client: -1 Msg Type: 0
+20.59.127.137 0
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.127.137 1
+20.59.127.137 2
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.127.88 3
+20.59.127.55 4
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.127.137 5
+ID/Client: -1 Msg Type: 0
+20.59.127.88 6
+ID/Client: -1 Msg Type: 0
+20.59.127.88 7
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.127.55 8
+ID/Client: -1 Msg Type: 0
+20.59.127.88 9
+ID/Client: -1 Msg Type: 0
+20.59.127.55 10
+ID/Client: -1 Msg Type: 0
+20.59.127.55 11
+20.59.127.72 12
+ID/Client: -1 Msg Type: 0
+20.59.127.72 13
+20.59.127.72 14
+ID/Client: -1 Msg Type: 0
+20.59.127.72 15
+ID/Client: -1 Msg Type: 0
+20.59.127.94 16
+20.59.127.94 17
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.126.143 18
+20.59.127.94 19
+20.59.127.94 20
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.126.143 21
+ID/Client: -1 Msg Type: 0
+20.59.126.122 22
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.126.122 23
+ID/Client: -1 Msg Type: 0
+20.59.126.143 24
+ID/Client: -1 Msg Type: 0
+20.59.126.143 25
+20.59.127.182 26
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.126.122 27
+20.59.126.122 28
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.126.217 29
+20.59.126.217 30
+ID/Client: -1 Msg Type: 0
+20.59.127.182 31
+ID/Client: -1 Msg Type: 0
+20.59.127.182 32
+20.59.126.217 33
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.127.182 34
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.126.217 35
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.127.46 36
+20.59.127.46 37
+20.59.127.46 38
+20.59.127.149 39
+ID/Client: -1 Msg Type: 0
+20.59.127.46 40
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.127.149 41
+20.59.126.175 42
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.126.175 43
+20.59.127.149 44
+20.59.126.175 45
+ID/Client: -1 Msg Type: 0
+20.59.127.149 46
+20.253.241.75 47
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.241.75 48
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.241.75 49
+20.253.241.38 50
+ID/Client: -1 Msg Type: 0
+20.253.241.38 51
+20.59.126.175 52
+20.253.241.38 53
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.241.162 54
+ID/Client: -1 Msg Type: 0
+20.253.241.129 55
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.241.38 56
+20.253.241.129 57
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.241.148 58
+ID/Client: -1 Msg Type: 0
+20.253.241.75 59
+ID/Client: -1 Msg Type: 0
+20.253.241.129 60
+20.253.241.129 61
+20.253.241.162 62
+ID/Client: -1 Msg Type: 0
+20.253.241.162 63
+ID/Client: -1 Msg Type: 0
+20.253.241.162 64
+ID/Client: -1 Msg Type: 0
+20.253.241.148 65
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.241.10 66
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.241.10 67
+20.253.241.148 68
+20.253.241.71 69
+ID/Client: -1 Msg Type: 0
+20.253.241.10 70
+20.253.241.71 71
+20.253.241.148 72
+ID/Client: -1 Msg Type: 0
+20.253.241.71 73
+ID/Client: -1 Msg Type: 0
+20.253.241.10 74
+20.253.241.210 75
+ID/Client: -1 Msg Type: 0
+20.253.241.71 76
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.241.210 77
+ID/Client: -1 Msg Type: 0
+20.253.241.210 78
+ID/Client: -1 Msg Type: 0
+20.253.241.52 79
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.241.52 80
+20.253.241.52 81
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.241.203 82
+20.253.241.210 83
+ID/Client: -1 Msg Type: 0
+20.253.241.52 84
+ID/Client: -1 Msg Type: 0
+20.253.241.207 85
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.241.203 86
+ID/Client: -1 Msg Type: 0
+20.253.241.203 87
+20.253.241.203 88
+ID/Client: -1 Msg Type: 0
+20.253.241.207 89
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.245.34 90
+ID/Client: -1 Msg Type: 0
+20.253.241.207 91
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.241.201 92
+ID/Client: -1 Msg Type: 0
+20.253.241.201 93
+20.253.241.201 94
+ID/Client: -1 Msg Type: 0
+20.253.241.207 95
+20.253.245.134 96
+20.253.241.201 97
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.245.34 98
+20.253.245.34 99
+ID/Client: -1 Msg Type: 0
+20.253.245.134 100
+ID/Client: -1 Msg Type: 0
+20.253.245.34 101
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.245.134 102
+20.245.0.77 103
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.245.134 104
+20.253.244.197 105
+ID/Client: -1 Msg Type: 0
+20.253.244.197 106
+ID/Client: -1 Msg Type: 0
+20.245.0.77 107
+20.253.244.197 108
+ID/Client: -1 Msg Type: 0
+20.245.0.77 109
+ID/Client: -1 Msg Type: 0
+20.253.244.197 110
+ID/Client: -1 Msg Type: 0
+20.253.245.238 111
+ID/Client: -1 Msg Type: 0
+20.245.0.77 112
+20.253.245.35 113
+20.253.245.35 114
+ID/Client: -1 Msg Type: 0
+20.253.245.238 115
+ID/Client: -1 Msg Type: 0
+20.253.245.238 116
+ID/Client: -1 Msg Type: 0
+20.253.245.254 117
+ID/Client: -1 Msg Type: 0
+20.253.245.35 118
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.245.238 119
+20.253.245.254 120
+ID/Client: -1 Msg Type: 0
+20.253.245.35 121
+20.253.245.239 122
+20.253.245.239 123
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.245.239 124
+20.253.245.239 125
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.245.254 126
+20.253.245.254 127
+ID/Client: 42 Msg Type: 3
+ID/Client: 15 Msg Type: 3
+ID/Client: 24 Msg Type: 3
+ID/Client: 119 Msg Type: 3
+ID/Client: 13 Msg Type: 3
+ID/Client: 117 Msg Type: 3
+ID/Client: 17 Msg Type: 3
+ID/Client: 118 Msg Type: 3
+ID/Client: 27 Msg Type: 3
+ID/Client: 97 Msg Type: 3
+ID/Client: 16 Msg Type: 3
+ID/Client: 20 Msg Type: 3
+ID/Client: 94 Msg Type: 3
+ID/Client: 100 Msg Type: 3
+ID/Client: 116 Msg Type: 3
+ID/Client: 30 Msg Type: 3
+ID/Client: 83 Msg Type: 3
+ID/Client: 52 Msg Type: 3
+ID/Client: 66 Msg Type: 3
+ID/Client: 102 Msg Type: 3
+ID/Client: 22 Msg Type: 3
+ID/Client: 11 Msg Type: 3
+ID/Client: 103 Msg Type: 3
+ID/Client: 95 Msg Type: 3
+ID/Client: 59 Msg Type: 3
+ID/Client: 46 Msg Type: 3
+ID/Client: 75 Msg Type: 3
+ID/Client: 57 Msg Type: 3
+ID/Client: 126 Msg Type: 3
+ID/Client: 112 Msg Type: 3
+ID/Client: 0 Msg Type: 3
+ID/Client: 10 Msg Type: 3
+ID/Client: 114 Msg Type: 3
+ID/Client: 40 Msg Type: 3
+ID/Client: 122 Msg Type: 3
+ID/Client: 3 Msg Type: 3
+ID/Client: 34 Msg Type: 3
+ID/Client: 9 Msg Type: 3
+ID/Client: 38 Msg Type: 3
+ID/Client: 87 Msg Type: 3
+ID/Client: 28 Msg Type: 3
+ID/Client: 111 Msg Type: 3
+ID/Client: 88 Msg Type: 3
+ID/Client: 124 Msg Type: 3
+ID/Client: 67 Msg Type: 3
+ID/Client: 85 Msg Type: 3
+ID/Client: 73 Msg Type: 3
+ID/Client: 55 Msg Type: 3
+ID/Client: 109 Msg Type: 3
+ID/Client: 62 Msg Type: 3
+ID/Client: 74 Msg Type: 3
+ID/Client: 104 Msg Type: 3
+ID/Client: 106 Msg Type: 3
+ID/Client: 125 Msg Type: 3
+ID/Client: 2 Msg Type: 3
+ID/Client: 4 Msg Type: 3
+ID/Client: 1 Msg Type: 3
+ID/Client: 123 Msg Type: 3
+ID/Client: 80 Msg Type: 3
+ID/Client: 47 Msg Type: 3
+ID/Client: 36 Msg Type: 3
+ID/Client: 70 Msg Type: 3
+ID/Client: 6 Msg Type: 3
+ID/Client: 101 Msg Type: 3
+ID/Client: 61 Msg Type: 3
+ID/Client: 21 Msg Type: 3
+ID/Client: 41 Msg Type: 3
+ID/Client: 45 Msg Type: 3
+ID/Client: 7 Msg Type: 3
+ID/Client: 79 Msg Type: 3
+ID/Client: 76 Msg Type: 3
+ID/Client: 107 Msg Type: 3
+ID/Client: 93 Msg Type: 3
+ID/Client: 44 Msg Type: 3
+ID/Client: 18 Msg Type: 3
+ID/Client: 86 Msg Type: 3
+ID/Client: 99 Msg Type: 3
+ID/Client: 108 Msg Type: 3
+ID/Client: 53 Msg Type: 3
+ID/Client: 14 Msg Type: 3
+ID/Client: 48 Msg Type: 3
+ID/Client: 68 Msg Type: 3
+ID/Client: 121 Msg Type: 3
+ID/Client: 43 Msg Type: 3
+ID/Client: 113 Msg Type: 3
+ID/Client: 35 Msg Type: 3
+ID/Client: 25 Msg Type: 3
+ID/Client: 96 Msg Type: 3
+ID/Client: 56 Msg Type: 3
+ID/Client: 69 Msg Type: 3
+ID/Client: 82 Msg Type: 3
+ID/Client: 78 Msg Type: 3
+ID/Client: 90 Msg Type: 3
+ID/Client: 58 Msg Type: 3
+ID/Client: 29 Msg Type: 3
+ID/Client: 91 Msg Type: 3
+ID/Client: 81 Msg Type: 3
+ID/Client: 127 Msg Type: 3
+ID/Client: 32 Msg Type: 3
+ID/Client: 19 Msg Type: 3
+ID/Client: 39 Msg Type: 3
+ID/Client: 23 Msg Type: 3
+ID/Client: 63 Msg Type: 3
+ID/Client: 71 Msg Type: 3
+ID/Client: 120 Msg Type: 3
+ID/Client: 12 Msg Type: 3
+ID/Client: 5 Msg Type: 3
+ID/Client: 26 Msg Type: 3
+ID/Client: 31 Msg Type: 3
+ID/Client: 89 Msg Type: 3
+ID/Client: 37 Msg Type: 3
+ID/Client: 50 Msg Type: 3
+ID/Client: 77 Msg Type: 3
+ID/Client: 54 Msg Type: 3
+ID/Client: 33 Msg Type: 3
+ID/Client: 64 Msg Type: 3
+ID/Client: 92 Msg Type: 3
+ID/Client: 72 Msg Type: 3
+ID/Client: 110 Msg Type: 3
+ID/Client: 98 Msg Type: 3
+ID/Client: 49 Msg Type: 3
+ID/Client: 115 Msg Type: 3
+ID/Client: 60 Msg Type: 3
+ID/Client: 51 Msg Type: 3
+ID/Client: 105 Msg Type: 3
+ID/Client: 65 Msg Type: 3
+ID/Client: 84 Msg Type: 3
+ID/Client: 8 Msg Type: 3
+Received last message: 1692822964022
+
+ Running on port 16401
+ID/Client: client3 Msg Type: 1
+ID/Client: client1 Msg Type: 1
+ID/Client: client4 Msg Type: 1
+ID/Client: client2 Msg Type: 1
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.127.137 0
+20.59.127.137 1
+ID/Client: -1 Msg Type: 0
+20.59.127.88 2
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.127.55 3
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.127.137 4
+ID/Client: -1 Msg Type: 0
+20.59.127.55 5
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.127.88 6
+20.59.127.137 7
+ID/Client: -1 Msg Type: 0
+20.59.127.88 8
+ID/Client: -1 Msg Type: 0
+20.59.127.88 9
+ID/Client: -1 Msg Type: 0
+20.59.127.55 10
+ID/Client: -1 Msg Type: 0
+20.59.127.55 11
+ID/Client: -1 Msg Type: 0
+20.59.127.72 12
+20.59.127.72 13
+20.59.127.72 14
+ID/Client: -1 Msg Type: 0
+20.59.127.72 15
+ID/Client: -1 Msg Type: 0
+20.59.126.143 16
+ID/Client: -1 Msg Type: 0
+20.59.127.94 17
+ID/Client: -1 Msg Type: 0
+20.59.127.94 18
+20.59.127.94 19
+ID/Client: -1 Msg Type: 0
+20.59.127.94 20
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.126.122 21
+ID/Client: -1 Msg Type: 0
+20.59.126.122 22
+ID/Client: -1 Msg Type: 0
+20.59.126.143 23
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.127.182 24
+20.59.126.143 25
+ID/Client: -1 Msg Type: 0
+20.59.126.143 26
+20.59.126.122 27
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.126.217 28
+ID/Client: -1 Msg Type: 0
+20.59.126.217 29
+ID/Client: -1 Msg Type: 0
+20.59.126.122 30
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.127.182 31
+20.59.127.182 32
+ID/Client: -1 Msg Type: 0
+20.59.127.182 33
+ID/Client: -1 Msg Type: 0
+20.59.127.46 34
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.126.217 35
+20.59.127.46 36
+20.59.126.217 37
+20.59.127.46 38
+20.59.127.46 39
+ID/Client: -1 Msg Type: 0
+20.59.127.149 40
+20.59.127.149 41
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.126.175 42
+ID/Client: -1 Msg Type: 0
+20.59.126.175 43
+20.59.127.149 44
+ID/Client: -1 Msg Type: 0
+20.59.127.149 45
+20.253.241.75 46
+ID/Client: -1 Msg Type: 0
+20.59.126.175 47
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.241.75 48
+ID/Client: -1 Msg Type: 0
+20.253.241.75 49
+ID/Client: -1 Msg Type: 0
+20.253.241.38 50
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.241.38 51
+ID/Client: -1 Msg Type: 0
+20.59.126.175 52
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.241.162 53
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.241.129 54
+20.253.241.148 55
+ID/Client: -1 Msg Type: 0
+20.253.241.38 56
+20.253.241.38 57
+20.253.241.129 58
+ID/Client: -1 Msg Type: 0
+20.253.241.75 59
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.241.129 60
+20.253.241.129 61
+ID/Client: -1 Msg Type: 0
+20.253.241.148 62
+20.253.241.162 63
+20.253.241.162 64
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.241.162 65
+20.253.241.148 66
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.241.10 67
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.241.10 68
+20.253.241.71 69
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.241.71 70
+ID/Client: -1 Msg Type: 0
+20.253.241.10 71
+20.253.241.71 72
+20.253.241.148 73
+ID/Client: -1 Msg Type: 0
+20.253.241.210 74
+ID/Client: -1 Msg Type: 0
+20.253.241.10 75
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.241.210 76
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.241.52 77
+ID/Client: -1 Msg Type: 0
+20.253.241.71 78
+20.253.241.52 79
+20.253.241.52 80
+20.253.241.203 81
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.241.210 82
+20.253.241.52 83
+ID/Client: -1 Msg Type: 0
+20.253.241.203 84
+ID/Client: -1 Msg Type: 0
+20.253.241.203 85
+ID/Client: -1 Msg Type: 0
+20.253.241.207 86
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.241.210 87
+ID/Client: -1 Msg Type: 0
+20.253.241.203 88
+20.253.245.34 89
+20.253.241.201 90
+20.253.241.207 91
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.241.207 92
+ID/Client: -1 Msg Type: 0
+20.253.241.201 93
+ID/Client: -1 Msg Type: 0
+20.253.241.201 94
+20.253.241.201 95
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.245.34 96
+ID/Client: -1 Msg Type: 0
+20.253.245.134 97
+ID/Client: -1 Msg Type: 0
+20.253.241.207 98
+ID/Client: -1 Msg Type: 0
+20.253.245.34 99
+20.253.245.34 100
+ID/Client: -1 Msg Type: 0
+20.253.245.134 101
+ID/Client: -1 Msg Type: 0
+20.253.245.134 102
+ID/Client: -1 Msg Type: 0
+20.253.245.134 103
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.244.197 104
+ID/Client: -1 Msg Type: 0
+20.245.0.77 105
+ID/Client: -1 Msg Type: 0
+20.253.244.197 106
+ID/Client: -1 Msg Type: 0
+20.253.244.197 107
+ID/Client: -1 Msg Type: 0
+20.245.0.77 108
+ID/Client: -1 Msg Type: 0
+20.245.0.77 109
+20.253.245.238 110
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.244.197 111
+ID/Client: -1 Msg Type: 0
+20.253.245.35 112
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.245.238 113
+20.245.0.77 114
+ID/Client: -1 Msg Type: 0
+20.253.245.238 115
+20.253.245.254 116
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.245.35 117
+ID/Client: -1 Msg Type: 0
+20.253.245.35 118
+20.253.245.239 119
+ID/Client: -1 Msg Type: 0
+20.253.245.35 120
+20.253.245.254 121
+20.253.245.238 122
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.245.239 123
+20.253.245.254 124
+20.253.245.239 125
+ID/Client: -1 Msg Type: 0
+20.253.245.239 126
+20.253.245.254 127
+ID/Client: 24 Msg Type: 3
+ID/Client: 59 Msg Type: 3
+ID/Client: 98 Msg Type: 3
+ID/Client: 26 Msg Type: 3
+ID/Client: 28 Msg Type: 3
+ID/Client: 85 Msg Type: 3
+ID/Client: 16 Msg Type: 3
+ID/Client: 52 Msg Type: 3
+ID/Client: 15 Msg Type: 3
+ID/Client: 14 Msg Type: 3
+ID/Client: 39 Msg Type: 3
+ID/Client: 11 Msg Type: 3
+ID/Client: 30 Msg Type: 3
+ID/Client: 62 Msg Type: 3
+ID/Client: 60 Msg Type: 3
+ID/Client: 27 Msg Type: 3
+ID/Client: 100 Msg Type: 3
+ID/Client: 117 Msg Type: 3
+ID/Client: 122 Msg Type: 3
+ID/Client: 1 Msg Type: 3
+ID/Client: 17 Msg Type: 3
+ID/Client: 74 Msg Type: 3
+ID/Client: 119 Msg Type: 3
+ID/Client: 10 Msg Type: 3
+ID/Client: 108 Msg Type: 3
+ID/Client: 93 Msg Type: 3
+ID/Client: 31 Msg Type: 3
+ID/Client: 35 Msg Type: 3
+ID/Client: 92 Msg Type: 3
+ID/Client: 111 Msg Type: 3
+ID/Client: 106 Msg Type: 3
+ID/Client: 116 Msg Type: 3
+ID/Client: 121 Msg Type: 3
+ID/Client: 77 Msg Type: 3
+ID/Client: 40 Msg Type: 3
+ID/Client: 42 Msg Type: 3
+ID/Client: 56 Msg Type: 3
+ID/Client: 112 Msg Type: 3
+ID/Client: 55 Msg Type: 3
+ID/Client: 57 Msg Type: 3
+ID/Client: 102 Msg Type: 3
+ID/Client: 32 Msg Type: 3
+ID/Client: 84 Msg Type: 3
+ID/Client: 82 Msg Type: 3
+ID/Client: 87 Msg Type: 3
+ID/Client: 103 Msg Type: 3
+ID/Client: 109 Msg Type: 3
+ID/Client: 101 Msg Type: 3
+ID/Client: 19 Msg Type: 3
+ID/Client: 95 Msg Type: 3
+ID/Client: 66 Msg Type: 3
+ID/Client: 65 Msg Type: 3
+ID/Client: 23 Msg Type: 3
+ID/Client: 127 Msg Type: 3
+ID/Client: 20 Msg Type: 3
+ID/Client: 79 Msg Type: 3
+ID/Client: 4 Msg Type: 3
+ID/Client: 34 Msg Type: 3
+ID/Client: 46 Msg Type: 3
+ID/Client: 72 Msg Type: 3
+ID/Client: 41 Msg Type: 3
+ID/Client: 73 Msg Type: 3
+ID/Client: 97 Msg Type: 3
+ID/Client: 88 Msg Type: 3
+ID/Client: 114 Msg Type: 3
+ID/Client: 81 Msg Type: 3
+ID/Client: 107 Msg Type: 3
+ID/Client: 54 Msg Type: 3
+ID/Client: 68 Msg Type: 3
+ID/Client: 18 Msg Type: 3
+ID/Client: 58 Msg Type: 3
+ID/Client: 90 Msg Type: 3
+ID/Client: 113 Msg Type: 3
+ID/Client: 0 Msg Type: 3
+ID/Client: 70 Msg Type: 3
+ID/Client: 83 Msg Type: 3
+ID/Client: 12 Msg Type: 3
+ID/Client: 75 Msg Type: 3
+ID/Client: 33 Msg Type: 3
+ID/Client: 118 Msg Type: 3
+ID/Client: 3 Msg Type: 3
+ID/Client: 2 Msg Type: 3
+ID/Client: 25 Msg Type: 3
+ID/Client: 64 Msg Type: 3
+ID/Client: 123 Msg Type: 3
+ID/Client: 99 Msg Type: 3
+ID/Client: 36 Msg Type: 3
+ID/Client: 86 Msg Type: 3
+ID/Client: 96 Msg Type: 3
+ID/Client: 9 Msg Type: 3
+ID/Client: 6 Msg Type: 3
+ID/Client: 50 Msg Type: 3
+ID/Client: 76 Msg Type: 3
+ID/Client: 8 Msg Type: 3
+ID/Client: 80 Msg Type: 3
+ID/Client: 69 Msg Type: 3
+ID/Client: 89 Msg Type: 3
+ID/Client: 53 Msg Type: 3
+ID/Client: 38 Msg Type: 3
+ID/Client: 44 Msg Type: 3
+ID/Client: 13 Msg Type: 3
+ID/Client: 120 Msg Type: 3
+ID/Client: 43 Msg Type: 3
+ID/Client: 47 Msg Type: 3
+ID/Client: 63 Msg Type: 3
+ID/Client: 71 Msg Type: 3
+ID/Client: 94 Msg Type: 3
+ID/Client: 126 Msg Type: 3
+ID/Client: 51 Msg Type: 3
+ID/Client: 67 Msg Type: 3
+ID/Client: 49 Msg Type: 3
+ID/Client: 48 Msg Type: 3
+ID/Client: 29 Msg Type: 3
+ID/Client: 124 Msg Type: 3
+ID/Client: 78 Msg Type: 3
+ID/Client: 22 Msg Type: 3
+ID/Client: 91 Msg Type: 3
+ID/Client: 105 Msg Type: 3
+ID/Client: 104 Msg Type: 3
+ID/Client: 125 Msg Type: 3
+ID/Client: 115 Msg Type: 3
+ID/Client: 37 Msg Type: 3
+ID/Client: 21 Msg Type: 3
+ID/Client: 7 Msg Type: 3
+ID/Client: 61 Msg Type: 3
+ID/Client: 5 Msg Type: 3
+ID/Client: 110 Msg Type: 3
+ID/Client: 45 Msg Type: 3
+Received last message: 1692823032183
+
+ Running on port 16401
+ID/Client: client3 Msg Type: 1
+ID/Client: client4 Msg Type: 1
+ID/Client: client2 Msg Type: 1
+ID/Client: client1 Msg Type: 1
+ID/Client: -1 Msg Type: 0
+20.59.127.137 0
+ID/Client: -1 Msg Type: 0
+20.59.127.137 1
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.127.88 2
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.127.55 3
+ID/Client: -1 Msg Type: 0
+20.59.127.55 4
+20.59.127.137 5
+ID/Client: -1 Msg Type: 0
+20.59.127.137 6
+ID/Client: -1 Msg Type: 0
+20.59.127.88 7
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.127.55 8
+20.59.127.88 9
+20.59.127.72 10
+ID/Client: -1 Msg Type: 0
+20.59.127.55 11
+ID/Client: -1 Msg Type: 0
+20.59.127.88 12
+ID/Client: -1 Msg Type: 0
+20.59.127.72 13
+20.59.127.72 14
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.127.72 15
+ID/Client: -1 Msg Type: 0
+20.59.126.143 16
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.127.94 17
+20.59.126.122 18
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.127.94 19
+ID/Client: -1 Msg Type: 0
+20.59.127.94 20
+ID/Client: -1 Msg Type: 0
+20.59.126.143 21
+ID/Client: -1 Msg Type: 0
+20.59.127.94 22
+20.59.126.122 23
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.127.182 24
+20.59.126.143 25
+ID/Client: -1 Msg Type: 0
+20.59.126.143 26
+ID/Client: -1 Msg Type: 0
+20.59.126.217 27
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.126.217 28
+20.59.126.122 29
+20.59.127.182 30
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.126.122 31
+20.59.127.182 32
+ID/Client: -1 Msg Type: 0
+20.59.126.217 33
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.126.217 34
+ID/Client: -1 Msg Type: 0
+20.59.127.182 35
+ID/Client: -1 Msg Type: 0
+20.59.127.46 36
+20.59.127.46 37
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.127.46 38
+20.59.127.46 39
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.127.149 40
+ID/Client: -1 Msg Type: 0
+20.59.127.149 41
+20.59.127.149 42
+20.59.126.175 43
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.241.75 44
+20.59.126.175 45
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.241.75 46
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.126.175 47
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.241.75 48
+20.59.127.149 49
+20.253.241.38 50
+ID/Client: -1 Msg Type: 0
+20.253.241.38 51
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.241.162 52
+ID/Client: -1 Msg Type: 0
+20.59.126.175 53
+ID/Client: -1 Msg Type: 0
+20.253.241.129 54
+ID/Client: -1 Msg Type: 0
+20.253.241.38 55
+20.253.241.148 56
+20.253.241.38 57
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.241.75 58
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.241.129 59
+ID/Client: -1 Msg Type: 0
+20.253.241.129 60
+20.253.241.129 61
+20.253.241.148 62
+20.253.241.162 63
+ID/Client: -1 Msg Type: 0
+20.253.241.162 64
+20.253.241.162 65
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.241.148 66
+20.253.241.71 67
+20.253.241.71 68
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.241.71 69
+20.253.241.10 70
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.241.10 71
+ID/Client: -1 Msg Type: 0
+20.253.241.210 72
+20.253.241.148 73
+ID/Client: -1 Msg Type: 0
+20.253.241.10 74
+20.253.241.10 75
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.241.52 76
+ID/Client: -1 Msg Type: 0
+20.253.241.210 77
+20.253.241.52 78
+ID/Client: -1 Msg Type: 0
+20.253.241.203 79
+ID/Client: -1 Msg Type: 0
+20.253.241.52 80
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.241.71 81
+20.253.241.52 82
+ID/Client: -1 Msg Type: 0
+20.253.241.203 83
+20.253.241.210 84
+ID/Client: -1 Msg Type: 0
+20.253.241.210 85
+ID/Client: -1 Msg Type: 0
+20.253.241.207 86
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.245.34 87
+ID/Client: -1 Msg Type: 0
+20.253.241.203 88
+20.253.241.203 89
+ID/Client: -1 Msg Type: 0
+20.253.241.201 90
+ID/Client: -1 Msg Type: 0
+20.253.241.207 91
+ID/Client: -1 Msg Type: 0
+20.253.241.201 92
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.241.207 93
+20.253.245.134 94
+ID/Client: -1 Msg Type: 0
+20.253.241.201 95
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.241.207 96
+ID/Client: -1 Msg Type: 0
+20.253.241.201 97
+20.253.245.34 98
+20.253.245.34 99
+ID/Client: -1 Msg Type: 0
+20.253.245.34 100
+20.253.245.134 101
+ID/Client: -1 Msg Type: 0
+20.253.245.134 102
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.245.134 103
+ID/Client: -1 Msg Type: 0
+20.253.244.197 104
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.244.197 105
+20.245.0.77 106
+ID/Client: -1 Msg Type: 0
+20.245.0.77 107
+ID/Client: -1 Msg Type: 0
+20.245.0.77 108
+20.253.244.197 109
+ID/Client: -1 Msg Type: 0
+20.253.245.238 110
+ID/Client: -1 Msg Type: 0
+20.253.245.238 111
+20.253.244.197 112
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.245.35 113
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.245.238 114
+ID/Client: -1 Msg Type: 0
+20.245.0.77 115
+20.253.245.35 116
+20.253.245.254 117
+ID/Client: -1 Msg Type: 0
+20.253.245.239 118
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.245.35 119
+ID/Client: -1 Msg Type: 0
+20.253.245.35 120
+20.253.245.239 121
+20.253.245.254 122
+ID/Client: -1 Msg Type: 0
+20.253.245.238 123
+ID/Client: -1 Msg Type: 0
+20.253.245.254 124
+20.253.245.239 125
+20.253.245.239 126
+ID/Client: -1 Msg Type: 0
+20.253.245.254 127
+ID/Client: 116 Msg Type: 3
+ID/Client: 125 Msg Type: 3
+ID/Client: 85 Msg Type: 3
+ID/Client: 31 Msg Type: 3
+ID/Client: 14 Msg Type: 3
+ID/Client: 117 Msg Type: 3
+ID/Client: 100 Msg Type: 3
+ID/Client: 25 Msg Type: 3
+ID/Client: 42 Msg Type: 3
+ID/Client: 111 Msg Type: 3
+ID/Client: 2 Msg Type: 3
+ID/Client: 30 Msg Type: 3
+ID/Client: 13 Msg Type: 3
+ID/Client: 45 Msg Type: 3
+ID/Client: 24 Msg Type: 3
+ID/Client: 16 Msg Type: 3
+ID/Client: 98 Msg Type: 3
+ID/Client: 95 Msg Type: 3
+ID/Client: 78 Msg Type: 3
+ID/Client: 106 Msg Type: 3
+ID/Client: 17 Msg Type: 3
+ID/Client: 87 Msg Type: 3
+ID/Client: 60 Msg Type: 3
+ID/Client: 28 Msg Type: 3
+ID/Client: 93 Msg Type: 3
+ID/Client: 121 Msg Type: 3
+ID/Client: 27 Msg Type: 3
+ID/Client: 22 Msg Type: 3
+ID/Client: 57 Msg Type: 3
+ID/Client: 92 Msg Type: 3
+ID/Client: 50 Msg Type: 3
+ID/Client: 83 Msg Type: 3
+ID/Client: 44 Msg Type: 3
+ID/Client: 122 Msg Type: 3
+ID/Client: 70 Msg Type: 3
+ID/Client: 4 Msg Type: 3
+ID/Client: 1 Msg Type: 3
+ID/Client: 118 Msg Type: 3
+ID/Client: 11 Msg Type: 3
+ID/Client: 79 Msg Type: 3
+ID/Client: 91 Msg Type: 3
+ID/Client: 34 Msg Type: 3
+ID/Client: 119 Msg Type: 3
+ID/Client: 12 Msg Type: 3
+ID/Client: 18 Msg Type: 3
+ID/Client: 75 Msg Type: 3
+ID/Client: 68 Msg Type: 3
+ID/Client: 62 Msg Type: 3
+ID/Client: 35 Msg Type: 3
+ID/Client: 54 Msg Type: 3
+ID/Client: 82 Msg Type: 3
+ID/Client: 114 Msg Type: 3
+ID/Client: 97 Msg Type: 3
+ID/Client: 94 Msg Type: 3
+ID/Client: 127 Msg Type: 3
+ID/Client: 33 Msg Type: 3
+ID/Client: 59 Msg Type: 3
+ID/Client: 6 Msg Type: 3
+ID/Client: 126 Msg Type: 3
+ID/Client: 88 Msg Type: 3
+ID/Client: 3 Msg Type: 3
+ID/Client: 58 Msg Type: 3
+ID/Client: 0 Msg Type: 3
+ID/Client: 101 Msg Type: 3
+ID/Client: 89 Msg Type: 3
+ID/Client: 67 Msg Type: 3
+ID/Client: 49 Msg Type: 3
+ID/Client: 112 Msg Type: 3
+ID/Client: 64 Msg Type: 3
+ID/Client: 41 Msg Type: 3
+ID/Client: 38 Msg Type: 3
+ID/Client: 66 Msg Type: 3
+ID/Client: 21 Msg Type: 3
+ID/Client: 84 Msg Type: 3
+ID/Client: 7 Msg Type: 3
+ID/Client: 69 Msg Type: 3
+ID/Client: 105 Msg Type: 3
+ID/Client: 104 Msg Type: 3
+ID/Client: 108 Msg Type: 3
+ID/Client: 19 Msg Type: 3
+ID/Client: 71 Msg Type: 3
+ID/Client: 73 Msg Type: 3
+ID/Client: 48 Msg Type: 3
+ID/Client: 52 Msg Type: 3
+ID/Client: 107 Msg Type: 3
+ID/Client: 36 Msg Type: 3
+ID/Client: 26 Msg Type: 3
+ID/Client: 9 Msg Type: 3
+ID/Client: 96 Msg Type: 3
+ID/Client: 15 Msg Type: 3
+ID/Client: 32 Msg Type: 3
+ID/Client: 90 Msg Type: 3
+ID/Client: 65 Msg Type: 3
+ID/Client: 76 Msg Type: 3
+ID/Client: 102 Msg Type: 3
+ID/Client: 115 Msg Type: 3
+ID/Client: 20 Msg Type: 3
+ID/Client: 23 Msg Type: 3
+ID/Client: 53 Msg Type: 3
+ID/Client: 47 Msg Type: 3
+ID/Client: 113 Msg Type: 3
+ID/Client: 61 Msg Type: 3
+ID/Client: 51 Msg Type: 3
+ID/Client: 29 Msg Type: 3
+ID/Client: 81 Msg Type: 3
+ID/Client: 5 Msg Type: 3
+ID/Client: 124 Msg Type: 3
+ID/Client: 10 Msg Type: 3
+ID/Client: 120 Msg Type: 3
+ID/Client: 99 Msg Type: 3
+ID/Client: 77 Msg Type: 3
+ID/Client: 8 Msg Type: 3
+ID/Client: 123 Msg Type: 3
+ID/Client: 74 Msg Type: 3
+ID/Client: 39 Msg Type: 3
+ID/Client: 46 Msg Type: 3
+ID/Client: 72 Msg Type: 3
+ID/Client: 40 Msg Type: 3
+ID/Client: 110 Msg Type: 3
+ID/Client: 56 Msg Type: 3
+ID/Client: 43 Msg Type: 3
+ID/Client: 37 Msg Type: 3
+ID/Client: 109 Msg Type: 3
+ID/Client: 86 Msg Type: 3
+ID/Client: 63 Msg Type: 3
+ID/Client: 80 Msg Type: 3
+ID/Client: 55 Msg Type: 3
+ID/Client: 103 Msg Type: 3
+Received last message: 1692823100574
+
+ Running on port 16401
+ID/Client: client3 Msg Type: 1
+ID/Client: client1 Msg Type: 1
+ID/Client: client4 Msg Type: 1
+ID/Client: client2 Msg Type: 1
+ID/Client: -1 Msg Type: 0
+20.59.127.137 0
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.127.137 1
+ID/Client: -1 Msg Type: 0
+20.59.127.55 2
+20.59.127.88 3
+ID/Client: -1 Msg Type: 0
+20.59.127.137 4
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.127.55 5
+ID/Client: -1 Msg Type: 0
+20.59.127.137 6
+ID/Client: -1 Msg Type: 0
+20.59.127.88 7
+ID/Client: -1 Msg Type: 0
+20.59.127.88 8
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.127.72 9
+20.59.127.55 10
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.127.55 11
+20.59.127.72 12
+20.59.127.88 13
+ID/Client: -1 Msg Type: 0
+20.59.127.72 14
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.127.94 15
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.126.143 16
+20.59.127.94 17
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.126.122 18
+ID/Client: -1 Msg Type: 0
+20.59.127.94 19
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.127.182 20
+ID/Client: -1 Msg Type: 0
+20.59.127.94 21
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.126.143 22
+ID/Client: -1 Msg Type: 0
+20.59.127.72 23
+ID/Client: -1 Msg Type: 0
+20.59.126.143 24
+20.59.126.143 25
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.126.122 26
+20.59.126.217 27
+20.59.126.217 28
+ID/Client: -1 Msg Type: 0
+20.59.127.182 29
+20.59.126.122 30
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.126.122 31
+ID/Client: -1 Msg Type: 0
+20.59.126.217 32
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.127.182 33
+20.59.126.217 34
+ID/Client: -1 Msg Type: 0
+20.59.127.46 35
+20.59.127.182 36
+20.59.127.46 37
+ID/Client: -1 Msg Type: 0
+20.59.127.46 38
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.127.46 39
+ID/Client: -1 Msg Type: 0
+20.59.126.175 40
+20.59.127.149 41
+ID/Client: -1 Msg Type: 0
+20.253.241.75 42
+20.59.127.149 43
+ID/Client: -1 Msg Type: 0
+20.253.241.75 44
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.126.175 45
+20.253.241.75 46
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.127.149 47
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.127.149 48
+20.253.241.162 49
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.241.38 50
+ID/Client: -1 Msg Type: 0
+20.253.241.38 51
+ID/Client: -1 Msg Type: 0
+20.59.126.175 52
+ID/Client: -1 Msg Type: 0
+20.59.126.175 53
+20.253.241.129 54
+20.253.241.38 55
+ID/Client: -1 Msg Type: 0
+20.253.241.75 56
+ID/Client: -1 Msg Type: 0
+20.253.241.148 57
+ID/Client: -1 Msg Type: 0
+20.253.241.129 58
+20.253.241.129 59
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.241.162 60
+ID/Client: -1 Msg Type: 0
+20.253.241.38 61
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.241.162 62
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.241.162 63
+ID/Client: -1 Msg Type: 0
+20.253.241.148 64
+20.253.241.148 65
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.241.129 66
+20.253.241.71 67
+20.253.241.71 68
+ID/Client: -1 Msg Type: 0
+20.253.241.71 69
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.241.10 70
+20.253.241.210 71
+20.253.241.10 72
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.241.10 73
+ID/Client: -1 Msg Type: 0
+20.253.241.148 74
+ID/Client: -1 Msg Type: 0
+20.253.241.210 75
+20.253.241.10 76
+20.253.241.52 77
+20.253.241.203 78
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.241.52 79
+ID/Client: -1 Msg Type: 0
+20.253.241.71 80
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.241.52 81
+20.253.241.52 82
+ID/Client: -1 Msg Type: 0
+20.253.241.207 83
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.241.210 84
+20.253.245.34 85
+20.253.241.210 86
+ID/Client: -1 Msg Type: 0
+20.253.241.203 87
+20.253.241.201 88
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.241.203 89
+20.253.241.201 90
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.245.134 91
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.241.207 92
+ID/Client: -1 Msg Type: 0
+20.253.241.203 93
+20.253.241.201 94
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.241.207 95
+20.253.241.201 96
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.241.207 97
+20.253.245.34 98
+20.253.245.34 99
+ID/Client: -1 Msg Type: 0
+20.253.245.134 100
+ID/Client: -1 Msg Type: 0
+20.253.245.134 101
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.245.134 102
+ID/Client: -1 Msg Type: 0
+20.253.245.34 103
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.244.197 104
+20.253.244.197 105
+ID/Client: -1 Msg Type: 0
+20.245.0.77 106
+20.245.0.77 107
+ID/Client: -1 Msg Type: 0
+20.253.245.238 108
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.245.0.77 109
+ID/Client: -1 Msg Type: 0
+20.253.244.197 110
+ID/Client: -1 Msg Type: 0
+20.253.244.197 111
+20.253.245.238 112
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.245.35 113
+ID/Client: -1 Msg Type: 0
+20.253.245.35 114
+20.253.245.254 115
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.245.35 116
+20.253.245.239 117
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.245.0.77 118
+ID/Client: -1 Msg Type: 0
+20.253.245.35 119
+20.253.245.238 120
+20.253.245.239 121
+ID/Client: -1 Msg Type: 0
+20.253.245.254 122
+20.253.245.254 123
+ID/Client: -1 Msg Type: 0
+20.253.245.238 124
+ID/Client: -1 Msg Type: 0
+20.253.245.239 125
+20.253.245.254 126
+20.253.245.239 127
+ID/Client: 24 Msg Type: 3
+ID/Client: 98 Msg Type: 3
+ID/Client: 63 Msg Type: 3
+ID/Client: 26 Msg Type: 3
+ID/Client: 14 Msg Type: 3
+ID/Client: 114 Msg Type: 3
+ID/Client: 73 Msg Type: 3
+ID/Client: 46 Msg Type: 3
+ID/Client: 117 Msg Type: 3
+ID/Client: 101 Msg Type: 3
+ID/Client: 106 Msg Type: 3
+ID/Client: 99 Msg Type: 3
+ID/Client: 61 Msg Type: 3
+ID/Client: 95 Msg Type: 3
+ID/Client: 15 Msg Type: 3
+ID/Client: 75 Msg Type: 3
+ID/Client: 8 Msg Type: 3
+ID/Client: 11 Msg Type: 3
+ID/Client: 28 Msg Type: 3
+ID/Client: 22 Msg Type: 3
+ID/Client: 69 Msg Type: 3
+ID/Client: 78 Msg Type: 3
+ID/Client: 123 Msg Type: 3
+ID/Client: 104 Msg Type: 3
+ID/Client: 94 Msg Type: 3
+ID/Client: 0 Msg Type: 3
+ID/Client: 17 Msg Type: 3
+ID/Client: 116 Msg Type: 3
+ID/Client: 118 Msg Type: 3
+ID/Client: 81 Msg Type: 3
+ID/Client: 74 Msg Type: 3
+ID/Client: 45 Msg Type: 3
+ID/Client: 127 Msg Type: 3
+ID/Client: 27 Msg Type: 3
+ID/Client: 113 Msg Type: 3
+ID/Client: 88 Msg Type: 3
+ID/Client: 52 Msg Type: 3
+ID/Client: 100 Msg Type: 3
+ID/Client: 84 Msg Type: 3
+ID/Client: 57 Msg Type: 3
+ID/Client: 103 Msg Type: 3
+ID/Client: 54 Msg Type: 3
+ID/Client: 42 Msg Type: 3
+ID/Client: 121 Msg Type: 3
+ID/Client: 60 Msg Type: 3
+ID/Client: 70 Msg Type: 3
+ID/Client: 126 Msg Type: 3
+ID/Client: 90 Msg Type: 3
+ID/Client: 1 Msg Type: 3
+ID/Client: 109 Msg Type: 3
+ID/Client: 82 Msg Type: 3
+ID/Client: 35 Msg Type: 3
+ID/Client: 13 Msg Type: 3
+ID/Client: 43 Msg Type: 3
+ID/Client: 115 Msg Type: 3
+ID/Client: 86 Msg Type: 3
+ID/Client: 93 Msg Type: 3
+ID/Client: 71 Msg Type: 3
+ID/Client: 79 Msg Type: 3
+ID/Client: 56 Msg Type: 3
+ID/Client: 33 Msg Type: 3
+ID/Client: 30 Msg Type: 3
+ID/Client: 4 Msg Type: 3
+ID/Client: 68 Msg Type: 3
+ID/Client: 21 Msg Type: 3
+ID/Client: 50 Msg Type: 3
+ID/Client: 31 Msg Type: 3
+ID/Client: 91 Msg Type: 3
+ID/Client: 7 Msg Type: 3
+ID/Client: 105 Msg Type: 3
+ID/Client: 85 Msg Type: 3
+ID/Client: 38 Msg Type: 3
+ID/Client: 40 Msg Type: 3
+ID/Client: 5 Msg Type: 3
+ID/Client: 111 Msg Type: 3
+ID/Client: 37 Msg Type: 3
+ID/Client: 20 Msg Type: 3
+ID/Client: 12 Msg Type: 3
+ID/Client: 119 Msg Type: 3
+ID/Client: 67 Msg Type: 3
+ID/Client: 59 Msg Type: 3
+ID/Client: 122 Msg Type: 3
+ID/Client: 3 Msg Type: 3
+ID/Client: 107 Msg Type: 3
+ID/Client: 16 Msg Type: 3
+ID/Client: 64 Msg Type: 3
+ID/Client: 125 Msg Type: 3
+ID/Client: 18 Msg Type: 3
+ID/Client: 25 Msg Type: 3
+ID/Client: 96 Msg Type: 3
+ID/Client: 87 Msg Type: 3
+ID/Client: 92 Msg Type: 3
+ID/Client: 89 Msg Type: 3
+ID/Client: 47 Msg Type: 3
+ID/Client: 102 Msg Type: 3
+ID/Client: 39 Msg Type: 3
+ID/Client: 66 Msg Type: 3
+ID/Client: 41 Msg Type: 3
+ID/Client: 76 Msg Type: 3
+ID/Client: 53 Msg Type: 3
+ID/Client: 110 Msg Type: 3
+ID/Client: 6 Msg Type: 3
+ID/Client: 32 Msg Type: 3
+ID/Client: 83 Msg Type: 3
+ID/Client: 10 Msg Type: 3
+ID/Client: 9 Msg Type: 3
+ID/Client: 44 Msg Type: 3
+ID/Client: 48 Msg Type: 3
+ID/Client: 97 Msg Type: 3
+ID/Client: 29 Msg Type: 3
+ID/Client: 120 Msg Type: 3
+ID/Client: 2 Msg Type: 3
+ID/Client: 112 Msg Type: 3
+ID/Client: 77 Msg Type: 3
+ID/Client: 23 Msg Type: 3
+ID/Client: 36 Msg Type: 3
+ID/Client: 58 Msg Type: 3
+ID/Client: 51 Msg Type: 3
+ID/Client: 55 Msg Type: 3
+ID/Client: 19 Msg Type: 3
+ID/Client: 34 Msg Type: 3
+ID/Client: 80 Msg Type: 3
+ID/Client: 65 Msg Type: 3
+ID/Client: 49 Msg Type: 3
+ID/Client: 72 Msg Type: 3
+ID/Client: 62 Msg Type: 3
+ID/Client: 108 Msg Type: 3
+ID/Client: 124 Msg Type: 3
+Received last message: 1692823155782
+
+ Running on port 16401
+ID/Client: client3 Msg Type: 1
+ID/Client: client4 Msg Type: 1
+ID/Client: client1 Msg Type: 1
+ID/Client: client2 Msg Type: 1
+ID/Client: -1 Msg Type: 0
+20.59.127.137 0
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.127.88 1
+ID/Client: -1 Msg Type: 0
+20.59.127.137 2
+ID/Client: -1 Msg Type: 0
+20.59.127.137 3
+20.59.127.55 4
+20.59.127.137 5
+20.59.127.55 6
+ID/Client: -1 Msg Type: 0
+20.59.127.72 7
+ID/Client: -1 Msg Type: 0
+20.59.127.88 8
+ID/Client: -1 Msg Type: 0
+20.59.127.72 9
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.127.94 10
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.127.88 11
+ID/Client: -1 Msg Type: 0
+20.59.126.143 12
+ID/Client: -1 Msg Type: 0
+20.59.127.55 13
+20.59.127.88 14
+ID/Client: -1 Msg Type: 0
+20.59.127.55 15
+ID/Client: -1 Msg Type: 0
+20.59.127.94 16
+20.59.127.72 17
+ID/Client: -1 Msg Type: 0
+20.59.126.122 18
+ID/Client: -1 Msg Type: 0
+20.59.127.182 19
+ID/Client: -1 Msg Type: 0
+20.59.127.94 20
+20.59.127.94 21
+ID/Client: -1 Msg Type: 0
+20.59.127.72 22
+ID/Client: -1 Msg Type: 0
+20.59.126.143 23
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.126.143 24
+20.59.126.217 25
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.126.143 26
+20.59.126.122 27
+ID/Client: -1 Msg Type: 0
+20.59.127.182 28
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.126.122 29
+20.59.126.217 30
+ID/Client: -1 Msg Type: 0
+20.59.126.122 31
+ID/Client: -1 Msg Type: 0
+20.59.126.217 32
+ID/Client: -1 Msg Type: 0
+20.59.126.217 33
+20.59.127.182 34
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.127.46 35
+20.59.127.46 36
+ID/Client: -1 Msg Type: 0
+20.59.127.46 37
+ID/Client: -1 Msg Type: 0
+20.59.127.46 38
+ID/Client: -1 Msg Type: 0
+20.59.127.149 39
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.126.175 40
+20.253.241.75 41
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.241.75 42
+ID/Client: -1 Msg Type: 0
+20.253.241.75 43
+ID/Client: -1 Msg Type: 0
+20.59.127.182 44
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.126.175 45
+ID/Client: -1 Msg Type: 0
+20.59.127.149 46
+ID/Client: -1 Msg Type: 0
+20.253.241.162 47
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.127.149 48
+ID/Client: -1 Msg Type: 0
+20.253.241.38 49
+20.253.241.38 50
+20.59.127.149 51
+ID/Client: -1 Msg Type: 0
+20.59.126.175 52
+20.253.241.129 53
+ID/Client: -1 Msg Type: 0
+20.59.126.175 54
+ID/Client: -1 Msg Type: 0
+20.253.241.75 55
+ID/Client: -1 Msg Type: 0
+20.253.241.38 56
+ID/Client: -1 Msg Type: 0
+20.253.241.148 57
+ID/Client: -1 Msg Type: 0
+20.253.241.129 58
+ID/Client: -1 Msg Type: 0
+20.253.241.162 59
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.241.129 60
+ID/Client: -1 Msg Type: 0
+20.253.241.38 61
+20.253.241.148 62
+20.253.241.148 63
+20.253.241.129 64
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.241.162 65
+20.253.241.162 66
+ID/Client: -1 Msg Type: 0
+20.253.241.71 67
+20.253.241.210 68
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.241.10 69
+20.253.241.10 70
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.241.10 71
+20.253.241.148 72
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.241.71 73
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.241.10 74
+20.253.241.210 75
+ID/Client: -1 Msg Type: 0
+20.253.241.71 76
+ID/Client: -1 Msg Type: 0
+20.253.241.203 77
+ID/Client: -1 Msg Type: 0
+20.253.241.52 78
+20.253.241.52 79
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.241.71 80
+20.253.241.52 81
+ID/Client: -1 Msg Type: 0
+20.253.241.210 82
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.241.52 83
+ID/Client: -1 Msg Type: 0
+20.253.241.207 84
+20.253.241.210 85
+20.253.245.34 86
+ID/Client: -1 Msg Type: 0
+20.253.241.201 87
+ID/Client: -1 Msg Type: 0
+20.253.241.203 88
+20.253.241.203 89
+ID/Client: -1 Msg Type: 0
+20.253.245.134 90
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.241.201 91
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.241.201 92
+20.253.241.207 93
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.241.203 94
+ID/Client: -1 Msg Type: 0
+20.253.241.207 95
+ID/Client: -1 Msg Type: 0
+20.253.241.207 96
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.241.201 97
+20.253.245.134 98
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.245.34 99
+20.253.245.134 100
+ID/Client: -1 Msg Type: 0
+20.253.245.134 101
+20.253.245.34 102
+ID/Client: -1 Msg Type: 0
+20.253.245.34 103
+ID/Client: -1 Msg Type: 0
+20.253.244.197 104
+ID/Client: -1 Msg Type: 0
+20.245.0.77 105
+ID/Client: -1 Msg Type: 0
+20.245.0.77 106
+ID/Client: -1 Msg Type: 0
+20.253.244.197 107
+20.253.244.197 108
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.245.0.77 109
+20.253.244.197 110
+20.253.245.238 111
+20.253.245.35 112
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.245.238 113
+ID/Client: -1 Msg Type: 0
+20.253.245.254 114
+ID/Client: -1 Msg Type: 0
+20.253.245.239 115
+ID/Client: -1 Msg Type: 0
+20.245.0.77 116
+20.253.245.35 117
+ID/Client: -1 Msg Type: 0
+20.253.245.35 118
+ID/Client: -1 Msg Type: 0
+20.253.245.35 119
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.245.254 120
+ID/Client: -1 Msg Type: 0
+20.253.245.239 121
+20.253.245.254 122
+20.253.245.239 123
+ID/Client: -1 Msg Type: 0
+20.253.245.238 124
+ID/Client: -1 Msg Type: 0
+20.253.245.238 125
+20.253.245.239 126
+20.253.245.254 127
+ID/Client: 6 Msg Type: 3
+ID/Client: 100 Msg Type: 3
+ID/Client: 26 Msg Type: 3
+ID/Client: 85 Msg Type: 3
+ID/Client: 102 Msg Type: 3
+ID/Client: 116 Msg Type: 3
+ID/Client: 68 Msg Type: 3
+ID/Client: 65 Msg Type: 3
+ID/Client: 52 Msg Type: 3
+ID/Client: 38 Msg Type: 3
+ID/Client: 40 Msg Type: 3
+ID/Client: 11 Msg Type: 3
+ID/Client: 78 Msg Type: 3
+ID/Client: 59 Msg Type: 3
+ID/Client: 113 Msg Type: 3
+ID/Client: 42 Msg Type: 3
+ID/Client: 117 Msg Type: 3
+ID/Client: 98 Msg Type: 3
+ID/Client: 37 Msg Type: 3
+ID/Client: 1 Msg Type: 3
+ID/Client: 16 Msg Type: 3
+ID/Client: 55 Msg Type: 3
+ID/Client: 99 Msg Type: 3
+ID/Client: 12 Msg Type: 3
+ID/Client: 64 Msg Type: 3
+ID/Client: 39 Msg Type: 3
+ID/Client: 86 Msg Type: 3
+ID/Client: 122 Msg Type: 3
+ID/Client: 69 Msg Type: 3
+ID/Client: 125 Msg Type: 3
+ID/Client: 60 Msg Type: 3
+ID/Client: 126 Msg Type: 3
+ID/Client: 57 Msg Type: 3
+ID/Client: 44 Msg Type: 3
+ID/Client: 8 Msg Type: 3
+ID/Client: 106 Msg Type: 3
+ID/Client: 28 Msg Type: 3
+ID/Client: 121 Msg Type: 3
+ID/Client: 70 Msg Type: 3
+ID/Client: 49 Msg Type: 3
+ID/Client: 80 Msg Type: 3
+ID/Client: 111 Msg Type: 3
+ID/Client: 81 Msg Type: 3
+ID/Client: 30 Msg Type: 3
+ID/Client: 127 Msg Type: 3
+ID/Client: 18 Msg Type: 3
+ID/Client: 76 Msg Type: 3
+ID/Client: 77 Msg Type: 3
+ID/Client: 54 Msg Type: 3
+ID/Client: 83 Msg Type: 3
+ID/Client: 10 Msg Type: 3
+ID/Client: 31 Msg Type: 3
+ID/Client: 88 Msg Type: 3
+ID/Client: 15 Msg Type: 3
+ID/Client: 22 Msg Type: 3
+ID/Client: 75 Msg Type: 3
+ID/Client: 114 Msg Type: 3
+ID/Client: 101 Msg Type: 3
+ID/Client: 82 Msg Type: 3
+ID/Client: 17 Msg Type: 3
+ID/Client: 50 Msg Type: 3
+ID/Client: 71 Msg Type: 3
+ID/Client: 20 Msg Type: 3
+ID/Client: 48 Msg Type: 3
+ID/Client: 62 Msg Type: 3
+ID/Client: 119 Msg Type: 3
+ID/Client: 95 Msg Type: 3
+ID/Client: 120 Msg Type: 3
+ID/Client: 53 Msg Type: 3
+ID/Client: 23 Msg Type: 3
+ID/Client: 56 Msg Type: 3
+ID/Client: 0 Msg Type: 3
+ID/Client: 9 Msg Type: 3
+ID/Client: 32 Msg Type: 3
+ID/Client: 96 Msg Type: 3
+ID/Client: 92 Msg Type: 3
+ID/Client: 3 Msg Type: 3
+ID/Client: 123 Msg Type: 3
+ID/Client: 35 Msg Type: 3
+ID/Client: 46 Msg Type: 3
+ID/Client: 118 Msg Type: 3
+ID/Client: 112 Msg Type: 3
+ID/Client: 21 Msg Type: 3
+ID/Client: 109 Msg Type: 3
+ID/Client: 67 Msg Type: 3
+ID/Client: 2 Msg Type: 3
+ID/Client: 84 Msg Type: 3
+ID/Client: 51 Msg Type: 3
+ID/Client: 34 Msg Type: 3
+ID/Client: 93 Msg Type: 3
+ID/Client: 90 Msg Type: 3
+ID/Client: 29 Msg Type: 3
+ID/Client: 36 Msg Type: 3
+ID/Client: 63 Msg Type: 3
+ID/Client: 45 Msg Type: 3
+ID/Client: 73 Msg Type: 3
+ID/Client: 7 Msg Type: 3
+ID/Client: 89 Msg Type: 3
+ID/Client: 58 Msg Type: 3
+ID/Client: 115 Msg Type: 3
+ID/Client: 4 Msg Type: 3
+ID/Client: 108 Msg Type: 3
+ID/Client: 74 Msg Type: 3
+ID/Client: 61 Msg Type: 3
+ID/Client: 33 Msg Type: 3
+ID/Client: 97 Msg Type: 3
+ID/Client: 94 Msg Type: 3
+ID/Client: 105 Msg Type: 3
+ID/Client: 5 Msg Type: 3
+ID/Client: 13 Msg Type: 3
+ID/Client: 24 Msg Type: 3
+ID/Client: 72 Msg Type: 3
+ID/Client: 79 Msg Type: 3
+ID/Client: 91 Msg Type: 3
+ID/Client: 14 Msg Type: 3
+ID/Client: 43 Msg Type: 3
+ID/Client: 27 Msg Type: 3
+ID/Client: 47 Msg Type: 3
+ID/Client: 25 Msg Type: 3
+ID/Client: 124 Msg Type: 3
+ID/Client: 41 Msg Type: 3
+ID/Client: 103 Msg Type: 3
+ID/Client: 110 Msg Type: 3
+ID/Client: 19 Msg Type: 3
+ID/Client: 66 Msg Type: 3
+ID/Client: 104 Msg Type: 3
+ID/Client: 87 Msg Type: 3
+ID/Client: 107 Msg Type: 3
+Received last message: 1692823211908
+
+ Running on port 16401
+ID/Client: client1 Msg Type: 1
+ID/Client: client3 Msg Type: 1
+ID/Client: client4 Msg Type: 1
+ID/Client: client2 Msg Type: 1
+ID/Client: -1 Msg Type: 0
+20.59.127.137 0
+ID/Client: -1 Msg Type: 0
+20.59.127.137 1
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.127.88 2
+20.59.127.55 3
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.127.137 4
+20.59.127.72 5
+ID/Client: -1 Msg Type: 0
+20.59.127.137 6
+ID/Client: -1 Msg Type: 0
+20.59.127.72 7
+ID/Client: -1 Msg Type: 0
+20.59.127.88 8
+ID/Client: -1 Msg Type: 0
+20.59.127.55 9
+20.59.126.143 10
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.127.94 11
+ID/Client: -1 Msg Type: 0
+20.59.127.88 12
+20.59.127.72 13
+20.59.127.88 14
+20.59.127.55 15
+ID/Client: -1 Msg Type: 0
+20.59.127.55 16
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.127.94 17
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.127.182 18
+ID/Client: -1 Msg Type: 0
+20.59.127.94 19
+20.59.127.94 20
+20.59.126.122 21
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.127.72 22
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.126.143 23
+20.59.126.143 24
+20.59.126.143 25
+ID/Client: -1 Msg Type: 0
+20.59.126.217 26
+20.59.127.182 27
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.126.217 28
+20.59.126.122 29
+ID/Client: -1 Msg Type: 0
+20.59.126.122 30
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.126.122 31
+20.59.127.182 32
+ID/Client: -1 Msg Type: 0
+20.59.126.217 33
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.127.46 34
+20.59.127.46 35
+20.59.127.46 36
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.126.217 37
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.126.175 38
+ID/Client: -1 Msg Type: 0
+20.59.127.46 39
+ID/Client: -1 Msg Type: 0
+20.253.241.75 40
+ID/Client: -1 Msg Type: 0
+20.253.241.75 41
+ID/Client: -1 Msg Type: 0
+20.253.241.75 42
+20.59.127.149 43
+ID/Client: -1 Msg Type: 0
+20.59.127.182 44
+20.253.241.162 45
+ID/Client: -1 Msg Type: 0
+20.59.127.149 46
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.241.38 47
+ID/Client: -1 Msg Type: 0
+20.59.126.175 48
+ID/Client: -1 Msg Type: 0
+20.59.127.149 49
+20.253.241.38 50
+20.253.241.129 51
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.127.149 52
+ID/Client: -1 Msg Type: 0
+20.59.126.175 53
+20.253.241.75 54
+20.253.241.148 55
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.126.175 56
+ID/Client: -1 Msg Type: 0
+20.253.241.129 57
+20.253.241.129 58
+ID/Client: -1 Msg Type: 0
+20.253.241.38 59
+ID/Client: -1 Msg Type: 0
+20.253.241.148 60
+ID/Client: -1 Msg Type: 0
+20.253.241.162 61
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.241.129 62
+ID/Client: -1 Msg Type: 0
+20.253.241.148 63
+20.253.241.162 64
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.241.38 65
+ID/Client: -1 Msg Type: 0
+20.253.241.162 66
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.241.10 67
+ID/Client: -1 Msg Type: 0
+20.253.241.71 68
+20.253.241.210 69
+ID/Client: -1 Msg Type: 0
+20.253.241.10 70
+ID/Client: -1 Msg Type: 0
+20.253.241.10 71
+ID/Client: -1 Msg Type: 0
+20.253.241.148 72
+20.253.241.10 73
+ID/Client: -1 Msg Type: 0
+20.253.241.210 74
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.241.71 75
+20.253.241.203 76
+ID/Client: -1 Msg Type: 0
+20.253.241.71 77
+20.253.241.52 78
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.241.52 79
+ID/Client: -1 Msg Type: 0
+20.253.241.71 80
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.241.210 81
+ID/Client: -1 Msg Type: 0
+20.253.241.210 82
+20.253.241.207 83
+ID/Client: -1 Msg Type: 0
+20.253.241.52 84
+ID/Client: -1 Msg Type: 0
+20.253.245.34 85
+20.253.241.201 86
+20.253.245.134 87
+ID/Client: -1 Msg Type: 0
+20.253.241.52 88
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.241.203 89
+ID/Client: -1 Msg Type: 0
+20.253.241.201 90
+ID/Client: -1 Msg Type: 0
+20.253.241.203 91
+ID/Client: -1 Msg Type: 0
+20.253.241.201 92
+20.253.241.203 93
+ID/Client: -1 Msg Type: 0
+20.253.241.207 94
+ID/Client: -1 Msg Type: 0
+20.253.241.207 95
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.241.201 96
+20.253.241.207 97
+ID/Client: -1 Msg Type: 0
+20.253.245.134 98
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.245.134 99
+20.253.245.34 100
+20.253.245.34 101
+ID/Client: -1 Msg Type: 0
+20.253.245.134 102
+ID/Client: -1 Msg Type: 0
+20.253.245.34 103
+20.245.0.77 104
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.245.238 105
+ID/Client: -1 Msg Type: 0
+20.253.244.197 106
+ID/Client: -1 Msg Type: 0
+20.253.244.197 107
+ID/Client: -1 Msg Type: 0
+20.245.0.77 108
+ID/Client: -1 Msg Type: 0
+20.253.245.254 109
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.245.238 110
+20.253.244.197 111
+ID/Client: -1 Msg Type: 0
+20.253.245.35 112
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.244.197 113
+ID/Client: -1 Msg Type: 0
+20.245.0.77 114
+20.253.245.239 115
+20.253.245.35 116
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.245.0.77 117
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.245.35 118
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.245.35 119
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.245.239 120
+20.253.245.238 121
+20.253.245.239 122
+20.253.245.254 123
+ID/Client: -1 Msg Type: 0
+20.253.245.254 124
+20.253.245.238 125
+20.253.245.239 126
+20.253.245.254 127
+ID/Client: 45 Msg Type: 3
+ID/Client: 88 Msg Type: 3
+ID/Client: 46 Msg Type: 3
+ID/Client: 78 Msg Type: 3
+ID/Client: 87 Msg Type: 3
+ID/Client: 85 Msg Type: 3
+ID/Client: 120 Msg Type: 3
+ID/Client: 1 Msg Type: 3
+ID/Client: 52 Msg Type: 3
+ID/Client: 96 Msg Type: 3
+ID/Client: 34 Msg Type: 3
+ID/Client: 114 Msg Type: 3
+ID/Client: 24 Msg Type: 3
+ID/Client: 4 Msg Type: 3
+ID/Client: 32 Msg Type: 3
+ID/Client: 97 Msg Type: 3
+ID/Client: 10 Msg Type: 3
+ID/Client: 94 Msg Type: 3
+ID/Client: 58 Msg Type: 3
+ID/Client: 104 Msg Type: 3
+ID/Client: 36 Msg Type: 3
+ID/Client: 17 Msg Type: 3
+ID/Client: 116 Msg Type: 3
+ID/Client: 67 Msg Type: 3
+ID/Client: 103 Msg Type: 3
+ID/Client: 80 Msg Type: 3
+ID/Client: 73 Msg Type: 3
+ID/Client: 27 Msg Type: 3
+ID/Client: 12 Msg Type: 3
+ID/Client: 91 Msg Type: 3
+ID/Client: 105 Msg Type: 3
+ID/Client: 77 Msg Type: 3
+ID/Client: 110 Msg Type: 3
+ID/Client: 79 Msg Type: 3
+ID/Client: 2 Msg Type: 3
+ID/Client: 11 Msg Type: 3
+ID/Client: 14 Msg Type: 3
+ID/Client: 60 Msg Type: 3
+ID/Client: 39 Msg Type: 3
+ID/Client: 127 Msg Type: 3
+ID/Client: 22 Msg Type: 3
+ID/Client: 81 Msg Type: 3
+ID/Client: 82 Msg Type: 3
+ID/Client: 107 Msg Type: 3
+ID/Client: 66 Msg Type: 3
+ID/Client: 40 Msg Type: 3
+ID/Client: 43 Msg Type: 3
+ID/Client: 125 Msg Type: 3
+ID/Client: 18 Msg Type: 3
+ID/Client: 54 Msg Type: 3
+ID/Client: 64 Msg Type: 3
+ID/Client: 5 Msg Type: 3
+ID/Client: 113 Msg Type: 3
+ID/Client: 95 Msg Type: 3
+ID/Client: 13 Msg Type: 3
+ID/Client: 19 Msg Type: 3
+ID/Client: 57 Msg Type: 3
+ID/Client: 106 Msg Type: 3
+ID/Client: 33 Msg Type: 3
+ID/Client: 62 Msg Type: 3
+ID/Client: 86 Msg Type: 3
+ID/Client: 42 Msg Type: 3
+ID/Client: 122 Msg Type: 3
+ID/Client: 76 Msg Type: 3
+ID/Client: 118 Msg Type: 3
+ID/Client: 70 Msg Type: 3
+ID/Client: 121 Msg Type: 3
+ID/Client: 41 Msg Type: 3
+ID/Client: 109 Msg Type: 3
+ID/Client: 83 Msg Type: 3
+ID/Client: 93 Msg Type: 3
+ID/Client: 15 Msg Type: 3
+ID/Client: 44 Msg Type: 3
+ID/Client: 51 Msg Type: 3
+ID/Client: 126 Msg Type: 3
+ID/Client: 124 Msg Type: 3
+ID/Client: 3 Msg Type: 3
+ID/Client: 48 Msg Type: 3
+ID/Client: 98 Msg Type: 3
+ID/Client: 117 Msg Type: 3
+ID/Client: 6 Msg Type: 3
+ID/Client: 92 Msg Type: 3
+ID/Client: 102 Msg Type: 3
+ID/Client: 119 Msg Type: 3
+ID/Client: 63 Msg Type: 3
+ID/Client: 108 Msg Type: 3
+ID/Client: 20 Msg Type: 3
+ID/Client: 65 Msg Type: 3
+ID/Client: 72 Msg Type: 3
+ID/Client: 16 Msg Type: 3
+ID/Client: 0 Msg Type: 3
+ID/Client: 71 Msg Type: 3
+ID/Client: 55 Msg Type: 3
+ID/Client: 56 Msg Type: 3
+ID/Client: 8 Msg Type: 3
+ID/Client: 38 Msg Type: 3
+ID/Client: 37 Msg Type: 3
+ID/Client: 115 Msg Type: 3
+ID/Client: 29 Msg Type: 3
+ID/Client: 53 Msg Type: 3
+ID/Client: 25 Msg Type: 3
+ID/Client: 99 Msg Type: 3
+ID/Client: 23 Msg Type: 3
+ID/Client: 84 Msg Type: 3
+ID/Client: 26 Msg Type: 3
+ID/Client: 112 Msg Type: 3
+ID/Client: 61 Msg Type: 3
+ID/Client: 74 Msg Type: 3
+ID/Client: 69 Msg Type: 3
+ID/Client: 35 Msg Type: 3
+ID/Client: 68 Msg Type: 3
+ID/Client: 89 Msg Type: 3
+ID/Client: 90 Msg Type: 3
+ID/Client: 49 Msg Type: 3
+ID/Client: 123 Msg Type: 3
+ID/Client: 75 Msg Type: 3
+ID/Client: 7 Msg Type: 3
+ID/Client: 31 Msg Type: 3
+ID/Client: 101 Msg Type: 3
+ID/Client: 100 Msg Type: 3
+ID/Client: 47 Msg Type: 3
+ID/Client: 9 Msg Type: 3
+ID/Client: 28 Msg Type: 3
+ID/Client: 111 Msg Type: 3
+ID/Client: 21 Msg Type: 3
+ID/Client: 59 Msg Type: 3
+ID/Client: 50 Msg Type: 3
+ID/Client: 30 Msg Type: 3
+Received last message: 1692823269138
+
+ Running on port 16401
+ID/Client: client3 Msg Type: 1
+ID/Client: client1 Msg Type: 1
+ID/Client: client4 Msg Type: 1
+ID/Client: client2 Msg Type: 1
+ID/Client: -1 Msg Type: 0
+20.59.127.137 0
+ID/Client: -1 Msg Type: 0
+20.59.127.55 1
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.127.137 2
+ID/Client: -1 Msg Type: 0
+20.59.127.88 3
+20.59.127.137 4
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.127.72 5
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.127.88 6
+ID/Client: -1 Msg Type: 0
+20.59.127.137 7
+20.59.127.72 8
+20.59.127.55 9
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.127.94 10
+ID/Client: -1 Msg Type: 0
+20.59.127.88 11
+20.59.126.143 12
+ID/Client: -1 Msg Type: 0
+20.59.127.72 13
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.127.55 14
+20.59.127.88 15
+ID/Client: -1 Msg Type: 0
+20.59.127.182 16
+20.59.127.94 17
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.127.55 18
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.127.72 19
+20.59.127.94 20
+20.59.127.94 21
+ID/Client: -1 Msg Type: 0
+20.59.126.143 22
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.126.143 23
+ID/Client: -1 Msg Type: 0
+20.59.126.122 24
+ID/Client: -1 Msg Type: 0
+20.59.126.217 25
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.126.143 26
+20.59.127.182 27
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.126.122 28
+20.59.127.182 29
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.126.122 30
+ID/Client: -1 Msg Type: 0
+20.59.126.217 31
+ID/Client: -1 Msg Type: 0
+20.59.127.46 32
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.126.217 33
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.127.46 34
+ID/Client: -1 Msg Type: 0
+20.59.126.175 35
+ID/Client: -1 Msg Type: 0
+20.59.127.46 36
+20.59.126.122 37
+ID/Client: -1 Msg Type: 0
+20.59.127.46 38
+ID/Client: -1 Msg Type: 0
+20.59.126.217 39
+20.253.241.75 40
+20.253.241.75 41
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.241.75 42
+20.59.127.149 43
+20.59.127.182 44
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.59.127.149 45
+ID/Client: -1 Msg Type: 0
+20.59.126.175 46
+ID/Client: -1 Msg Type: 0
+20.253.241.162 47
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.241.38 48
+20.59.127.149 49
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.241.129 50
+20.253.241.38 51
+ID/Client: -1 Msg Type: 0
+20.253.241.148 52
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.241.75 53
+20.59.126.175 54
+20.59.126.175 55
+ID/Client: -1 Msg Type: 0
+20.253.241.129 56
+ID/Client: -1 Msg Type: 0
+20.253.241.38 57
+ID/Client: -1 Msg Type: 0
+20.59.127.149 58
+ID/Client: -1 Msg Type: 0
+20.253.241.129 59
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.241.129 60
+20.253.241.148 61
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.241.162 62
+ID/Client: -1 Msg Type: 0
+20.253.241.38 63
+ID/Client: -1 Msg Type: 0
+20.253.241.162 64
+ID/Client: -1 Msg Type: 0
+20.253.241.71 65
+ID/Client: -1 Msg Type: 0
+20.253.241.210 66
+20.253.241.148 67
+20.253.241.10 68
+ID/Client: -1 Msg Type: 0
+20.253.241.162 69
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.241.148 70
+20.253.241.210 71
+ID/Client: -1 Msg Type: 0
+20.253.241.10 72
+20.253.241.71 73
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.241.10 74
+ID/Client: -1 Msg Type: 0
+20.253.241.10 75
+20.253.241.203 76
+ID/Client: -1 Msg Type: 0
+20.253.241.71 77
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.241.71 78
+ID/Client: -1 Msg Type: 0
+20.253.241.52 79
+20.253.241.210 80
+ID/Client: -1 Msg Type: 0
+20.253.241.210 81
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.241.52 82
+ID/Client: -1 Msg Type: 0
+20.253.245.34 83
+20.253.241.52 84
+20.253.241.201 85
+20.253.241.52 86
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.245.134 87
+ID/Client: -1 Msg Type: 0
+20.253.241.201 88
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.241.203 89
+20.253.241.201 90
+20.253.241.207 91
+ID/Client: -1 Msg Type: 0
+20.253.241.203 92
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.241.203 93
+20.253.241.207 94
+20.253.241.207 95
+20.253.245.134 96
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.241.201 97
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.245.34 98
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.245.134 99
+20.253.241.207 100
+ID/Client: -1 Msg Type: 0
+20.253.245.34 101
+ID/Client: -1 Msg Type: 0
+20.253.245.34 102
+ID/Client: -1 Msg Type: 0
+20.253.245.134 103
+20.253.245.238 104
+20.245.0.77 105
+ID/Client: -1 Msg Type: 0
+20.253.245.254 106
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.245.238 107
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.244.197 108
+20.253.245.35 109
+ID/Client: -1 Msg Type: 0
+20.253.244.197 110
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.244.197 111
+ID/Client: -1 Msg Type: 0
+20.245.0.77 112
+20.245.0.77 113
+ID/Client: -1 Msg Type: 0
+20.253.244.197 114
+20.253.245.35 115
+ID/Client: -1 Msg Type: 0
+20.253.245.239 116
+20.245.0.77 117
+ID/Client: -1 Msg Type: 0
+20.253.245.35 118
+20.253.245.35 119
+20.253.245.238 120
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.245.254 121
+ID/Client: -1 Msg Type: 0
+20.253.245.238 122
+ID/Client: -1 Msg Type: 0
+ID/Client: -1 Msg Type: 0
+20.253.245.239 123
+ID/Client: -1 Msg Type: 0
+20.253.245.239 124
+20.253.245.254 125
+20.253.245.254 126
+20.253.245.239 127
+ID/Client: 27 Msg Type: 3
+ID/Client: 83 Msg Type: 3
+ID/Client: 85 Msg Type: 3
+ID/Client: 24 Msg Type: 3
+ID/Client: 38 Msg Type: 3
+ID/Client: 66 Msg Type: 3
+ID/Client: 84 Msg Type: 3
+ID/Client: 45 Msg Type: 3
+ID/Client: 114 Msg Type: 3
+ID/Client: 54 Msg Type: 3
+ID/Client: 109 Msg Type: 3
+ID/Client: 40 Msg Type: 3
+ID/Client: 127 Msg Type: 3
+ID/Client: 80 Msg Type: 3
+ID/Client: 112 Msg Type: 3
+ID/Client: 73 Msg Type: 3
+ID/Client: 104 Msg Type: 3
+ID/Client: 108 Msg Type: 3
+ID/Client: 92 Msg Type: 3
+ID/Client: 121 Msg Type: 3
+ID/Client: 103 Msg Type: 3
+ID/Client: 11 Msg Type: 3
+ID/Client: 90 Msg Type: 3
+ID/Client: 60 Msg Type: 3
+ID/Client: 77 Msg Type: 3
+ID/Client: 116 Msg Type: 3
+ID/Client: 6 Msg Type: 3
+ID/Client: 31 Msg Type: 3
+ID/Client: 126 Msg Type: 3
+ID/Client: 93 Msg Type: 3
+ID/Client: 4 Msg Type: 3
+ID/Client: 62 Msg Type: 3
+ID/Client: 115 Msg Type: 3
+ID/Client: 111 Msg Type: 3
+ID/Client: 75 Msg Type: 3
+ID/Client: 10 Msg Type: 3
+ID/Client: 113 Msg Type: 3
+ID/Client: 18 Msg Type: 3
+ID/Client: 49 Msg Type: 3
+ID/Client: 117 Msg Type: 3
+ID/Client: 101 Msg Type: 3
+ID/Client: 120 Msg Type: 3
+ID/Client: 65 Msg Type: 3
+ID/Client: 99 Msg Type: 3
+ID/Client: 95 Msg Type: 3
+ID/Client: 13 Msg Type: 3
+ID/Client: 21 Msg Type: 3
+ID/Client: 5 Msg Type: 3
+ID/Client: 91 Msg Type: 3
+ID/Client: 37 Msg Type: 3
+ID/Client: 97 Msg Type: 3
+ID/Client: 86 Msg Type: 3
+ID/Client: 42 Msg Type: 3
+ID/Client: 74 Msg Type: 3
+ID/Client: 61 Msg Type: 3
+ID/Client: 35 Msg Type: 3
+ID/Client: 64 Msg Type: 3
+ID/Client: 100 Msg Type: 3
+ID/Client: 94 Msg Type: 3
+ID/Client: 82 Msg Type: 3
+ID/Client: 87 Msg Type: 3
+ID/Client: 17 Msg Type: 3
+ID/Client: 16 Msg Type: 3
+ID/Client: 125 Msg Type: 3
+ID/Client: 2 Msg Type: 3
+ID/Client: 20 Msg Type: 3
+ID/Client: 51 Msg Type: 3
+ID/Client: 76 Msg Type: 3
+ID/Client: 67 Msg Type: 3
+ID/Client: 7 Msg Type: 3
+ID/Client: 14 Msg Type: 3
+ID/Client: 44 Msg Type: 3
+ID/Client: 57 Msg Type: 3
+ID/Client: 59 Msg Type: 3
+ID/Client: 48 Msg Type: 3
+ID/Client: 118 Msg Type: 3
+ID/Client: 81 Msg Type: 3
+ID/Client: 72 Msg Type: 3
+ID/Client: 52 Msg Type: 3
+ID/Client: 79 Msg Type: 3
+ID/Client: 123 Msg Type: 3
+ID/Client: 63 Msg Type: 3
+ID/Client: 69 Msg Type: 3
+ID/Client: 107 Msg Type: 3
+ID/Client: 0 Msg Type: 3
+ID/Client: 41 Msg Type: 3
+ID/Client: 19 Msg Type: 3
+ID/Client: 15 Msg Type: 3
+ID/Client: 28 Msg Type: 3
+ID/Client: 98 Msg Type: 3
+ID/Client: 124 Msg Type: 3
+ID/Client: 30 Msg Type: 3
+ID/Client: 1 Msg Type: 3
+ID/Client: 106 Msg Type: 3
+ID/Client: 8 Msg Type: 3
+ID/Client: 9 Msg Type: 3
+ID/Client: 122 Msg Type: 3
+ID/Client: 33 Msg Type: 3
+ID/Client: 22 Msg Type: 3
+ID/Client: 88 Msg Type: 3
+ID/Client: 78 Msg Type: 3
+ID/Client: 68 Msg Type: 3
+ID/Client: 71 Msg Type: 3
+ID/Client: 58 Msg Type: 3
+ID/Client: 39 Msg Type: 3
+ID/Client: 43 Msg Type: 3
+ID/Client: 47 Msg Type: 3
+ID/Client: 12 Msg Type: 3
+ID/Client: 53 Msg Type: 3
+ID/Client: 34 Msg Type: 3
+ID/Client: 32 Msg Type: 3
+ID/Client: 26 Msg Type: 3
+ID/Client: 36 Msg Type: 3
+ID/Client: 56 Msg Type: 3
+ID/Client: 110 Msg Type: 3
+ID/Client: 55 Msg Type: 3
+ID/Client: 96 Msg Type: 3
+ID/Client: 25 Msg Type: 3
+ID/Client: 29 Msg Type: 3
+ID/Client: 119 Msg Type: 3
+ID/Client: 3 Msg Type: 3
+ID/Client: 70 Msg Type: 3
+ID/Client: 23 Msg Type: 3
+ID/Client: 105 Msg Type: 3
+ID/Client: 89 Msg Type: 3
+ID/Client: 46 Msg Type: 3
+ID/Client: 102 Msg Type: 3
+ID/Client: 50 Msg Type: 3
+Received last message: 1692823322471
 
  Running on port 16401
 ID/Client: client1 Msg Type: 1
@@ -398,395 +3524,387 @@ ID/Client: client2 Msg Type: 1
 ID/Client: client4 Msg Type: 1
 ID/Client: client3 Msg Type: 1
 ID/Client: -1 Msg Type: 0
-20.253.214.47 0
+20.59.127.137 0
 ID/Client: -1 Msg Type: 0
+20.59.127.55 1
 ID/Client: -1 Msg Type: 0
-20.253.214.44 1
 ID/Client: -1 Msg Type: 0
+20.59.127.88 2
 ID/Client: -1 Msg Type: 0
-20.253.214.54 2
+20.59.127.137 3
 ID/Client: -1 Msg Type: 0
+20.59.127.72 4
+20.59.127.137 5
 ID/Client: -1 Msg Type: 0
-20.253.214.86 3
-20.253.214.79 4
-20.253.214.34 5
-20.253.214.101 6
 ID/Client: -1 Msg Type: 0
+20.59.127.88 6
 ID/Client: -1 Msg Type: 0
-20.228.118.216 7
+20.59.127.137 7
 ID/Client: -1 Msg Type: 0
+20.59.127.72 8
+20.59.127.94 9
 ID/Client: -1 Msg Type: 0
-20.228.118.222 8
 ID/Client: -1 Msg Type: 0
 ID/Client: -1 Msg Type: 0
+20.59.126.143 10
+20.59.127.55 11
+20.59.127.88 12
 ID/Client: -1 Msg Type: 0
-20.253.214.103 9
 ID/Client: -1 Msg Type: 0
-20.253.214.42 10
-20.253.214.70 11
+20.59.127.94 13
 ID/Client: -1 Msg Type: 0
+20.59.127.182 14
 ID/Client: -1 Msg Type: 0
-20.228.118.246 12
 ID/Client: -1 Msg Type: 0
+20.59.127.72 15
 ID/Client: -1 Msg Type: 0
-20.253.214.96 13
-20.228.118.253 14
+20.59.127.55 16
 ID/Client: -1 Msg Type: 0
-20.228.118.229 15
+20.59.127.55 17
 ID/Client: -1 Msg Type: 0
-20.228.119.17 16
+20.59.127.72 18
 ID/Client: -1 Msg Type: 0
-20.228.118.225 17
 ID/Client: -1 Msg Type: 0
+20.59.127.88 19
+20.59.127.94 20
+20.59.127.94 21
 ID/Client: -1 Msg Type: 0
-20.228.119.5 18
-20.228.118.242 19
 ID/Client: -1 Msg Type: 0
-20.228.118.248 20
+20.59.126.143 22
 ID/Client: -1 Msg Type: 0
-20.228.119.12 21
+20.59.126.217 23
 ID/Client: -1 Msg Type: 0
 ID/Client: -1 Msg Type: 0
-20.253.211.68 22
-20.253.213.153 23
+20.59.126.122 24
 ID/Client: -1 Msg Type: 0
-20.253.211.36 24
+20.59.126.143 25
+20.59.126.143 26
+20.59.126.122 27
 ID/Client: -1 Msg Type: 0
-20.253.211.42 25
+20.59.127.182 28
 ID/Client: -1 Msg Type: 0
-20.253.211.70 26
+20.59.127.182 29
 ID/Client: -1 Msg Type: 0
-20.253.211.41 27
+20.59.126.122 30
 ID/Client: -1 Msg Type: 0
-20.253.213.134 28
+20.59.126.217 31
 ID/Client: -1 Msg Type: 0
 ID/Client: -1 Msg Type: 0
-20.253.213.227 29
-20.253.211.92 30
 ID/Client: -1 Msg Type: 0
-20.253.212.217 31
-20.253.212.241 32
+20.59.126.217 32
 ID/Client: -1 Msg Type: 0
+20.59.127.46 33
 ID/Client: -1 Msg Type: 0
-20.253.211.73 33
+20.59.127.46 34
 ID/Client: -1 Msg Type: 0
-20.253.213.135 34
+20.59.127.46 35
+20.59.126.175 36
 ID/Client: -1 Msg Type: 0
+20.59.127.46 37
+20.59.126.122 38
 ID/Client: -1 Msg Type: 0
-20.253.211.74 35
+20.253.241.75 39
 ID/Client: -1 Msg Type: 0
-20.253.214.93 36
-20.253.215.149 37
 ID/Client: -1 Msg Type: 0
+20.253.241.75 40
+20.59.126.217 41
 ID/Client: -1 Msg Type: 0
 ID/Client: -1 Msg Type: 0
-20.253.212.240 38
-20.253.214.65 39
-20.253.214.64 40
 ID/Client: -1 Msg Type: 0
+20.59.127.149 42
+20.59.126.175 43
 ID/Client: -1 Msg Type: 0
-20.245.218.94 41
-20.253.215.148 42
-20.245.218.17 43
 ID/Client: -1 Msg Type: 0
+20.59.127.182 44
 ID/Client: -1 Msg Type: 0
-20.253.211.55 44
+20.253.241.75 45
+20.59.127.149 46
 ID/Client: -1 Msg Type: 0
-20.245.218.122 45
+20.59.127.149 47
+20.253.241.162 48
 ID/Client: -1 Msg Type: 0
+20.253.241.129 49
 ID/Client: -1 Msg Type: 0
 ID/Client: -1 Msg Type: 0
-20.245.219.238 46
-20.253.211.65 47
 ID/Client: -1 Msg Type: 0
-20.245.218.119 48
+20.253.241.38 50
 ID/Client: -1 Msg Type: 0
+20.59.126.175 51
 ID/Client: -1 Msg Type: 0
-20.245.218.188 49
+20.253.241.75 52
+20.253.241.38 53
 ID/Client: -1 Msg Type: 0
-20.245.218.13 50
-20.245.219.220 51
 ID/Client: -1 Msg Type: 0
-20.245.218.102 52
 ID/Client: -1 Msg Type: 0
-20.245.218.44 53
+20.59.126.175 54
 ID/Client: -1 Msg Type: 0
-20.245.218.167 54
-20.245.218.147 55
+20.253.241.148 55
+20.59.127.149 56
+20.253.241.38 57
 ID/Client: -1 Msg Type: 0
+20.253.241.129 58
 ID/Client: -1 Msg Type: 0
-20.245.218.152 56
-20.245.219.97 57
+20.253.241.129 59
 ID/Client: -1 Msg Type: 0
-20.245.219.167 58
+20.253.241.162 60
 ID/Client: -1 Msg Type: 0
+20.253.241.148 61
+20.253.241.129 62
 ID/Client: -1 Msg Type: 0
-20.245.219.200 59
+20.253.241.162 63
 ID/Client: -1 Msg Type: 0
-20.253.215.197 60
+20.253.241.38 64
 ID/Client: -1 Msg Type: 0
-20.253.215.189 61
-20.245.219.175 62
-20.245.219.56 63
-20.245.219.193 64
+20.253.241.148 65
 ID/Client: -1 Msg Type: 0
-20.245.219.214 65
 ID/Client: -1 Msg Type: 0
-20.245.219.209 66
 ID/Client: -1 Msg Type: 0
+20.253.241.10 66
 ID/Client: -1 Msg Type: 0
+20.253.241.71 67
+20.253.241.210 68
 ID/Client: -1 Msg Type: 0
 ID/Client: -1 Msg Type: 0
-20.245.219.195 67
-20.253.215.177 68
-20.228.116.51 69
-20.253.215.150 70
-20.228.118.168 71
+20.253.241.162 69
+20.253.241.148 70
 ID/Client: -1 Msg Type: 0
+20.253.241.210 71
 ID/Client: -1 Msg Type: 0
+20.253.241.10 72
 ID/Client: -1 Msg Type: 0
-20.228.115.51 72
 ID/Client: -1 Msg Type: 0
+20.253.241.10 73
 ID/Client: -1 Msg Type: 0
+20.253.241.71 74
 ID/Client: -1 Msg Type: 0
-20.253.215.167 73
-20.228.119.196 74
-20.253.208.32 75
+20.253.241.10 75
+20.253.241.203 76
+20.253.241.71 77
 ID/Client: -1 Msg Type: 0
-20.253.212.123 76
-20.245.116.138 77
+20.253.241.52 78
 ID/Client: -1 Msg Type: 0
+20.253.241.210 79
 ID/Client: -1 Msg Type: 0
-20.253.213.165 78
 ID/Client: -1 Msg Type: 0
-20.245.223.183 79
+20.253.241.52 80
+20.253.241.210 81
 ID/Client: -1 Msg Type: 0
 ID/Client: -1 Msg Type: 0
-20.245.223.120 80
-20.245.223.166 81
+20.253.241.71 82
+20.253.241.52 83
 ID/Client: -1 Msg Type: 0
-20.228.118.181 82
 ID/Client: -1 Msg Type: 0
+20.253.241.201 84
 ID/Client: -1 Msg Type: 0
+20.253.245.34 85
+20.253.241.52 86
 ID/Client: -1 Msg Type: 0
-20.245.223.246 83
-20.253.215.136 84
 ID/Client: -1 Msg Type: 0
-20.245.117.32 85
-20.245.115.42 86
+20.253.241.203 87
 ID/Client: -1 Msg Type: 0
+20.253.245.134 88
+20.253.241.207 89
 ID/Client: -1 Msg Type: 0
-20.228.116.50 87
+20.253.241.201 90
+20.253.241.201 91
 ID/Client: -1 Msg Type: 0
 ID/Client: -1 Msg Type: 0
-20.245.223.187 88
-20.228.119.227 89
+20.253.241.203 92
+20.253.241.203 93
 ID/Client: -1 Msg Type: 0
-20.228.119.226 90
 ID/Client: -1 Msg Type: 0
-20.245.115.43 91
 ID/Client: -1 Msg Type: 0
-20.245.223.225 92
+20.253.241.207 94
 ID/Client: -1 Msg Type: 0
-20.245.115.195 93
 ID/Client: -1 Msg Type: 0
-20.253.208.54 94
 ID/Client: -1 Msg Type: 0
-20.228.118.180 95
+20.253.245.134 95
 ID/Client: -1 Msg Type: 0
-20.245.116.93 96
+20.253.241.207 96
+20.253.241.201 97
 ID/Client: -1 Msg Type: 0
 ID/Client: -1 Msg Type: 0
-20.245.223.129 97
+20.253.245.34 98
 ID/Client: -1 Msg Type: 0
 ID/Client: -1 Msg Type: 0
-20.245.219.254 98
-20.245.219.227 99
+20.253.245.134 99
 ID/Client: -1 Msg Type: 0
-20.245.219.181 100
-20.245.217.183 101
+20.253.245.34 100
+20.245.0.77 101
 ID/Client: -1 Msg Type: 0
 ID/Client: -1 Msg Type: 0
-20.245.220.14 102
-20.245.219.255 103
+20.253.241.207 102
+20.253.245.134 103
+20.253.245.238 104
 ID/Client: -1 Msg Type: 0
+20.253.245.254 105
+20.253.245.34 106
 ID/Client: -1 Msg Type: 0
-20.245.219.226 104
 ID/Client: -1 Msg Type: 0
+20.253.245.238 107
+20.253.245.35 108
 ID/Client: -1 Msg Type: 0
-20.245.220.68 105
-20.245.220.69 106
+20.253.244.197 109
+20.253.244.197 110
 ID/Client: -1 Msg Type: 0
-20.253.208.126 107
 ID/Client: -1 Msg Type: 0
-20.253.210.8 108
+20.245.0.77 111
 ID/Client: -1 Msg Type: 0
-20.253.209.110 109
-20.253.213.146 110
 ID/Client: -1 Msg Type: 0
+20.253.245.239 112
 ID/Client: -1 Msg Type: 0
-20.253.213.7 111
+20.253.244.197 113
+20.253.244.197 114
 ID/Client: -1 Msg Type: 0
-20.245.219.207 112
 ID/Client: -1 Msg Type: 0
-20.228.114.221 113
+20.245.0.77 115
 ID/Client: -1 Msg Type: 0
-20.253.212.176 114
-20.253.209.175 115
-20.253.209.126 116
 ID/Client: -1 Msg Type: 0
-20.253.209.217 117
+20.253.245.35 116
 ID/Client: -1 Msg Type: 0
+20.253.245.238 117
 ID/Client: -1 Msg Type: 0
-20.253.208.141 118
-20.253.208.135 119
+20.253.245.254 118
 ID/Client: -1 Msg Type: 0
+20.253.245.35 119
 ID/Client: -1 Msg Type: 0
-20.253.209.145 120
 ID/Client: -1 Msg Type: 0
+20.245.0.77 120
+20.253.245.238 121
 ID/Client: -1 Msg Type: 0
-20.228.114.88 121
-20.237.140.153 122
-20.228.114.192 123
-20.253.208.145 124
-20.253.215.156 125
-20.228.114.230 126
+20.253.245.239 122
 ID/Client: -1 Msg Type: 0
-20.253.215.163 127
-ID/Client: -1 Msg Type: 0
-20.253.215.114 128
-ID/Client: 28 Msg Type: 3
-ID/Client: 34 Msg Type: 3
-ID/Client: 116 Msg Type: 3
-ID/Client: 43 Msg Type: 3
-ID/Client: 70 Msg Type: 3
-ID/Client: 69 Msg Type: 3
-ID/Client: 96 Msg Type: 3
-ID/Client: 41 Msg Type: 3
-ID/Client: 98 Msg Type: 3
-ID/Client: 5 Msg Type: 3
-ID/Client: 103 Msg Type: 3
-ID/Client: 40 Msg Type: 3
-ID/Client: 104 Msg Type: 3
-ID/Client: 12 Msg Type: 3
-ID/Client: 9 Msg Type: 3
-ID/Client: 1 Msg Type: 3
-ID/Client: 25 Msg Type: 3
-ID/Client: 13 Msg Type: 3
-ID/Client: 114 Msg Type: 3
-ID/Client: 46 Msg Type: 3
-ID/Client: 125 Msg Type: 3
-ID/Client: 58 Msg Type: 3
-ID/Client: 127 Msg Type: 3
-ID/Client: 109 Msg Type: 3
-ID/Client: 19 Msg Type: 3
-ID/Client: 90 Msg Type: 3
-ID/Client: 60 Msg Type: 3
-ID/Client: 27 Msg Type: 3
-ID/Client: 56 Msg Type: 3
-ID/Client: 16 Msg Type: 3
-ID/Client: 77 Msg Type: 3
-ID/Client: 94 Msg Type: 3
-ID/Client: 42 Msg Type: 3
-ID/Client: 30 Msg Type: 3
-ID/Client: 82 Msg Type: 3
-ID/Client: 79 Msg Type: 3
-ID/Client: 75 Msg Type: 3
-ID/Client: 29 Msg Type: 3
-ID/Client: 23 Msg Type: 3
-ID/Client: 38 Msg Type: 3
-ID/Client: 0 Msg Type: 3
-ID/Client: 20 Msg Type: 3
-ID/Client: 102 Msg Type: 3
-ID/Client: 86 Msg Type: 3
-ID/Client: 39 Msg Type: 3
-ID/Client: 62 Msg Type: 3
-ID/Client: 35 Msg Type: 3
-ID/Client: 92 Msg Type: 3
-ID/Client: 31 Msg Type: 3
-ID/Client: 36 Msg Type: 3
-ID/Client: 115 Msg Type: 3
-ID/Client: 121 Msg Type: 3
-ID/Client: 74 Msg Type: 3
-ID/Client: 24 Msg Type: 3
-ID/Client: 50 Msg Type: 3
-ID/Client: 49 Msg Type: 3
-ID/Client: 59 Msg Type: 3
-ID/Client: 107 Msg Type: 3
-ID/Client: 37 Msg Type: 3
-ID/Client: 100 Msg Type: 3
-ID/Client: 15 Msg Type: 3
-ID/Client: 81 Msg Type: 3
-ID/Client: 2 Msg Type: 3
-ID/Client: 6 Msg Type: 3
-ID/Client: 85 Msg Type: 3
-ID/Client: 113 Msg Type: 3
-ID/Client: 108 Msg Type: 3
-ID/Client: 88 Msg Type: 3
-ID/Client: 126 Msg Type: 3
-ID/Client: 17 Msg Type: 3
-ID/Client: 55 Msg Type: 3
-ID/Client: 89 Msg Type: 3
-ID/Client: 93 Msg Type: 3
-ID/Client: 99 Msg Type: 3
-ID/Client: 53 Msg Type: 3
-ID/Client: 63 Msg Type: 3
-ID/Client: 87 Msg Type: 3
-ID/Client: 47 Msg Type: 3
-ID/Client: 33 Msg Type: 3
-ID/Client: 61 Msg Type: 3
-ID/Client: 67 Msg Type: 3
-ID/Client: 57 Msg Type: 3
-ID/Client: 71 Msg Type: 3
-ID/Client: 10 Msg Type: 3
-ID/Client: 124 Msg Type: 3
-ID/Client: 91 Msg Type: 3
-ID/Client: 106 Msg Type: 3
+20.253.245.239 123
+20.253.245.35 124
+20.253.245.254 125
+20.253.245.254 126
+20.253.245.239 127
 ID/Client: 119 Msg Type: 3
-ID/Client: 14 Msg Type: 3
-ID/Client: 26 Msg Type: 3
-ID/Client: 123 Msg Type: 3
-ID/Client: 110 Msg Type: 3
-ID/Client: 68 Msg Type: 3
-ID/Client: 117 Msg Type: 3
-ID/Client: 4 Msg Type: 3
-ID/Client: 66 Msg Type: 3
-ID/Client: 7 Msg Type: 3
-ID/Client: 44 Msg Type: 3
+ID/Client: 27 Msg Type: 3
+ID/Client: 100 Msg Type: 3
+ID/Client: 75 Msg Type: 3
+ID/Client: 106 Msg Type: 3
+ID/Client: 25 Msg Type: 3
 ID/Client: 95 Msg Type: 3
-ID/Client: 105 Msg Type: 3
-ID/Client: 51 Msg Type: 3
-ID/Client: 48 Msg Type: 3
-ID/Client: 32 Msg Type: 3
-ID/Client: 64 Msg Type: 3
-ID/Client: 101 Msg Type: 3
-ID/Client: 72 Msg Type: 3
-ID/Client: 80 Msg Type: 3
-ID/Client: 111 Msg Type: 3
-ID/Client: 84 Msg Type: 3
-ID/Client: 22 Msg Type: 3
-ID/Client: 3 Msg Type: 3
-ID/Client: 83 Msg Type: 3
-ID/Client: 120 Msg Type: 3
-ID/Client: 21 Msg Type: 3
-ID/Client: 54 Msg Type: 3
-ID/Client: 76 Msg Type: 3
-ID/Client: 8 Msg Type: 3
-ID/Client: 112 Msg Type: 3
-ID/Client: 52 Msg Type: 3
-ID/Client: 11 Msg Type: 3
-ID/Client: 122 Msg Type: 3
-ID/Client: 45 Msg Type: 3
+ID/Client: 81 Msg Type: 3
+ID/Client: 104 Msg Type: 3
+ID/Client: 6 Msg Type: 3
+ID/Client: 108 Msg Type: 3
+ID/Client: 68 Msg Type: 3
 ID/Client: 65 Msg Type: 3
-ID/Client: 97 Msg Type: 3
+ID/Client: 109 Msg Type: 3
+ID/Client: 99 Msg Type: 3
+ID/Client: 122 Msg Type: 3
+ID/Client: 10 Msg Type: 3
+ID/Client: 114 Msg Type: 3
+ID/Client: 121 Msg Type: 3
+ID/Client: 53 Msg Type: 3
+ID/Client: 36 Msg Type: 3
+ID/Client: 85 Msg Type: 3
+ID/Client: 78 Msg Type: 3
+ID/Client: 1 Msg Type: 3
+ID/Client: 33 Msg Type: 3
+ID/Client: 40 Msg Type: 3
+ID/Client: 14 Msg Type: 3
+ID/Client: 101 Msg Type: 3
+ID/Client: 111 Msg Type: 3
+ID/Client: 58 Msg Type: 3
+ID/Client: 20 Msg Type: 3
+ID/Client: 83 Msg Type: 3
+ID/Client: 0 Msg Type: 3
+ID/Client: 41 Msg Type: 3
+ID/Client: 35 Msg Type: 3
 ID/Client: 73 Msg Type: 3
+ID/Client: 28 Msg Type: 3
+ID/Client: 4 Msg Type: 3
+ID/Client: 112 Msg Type: 3
+ID/Client: 24 Msg Type: 3
+ID/Client: 51 Msg Type: 3
+ID/Client: 61 Msg Type: 3
+ID/Client: 15 Msg Type: 3
+ID/Client: 91 Msg Type: 3
+ID/Client: 17 Msg Type: 3
+ID/Client: 19 Msg Type: 3
+ID/Client: 62 Msg Type: 3
 ID/Client: 118 Msg Type: 3
+ID/Client: 115 Msg Type: 3
+ID/Client: 92 Msg Type: 3
+ID/Client: 59 Msg Type: 3
+ID/Client: 22 Msg Type: 3
+ID/Client: 71 Msg Type: 3
+ID/Client: 105 Msg Type: 3
+ID/Client: 52 Msg Type: 3
+ID/Client: 46 Msg Type: 3
+ID/Client: 76 Msg Type: 3
+ID/Client: 5 Msg Type: 3
+ID/Client: 37 Msg Type: 3
+ID/Client: 9 Msg Type: 3
+ID/Client: 21 Msg Type: 3
+ID/Client: 11 Msg Type: 3
+ID/Client: 94 Msg Type: 3
+ID/Client: 127 Msg Type: 3
+ID/Client: 31 Msg Type: 3
+ID/Client: 8 Msg Type: 3
+ID/Client: 125 Msg Type: 3
+ID/Client: 49 Msg Type: 3
+ID/Client: 66 Msg Type: 3
+ID/Client: 124 Msg Type: 3
+ID/Client: 82 Msg Type: 3
+ID/Client: 102 Msg Type: 3
+ID/Client: 45 Msg Type: 3
+ID/Client: 123 Msg Type: 3
+ID/Client: 44 Msg Type: 3
+ID/Client: 70 Msg Type: 3
+ID/Client: 38 Msg Type: 3
+ID/Client: 60 Msg Type: 3
+ID/Client: 87 Msg Type: 3
+ID/Client: 96 Msg Type: 3
+ID/Client: 12 Msg Type: 3
+ID/Client: 69 Msg Type: 3
+ID/Client: 32 Msg Type: 3
+ID/Client: 103 Msg Type: 3
+ID/Client: 30 Msg Type: 3
+ID/Client: 93 Msg Type: 3
+ID/Client: 113 Msg Type: 3
+ID/Client: 3 Msg Type: 3
+ID/Client: 48 Msg Type: 3
+ID/Client: 86 Msg Type: 3
+ID/Client: 13 Msg Type: 3
+ID/Client: 63 Msg Type: 3
+ID/Client: 107 Msg Type: 3
+ID/Client: 117 Msg Type: 3
+ID/Client: 16 Msg Type: 3
+ID/Client: 54 Msg Type: 3
+ID/Client: 116 Msg Type: 3
+ID/Client: 42 Msg Type: 3
+ID/Client: 77 Msg Type: 3
+ID/Client: 39 Msg Type: 3
+ID/Client: 26 Msg Type: 3
+ID/Client: 67 Msg Type: 3
+ID/Client: 34 Msg Type: 3
+ID/Client: 2 Msg Type: 3
+ID/Client: 98 Msg Type: 3
+ID/Client: 88 Msg Type: 3
+ID/Client: 29 Msg Type: 3
+ID/Client: 120 Msg Type: 3
+ID/Client: 43 Msg Type: 3
+ID/Client: 90 Msg Type: 3
+ID/Client: 56 Msg Type: 3
+ID/Client: 74 Msg Type: 3
+ID/Client: 84 Msg Type: 3
+ID/Client: 72 Msg Type: 3
+ID/Client: 64 Msg Type: 3
+ID/Client: 97 Msg Type: 3
+ID/Client: 23 Msg Type: 3
+ID/Client: 89 Msg Type: 3
 ID/Client: 18 Msg Type: 3
-ID/Client: -1 Msg Type: 0
-20.253.213.165 129
-ID/Client: -1 Msg Type: 0
-20.237.141.49 130
-ID/Client: -1 Msg Type: 0
-20.237.140.45 131
-ID/Client: -1 Msg Type: 0
-20.237.140.64 132
+ID/Client: 55 Msg Type: 3
+ID/Client: 79 Msg Type: 3
+ID/Client: 50 Msg Type: 3
+ID/Client: 57 Msg Type: 3
+ID/Client: 80 Msg Type: 3
+ID/Client: 7 Msg Type: 3
+ID/Client: 126 Msg Type: 3
+ID/Client: 110 Msg Type: 3
+ID/Client: 47 Msg Type: 3
+Received last message: 1692823375945
