@@ -3,7 +3,7 @@
     "covariants": ["1", "1-1250", "2-1250", "3-1250", "4-1250", "5-1250"],
     "institutions": ["client1", "client2", "client3", "client4"],
     "y_val_name": "disease-1250",
-    "analysis_type": "logistic",
+    "analysis_type": "linear",
     "enclave_path": "../enclave/gwasenc.signed",
     "register_server_info": {
         "hostname": "20.42.89.122",
