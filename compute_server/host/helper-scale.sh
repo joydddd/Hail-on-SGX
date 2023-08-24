@@ -1,4 +1,4 @@
-!/bin/bash
+#!/bin/bash
 for _ in {1..5}
 do
     echo "Log 5000"
