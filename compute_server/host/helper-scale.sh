@@ -1,9 +1,9 @@
 #!/bin/bash
-# for _ in {1..5}
-# do
-#     echo "Log 5000"
-#     ./gwashost compute_server_config1250log.json >> scaling-5k-64.txt
-# done
+for _ in {1..5}
+do
+    echo "Log 5000"
+    ./gwashost compute_server_config1250log.json >> scaling-5k-64.txt
+done
 
 for _ in {1..5}
 do
@@ -35,14 +35,14 @@ do
     ./gwashost compute_server_config5000lin.json >> scaling-20k-64.txt
 done
 
-for _ in {1..5}
-do
-    echo "Log 20000"
-    ./gwashost compute_server_config5000log-famhe.json >> scaling-20k-64.txt
-done
+# for _ in {1..5}
+# do
+#     echo "Log 20000"
+#     ./gwashost compute_server_config5000log-famhe.json >> scaling-20k-64.txt
+# done
 
-for _ in {1..5}
-do
-    echo "Lin 20000"
-    ./gwashost compute_server_config5000lin-famhe.json >> scaling-20k-64.txt
-done
+# for _ in {1..5}
+# do
+#     echo "Lin 20000"
+#     ./gwashost compute_server_config5000lin-famhe.json >> scaling-20k-64.txt
+# done
