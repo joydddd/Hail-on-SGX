@@ -214,7 +214,10 @@ bool ComputeServer::start_thread(int connFD, char* body_buffer) {
             header_size++;
         }
         if (!found_delim) {
-            throw std::runtime_error("Didn't read in a null terminating char");
+            std::cout << "Recieved message without null terminating char" << std::endl;
+            std::cout << header_buffer << std::endl;
+            return true;
+            //throw std::runtime_error("Didn't read in a null terminating char");
         }
         std::string header(header_buffer, header_size);
         if (header.find("GET / HTTP/1.1") != std::string::npos) {

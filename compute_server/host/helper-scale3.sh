@@ -1,9 +1,9 @@
 #!/bin/bash
-for _ in {1..5}
-do
-    echo "log-2 5000"
-    ./gwashost compute_server_config1250log-3.json >> scaling-5k-64-3.txt
-done
+# for _ in {1..5}
+# do
+#     echo "log-2 5000"
+#     ./gwashost compute_server_config1250log-3.json >> scaling-5k-64-3.txt
+# done
 
 for _ in {1..5}
 do
