@@ -13,7 +13,7 @@ Client::Client(const std::string& config_file) {
 Client::~Client() {}
 
 void Client::init(const std::string& config_file) {
-    std::this_thread::sleep_for(std::chrono::milliseconds(10000));
+    std::this_thread::sleep_for(std::chrono::milliseconds(20000));
 
     std::ifstream client_config_file(config_file);
     client_config_file >> client_config;
@@ -273,7 +273,7 @@ void Client::handle_message(int connFD, const unsigned int global_id, const Clie
             // First we should send all of the phenotype data
             std::vector<Phenotype>& phenotypes = phenotypes_list[global_id];
             for (const Phenotype& ptype : phenotypes) {
-                std::thread([global_id, ptype, this](){
+                std::thread([global_id, ptype, this]() {
                     send_msg(global_id, ptype.mtype, ptype.message);
                 }).detach();
             }

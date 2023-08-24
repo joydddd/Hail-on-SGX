@@ -242,38 +242,45 @@ bool RegisterServer::handle_message(int connFD, RegisterServerMessageType mtype,
             if (++eof_messages_received == compute_server_count) {
                 std::cout << "Received last message: "  << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count() << std::endl;
 
-                for (std::mutex& mux : tmp_file_mutex_list) {
-                    mux.lock();
-                }
+                // for (std::mutex& mux : tmp_file_mutex_list) {
+                //     mux.lock();
+                // }
 
-                for (std::vector<std::string>& tmp_file_string : tmp_file_string_list) {
-                    for (const std::string& tmp : tmp_file_string) {
-                        std::vector<std::string> split;
-                        Parser::split(split, tmp, '\n');
-                        for (const std::string& tmp_split : split) {
-                            sorted_file_queue.push(tmp_split);
-                        }
-                    }
-                }
-                while(!sorted_file_queue.empty()) {
-                    output_file << sorted_file_queue.top() << std::endl;
-                    sorted_file_queue.pop();
-                }
-                output_file.flush();
+                // for (std::vector<std::string>& tmp_file_string : tmp_file_string_list) {
+                //     for (const std::string& tmp : tmp_file_string) {
+                //         std::vector<std::string> split;
+                //         Parser::split(split, tmp, '\n');
+                //         for (const std::string& tmp_split : split) {
+                //             sorted_file_queue.push(tmp_split);
+                //         }
+                //     }
+                // }
+                // while(!sorted_file_queue.empty()) {
+                //     output_file << sorted_file_queue.top() << std::endl;
+                //     sorted_file_queue.pop();
+                // }
+                // output_file.flush();
 
-                for (std::mutex& mux : tmp_file_mutex_list) {
-                    mux.unlock();
-                }
+                // for (std::mutex& mux : tmp_file_mutex_list) {
+                //     mux.unlock();
+                // }
 
                 // sometimes there is a race condition where messages get delayed, waiting a second can help
                 std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-
+                std::vector<std::thread> msg_threads;
                 // These aren't necesary for program correctness, but they help with iterative testing!
                 for (ConnectionInfo institution_info : institution_info_list) {
-                    send_msg(institution_info.hostname, institution_info.port, ClientMessageType::END_CLIENT, "");
+                    msg_threads.push_back(std::thread([institution_info, this]() {
+                        send_msg(institution_info.hostname, institution_info.port, ClientMessageType::END_CLIENT, "");
+                    }));
                 }
                 for (ConnectionInfo compute_info : compute_info_list) {
-                    send_msg(compute_info.hostname, compute_info.port, ComputeServerMessageType::END_COMPUTE, "");
+                    msg_threads.push_back(std::thread([compute_info, this]() {
+                        send_msg(compute_info.hostname, compute_info.port, ComputeServerMessageType::END_COMPUTE, "");
+                    }));
+                }
+                for (std::thread &t : msg_threads) {
+                    t.join();
                 }
 
                 // All files recieved, all shutdown messages sent, we can exit now
