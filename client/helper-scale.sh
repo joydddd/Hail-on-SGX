@@ -5,11 +5,11 @@
 #     ./bin/client client_config1250.json >> scaling-5k-256-2.txt
 # done
 
-for _ in {1..5}
-do
-    echo "Lin 5000"
-    ./bin/client client_config1250.json >> scaling-5k-256-2.txt
-done
+# for _ in {1..5}
+# do
+#     echo "Lin 5000"
+#     ./bin/client client_config1250.json >> scaling-5k-256-2.txt
+# done
 
 for _ in {1..5}
 do

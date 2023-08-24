@@ -5,11 +5,11 @@
 #     ./gwashost compute_server_config1250log.json >> scaling-5k-64.txt
 # done
 
-for _ in {1..5}
-do
-    echo "Lin 5000"
-    ./gwashost compute_server_config1250lin.json >> scaling-5k-64.txt
-done
+# for _ in {1..5}
+# do
+#     echo "Lin 5000"
+#     ./gwashost compute_server_config1250lin.json >> scaling-5k-64.txt
+# done
 
 for _ in {1..5}
 do
