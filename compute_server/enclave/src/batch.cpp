@@ -17,10 +17,10 @@ Batch::Batch(size_t _row_size, EncAnalysis analysis_type, ImputePolicy impute_po
             row = new Lin_row(row_size, sizes, _gwas, impute_policy, thread_id);
             break;
         case EncAnalysis::logistic_oblivious:
-            row = new Oblivious_log_row(row_size, _gwas, impute_policy);
+            row = new Oblivious_log_row(row_size, sizes, _gwas, impute_policy, thread_id);
             break;
         case EncAnalysis::linear_oblivious:
-            row = new Oblivious_lin_row(row_size, _gwas, impute_policy);
+            row = new Oblivious_lin_row(row_size, sizes, _gwas, impute_policy, thread_id);
             break;
         default:
             throw std::runtime_error("No valid analysis type provided.");

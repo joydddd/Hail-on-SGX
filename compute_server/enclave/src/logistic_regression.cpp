@@ -17,35 +17,17 @@ inline double modified_pade_approx_oblivious(double x) {
     return approx * within_bounds + !within_bounds * ((pos << 7) * x);
 }
 
-// https://math.stackexchange.com/questions/71357/approximation-of-e-x
-inline double modified_pade_approx(double x) {
-    if (x < -3 || x > 3) {
-        return x > 0 ? 100 * x : 0;
-    }
-    return ((x + 3) * (x + 3) + 3) / ((x - 3) * (x - 3) + 3);
-}
-
+// 2 is a magic number that helps with SqrMatrix construction, "highest level matrix"
 Log_row::Log_row(int _size, const std::vector<int>& sizes, GWAS* _gwas, ImputePolicy _impute_policy, int thread_id) : 
     Row(_size, sizes, _gwas->dim(), _impute_policy), H(num_dimensions, 2) {
     fitted = true;
-
     offset = thread_id * get_padded_buffer_len(num_dimensions);
-
-    //beta_delta.resize(num_dimensions);
-    // 2 is a magic number that helps with SqrMatrix construction, "highest level matrix"
-    //Grad.resize(num_dimensions);
-    //Grad = new double[num_dimensions];
-
     if (gwas->size() != n) throw CombineERROR("row length mismatch");
-    // if (b.size() != n) {
-    //     b.resize(n);
-    // }
 }
 
 /* fitting */
 bool Log_row::fit(int thread_id, int max_it, double sig) {
     /* intialize beta to 0*/
-
     init();
     it_count = 1;
 
@@ -122,20 +104,18 @@ void Log_row::init() {
         (beta_g + offset)[i] = 0;
     }
 
-    //if (impute_average) {
-        double sum = 0;
-        double count = 0;
-        uint8_t val;
-        for (int i = 0 ; i < n; ++i) {
-            val = (data[i / 4] >> ((i % 4) * 2)) & 0b11;
-            if (!is_NA_uint8(val)) {
-                sum += val;
-                count++;
-            }
+    double sum = 0;
+    double count = 0;
+    uint8_t val;
+    for (int i = 0 ; i < n; ++i) {
+        val = (data[i / 4] >> ((i % 4) * 2)) & 0b11;
+        if (!is_NA_uint8(val)) {
+            sum += val;
+            count++;
         }
+    }
 
-        genotype_average = sum / (count + !count);
-    //}
+    genotype_average = sum / (count + !count);
 
     update_estimate();
 }
@@ -200,7 +180,7 @@ void Log_row::update_upperH_and_Grad(double y_est, double x, const std::vector<d
         H.plus_equals(j, 0, x * pnc_j_times_y_est);
         H.plus_equals(j, j, patient_pnc_j * pnc_j_times_y_est);
 
-        for (int k = 1; k < j; k += 1) {
+        for (int k = 1; k < j; k++) {
             H.plus_equals(j, k, patient_pnc[k] * pnc_j_times_y_est);
         }
     }

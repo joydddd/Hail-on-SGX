@@ -50,6 +50,7 @@ Lin_row::Lin_row(int _size, const std::vector<int>& sizes, GWAS* _gwas, ImputePo
 void Lin_row::init() {}
 
 bool Lin_row::fit(int thread_id, int max_iteration, double sig) {
+
     int offset = thread_id * get_padded_buffer_len(num_dimensions);
     double *beta = beta_g + offset;
     double *XTY = XTY_g + offset;
@@ -86,28 +87,14 @@ bool Lin_row::fit(int thread_id, int max_iteration, double sig) {
 
         double x = (data[(i + client_offset) / 4] >> (((i + client_offset) % 4) * 2) ) & 0b11;
         is_NA = is_NA_uint8(x);
-        //x = is_NA ? genotype_average : x;
         x = (!is_NA * x) + (is_NA * genotype_average);
         double y = patient_pnc[0];
 
-        //if (!is_NA && !impute_average) {
         XTY[0] += x * y;
-        double x1 = x;
-        XTX.plus_equals(0, 0, x1 * x);
+        XTX.plus_equals(0, 0, x * x);
         for (int j = 1; j < num_dimensions; ++j) {
-            x1 = patient_pnc[j];
-            XTX.plus_equals(j, 0, x1 * x);
+            XTX.plus_equals(j, 0, patient_pnc[j] * x);
         }
-        // } else { // adjust the part non valid
-        // // TODO: some optimization here: whether to precalculate Xcov * Y and Xocv * Xcov for each patient
-        //     //std::cout << "???" << std::endl;
-        //     for (int j = 1; j < num_dimensions; ++j){
-        //         XTY[j] -= patient_pnc[j] * y;
-        //         for (int k = 1; k <= j; ++k){
-        //             XTX.minus_equals(j, k, patient_pnc[j] * patient_pnc[k]);
-        //         }
-        //     }
-        // }
 
         /* update data index */
         data_idx++;
@@ -143,16 +130,15 @@ bool Lin_row::fit(int thread_id, int max_iteration, double sig) {
 
         double x = (data[(i + client_offset) / 4] >> (((i + client_offset) % 4) * 2) ) & 0b11;
         is_NA = is_NA_uint8(x);
-        //x = is_NA ? genotype_average : x;
+
         x = (!is_NA * x) + (is_NA * genotype_average);
         double y = patient_pnc[0];
-        //if (!is_NA && !impute_average) {
+
         double y_est = beta[0] * x;
         for (int j = 1; j < num_dimensions; j++){
             y_est += patient_pnc[j] * beta[j];
         }
         sse += (y - y_est) * (y - y_est);
-        //}
 
         /* update data index */
         data_idx++;
@@ -172,7 +158,6 @@ bool Lin_row::fit(int thread_id, int max_iteration, double sig) {
     // overwrite b[1] with the standard error, helps with false sharing issue... if we need
     // to report other betas in the future we need to change this!
     beta[1] = std::sqrt(sse * XTX.t[0][0]);
-    
 
     return true;
 }
