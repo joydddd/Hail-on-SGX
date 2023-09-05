@@ -449,6 +449,14 @@ void Client::fill_queue() {
     }
 }
 
+bool replace_str(std::string& str, const std::string& from, const std::string& to) {
+    size_t start_pos = str.find(from);
+    if(start_pos == std::string::npos)
+        return false;
+    str.replace(start_pos, from.length(), to);
+    return true;
+}
+
 void Client::prepare_tsv_file(unsigned int global_id, const std::string& filename, ComputeServerMessageType mtype) {
     std::ifstream tsv_file("client_data/" + filename + ".tsv");
     std::string data;
@@ -459,7 +467,11 @@ void Client::prepare_tsv_file(unsigned int global_id, const std::string& filenam
     while(getline(tsv_file, line)) {
         patient_and_data.clear();
         Parser::split(patient_and_data, line, '\t');
-        data.append(patient_and_data.back() + "\t");
+        std::string val = patient_and_data.back();
+        replace_str(val, "false", "0");
+        replace_str(val, "true", "1");
+        
+        data.append(val + "\t");
         patient_count++;
     }
     data.pop_back();
