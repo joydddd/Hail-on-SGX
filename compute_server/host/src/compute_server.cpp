@@ -54,7 +54,7 @@ void ComputeServer::init(const std::string& config_file) {
     compute_config_file >> compute_config;
 
     // Read in information we need to register compute server
-    port = compute_config["compute_server_bind_port"];
+    port = compute_config["compute_server_bind_port"]; //(rand() % 49151) + 1024;
 
     // read in list institutions/clients involved in GWAS
     for (int i = 0; i < compute_config["institutions"].size(); ++i) {

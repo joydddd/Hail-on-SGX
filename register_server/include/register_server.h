@@ -15,9 +15,22 @@
 #include <mutex>
 #include <boost/thread.hpp>
 #include <thread>
+#include <condition_variable>
 #include "json.hpp"
+#include <iostream>
+#include <fstream>
+#include <assert.h>
+#include <stdexcept>
+#include <chrono>
+#include <stdint.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netdb.h>
+
 #include "output.h"
 #include "parser.h"
+#include "concurrentqueue.h"
+#include "socket_send.h"
 
 struct AlleleGT {
   inline bool operator()(const std::string &a, const std::string &b) const {
@@ -68,8 +81,11 @@ class RegisterServer {
     std::vector<ConnectionInfo> institution_info_list;
     std::vector<ConnectionInfo> compute_info_list;
 
-    std::vector<std::vector<std::string> > tmp_file_string_list;
+    std::vector<moodycamel::ConcurrentQueue<std::string> > tmp_file_string_list;
+    moodycamel::ConcurrentQueue<int> work_queue;
     std::vector<std::mutex> tmp_file_mutex_list;
+
+    bool shutdown;
 
     std::priority_queue<std::string, std::vector<std::string>, AlleleGT > sorted_file_queue;
 
@@ -89,7 +105,7 @@ class RegisterServer {
     int send_msg(const std::string& hostname, const int port, int mtype, const std::string& msg, int connFD=-1);
 
     // start a thread that will handle a message and exit properly if it finds an error
-    bool start_thread(int connFD);
+    void start_thread();
 
   public:
 
