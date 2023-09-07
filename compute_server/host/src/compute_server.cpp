@@ -248,7 +248,9 @@ bool ComputeServer::start_thread(int connFD, char* body_buffer) {
         ComputeServerMessageType mtype;
         parse_header_compute_server_header(body, msg, client_name, mtype, connFD);
 
-        //guarded_cout("Msg type: " + std::to_string(mtype) + " client: " + client_name, cout_lock);
+        if (mtype != ComputeServerMessageType::DATA) {
+            guarded_cout("Msg type: " + std::to_string(mtype) + " client: " + client_name, cout_lock);
+        }
 
         handle_message(connFD, client_name, mtype, msg);
     }
@@ -307,9 +309,11 @@ bool ComputeServer::handle_message(int connFD, const std::string& name, ComputeS
         }
         case AES_KEY:
         {
-            
             std::vector<std::string> aes_info;
             Parser::split(aes_info, msg, '\t');
+            if (aes_info.size() != 3) {
+                std::cout << "got msg with split " << aes_info.size() << msg << std::endl;
+            }
             int thread_id = std::stoi(aes_info[2]);
             // We only want 1 "check in"
             if (thread_id == 0) {
