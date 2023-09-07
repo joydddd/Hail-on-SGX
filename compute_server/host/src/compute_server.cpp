@@ -278,13 +278,16 @@ bool ComputeServer::handle_message(int connFD, const std::string& name, ComputeS
         {
             // Wait until we have a global id!
             while (get_instance()->global_id < 0) {}
-
+            std::cout << "b4 " << name << std::endl;
+            institutions_lock.lock();
             if (institutions.count(name)) {
+                institutions_lock.unlock();
                 throw std::runtime_error("User already registered");
             }
             std::vector<std::string> hostname_and_port;
             Parser::split(hostname_and_port, msg, '\t');
             if (hostname_and_port.size() != 2) {
+                institutions_lock.unlock();
                 throw std::runtime_error("Invalid register message: " + msg);
             }
             bool found = false;
@@ -292,28 +295,28 @@ bool ComputeServer::handle_message(int connFD, const std::string& name, ComputeS
                 // Look for client id!
                 if (institution_list[id] == name) {
                     found = true;
-                    institutions_lock.lock();
+                    
                     institutions[name] = new Institution(hostname_and_port[0], 
                                                          std::stoi(hostname_and_port[1]),
                                                          id,
                                                          num_threads);
-                    institutions_lock.unlock();
                 }
             }
             if (!found) {
+                institutions_lock.unlock();
                 throw std::runtime_error("No institution with that name was found");
             }
             response_mtype = RSA_PUB_KEY;
             response = reinterpret_cast<char *>(rsa_public_key);
+            institutions_lock.unlock();
+            std::cout << "after " << name << std::endl;
             break;
         }
         case AES_KEY:
         {
             std::vector<std::string> aes_info;
             Parser::split(aes_info, msg, '\t');
-            if (aes_info.size() != 3) {
-                std::cout << "got msg with split " << aes_info.size() << msg << std::endl;
-            }
+
             int thread_id = std::stoi(aes_info[2]);
             // We only want 1 "check in"
             if (thread_id == 0) {

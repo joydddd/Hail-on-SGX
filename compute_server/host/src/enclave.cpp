@@ -63,10 +63,8 @@ bool getaes(const int client_num,
     if (!encrypted_aes_key.length() || !encrypted_aes_iv.length()) {
         return false;
     }
-    std::cout << "Got key and iv from thread " << thread_id << std::endl;
     std::memcpy(key, &encrypted_aes_key[0], 256);
     std::memcpy(iv, &encrypted_aes_iv[0], 256);
-    std::cout << "memcpy didn't segfault " << thread_id << std::endl;
     return true;
 }
 
