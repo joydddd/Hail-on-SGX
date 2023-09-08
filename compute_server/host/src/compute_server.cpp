@@ -306,7 +306,7 @@ bool ComputeServer::handle_message(int connFD, const std::string& name, ComputeS
                 throw std::runtime_error("No institution with that name was found");
             }
             response_mtype = RSA_PUB_KEY;
-            response = reinterpret_cast<char *>(rsa_public_key);
+            response = std::string(reinterpret_cast<char *>(get_rsa_pub_key()), RSA_PUB_KEY_SIZE);
             institutions_lock.unlock();
             break;
         }
