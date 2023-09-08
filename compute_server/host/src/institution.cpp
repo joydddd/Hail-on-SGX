@@ -10,6 +10,10 @@ Institution::Institution(std::string hostname, int port, int id, const int num_t
           request_conn(-1), current_pos(0), all_data_received(false), id(id) {
     aes_encrypted_key_list.resize(num_threads);
     aes_encrypted_iv_list.resize(num_threads);
+    for (int i = 0; i < num_threads; ++i) {
+        aes_encrypted_key_list[i] = "";
+        aes_encrypted_iv_list[i] = "";
+    }
 }
 
 Institution::~Institution() {

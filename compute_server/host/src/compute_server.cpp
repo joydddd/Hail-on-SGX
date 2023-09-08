@@ -278,7 +278,6 @@ bool ComputeServer::handle_message(int connFD, const std::string& name, ComputeS
         {
             // Wait until we have a global id!
             while (get_instance()->global_id < 0) {}
-            std::cout << "b4 " << name << std::endl;
             institutions_lock.lock();
             if (institutions.count(name)) {
                 institutions_lock.unlock();
@@ -309,7 +308,6 @@ bool ComputeServer::handle_message(int connFD, const std::string& name, ComputeS
             response_mtype = RSA_PUB_KEY;
             response = reinterpret_cast<char *>(rsa_public_key);
             institutions_lock.unlock();
-            std::cout << "after " << name << std::endl;
             break;
         }
         case AES_KEY:
@@ -382,16 +380,19 @@ bool ComputeServer::handle_message(int connFD, const std::string& name, ComputeS
             throw std::runtime_error("Not a valid response type");
     }
     // now let's send that response
+    std::cout << "b4 send " << name << std::endl;
     if (response.length()) {
         send_msg(name, response_mtype, response);
     }
+    std::cout << "after send" << name << std::endl;
     if (mtype != DATA && mtype != EOF_DATA) {
         // cool, well handled!
         //guarded_cout("\nClosing connection", cout_lock);
         close(connFD);
+        std::cout << "closed " << name << std::endl;
         //guarded_cout("\n--------------", cout_lock);
         return false;
-    }   
+    } 
     return true;  
 }
 

@@ -70,6 +70,7 @@ void setup_enclave_encryption(const int num_threads) {
             client.aes_list[thread_id] = aes;
         }
     }
+    std::cout << "made it past? " << std::endl;
 
     try {
         unsigned char enc_aes_key[256];
@@ -78,6 +79,7 @@ void setup_enclave_encryption(const int num_threads) {
         for (int client = 0; client < num_clients; ++client) {
             for (int thread_id = 0; thread_id < num_threads; ++thread_id) {
                 bool rt = false;
+                std::cout << "and again..." << std::endl;
                 while (!rt) {
                     getaes(&rt, client, thread_id, enc_aes_key, enc_aes_iv);
                 }
