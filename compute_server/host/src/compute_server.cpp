@@ -182,11 +182,13 @@ void ComputeServer::run() {
 }
 
 bool ComputeServer::start_thread(int connFD, char* body_buffer) {
+    guarded_cout("new msg", cout_lock);
     // if we catch any errors we will throw an error to catch and close the connection
     bool buffer_given = body_buffer != nullptr;
     if (!buffer_given) {
         body_buffer = new char[MAX_MESSAGE_SIZE]();
     }
+    guarded_cout("buffer created", cout_lock);
     try {
         char header_buffer[128];
         // receive header, byte by byte until we hit deliminating char
@@ -213,6 +215,7 @@ bool ComputeServer::start_thread(int connFD, char* body_buffer) {
             }
             header_size++;
         }
+        guarded_cout("read header", cout_lock);
         if (!found_delim) {
             std::cout << "Recieved message without null terminating char" << std::endl;
             std::cout << header_buffer << std::endl;
@@ -241,6 +244,7 @@ bool ComputeServer::start_thread(int connFD, char* body_buffer) {
                 throw std::runtime_error("Error reading request body");
             }
         }
+        guarded_cout("read body", cout_lock);
         std::string body(body_buffer, body_size);
 
         std::string msg;
@@ -380,11 +384,9 @@ bool ComputeServer::handle_message(int connFD, const std::string& name, ComputeS
             throw std::runtime_error("Not a valid response type");
     }
     // now let's send that response
-    std::cout << "b4 send " << name << std::endl;
     if (response.length()) {
         send_msg(name, response_mtype, response);
     }
-    std::cout << "after send " << name << std::endl;
     if (mtype != DATA && mtype != EOF_DATA) {
         // cool, well handled!
         //guarded_cout("\nClosing connection", cout_lock);
