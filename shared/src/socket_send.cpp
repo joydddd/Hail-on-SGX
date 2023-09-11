@@ -59,9 +59,10 @@ int send_message(const char *hostname, int port, const char *message, const int 
 		throw std::runtime_error("Message exceeds maximum length: " + std::to_string(message_length));
 		return -1;
 	}
-
+	std::cout << "1" << std::endl;
 	// Connect to remote server
 	if (sock == -1) {
+		std::cout << "2" << std::endl;
 		struct addrinfo hints = {}, *addrs;
 		char port_str[16] = {};
 
@@ -69,10 +70,12 @@ int send_message(const char *hostname, int port, const char *message, const int 
 		hints.ai_socktype = SOCK_STREAM;
 		hints.ai_protocol = IPPROTO_TCP;
 		sprintf(port_str, "%d", port);
+		std::cout << "3" << std::endl;
 
 		if (getaddrinfo(hostname, port_str, &hints, &addrs) != 0) {
 			throw std::runtime_error("Failed to get addr info");
 		}
+		std::cout << "4" << std::endl;
 		for (struct addrinfo *addr = addrs; addr != NULL; addr = addr->ai_next) {
 			sock = socket(addr->ai_family, addr->ai_socktype, addr->ai_protocol);
 			if (sock == -1)
@@ -85,7 +88,9 @@ int send_message(const char *hostname, int port, const char *message, const int 
 			close(sock);
 			sock = -1;
 		}
+		std::cout << "5" << std::endl;
 		freeaddrinfo(addrs);
+		std::cout << "6" << std::endl;
 
 		if (sock == -1) {
 			char buffer[ 256 ];
@@ -93,12 +98,14 @@ int send_message(const char *hostname, int port, const char *message, const int 
 			printf("Error %s\n", errorMsg); //return value has to be used since buffer might not be modified
 			throw std::runtime_error("Failed to connect\n");
 		}
+		std::cout << "7" << std::endl;
 	}
 
 	// Send message to remote server
 	if (send(sock, message, message_length, 0) == -1) {
 		throw std::runtime_error("Hostname: " + std::string(hostname) + " error sending on stream socket");
 	}
+	std::cout << "8" << std::endl;
 
 	return sock;
 }
