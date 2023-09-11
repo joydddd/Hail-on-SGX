@@ -88,10 +88,8 @@ int send_message(const char *hostname, int port, const char *message, const int 
 				sock = -1;
 				continue;
 			}
-			std::cout << hostname << " 3 " << addr->ai_addrlen << std::endl;
 			if (connect(sock, addr->ai_addr, addr->ai_addrlen) == 0)
 				break;
-			std::cout << "4" << std::endl;
 
 			close(sock);
 			sock = -1;
