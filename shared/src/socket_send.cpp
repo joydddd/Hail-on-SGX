@@ -74,18 +74,26 @@ int send_message(const char *hostname, int port, const char *message, const int 
 		}
 
 		for (struct addrinfo *addr = addrs; addr != NULL; addr = addr->ai_next) {
-			std::cout << "1" << std::endl;
 			sock = socket(addr->ai_family, addr->ai_socktype, addr->ai_protocol);
-			std::cout << "2" << std::endl;
 			if (sock == -1)
 				break;
-			std::cout << "3" << std::endl;
+			
+			if (!addr->ai_addr) {
+				std::cout << "addr ai was null, go to next?" << std::endl;
+				sock = -1;
+				continue;
+			}
+			if (!addr->ai_addrlen) {
+				std::cout << "addr ai len was 0, go to next?" << std::endl;
+				sock = -1;
+				continue;
+			}
+			std::cout << hostname << " 3 " << addr->ai_addrlen << std::endl;
 			if (connect(sock, addr->ai_addr, addr->ai_addrlen) == 0)
 				break;
 			std::cout << "4" << std::endl;
 
 			close(sock);
-			std::cout << "5" << std::endl;
 			sock = -1;
 		}
 		freeaddrinfo(addrs);
