@@ -380,7 +380,7 @@ bool ComputeServer::handle_message(int connFD, const std::string& name, ComputeS
             throw std::runtime_error("Not a valid response type");
     }
     // now let's send that response
-    std::cout << "b4 send " << name << std::endl;
+    std::cout << "b4 send " << name << " " << response.length() << " " << RSA_PUB_KEY_SIZE << std::endl;
     if (response.length()) {
         send_msg(name, response_mtype, response);
     }
