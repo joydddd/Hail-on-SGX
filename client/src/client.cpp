@@ -3,8 +3,10 @@
 #include <chrono>
 #include <thread>
 #include <string>
+#include <condition_variable>
 
 std::mutex cout_lock;
+std::condition_variable work_queue_condition;
 
 Client::Client(const std::string& config_file) {
     init(config_file);
@@ -37,6 +39,7 @@ void Client::init(const std::string& config_file) {
     y_and_cov_count = 0;
     filled_count = 0;
     current_line_num = 0;
+    shutdown = false;
 }
 
 void Client::run() {
@@ -82,18 +85,41 @@ void Client::run() {
     listen_port = ntohs(addr.sin_port);
     guarded_cout("\n Running on port " + std::to_string(listen_port), cout_lock);
 
+    // Make a thread pool to listen for connections!
+    const uint32_t num_threads = std::thread::hardware_concurrency(); // Max # of threads the system supports
+    for (uint32_t ii = 0; ii < num_threads; ++ii) {
+        std::thread pool_thread = std::thread(&Client::start_thread_wrapper, this);
+        pool_thread.detach();
+    }
+
     // (5) Serve incoming connections one by one forever (a lonely fate).
 	while (true) {
         // accept connection from client
         int connFD = accept(sockfd, (struct sockaddr*) &addr, &addrSize);
-
-        // spin up a new thread to handle this message
-        boost::thread msg_thread(&Client::start_thread, this, connFD);
-        msg_thread.detach();
+        
+        work_queue.enqueue(connFD);
+        work_queue_condition.notify_all();
     }
 }
 
-bool Client::start_thread(int connFD) {
+void Client::start_thread_wrapper() {
+    while (true) {
+        start_thread();
+    }
+}
+
+bool Client::start_thread() {
+    int connFD;
+    std::mutex useless_lock;
+    std::unique_lock<std::mutex> useless_lock_wrapper(useless_lock);
+    while (!work_queue.try_dequeue(connFD)) {
+        if (shutdown) {
+            work_queue_condition.notify_all();
+            exit(0);
+        }
+        work_queue_condition.wait(useless_lock_wrapper);
+    }
+
     char* body_buffer = new char[MAX_MESSAGE_SIZE]();
     // if we catch any errors we will throw an error to catch and close the connection
     try {
@@ -206,7 +232,6 @@ void Client::handle_message(int connFD, const unsigned int global_id, const Clie
         case RSA_PUB_KEY:
         {
             // I wanted to use .resize() but the compiler cried about it, this is not ideal but acceptable.
-            
             const std::string header = "-----BEGIN PUBLIC KEY-----";
             const std::string footer = "-----END PUBLIC KEY-----";
 
@@ -335,6 +360,8 @@ void Client::handle_message(int connFD, const unsigned int global_id, const Clie
         case END_CLIENT:
         {
             // Client has served its purpose! Exit the program
+            shutdown = true;
+            work_queue_condition.notify_all();
             exit(0);
             break;
         }

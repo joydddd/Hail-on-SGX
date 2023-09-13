@@ -88,14 +88,17 @@ int send_message(const char *hostname, int port, const char *message, const int 
 				sock = -1;
 				continue;
 			}
-			if (connect(sock, addr->ai_addr, addr->ai_addrlen) == 0)
+			std::cout << "b4 connect" << std::endl;
+			if (connect(sock, addr->ai_addr, addr->ai_addrlen) == 0) {
 				break;
+			}
 
 			close(sock);
 			sock = -1;
 		}
+		std::cout << "after connect" << std::endl;
 		freeaddrinfo(addrs);
-
+		std::cout << "after freeaddrinfo" << std::endl;
 		if (sock == -1) {
 			char buffer[ 256 ];
 			char * errorMsg = strerror_r( errno, buffer, 256 ); // GNU-specific version, Linux default
@@ -103,11 +106,12 @@ int send_message(const char *hostname, int port, const char *message, const int 
 			throw std::runtime_error("Failed to connect\n");
 		}
 	}
-
+	std::cout << "about to send" << std::endl;
 	// Send message to remote server
 	if (send(sock, message, message_length, 0) == -1) {
 		throw std::runtime_error("Hostname: " + std::string(hostname) + " error sending on stream socket");
 	}
+	std::cout << "after send" << std::endl;
 
 	return sock;
 }

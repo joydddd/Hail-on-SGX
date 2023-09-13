@@ -7,7 +7,7 @@ TESTDIR := tests
 include ../config.mk
 ####################################
 EXECUTABLE = $(PROJECTNAME)host
-CONFIG = compute_server_config.json
+CONFIG = configs/compute_server_config.json
 
 TESTSOURCES = $(wildcard $(TESTDIR)/test*.cpp)
 # names of test executables

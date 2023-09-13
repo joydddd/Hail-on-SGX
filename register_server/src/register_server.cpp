@@ -193,11 +193,10 @@ bool RegisterServer::handle_message(int connFD, RegisterServerMessageType mtype,
             // Compare the max thread count of this machine with the others before it
             Parser::parse_connection_info(msg, compute_info);
             // Send the compute server its global ID
-            std::lock_guard<std::mutex> raii(compute_lock);
-            send_msg(compute_info.hostname, compute_info.port, ComputeServerMessageType::GLOBAL_ID, std::to_string(compute_server_info.size()));
-            std::cout << compute_info.hostname << " " << std::to_string(compute_server_info.size()) << std::endl;
-            compute_info_list.push_back(compute_info);
+            compute_lock.lock();
+            int curr_compute_server_info_size = compute_server_info.size();
 
+            compute_info_list.push_back(compute_info);
             compute_server_info.push_back(msg);
             if (compute_server_info.size() == compute_server_count) {
                 // Create message containing all compute server info
@@ -212,6 +211,11 @@ bool RegisterServer::handle_message(int connFD, RegisterServerMessageType mtype,
                     send_msg(institution_info.hostname, institution_info.port, ClientMessageType::COMPUTE_INFO, serialized_server_info);
                 }
             }
+            std::cout << compute_info.hostname << " " << std::to_string(curr_compute_server_info_size) << std::endl;
+            compute_lock.unlock();
+
+            send_msg(compute_info.hostname, compute_info.port, ComputeServerMessageType::GLOBAL_ID, std::to_string(curr_compute_server_info_size));
+
             break;
         }
         case CLIENT_REGISTER:

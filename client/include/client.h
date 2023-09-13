@@ -24,6 +24,7 @@
 #include "aes-crypto.h"
 #include "json.hpp"
 #include "phenotype.h"
+#include "concurrentqueue.h"
 
 #ifndef _CLIENT_H_
 #define _CLIENT_H_
@@ -59,6 +60,9 @@ class Client {
 
     std::ifstream xval;
 
+    bool shutdown;
+    moodycamel::ConcurrentQueue<int> work_queue;
+
     std::vector<std::vector<AESCrypto> > aes_encryptor_list;
     std::vector<std::vector<Phenotype> > phenotypes_list;
     std::vector<ConnectionInfo> compute_server_info;
@@ -88,8 +92,10 @@ class Client {
     void send_msg(const unsigned int global_id, const unsigned int mtype, const std::string& msg, int connFD=-1);
     int send_msg(const std::string& hostname, unsigned int port, unsigned int mtype, const std::string& msg, int connFD=-1);
 
+    void start_thread_wrapper();
+
     // start a thread that will handle a message and exit properly if it finds an error
-    bool start_thread(int connFD);
+    bool start_thread();
 
     void queue_helper(const int global_id, const int num_helpers);
 
