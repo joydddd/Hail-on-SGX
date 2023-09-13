@@ -387,7 +387,6 @@ bool ComputeServer::handle_message(int connFD, const std::string& name, ComputeS
         // cool, well handled!
         //guarded_cout("\nClosing connection", cout_lock);
         close(connFD);
-        std::cout << "closed " << name << std::endl;
         //guarded_cout("\n--------------", cout_lock);
         return false;
     } 
@@ -573,6 +572,9 @@ void ComputeServer::parse_header_compute_server_header(const std::string& header
     // Parse client name
     while(header[header_idx] != ' ') {
         client_name.push_back(header[header_idx++]);
+        if (header_idx >= header.length()) {
+            std::cout << "1 Invalid header? " << header << std::endl;
+        }
     }
     header_idx++;
 
@@ -581,6 +583,9 @@ void ComputeServer::parse_header_compute_server_header(const std::string& header
 
     while(header[header_idx] != ' ') {
         mtype_str.push_back(header[header_idx++]);
+        if (header_idx >= header.length()) {
+            std::cout << "2 Invalid header? " << header << std::endl;
+        }
     }
     header_idx++;
     mtype = static_cast<ComputeServerMessageType>(std::stoi(mtype_str));
@@ -603,6 +608,9 @@ void ComputeServer::parse_header_compute_server_header(const std::string& header
     // Parse batch position
     while(header[header_idx++] != '\t') {
         pos_str.push_back(header[header_idx - 1]);
+        if (header_idx > header.length()) {
+            std::cout << "3 Invalid header? " << header << std::endl;
+        }
     }
 
     batch->pos = std::stoi(pos_str);
@@ -618,6 +626,9 @@ void ComputeServer::parse_header_compute_server_header(const std::string& header
                 continue;
             }
             length_str.push_back(header[header_idx - 1]);
+            if (header_idx > header.length()) {
+                std::cout << "4 Invalid header? " << header << std::endl;
+            }
         }
         lengths.push_back(std::stoi(length_str));
     } catch (const std::exception& e) {
