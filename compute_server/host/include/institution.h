@@ -22,6 +22,7 @@ class Institution {
   private:
     std::mutex num_patients_lock;
     std::mutex blocks_lock;
+    std::mutex eligible_blocks_lock;
     std::mutex covariant_data_lock;
     std::mutex y_val_data_lock;
     std::mutex aes_key_iv_lock;

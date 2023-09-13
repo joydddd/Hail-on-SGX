@@ -103,6 +103,7 @@ void Institution::transfer_eligible_blocks() {
         }
         blocks.pop();
 
+        std::lock_guard<std::mutex> raii2(eligible_blocks_lock);
         for (DataBlock* parsed_block : batch->blocks_batch) {
             eligible_blocks.push(parsed_block);
         }
@@ -113,10 +114,12 @@ void Institution::transfer_eligible_blocks() {
 }
 
 DataBlock* Institution::get_top_block() {
+    std::lock_guard<std::mutex> raii(eligible_blocks_lock);
     if (eligible_blocks.empty()) return nullptr;
     return eligible_blocks.front();
 }
 
 void Institution::pop_top_block() {
+    std::lock_guard<std::mutex> raii(eligible_blocks_lock);
     eligible_blocks.pop();
 }
