@@ -169,7 +169,8 @@ void RegisterServer::start_thread() {
         RegisterServerMessageType type = static_cast<RegisterServerMessageType>(std::stoi(parsed_header[1]));
         if (type == RegisterServerMessageType::EOF_OUTPUT) {
             cout_lock.lock();
-            std::cout << "ID/Client: " << parsed_header[0] << " Msg Type: " << parsed_header[1] << "\n";
+            std::cout << "ID/Client: " << parsed_header[0] 
+                      << " Msg Type: " << parsed_header[1] << "\n";
             cout_lock.unlock();
         } else if (type != RegisterServerMessageType::OUTPUT) {
             guarded_cout("ID/Client: " + parsed_header[0] + 
