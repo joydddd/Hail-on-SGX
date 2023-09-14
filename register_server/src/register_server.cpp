@@ -216,8 +216,8 @@ bool RegisterServer::handle_message(int connFD, RegisterServerMessageType mtype,
                     send_msg(institution_info.hostname, institution_info.port, ClientMessageType::COMPUTE_INFO, serialized_server_info);
                 }
             }
-            std::cout << compute_info.hostname << " " << std::to_string(curr_compute_server_info_size) << "std::endl";
             compute_lock.unlock();
+            std::cout << compute_info.hostname << " " << std::to_string(curr_compute_server_info_size) << std::endl;
 
             send_msg(compute_info.hostname, compute_info.port, ComputeServerMessageType::GLOBAL_ID, std::to_string(curr_compute_server_info_size));
 

@@ -246,6 +246,10 @@ bool ComputeServer::start_thread(int connFD, char* body_buffer) {
         std::string msg;
         std::string client_name;
         ComputeServerMessageType mtype;
+        if (!body.length()) {
+            std::cout << "No body? " << header << " ! " << body << std::endl;
+            return true;
+        }
         parse_header_compute_server_header(body, msg, client_name, mtype, connFD);
 
         // if (mtype != ComputeServerMessageType::DATA) {
@@ -570,6 +574,7 @@ void ComputeServer::parse_header_compute_server_header(const std::string& header
                                                        int connFD) {
     int header_idx = 0;
     // Parse client name
+    std::cout << "1" << std::endl;
     while(header[header_idx] != ' ') {
         client_name.push_back(header[header_idx++]);
         if (header_idx >= header.length()) {
@@ -577,6 +582,7 @@ void ComputeServer::parse_header_compute_server_header(const std::string& header
         }
     }
     header_idx++;
+    std::cout << "2" << std::endl;
 
     // Parse mtype
     std::string mtype_str;
@@ -587,6 +593,7 @@ void ComputeServer::parse_header_compute_server_header(const std::string& header
             std::cout << "2 Invalid header? " << header << std::endl;
         }
     }
+    std::cout << "3" << std::endl;
     header_idx++;
     mtype = static_cast<ComputeServerMessageType>(std::stoi(mtype_str));
 
@@ -596,12 +603,14 @@ void ComputeServer::parse_header_compute_server_header(const std::string& header
         }
         return;
     }
+    std::cout << "4" << std::endl;
 
     if (!seen_fds.count(connFD)) {
         seen_fds.insert(connFD);
         boost::thread data_listener_thread(&ComputeServer::data_listener, this, connFD);
         data_listener_thread.detach();
     }
+    std::cout << "5" << std::endl;
 
     DataBlockBatch* batch = new DataBlockBatch;
     std::string pos_str;
@@ -612,6 +621,7 @@ void ComputeServer::parse_header_compute_server_header(const std::string& header
             std::cout << "3 Invalid header? " << header << std::endl;
         }
     }
+    std::cout << "6" << std::endl;
 
     batch->pos = std::stoi(pos_str);
 
@@ -634,7 +644,7 @@ void ComputeServer::parse_header_compute_server_header(const std::string& header
     } catch (const std::exception& e) {
         std::cout << "Failed header parse with error " << e.what() << std::endl;
     }
-    
+    std::cout << "7" << std::endl;
 
     for (int length : lengths) {
         const std::string substr = header.substr(header_idx, length);
@@ -657,6 +667,7 @@ void ComputeServer::parse_header_compute_server_header(const std::string& header
         }
         batch->blocks_batch.push_back(block);
     }
+    std::cout << "8" << std::endl;
 
     institutions[client_name]->add_block_batch(batch);
 }
