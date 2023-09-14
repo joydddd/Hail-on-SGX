@@ -18,6 +18,7 @@
 #include <condition_variable>
 #include "json.hpp"
 #include <iostream>
+#include <future>
 #include <fstream>
 #include <assert.h>
 #include <stdexcept>
@@ -31,6 +32,8 @@
 #include "parser.h"
 #include "concurrentqueue.h"
 #include "socket_send.h"
+
+#include <ctpl.h>
 
 struct AlleleGT {
   inline bool operator()(const std::string &a, const std::string &b) const {
@@ -82,7 +85,7 @@ class RegisterServer {
     std::vector<ConnectionInfo> compute_info_list;
 
     std::vector<moodycamel::ConcurrentQueue<std::string> > tmp_file_string_list;
-    moodycamel::ConcurrentQueue<int> work_queue;
+
     std::vector<std::mutex> tmp_file_mutex_list;
 
     bool shutdown;
@@ -104,8 +107,10 @@ class RegisterServer {
     // send messages to the client
     int send_msg(const std::string& hostname, const int port, int mtype, const std::string& msg, int connFD=-1);
 
+    void start_thread_wrapper();
+
     // start a thread that will handle a message and exit properly if it finds an error
-    void start_thread();
+    void start_thread(int connFD);
 
   public:
 

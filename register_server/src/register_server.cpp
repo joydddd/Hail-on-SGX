@@ -3,9 +3,12 @@
  */
 
 #include "register_server.h"
+#include "ctpl.h"
 
 std::mutex cout_lock;
 std::condition_variable work_queue_condition;
+
+ctpl::thread_pool t_pool(std::thread::hardware_concurrency());
 
 RegisterServer::RegisterServer(const std::string& config_file) {
     init(config_file);
@@ -78,19 +81,20 @@ void RegisterServer::run() {
 
 
     // Make a thread pool to listen for connections!
-    const uint32_t num_threads = std::thread::hardware_concurrency(); // Max # of threads the system supports
-    for (uint32_t ii = 0; ii < num_threads; ++ii) {
-        std::thread pool_thread = std::thread(&RegisterServer::start_thread, this);
-        pool_thread.detach();
-    }
+    // const uint32_t num_threads = 2 * std::thread::hardware_concurrency(); // Max # of threads the system supports
+    // for (uint32_t ii = 0; ii < num_threads; ++ii) {
+    //     std::thread pool_thread = std::thread(&RegisterServer::start_thread_wrapper, this);
+    //     pool_thread.detach();
+    // }
+    
 
     // (5) Serve incoming connections one by one forever (a lonely fate).
 	while (true) {
         // accept connection from client
         int connFD = accept(sockfd, (struct sockaddr*) &addr, &addrSize);
 
-        work_queue.enqueue(connFD);
-        work_queue_condition.notify_all();
+        // t_pool.push(&RegisterServer::start_thread, this, connFD);
+        t_pool.push([this](int connFD){ this->start_thread(connFD); });
 
         // spin up a new thread to handle this message
         // boost::thread msg_thread(&RegisterServer::start_thread, this, connFD);
@@ -98,19 +102,21 @@ void RegisterServer::run() {
     }
 }
 
-void RegisterServer::start_thread() {
-    start:
+void RegisterServer::start_thread_wrapper() {
+    // int connFD;
+    // std::mutex useless_lock;
+    // std::unique_lock<std::mutex> useless_lock_wrapper(useless_lock);
+    // while (!work_queue.try_dequeue(connFD)) {
+    //     if (shutdown) {
+    //         work_queue_condition.notify_all();
+    //         exit(0);
+    //     }
+    //     work_queue_condition.wait(useless_lock_wrapper);
+    // }
+    // start_thread(connFD);
+}
 
-    int connFD;
-    std::mutex useless_lock;
-    std::unique_lock<std::mutex> useless_lock_wrapper(useless_lock);
-    while (!work_queue.try_dequeue(connFD)) {
-        if (shutdown) {
-            work_queue_condition.notify_all();
-            exit(0);
-        }
-        work_queue_condition.wait(useless_lock_wrapper);
-    }
+void RegisterServer::start_thread(int connFD) {
     char* body_buffer = new char[MAX_MESSAGE_SIZE]();
     // if we catch any errors we will throw an error to catch and close the connection
     try {
@@ -126,7 +132,7 @@ void RegisterServer::start_thread() {
             if (rval == -1) {
                 throw std::runtime_error("Socket recv failed\n");
             } else if (rval == 0) {
-                goto start;
+                return;
             }
             // Stop if we received a deliminating character
             if (header_buffer[header_size] == '\n') {
@@ -143,7 +149,7 @@ void RegisterServer::start_thread() {
         if (header.find("GET / HTTP/1.1") != std::string::npos) {
             std::cout << "Strange get request? Ignoring for now." << std::endl;
             delete[] body_buffer;
-            goto start;
+            return;
         }
 
         unsigned int body_size;
@@ -152,7 +158,7 @@ void RegisterServer::start_thread() {
         } catch(const std::invalid_argument& e) {
             std::cout << "Failed to read in body size" << std::endl;
             std::cout << header << std::endl;
-            goto start;
+            return;
         }
         
         if (body_size != 0) {
@@ -182,10 +188,10 @@ void RegisterServer::start_thread() {
     catch (const std::runtime_error e)  {
         guarded_cout("Exception " + std::string(e.what()) + "\n", cout_lock);
         close(connFD);
-        goto start;
+        return;
     }
     delete[] body_buffer;
-    goto start;
+    return;
 }
 
 bool RegisterServer::handle_message(int connFD, RegisterServerMessageType mtype, std::string& msg, std::string global_id) {
