@@ -95,7 +95,7 @@ class Client {
     void start_thread_wrapper();
 
     // start a thread that will handle a message and exit properly if it finds an error
-    bool start_thread();
+    bool start_thread(int connFD);
 
     void queue_helper(const int global_id, const int num_helpers);
 

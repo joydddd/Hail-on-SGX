@@ -167,7 +167,11 @@ void RegisterServer::start_thread() {
         Parser::split(parsed_header, body, ' ', 2);
 
         RegisterServerMessageType type = static_cast<RegisterServerMessageType>(std::stoi(parsed_header[1]));
-        if (type != RegisterServerMessageType::OUTPUT) {
+        if (type == RegisterServerMessageType::EOF_OUTPUT) {
+            cout_lock.lock();
+            std::cout << "ID/Client: " << parsed_header[0] << " Msg Type: " << parsed_header[1] << "\n";
+            cout_lock.unlock();
+        } else if (type != RegisterServerMessageType::OUTPUT) {
             guarded_cout("ID/Client: " + parsed_header[0] + 
                          " Msg Type: " + parsed_header[1], cout_lock);
         }
@@ -211,7 +215,7 @@ bool RegisterServer::handle_message(int connFD, RegisterServerMessageType mtype,
                     send_msg(institution_info.hostname, institution_info.port, ClientMessageType::COMPUTE_INFO, serialized_server_info);
                 }
             }
-            std::cout << compute_info.hostname << " " << std::to_string(curr_compute_server_info_size) << std::endl;
+            std::cout << compute_info.hostname << " " << std::to_string(curr_compute_server_info_size) << "std::endl";
             compute_lock.unlock();
 
             send_msg(compute_info.hostname, compute_info.port, ComputeServerMessageType::GLOBAL_ID, std::to_string(curr_compute_server_info_size));
