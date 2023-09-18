@@ -281,18 +281,21 @@ bool ComputeServer::handle_message(int connFD, const std::string& name, ComputeS
         case REGISTER:
         {
             // Wait until we have a global id!
+            std::cout << "?1" << std::endl;
             while (get_instance()->global_id < 0) {}
             institutions_lock.lock();
             if (institutions.count(name)) {
                 institutions_lock.unlock();
                 throw std::runtime_error("User already registered");
             }
+            std::cout << "?2" << std::endl;
             std::vector<std::string> hostname_and_port;
             Parser::split(hostname_and_port, msg, '\t');
             if (hostname_and_port.size() != 2) {
                 institutions_lock.unlock();
                 throw std::runtime_error("Invalid register message: " + msg);
             }
+            std::cout << "?3" << std::endl;
             bool found = false;
             for (int id = 0; id < institution_list.size(); ++id) {
                 // Look for client id!
@@ -305,13 +308,16 @@ bool ComputeServer::handle_message(int connFD, const std::string& name, ComputeS
                                                          num_threads);
                 }
             }
+            std::cout << "?4" << std::endl;
             if (!found) {
                 institutions_lock.unlock();
                 throw std::runtime_error("No institution with that name was found");
             }
+            std::cout << "?5" << std::endl;
             response_mtype = RSA_PUB_KEY;
             response = std::string(reinterpret_cast<char *>(get_rsa_pub_key()), RSA_PUB_KEY_SIZE);
             institutions_lock.unlock();
+            std::cout << "?6" << std::endl;
             break;
         }
         case AES_KEY:
