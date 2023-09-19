@@ -604,16 +604,17 @@ void ComputeServer::parse_header_compute_server_header(const std::string& header
         return;
     }
 
-    if (registered_fds != institution_list.size()) {
+    //if (registered_fds != institution_list.size()) {
         expected_lock.lock();
         if (!seen_fds.count(connFD)) {
             registered_fds++;
+            std::cout << "reg fds " << registered_fds << std::endl;
             seen_fds.insert(connFD);
             boost::thread data_listener_thread(&ComputeServer::data_listener, this, connFD);
             data_listener_thread.detach();
         }
         expected_lock.unlock();
-    }
+    //}
 
     DataBlockBatch* batch = new DataBlockBatch;
     std::string pos_str;
