@@ -88,6 +88,8 @@ class RegisterServer {
 
     std::vector<std::mutex> tmp_file_mutex_list;
 
+    moodycamel::ConcurrentQueue<int> work_queue; 
+    ctpl::thread_pool t_pool;
     bool shutdown;
 
     std::priority_queue<std::string, std::vector<std::string>, AlleleGT > sorted_file_queue;
@@ -107,10 +109,8 @@ class RegisterServer {
     // send messages to the client
     int send_msg(const std::string& hostname, const int port, int mtype, const std::string& msg, int connFD=-1);
 
-    void start_thread_wrapper();
-
     // start a thread that will handle a message and exit properly if it finds an error
-    void start_thread(int connFD);
+    void start_thread();
 
   public:
 

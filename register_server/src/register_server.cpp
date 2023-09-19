@@ -8,8 +8,6 @@
 std::mutex cout_lock;
 std::condition_variable work_queue_condition;
 
-ctpl::thread_pool t_pool(std::thread::hardware_concurrency());
-
 RegisterServer::RegisterServer(const std::string& config_file) {
     init(config_file);
 }
@@ -34,6 +32,7 @@ void RegisterServer::init(const std::string& config_file) {
     eof_messages_received = 0;
     first = true;
     shutdown = false;
+    t_pool.resize(std::thread::hardware_concurrency());
 }
 
 void RegisterServer::run() {
@@ -92,9 +91,11 @@ void RegisterServer::run() {
 	while (true) {
         // accept connection from client
         int connFD = accept(sockfd, (struct sockaddr*) &addr, &addrSize);
-
-        // t_pool.push(&RegisterServer::start_thread, this, connFD);
-        t_pool.push([this](int connFD){ this->start_thread(connFD); });
+        
+        work_queue.enqueue(connFD);
+        t_pool.push(
+            [&, this](int id){ this->start_thread(); }
+        );
 
         // spin up a new thread to handle this message
         // boost::thread msg_thread(&RegisterServer::start_thread, this, connFD);
@@ -102,21 +103,11 @@ void RegisterServer::run() {
     }
 }
 
-void RegisterServer::start_thread_wrapper() {
-    // int connFD;
-    // std::mutex useless_lock;
-    // std::unique_lock<std::mutex> useless_lock_wrapper(useless_lock);
-    // while (!work_queue.try_dequeue(connFD)) {
-    //     if (shutdown) {
-    //         work_queue_condition.notify_all();
-    //         exit(0);
-    //     }
-    //     work_queue_condition.wait(useless_lock_wrapper);
-    // }
-    // start_thread(connFD);
-}
-
-void RegisterServer::start_thread(int connFD) {
+void RegisterServer::start_thread() {
+    int connFD;
+    if (!work_queue.try_dequeue(connFD)) {
+        throw std::runtime_error("should be impossible? didn't find connFD");
+    }
     char* body_buffer = new char[MAX_MESSAGE_SIZE]();
     // if we catch any errors we will throw an error to catch and close the connection
     try {
@@ -222,8 +213,8 @@ bool RegisterServer::handle_message(int connFD, RegisterServerMessageType mtype,
                     send_msg(institution_info.hostname, institution_info.port, ClientMessageType::COMPUTE_INFO, serialized_server_info);
                 }
             }
-            compute_lock.unlock();
             std::cout << compute_info.hostname << " " << std::to_string(curr_compute_server_info_size) << std::endl;
+            compute_lock.unlock();
 
             send_msg(compute_info.hostname, compute_info.port, ComputeServerMessageType::GLOBAL_ID, std::to_string(curr_compute_server_info_size));
 
@@ -298,8 +289,6 @@ bool RegisterServer::handle_message(int connFD, RegisterServerMessageType mtype,
                 }
 
                 // All files recieved, all shutdown messages sent, we can exit now
-                shutdown = true;
-                work_queue_condition.notify_all();
                 exit(0);
             }
             break;

@@ -282,20 +282,17 @@ bool ComputeServer::handle_message(int connFD, const std::string& name, ComputeS
         case REGISTER:
         {
             // Wait until we have a global id!
-            std::cout << "?1" << std::endl;
             while (get_instance()->global_id < 0) { std::this_thread::yield(); }
             std::lock_guard<std::mutex> raii(institutions_lock);
 
             if (institutions.count(name)) {
                 throw std::runtime_error("User already registered");
             }
-            std::cout << "?2" << std::endl;
             std::vector<std::string> hostname_and_port;
             Parser::split(hostname_and_port, msg, '\t');
             if (hostname_and_port.size() != 2) {
                 throw std::runtime_error("Invalid register message: " + msg);
             }
-            std::cout << "?3" << std::endl;
             bool found = false;
             for (int id = 0; id < institution_list.size(); ++id) {
                 // Look for client id!
@@ -308,14 +305,11 @@ bool ComputeServer::handle_message(int connFD, const std::string& name, ComputeS
                                                          num_threads);
                 }
             }
-            std::cout << "?4" << std::endl;
             if (!found) {
                 throw std::runtime_error("No institution with that name was found");
             }
-            std::cout << "?5" << std::endl;
             response_mtype = RSA_PUB_KEY;
             response = std::string(reinterpret_cast<char *>(get_rsa_pub_key()), RSA_PUB_KEY_SIZE);
-            std::cout << "?6" << std::endl;
             break;
         }
         case AES_KEY:
@@ -604,17 +598,16 @@ void ComputeServer::parse_header_compute_server_header(const std::string& header
         return;
     }
 
-    //if (registered_fds != institution_list.size()) {
+    if (registered_fds < 2 * institution_list.size()) {
         expected_lock.lock();
         if (!seen_fds.count(connFD)) {
             registered_fds++;
-            std::cout << "reg fds " << registered_fds << std::endl;
             seen_fds.insert(connFD);
             boost::thread data_listener_thread(&ComputeServer::data_listener, this, connFD);
             data_listener_thread.detach();
         }
         expected_lock.unlock();
-    //}
+    }
 
     DataBlockBatch* batch = new DataBlockBatch;
     std::string pos_str;
