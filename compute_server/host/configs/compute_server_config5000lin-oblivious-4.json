@@ -1,12 +1,12 @@
 {
     "compute_server_bind_port": 16704,
-    "covariants": ["1", "1-5000", "2-5000", "3-5000", "4-5000", "5-5000"],
+    "covariants": ["1", "1-5000", "2-5000", "3-5000", "4-5000", "5-5000", "6-5000", "7-5000", "8-5000", "9-5000", "10-5000", "11-5000"],
     "institutions": ["client1"],
     "y_val_name": "disease-5000",
     "analysis_type": "linear-oblivious",
     "enclave_path": "../enclave/gwasenc.signed",
     "register_server_info": {
-        "hostname": "74.235.203.228",
+        "hostname": "20.84.51.39",
         "port": 16401
     }
 }
