@@ -113,7 +113,12 @@ void ComputeServer::init(const std::string& config_file) {
     server_eof = false;
     max_batch_lines = 0;
     global_id = -1;
-    registered_fds = 0;
+
+    // Make a bucket for each possible port number. This is not very space
+    // efficient but I couldn't find a good lock free unordered_set
+    // so this will do just fine. All race conditions are basically benign.
+    seen_fds.resize(65354);
+    std::fill(seen_fds.begin(), seen_fds.end(), false);
 
     allele_queue_list.resize(num_threads);
     eof_read_list.resize(num_threads);
@@ -598,15 +603,13 @@ void ComputeServer::parse_header_compute_server_header(const std::string& header
         return;
     }
 
-    if (registered_fds < 2 * institution_list.size()) {
-        expected_lock.lock();
-        if (!seen_fds.count(connFD)) {
-            registered_fds++;
-            seen_fds.insert(connFD);
-            boost::thread data_listener_thread(&ComputeServer::data_listener, this, connFD);
-            data_listener_thread.detach();
-        }
-        expected_lock.unlock();
+    if (connFD > 65353 || connFD < 0) {
+        throw std::runtime_error("ConnFD out of range " + std::to_string(connFD));
+    }
+    if (!seen_fds[connFD]) {
+        seen_fds[connFD] = true;
+        boost::thread data_listener_thread(&ComputeServer::data_listener, this, connFD);
+        data_listener_thread.detach();
     }
 
     DataBlockBatch* batch = new DataBlockBatch;
