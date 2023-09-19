@@ -19,6 +19,7 @@
 #include <unordered_set>
 #include <functional>
 #include <fstream>
+#include <atomic>
 #include <boost/thread.hpp>
 
 #include "institution.h"
@@ -52,6 +53,7 @@ class ComputeServer {
     std::unordered_set<std::string> expected_institutions;
     std::unordered_set<std::string> expected_covariants;
     std::unordered_set<int> seen_fds;
+    std::atomic<int> registered_fds;
     std::vector<std::string> institution_list;
     std::vector<moodycamel::ReaderWriterQueue<std::string>> allele_queue_list;
     std::queue<std::string> output_queue;

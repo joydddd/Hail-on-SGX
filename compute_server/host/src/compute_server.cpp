@@ -113,6 +113,7 @@ void ComputeServer::init(const std::string& config_file) {
     server_eof = false;
     max_batch_lines = 0;
     global_id = -1;
+    registered_fds = 0;
 
     allele_queue_list.resize(num_threads);
     eof_read_list.resize(num_threads);
@@ -282,17 +283,16 @@ bool ComputeServer::handle_message(int connFD, const std::string& name, ComputeS
         {
             // Wait until we have a global id!
             std::cout << "?1" << std::endl;
-            while (get_instance()->global_id < 0) {}
-            institutions_lock.lock();
+            while (get_instance()->global_id < 0) { std::this_thread::yield(); }
+            std::lock_guard<std::mutex> raii(institutions_lock);
+
             if (institutions.count(name)) {
-                institutions_lock.unlock();
                 throw std::runtime_error("User already registered");
             }
             std::cout << "?2" << std::endl;
             std::vector<std::string> hostname_and_port;
             Parser::split(hostname_and_port, msg, '\t');
             if (hostname_and_port.size() != 2) {
-                institutions_lock.unlock();
                 throw std::runtime_error("Invalid register message: " + msg);
             }
             std::cout << "?3" << std::endl;
@@ -310,13 +310,11 @@ bool ComputeServer::handle_message(int connFD, const std::string& name, ComputeS
             }
             std::cout << "?4" << std::endl;
             if (!found) {
-                institutions_lock.unlock();
                 throw std::runtime_error("No institution with that name was found");
             }
             std::cout << "?5" << std::endl;
             response_mtype = RSA_PUB_KEY;
             response = std::string(reinterpret_cast<char *>(get_rsa_pub_key()), RSA_PUB_KEY_SIZE);
-            institutions_lock.unlock();
             std::cout << "?6" << std::endl;
             break;
         }
@@ -580,7 +578,6 @@ void ComputeServer::parse_header_compute_server_header(const std::string& header
                                                        int connFD) {
     int header_idx = 0;
     // Parse client name
-    std::cout << "1" << std::endl;
     while(header[header_idx] != ' ') {
         client_name.push_back(header[header_idx++]);
         if (header_idx >= header.length()) {
@@ -588,8 +585,6 @@ void ComputeServer::parse_header_compute_server_header(const std::string& header
         }
     }
     header_idx++;
-    std::cout << "2" << std::endl;
-
     // Parse mtype
     std::string mtype_str;
 
@@ -599,7 +594,6 @@ void ComputeServer::parse_header_compute_server_header(const std::string& header
             std::cout << "2 Invalid header? " << header << std::endl;
         }
     }
-    std::cout << "3" << std::endl;
     header_idx++;
     mtype = static_cast<ComputeServerMessageType>(std::stoi(mtype_str));
 
@@ -609,14 +603,17 @@ void ComputeServer::parse_header_compute_server_header(const std::string& header
         }
         return;
     }
-    std::cout << "4" << std::endl;
 
-    if (!seen_fds.count(connFD)) {
-        seen_fds.insert(connFD);
-        boost::thread data_listener_thread(&ComputeServer::data_listener, this, connFD);
-        data_listener_thread.detach();
+    if (registered_fds != institution_list.size()) {
+        expected_lock.lock();
+        if (!seen_fds.count(connFD)) {
+            registered_fds++;
+            seen_fds.insert(connFD);
+            boost::thread data_listener_thread(&ComputeServer::data_listener, this, connFD);
+            data_listener_thread.detach();
+        }
+        expected_lock.unlock();
     }
-    std::cout << "5" << std::endl;
 
     DataBlockBatch* batch = new DataBlockBatch;
     std::string pos_str;
@@ -627,7 +624,6 @@ void ComputeServer::parse_header_compute_server_header(const std::string& header
             std::cout << "3 Invalid header? " << header << std::endl;
         }
     }
-    std::cout << "6" << std::endl;
 
     batch->pos = std::stoi(pos_str);
 
@@ -650,7 +646,6 @@ void ComputeServer::parse_header_compute_server_header(const std::string& header
     } catch (const std::exception& e) {
         std::cout << "Failed header parse with error " << e.what() << std::endl;
     }
-    std::cout << "7" << std::endl;
 
     for (int length : lengths) {
         const std::string substr = header.substr(header_idx, length);
@@ -673,7 +668,6 @@ void ComputeServer::parse_header_compute_server_header(const std::string& header
         }
         batch->blocks_batch.push_back(block);
     }
-    std::cout << "8" << std::endl;
 
     institutions[client_name]->add_block_batch(batch);
 }
