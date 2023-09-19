@@ -48,7 +48,7 @@ ComputeServer::~ComputeServer() {
 
 void ComputeServer::init(const std::string& config_file) {
     std::this_thread::sleep_for(std::chrono::milliseconds(10000));
-    num_threads = 1;//boost::thread::hardware_concurrency();
+    num_threads = 2;//boost::thread::hardware_concurrency();
 
     std::ifstream compute_config_file(config_file);
     compute_config_file >> compute_config;
@@ -251,7 +251,7 @@ bool ComputeServer::start_thread(int connFD, char* body_buffer) {
 
         std::string msg;
         std::string client_name;
-        ComputeServerMessageType mtype;
+        ComputeServerMessageType mtype = DATA;
         if (!body.length()) {
             std::cout << "No body? " << header << " ! " << body << std::endl;
             return true;
@@ -594,7 +594,13 @@ void ComputeServer::parse_header_compute_server_header(const std::string& header
         }
     }
     header_idx++;
-    mtype = static_cast<ComputeServerMessageType>(std::stoi(mtype_str));
+    try {
+        mtype = static_cast<ComputeServerMessageType>(std::stoi(mtype_str));
+    } catch(const std::invalid_argument& e) {
+        std::cout << "Failed to read in mtype" << std::endl;
+        std::cout << "header " << header << "\n msg " << msg << std::endl;
+        return;
+    }
 
     if (mtype != ComputeServerMessageType::DATA) {
         for (; header_idx < header.length(); ++header_idx) {
@@ -622,7 +628,15 @@ void ComputeServer::parse_header_compute_server_header(const std::string& header
         }
     }
 
-    batch->pos = std::stoi(pos_str);
+    try {
+        batch->pos = std::stoi(pos_str);
+    } catch(const std::invalid_argument& e) {
+        std::cout << "Failed to read in pos" << std::endl;
+        std::cout << "header " << header << "\n msg " << msg << std::endl;
+        return;
+    }
+
+    
 
     // msg format: blocks sent \t lengths (tab delimited) \n (terminating char) blocks of data w no delimiters
     std::vector<int> lengths;
