@@ -30,4 +30,5 @@ compute_server_config-*.json
 sgx_linux_x64_driver.bin
 *.crc
 *.mt
+ip.txt
 

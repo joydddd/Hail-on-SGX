@@ -703,7 +703,10 @@ ImputePolicy ComputeServer::get_impute_policy() {
 void ComputeServer::finish_setup() {
     // Register with the register server!
     const nlohmann::json config = get_instance()->compute_config;
-    std::string msg = std::string(get_hostname_str()) + "\t" + std::to_string(get_instance()->port) + "\t" + std::to_string(get_instance()->num_threads);
+    std::string compute_server_hostname;
+    std::ifstream ipfile("ip.txt");
+    std::getline(ipfile, compute_server_hostname);
+    std::string msg = compute_server_hostname + "\t" + std::to_string(get_instance()->port) + "\t" + std::to_string(get_instance()->num_threads);
     get_instance()->send_msg(config["register_server_info"]["hostname"], 
                             config["register_server_info"]["port"],
                             RegisterServerMessageType::COMPUTE_REGISTER,

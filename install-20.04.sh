@@ -52,3 +52,8 @@ python3 generate_phenotypes.py 2500 0
 
 python3 generate_phenotypes.py 5000 12
 python3 generate_phenotypes.py 5000 0
+
+curl https://ipv4.icanhazip.com >> ip.txt
+cp ip.txt compute_server/host/ip.txt
+cp ip.txt client/ip.txt
+rm ip.txt
