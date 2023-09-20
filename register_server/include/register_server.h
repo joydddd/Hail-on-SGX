@@ -20,6 +20,7 @@
 #include <iostream>
 #include <future>
 #include <fstream>
+#include <atomic>
 #include <assert.h>
 #include <stdexcept>
 #include <chrono>
@@ -74,7 +75,7 @@ class RegisterServer {
   private:
     unsigned int port;
     unsigned int compute_server_count;
-    unsigned int eof_messages_received;
+    std::atomic<int> eof_messages_received;
     nlohmann::json register_config;
 
     std::vector<std::string> compute_server_info;
@@ -88,6 +89,8 @@ class RegisterServer {
 
     std::vector<std::mutex> tmp_file_mutex_list;
 
+    std::vector<bool> got_msg;
+
     moodycamel::ConcurrentQueue<int> work_queue; 
     ctpl::thread_pool t_pool;
     bool shutdown;
@@ -99,6 +102,7 @@ class RegisterServer {
     std::string output_file_name;
 
     bool first;
+    std::atomic<bool> eof_rec;
 
     // set up data structures
     void init(const std::string& config_file);
@@ -111,6 +115,8 @@ class RegisterServer {
 
     // start a thread that will handle a message and exit properly if it finds an error
     void start_thread();
+
+    void debug_eof();
 
   public:
 

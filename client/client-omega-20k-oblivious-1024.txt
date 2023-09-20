@@ -1,0 +1,84 @@
+
+ Running on port 18601
+Fill/encryption time total: 44450921
+Sending first message: 1695171349571
+Sending last message: 1695171351261
+Data send time total: 1690369
+
+ Running on port 18601
+Fill/encryption time total: 44605935
+Sending first message: 1695171485943
+Sending last message: 1695171487629
+Data send time total: 1685865
+
+ Running on port 18601
+Fill/encryption time total: 44570416
+Sending first message: 1695171622779
+Sending last message: 1695171624364
+Data send time total: 1585159
+
+ Running on port 18601
+Fill/encryption time total: 43484932
+Sending first message: 1695171761082
+Sending last message: 1695171762852
+Data send time total: 1770471
+
+ Running on port 18601
+Fill/encryption time total: 44297886
+Sending first message: 1695171899379
+Sending last message: 1695171900871
+Data send time total: 1492412
+
+ Running on port 18601
+Fill/encryption time total: 44836697
+Sending first message: 1695172037177
+Sending last message: 1695172038572
+Data send time total: 1394689
+
+ Running on port 18601
+Fill/encryption time total: 44723117
+Sending first message: 1695172173881
+Sending last message: 1695172175418
+Data send time total: 1536610
+
+ Running on port 18601
+Fill/encryption time total: 44076746
+Sending first message: 1695172310041
+Sending last message: 1695172311846
+Data send time total: 1805052
+
+ Running on port 18601
+Fill/encryption time total: 44055801
+Sending first message: 1695172405726
+Sending last message: 1695172407430
+Data send time total: 1704203
+
+ Running on port 18601
+Fill/encryption time total: 43978447
+Sending first message: 1695172500366
+Sending last message: 1695172501999
+Data send time total: 1633291
+
+ Running on port 18601
+Fill/encryption time total: 43809916
+Sending first message: 1695172594981
+Sending last message: 1695172596775
+Data send time total: 1794063
+
+ Running on port 18601
+Fill/encryption time total: 44530831
+Sending first message: 1695172691218
+Sending last message: 1695172692686
+Data send time total: 1467987
+
+ Running on port 18601
+Fill/encryption time total: 44975178
+Sending first message: 1695172794773
+Sending last message: 1695172796146
+Data send time total: 1372954
+
+ Running on port 18601
+Fill/encryption time total: 44371475
+Sending first message: 1695172891182
+Sending last message: 1695172892872
+Data send time total: 1689894

@@ -33,6 +33,10 @@ void RegisterServer::init(const std::string& config_file) {
     first = true;
     shutdown = false;
     t_pool.resize(std::thread::hardware_concurrency());
+    got_msg.resize(compute_server_count);
+    std::fill(got_msg.begin(), got_msg.end(), false);
+
+    eof_rec = false;
 }
 
 void RegisterServer::run() {
@@ -164,15 +168,12 @@ void RegisterServer::start_thread() {
         Parser::split(parsed_header, body, ' ', 2);
 
         RegisterServerMessageType type = static_cast<RegisterServerMessageType>(std::stoi(parsed_header[1]));
-        if (type == RegisterServerMessageType::EOF_OUTPUT) {
-            cout_lock.lock();
-            std::cout << "ID/Client: " << parsed_header[0] 
-                      << " Msg Type: " << parsed_header[1] << "\n";
-            cout_lock.unlock();
-        } else if (type != RegisterServerMessageType::OUTPUT) {
-            guarded_cout("ID/Client: " + parsed_header[0] + 
-                         " Msg Type: " + parsed_header[1], cout_lock);
-        }
+        // if (type != RegisterServerMessageType::EOF_OUTPUT && type != RegisterServerMessageType::OUTPUT) {
+        //     cout_lock.lock();
+        //     std::cout << "ID/Client: " << parsed_header[0] 
+        //               << " Msg Type: " << parsed_header[1] << "\n";
+        //     cout_lock.unlock();
+        // }
         //guarded_cout("\nEncrypted body:\n" + parsed_header[2], cout_lock);
         handle_message(connFD, type, parsed_header[2], parsed_header[0]);
     }
@@ -183,6 +184,15 @@ void RegisterServer::start_thread() {
     }
     delete[] body_buffer;
     return;
+}
+
+void RegisterServer::debug_eof() {
+    std::this_thread::sleep_for(std::chrono::milliseconds(30000));
+    for (int i = 0; i < got_msg.size(); ++i) {
+        if (!got_msg[i]) {
+            std::cout << "No rec value for " << i << std::endl;
+         }
+    }
 }
 
 bool RegisterServer::handle_message(int connFD, RegisterServerMessageType mtype, std::string& msg, std::string global_id) {
@@ -222,6 +232,7 @@ bool RegisterServer::handle_message(int connFD, RegisterServerMessageType mtype,
         }
         case CLIENT_REGISTER:
         {   
+            guarded_cout("Got client " + global_id, cout_lock);
             // Parse body to get hostname and port
             ConnectionInfo institution_info;
             Parser::parse_connection_info(msg, institution_info);
@@ -244,8 +255,13 @@ bool RegisterServer::handle_message(int connFD, RegisterServerMessageType mtype,
         }
         case EOF_OUTPUT:
         {
+            int id = std::stoi(global_id);
+            got_msg[id] = true;
+            if (!eof_rec.exchange(true)) {
+                boost::thread msg_thread(&RegisterServer::debug_eof, this);
+                msg_thread.detach();
+            }
             if (strcmp(msg.c_str(), EOFSeperator) != 0) {
-                int id = std::stoi(global_id);
                 moodycamel::ConcurrentQueue<std::string> &tmp_file_string = tmp_file_string_list[id];
                 tmp_file_string.enqueue(msg);
             }
