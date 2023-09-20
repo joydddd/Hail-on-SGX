@@ -1,4 +1,10 @@
 #!/bin/bash
+
+curl https://ipv4.icanhazip.com > ip.txt
+cp ip.txt compute_server/host/ip.txt
+cp ip.txt client/ip.txt
+rm ip.txt
+
 echo 'deb [arch=amd64] https://download.01.org/intel-sgx/sgx_repo/ubuntu focal main' | sudo tee /etc/apt/sources.list.d/intel-sgx.list
 wget -qO - https://download.01.org/intel-sgx/sgx_repo/ubuntu/intel-sgx-deb.key | sudo apt-key add -
 
@@ -52,8 +58,3 @@ python3 generate_phenotypes.py 2500 0
 
 python3 generate_phenotypes.py 5000 12
 python3 generate_phenotypes.py 5000 0
-
-curl https://ipv4.icanhazip.com >> ip.txt
-cp ip.txt compute_server/host/ip.txt
-cp ip.txt client/ip.txt
-rm ip.txt
