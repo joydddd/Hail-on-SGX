@@ -20,7 +20,7 @@ do
     ./bin/client client_config10000-62500.json >> client_local_6.txt
 done
 
-for VAR in {1..7..1}
+for VAR in {1..5..1}
 do
     echo "125000"
     ./bin/client client_config10000.json >> client_local_7.txt
