@@ -37,9 +37,9 @@ class Lin_row : public Row {
     bool fit(int thread_id = -1, int max_iteration = 15, double sig = 1e-6);
     
     /* output results */
-    double get_beta(int thread_id);
-    double get_t_stat(int thread_id);
-    double get_standard_error(int thread_id);
+    // double get_beta(int thread_id);
+    // double get_t_stat(int thread_id);
+    // double get_standard_error(int thread_id);
     void get_outputs(int thread_id, std::string& output_string);
 
     int size() { return n; }

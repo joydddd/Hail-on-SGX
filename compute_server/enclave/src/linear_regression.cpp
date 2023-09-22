@@ -1,4 +1,4 @@
-#include <cmath>
+#include <math.h>
 
 #include <limits>
 
@@ -162,17 +162,17 @@ bool Lin_row::fit(int thread_id, int max_iteration, double sig) {
     return true;
 }
 
-double Lin_row::get_beta(int thread_id) {
-    return (beta_g + (thread_id * get_padded_buffer_len(num_dimensions)))[0];
-}
+// double Lin_row::get_beta(int thread_id) {
+//     return (beta_g + (thread_id * get_padded_buffer_len(num_dimensions)))[0];
+// }
 
-double Lin_row::get_standard_error(int thread_id) {
-    return (beta_g + (thread_id * get_padded_buffer_len(num_dimensions)))[1];
-}
+// double Lin_row::get_standard_error(int thread_id) {
+//     return (beta_g + (thread_id * get_padded_buffer_len(num_dimensions)))[1];
+// }
 
-double Lin_row::get_t_stat(int thread_id) {
-    return (beta_g + (thread_id * get_padded_buffer_len(num_dimensions)))[0] / (beta_g + (thread_id * get_padded_buffer_len(num_dimensions)))[1];
-}
+// double Lin_row::get_t_stat(int thread_id) {
+//     return (beta_g + (thread_id * get_padded_buffer_len(num_dimensions)))[0] / (beta_g + (thread_id * get_padded_buffer_len(num_dimensions)))[1];
+// }
 
 void Lin_row::get_outputs(int thread_id, std::string& output_string) {
     int offset = thread_id * get_padded_buffer_len(num_dimensions);

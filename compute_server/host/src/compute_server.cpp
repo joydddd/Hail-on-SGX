@@ -372,7 +372,7 @@ bool ComputeServer::handle_message(int connFD, const std::string& name, ComputeS
 
             batch->blocks_batch.push_back(block);
             institutions[name]->add_block_batch(batch);
-            institutions[name]->transfer_eligible_blocks();
+            //institutions[name]->transfer_eligible_blocks();
             break;
         }
         case DATA:
