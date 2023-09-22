@@ -21,8 +21,9 @@ Institution::~Institution() {
 }
 
 void Institution::add_block_batch(DataBlockBatch* block_batch) {
-    std::lock_guard<std::mutex> raii(blocks_lock);
-    blocks.push(block_batch);
+    // std::lock_guard<std::mutex> raii(blocks_lock);
+    // blocks.push(block_batch);
+    unsorted_blocks.enqueue(block_batch);
 }
 
 int Institution::get_blocks_size() {
@@ -95,17 +96,21 @@ std::string Institution::get_covariant_data(const std::string& covariant_name) {
 }
 
 void Institution::transfer_eligible_blocks() {
-    std::lock_guard<std::mutex> raii(blocks_lock);
-    while(!blocks.empty()) {
+    // std::lock_guard<std::mutex> raii(blocks_lock);
+    DataBlockBatch *unsorted_batch;
+    while (unsorted_blocks.try_dequeue(unsorted_batch)) {
+        blocks.push(unsorted_batch);
+    }
+    while (!blocks.empty()) {
         DataBlockBatch* batch = blocks.top();
         if (batch->pos != current_pos) {
             return;
         }
         blocks.pop();
 
-        std::lock_guard<std::mutex> raii2(eligible_blocks_lock);
+        // std::lock_guard<std::mutex> raii2(eligible_blocks_lock);
         for (DataBlock* parsed_block : batch->blocks_batch) {
-            eligible_blocks.push(parsed_block);
+            eligible_blocks.enqueue(parsed_block);
         }
         // Clean up block batch!
         delete batch;
@@ -114,12 +119,24 @@ void Institution::transfer_eligible_blocks() {
 }
 
 DataBlock* Institution::get_top_block() {
-    std::lock_guard<std::mutex> raii(eligible_blocks_lock);
-    if (eligible_blocks.empty()) return nullptr;
-    return eligible_blocks.front();
+    //std::lock_guard<std::mutex> raii(eligible_blocks_lock);
+    // DataBlock *ret;
+    // bool success = eligible_blocks.try_dequeue(ret);
+    // if (!success) {
+    //     return nullptr;
+    // }
+    // return ret;
+    // if (eligible_blocks.empty()) return nullptr;
+    // return eligible_blocks.front();
+    DataBlock **ret = eligible_blocks.peek();
+    if (!ret) return nullptr;
+    return *ret;
 }
 
-void Institution::pop_top_block() {
-    std::lock_guard<std::mutex> raii(eligible_blocks_lock);
-    eligible_blocks.pop();
+DataBlock* Institution::pop_top_block() {
+    //std::lock_guard<std::mutex> raii(eligible_blocks_lock);
+    // eligible_blocks.pop();
+    DataBlock *ret;
+    eligible_blocks.try_dequeue(ret);
+    return ret;
 }

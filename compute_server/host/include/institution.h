@@ -11,6 +11,7 @@
 #include <vector>
 #include <mutex>
 #include "parser.h"
+#include "readerwriterqueue.h"
 
 struct BlockPointerBatchGT {
   inline bool operator()(const DataBlockBatch* a, const DataBlockBatch* b) const {
@@ -26,8 +27,10 @@ class Institution {
     std::mutex covariant_data_lock;
     std::mutex y_val_data_lock;
     std::mutex aes_key_iv_lock;
+    moodycamel::ReaderWriterQueue<DataBlockBatch*> unsorted_blocks;
     std::priority_queue<DataBlockBatch*, std::vector<DataBlockBatch* >, BlockPointerBatchGT > blocks;
-    std::queue<DataBlock*> eligible_blocks;
+    moodycamel::ReaderWriterQueue<DataBlock*> eligible_blocks;
+    // std::queue<DataBlock*> eligible_blocks;
     std::unordered_map<std::string, std::string> covariant_data;
     std::string y_val_data;
     std::string num_patients_encrypted;
@@ -71,7 +74,7 @@ class Institution {
 
     DataBlock* get_top_block();
 
-    void pop_top_block();
+    DataBlock* pop_top_block();
 
     AESCrypto decoder;
     int port;

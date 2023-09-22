@@ -520,7 +520,7 @@ void ComputeServer::allele_matcher() {
                 if (!block) continue;
 
                 if (block->locus == min_locus) {
-                    inst->pop_top_block();
+                    block = inst->pop_top_block();
                     allele_line.append(std::to_string(inst->get_id()) + "\t");
                     data.append(block->data);
                     delete block;
