@@ -87,7 +87,9 @@ void ComputeServer::init(const std::string& config_file) {
     if (!compute_config.count("analysis_type")) {
         throw std::runtime_error("No analysis type specified, use flag: \"analysis_type\".");
     }
-    if (compute_config["analysis_type"] == "linear") {
+    if (compute_config["analysis_type"] == "linear_dummy") {
+        enc_analysis = EncAnalysis::linear_dummy;
+    }else if (compute_config["analysis_type"] == "linear") {
         enc_analysis = EncAnalysis::linear;
     } else if (compute_config["analysis_type"] == "logistic") {
         enc_analysis = EncAnalysis::logistic;

@@ -137,6 +137,7 @@ inline int split_delim(const char* line, std::vector<std::string> &parts, char d
 
 class Covar {
     friend class Log_row;
+    friend class Lin_row_dummy;
     friend class Lin_row;
     friend class Oblivious_lin_row;
     friend class Oblivious_log_row;

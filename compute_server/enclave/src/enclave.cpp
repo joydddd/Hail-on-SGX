@@ -325,6 +325,9 @@ void regression(const int thread_id, EncAnalysis analysis_type) {
         // starting the get_row timer happens within the function because our code is written weirdly and we do our output
         try {
             switch(analysis_type) {
+                case EncAnalysis::linear_dummy:
+                    if (!(row = static_cast<Lin_row_dummy*>(batch->get_row(buffer)))) continue;
+                    break;
                 case EncAnalysis::linear:
                     if (!(row = static_cast<Lin_row*>(batch->get_row(buffer)))) continue;
                     break;

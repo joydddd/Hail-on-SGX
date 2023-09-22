@@ -3,6 +3,7 @@
 
 #include "buffer.h"
 #include "logistic_regression.h"
+#include "linear_regression_dummy.h"
 #include "linear_regression.h"
 #include "oblivious_logistic_regression.h"
 #include "oblivious_linear_regression.h"
