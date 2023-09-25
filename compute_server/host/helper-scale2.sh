@@ -3,13 +3,13 @@
 for _ in {1..5}
 do
     echo "Lin 20000"
-    ./gwashost configs/compute_server_config5000lin-famhe-2.json >> scaling-20k-64.txt
+    ./gwashost configs/compute_server_config5000lin-oblivious-2.json >> scaling-20k-64.txt
 done
 
 for _ in {1..5}
 do
     echo "Lin 20000"
-    ./gwashost configs/compute_server_config5000lin-oblivious-2.json >> scaling-20k-64.txt
+    ./gwashost configs/compute_server_config5000lin-famhe-2.json >> scaling-20k-64.txt
 done
 
 for _ in {1..5}
