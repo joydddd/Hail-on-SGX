@@ -1,0 +1,72 @@
+
+ Running on port 18601
+Fill/encryption time total: 44564143
+Sending first message: 1695673643269
+Sending last message: 1695673645071
+Data send time total: 1801729
+
+ Running on port 18601
+Fill/encryption time total: 44519441
+Sending first message: 1695673755264
+Sending last message: 1695673756869
+Data send time total: 1604613
+
+ Running on port 18601
+Fill/encryption time total: 44550457
+Sending first message: 1695673866635
+Sending last message: 1695673868224
+Data send time total: 1589367
+
+ Running on port 18601
+Fill/encryption time total: 44466082
+Sending first message: 1695673978058
+Sending last message: 1695673979452
+Data send time total: 1394052
+
+ Running on port 18601
+Fill/encryption time total: 44756586
+Sending first message: 1695674089876
+Sending last message: 1695674091597
+Data send time total: 1721106
+
+ Running on port 18601
+Fill/encryption time total: 44327646
+Sending first message: 1695677650030
+Sending last message: 1695677651275
+Data send time total: 1245317
+
+ Running on port 18601
+Fill/encryption time total: 44261428
+Sending first message: 1695677792554
+Sending last message: 1695677794109
+Data send time total: 1554819
+
+ Running on port 18601
+Fill/encryption time total: 43715003
+Sending first message: 1695677935390
+Sending last message: 1695677937166
+Data send time total: 1775962
+
+ Running on port 18601
+Fill/encryption time total: 44008772
+Sending first message: 1695678077838
+Sending last message: 1695678079159
+Data send time total: 1320826
+
+ Running on port 18601
+Fill/encryption time total: 44279584
+Sending first message: 1695678220456
+Sending last message: 1695678222128
+Data send time total: 1671943
+
+ Running on port 18601
+Fill/encryption time total: 43997297
+Sending first message: 1695682438664
+Sending last message: 1695682440546
+Data send time total: 1881318
+
+ Running on port 18601
+Error Connection refused
+Exception Failed to connect
+
+
