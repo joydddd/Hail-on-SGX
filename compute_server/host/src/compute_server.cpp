@@ -89,7 +89,7 @@ void ComputeServer::init(const std::string& config_file) {
     }
     if (compute_config["analysis_type"] == "linear_dummy") {
         enc_analysis = EncAnalysis::linear_dummy;
-    }else if (compute_config["analysis_type"] == "linear") {
+    } else if (compute_config["analysis_type"] == "linear") {
         enc_analysis = EncAnalysis::linear;
     } else if (compute_config["analysis_type"] == "logistic") {
         enc_analysis = EncAnalysis::logistic;

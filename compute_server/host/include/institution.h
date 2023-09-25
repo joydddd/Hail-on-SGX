@@ -12,6 +12,7 @@
 #include <mutex>
 #include "parser.h"
 #include "readerwriterqueue.h"
+#include "concurrentqueue.h"
 
 struct BlockPointerBatchGT {
   inline bool operator()(const DataBlockBatch* a, const DataBlockBatch* b) const {
@@ -27,7 +28,7 @@ class Institution {
     std::mutex covariant_data_lock;
     std::mutex y_val_data_lock;
     std::mutex aes_key_iv_lock;
-    moodycamel::ReaderWriterQueue<DataBlockBatch*> unsorted_blocks;
+    moodycamel::ConcurrentQueue<DataBlockBatch*> unsorted_blocks;
     std::priority_queue<DataBlockBatch*, std::vector<DataBlockBatch* >, BlockPointerBatchGT > blocks;
     moodycamel::ReaderWriterQueue<DataBlock*> eligible_blocks;
     // std::queue<DataBlock*> eligible_blocks;
