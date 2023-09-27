@@ -20,14 +20,14 @@ do
     ./bin/register_server register_config.json >> register_local_6.txt
 done
 
-for VAR in {1..3..1}
+for VAR in {1..5..1}
 do
     echo "125000"
     ./bin/register_server register_config.json >> register_local_7.txt
     ./bin/register_server register_config.json >> register_local_7.txt
 done
 
-for VAR in {1..3..1}
+for VAR in {1..5..1}
 do
     echo "500000"
     ./bin/register_server register_config.json >> register_local_9.txt

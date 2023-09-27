@@ -4,7 +4,7 @@
 # read x
 # x=$(($2 * 100000))
 
-for i in {1..3..1}
+for i in {1..5..1}
 do
     for cov in $(eval echo {1..16..3})
     do 

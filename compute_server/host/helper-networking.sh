@@ -20,14 +20,14 @@ do
     ./gwashost compute_server_config10000lin.json >> compute_local_6.txt
 done
 
-for VAR in {1..3..1}
+for VAR in {1..5..1}
 do
     echo "125000"
     ./gwashost compute_server_config10000log.json >> compute_local_7.txt
     ./gwashost compute_server_config10000lin.json >> compute_local_7.txt
 done
 
-for VAR in {1..3..1}
+for VAR in {1..5..1}
 do
     echo "500000"
     ./gwashost compute_server_config10000log.json >> compute_local_9.txt

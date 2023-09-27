@@ -1,4 +1,4 @@
-# for VAR in {1..3..1}
+# for VAR in {1..5..1}
 # do
 #     echo "Baseline"
 #     ./gwashost compute_server_config10000log.json >> sgx-no-mit.txt
@@ -23,7 +23,7 @@
 #     ./gwashost compute_server_config20000lin.json >> sgx-no-mit20k.txt
 # done
 
-for VAR in {1..3..1}
+for VAR in {1..5..1}
 do
     echo "Baseline"
     ./gwas_nonoe compute_server_config10000log.json >> nonoe.txt

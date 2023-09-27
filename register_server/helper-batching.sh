@@ -1,6 +1,6 @@
 #!/bin/bash
 
-for VAR in {1..3..1}
+for VAR in {1..5..1}
 do
     echo "1"
     ./bin/register_server register_config.json

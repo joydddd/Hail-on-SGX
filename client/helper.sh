@@ -1,4 +1,4 @@
-for VAR in {1..3..1}
+for VAR in {1..5..1}
 do
     echo "Baseline"
     ./bin/client client_config10000.json
