@@ -21,6 +21,7 @@ void RegisterServer::init(const std::string& config_file) {
     register_config_file >> register_config;
     port = register_config["register_server_bind_port"];
     compute_server_count = register_config["compute_server_count"];
+    client_count = register_config["client_count"];
     output_file_name = register_config["output_file_name"];
     output_file.open(output_file_name);
     
@@ -210,7 +211,10 @@ bool RegisterServer::handle_message(int connFD, RegisterServerMessageType mtype,
 
             compute_info_list.push_back(compute_info);
             compute_server_info.push_back(msg);
-            if (compute_server_info.size() == compute_server_count) {
+            if (compute_server_info.size() == compute_server_count && client_info.size() == client_count) {
+                std::string serialized_server_info;
+                std::string serialized_client_info;
+
                 // Create message containing all compute server info
                 for (std::string& info : compute_server_info) {
                     serialized_server_info.append(info + "\n");
@@ -218,8 +222,17 @@ bool RegisterServer::handle_message(int connFD, RegisterServerMessageType mtype,
                 // Remove trailing '\t'
                 serialized_server_info.pop_back();
 
-                // Send the compute server info to all waiting clients{
+                // Create message containing all client server info
+                for (std::string& info : client_info) {
+                    serialized_client_info.append(info + "\n");
+                }
+
+                // Remove trailing '\t'
+                serialized_client_info.pop_back();
+
+                // Send the compute server info to all waiting clients
                 for (ConnectionInfo institution_info : institution_info_list) {
+                    send_msg(institution_info.hostname, institution_info.port, ClientMessageType::CLIENT_INFO, serialized_client_info);
                     send_msg(institution_info.hostname, institution_info.port, ClientMessageType::COMPUTE_INFO, serialized_server_info);
                 }
             }
@@ -240,9 +253,31 @@ bool RegisterServer::handle_message(int connFD, RegisterServerMessageType mtype,
             std::lock_guard<std::mutex> raii(compute_lock);
             // If we don't have all compute server info, add to waiting queue
             institution_info_list.push_back(institution_info);
-            if (compute_server_info.size() == compute_server_count) {
-                // If we have already received all compute server info, no need to wait!
-                send_msg(institution_info.hostname, institution_info.port, ClientMessageType::COMPUTE_INFO, serialized_server_info);
+            client_info.push_back(msg);
+            if (compute_server_info.size() == compute_server_count && client_info.size() == client_count) {
+                std::string serialized_server_info;
+                std::string serialized_client_info;
+
+                // Create message containing all compute server info
+                for (std::string& info : compute_server_info) {
+                    serialized_server_info.append(info + "\n");
+                }
+                // Remove trailing '\t'
+                serialized_server_info.pop_back();
+
+                // Create message containing all client server info
+                for (std::string& info : client_info) {
+                    serialized_client_info.append(info + "\n");
+                }
+
+                // Remove trailing '\t'
+                serialized_client_info.pop_back();
+
+                // Send the compute server info to all waiting clients
+                for (ConnectionInfo institution_info : institution_info_list) {
+                    send_msg(institution_info.hostname, institution_info.port, ClientMessageType::CLIENT_INFO, serialized_client_info);
+                    send_msg(institution_info.hostname, institution_info.port, ClientMessageType::COMPUTE_INFO, serialized_server_info);
+                }
             }
             break;
         }

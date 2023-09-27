@@ -75,11 +75,12 @@ class RegisterServer {
   private:
     unsigned int port;
     unsigned int compute_server_count;
+    unsigned int client_count;
     std::atomic<int> eof_messages_received;
     nlohmann::json register_config;
 
     std::vector<std::string> compute_server_info;
-    std::string serialized_server_info;
+    std::vector<std::string> client_info;
     std::mutex compute_lock;
 
     std::vector<ConnectionInfo> institution_info_list;

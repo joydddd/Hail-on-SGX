@@ -49,9 +49,7 @@ class Client {
     
     std::string client_name;
     std::string client_hostname;
-    std::string server_hostname;
-    int listen_port;
-    int server_port;
+    unsigned int listen_port;
 
     int num_patients;
     int num_lines_per_block;
@@ -66,14 +64,17 @@ class Client {
     std::vector<std::vector<AESCrypto> > aes_encryptor_list;
     std::vector<std::vector<Phenotype> > phenotypes_list;
     std::vector<ConnectionInfo> compute_server_info;
+    std::vector<ConnectionInfo> client_info;
     std::vector<std::queue<std::string> *> allele_queue_list;
     std::vector<std::priority_queue<EncryptionBlock*, std::vector<EncryptionBlock* >, EncryptionBlockGT > > encryption_queue_list;
     std::vector<std::mutex> encryption_queue_lock_list;
     std::atomic<int> y_and_cov_count;
     std::atomic<int> filled_count;
+    std::atomic<int> sync_count;
     std::atomic<int> work_distributed_count;
     std::mutex xval_file_lock;
     std::condition_variable start_sender_cv;
+    std::condition_variable sync_cv;
     std::condition_variable queue_cv;
 
   public:

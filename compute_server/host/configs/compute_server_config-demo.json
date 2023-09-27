@@ -1,12 +1,12 @@
 {
     "compute_server_bind_port": 16701,
-    "covariants": ["1", "1-5000", "2-5000"],
-    "institutions": ["client1", "client2"],
-    "y_val_name": "disease-5000",
-    "analysis_type": "linear",
+    "covariants": ["1", "isFemale"],
+    "institutions": ["client1"],
+    "y_val_name": "PurpleHair",
+    "analysis_type": "logistic",
     "enclave_path": "../enclave/gwasenc.signed",
     "register_server_info": {
-        "hostname": "sgx.eecs.umich.edu",
+        "hostname": "localhost",
         "port": 16401
     },
     "impute_policy": "Hail"

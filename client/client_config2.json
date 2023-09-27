@@ -1,0 +1,9 @@
+{
+    "client_name": "client2",
+    "client_bind_port": 18602,
+    "allele_file": "client_data/generated_alleles_5000-50000.tsv",
+    "register_server_info": {
+        "hostname": "sgx.eecs.umich.edu",
+        "port": 16401
+    }
+}

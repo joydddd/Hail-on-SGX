@@ -38,6 +38,7 @@ void Client::init(const std::string& config_file) {
     work_distributed_count = 0;
     y_and_cov_count = 0;
     filled_count = 0;
+    sync_count = 0;
     current_line_num = 0;
 }
 
@@ -132,9 +133,8 @@ bool Client::start_thread(int connFD) {
         unsigned int body_size;
         try {
             body_size = std::stoi(header);
-        } catch(const std::invalid_argument &e) {
+        } catch (const std::invalid_argument &e) {
             std::cout << "Failed to read body size: " << header << std::endl;
-            std::cout << header << std::endl;
             return true;
         }
         
@@ -152,10 +152,14 @@ bool Client::start_thread(int connFD) {
         // guarded_cout("ID: " + parsed_header[0] + 
         //              " Msg Type: " + parsed_header[1], cout_lock);
         // guarded_cout("\nEncrypted body:\n" + parsed_header[2], cout_lock);
-
-        handle_message(connFD, std::stoi(parsed_header[0]), static_cast<ClientMessageType>(std::stoi(parsed_header[1])), parsed_header[2]);
+        try {
+            handle_message(connFD, std::stoi(parsed_header[0]), static_cast<ClientMessageType>(std::stoi(parsed_header[1])), parsed_header[2]);
+        } catch (const std::invalid_argument &e) {
+            std::cout << "Failed parse header type \n" << header << std::endl;
+            return true;
+        }
     }
-    catch (const std::runtime_error e)  {
+    catch (const std::runtime_error& e)  {
         guarded_cout("Exception " + std::string(e.what()) + "\n", cout_lock);
         close(connFD);
         return false;
@@ -167,9 +171,22 @@ bool Client::start_thread(int connFD) {
 void Client::handle_message(int connFD, const unsigned int global_id, const ClientMessageType mtype, std::string& msg) {
 
     std::string response;
-    ComputeServerMessageType response_mtype;
 
     switch (mtype) {
+        case CLIENT_INFO:
+        {
+            std::vector<std::string> parsed_client_info;
+            Parser::split(parsed_client_info, msg, '\n');
+            for (const std::string& client_info_str : parsed_client_info) {
+                ConnectionInfo info;
+                Parser::parse_connection_info(client_info_str, info, false);
+                if (info.hostname != client_hostname || info.port != listen_port) {
+                    client_info.push_back(info);
+                }
+            }
+            // std::cout << client_info.size() << std::endl;
+            break;
+        }
         case COMPUTE_INFO:
         {
             std::vector<std::string> parsed_compute_info;
@@ -199,7 +216,7 @@ void Client::handle_message(int connFD, const unsigned int global_id, const Clie
                 aes_encryptor_list[aes_idx++] = std::vector<AESCrypto>(info.num_threads);
             }
 
-            for (int id = 0; id < compute_server_info.size(); ++id) {
+            for (unsigned int id = 0; id < compute_server_info.size(); ++id) {
                 send_msg(id, REGISTER, client_hostname + "\t" + std::to_string(listen_port));
             }
 
@@ -225,7 +242,7 @@ void Client::handle_message(int connFD, const unsigned int global_id, const Clie
             public_key.Load(pub_key_source);
             
             CryptoPP::RSAES<CryptoPP::OAEP<CryptoPP::SHA256> >::Encryptor rsa_encryptor(public_key);
-            for (int thread_id = 0; thread_id < compute_server_info[global_id].num_threads; ++thread_id) {
+            for (unsigned int thread_id = 0; thread_id < compute_server_info[global_id].num_threads; ++thread_id) {
                 send_msg(global_id, AES_KEY, aes_encryptor_list[global_id][thread_id].get_key_and_iv(rsa_encryptor) + "\t" + std::to_string(thread_id));
             }
 
@@ -249,7 +266,7 @@ void Client::handle_message(int connFD, const unsigned int global_id, const Clie
                 }
             }
             
-            if(++y_and_cov_count == aes_encryptor_list.size()) {
+            if (static_cast<unsigned int>(++y_and_cov_count) == aes_encryptor_list.size()) {
                 fill_queue();
             }
 
@@ -260,12 +277,13 @@ void Client::handle_message(int connFD, const unsigned int global_id, const Clie
             std::mutex useless_lock;
             std::unique_lock<std::mutex> useless_lock_wrapper(useless_lock);
             // Wait until all data is ready to go!
-            while (filled_count != allele_queue_list.size()) {
+            while (static_cast<unsigned int>(filled_count) != allele_queue_list.size()) {
                 start_sender_cv.wait(useless_lock_wrapper);
             }
-            auto start = std::chrono::high_resolution_clock::now();
+            std::chrono::time_point<std::chrono::high_resolution_clock> start;
 
             if (global_id == 0) {
+                start = std::chrono::high_resolution_clock::now();
                 // Casting duration.count() to a string sucks, so RAII is difficult here
                 cout_lock.lock();
                 std::cout << "Sending first message: "  << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count() << std::endl;
@@ -300,10 +318,7 @@ void Client::handle_message(int connFD, const unsigned int global_id, const Clie
                 if ((prospective_length > (1 << 16) - 1) && block.length()) {
                     // msg format: blocks sent \t lengths (tab delimited) \n (terminating char) blocks of data w no delimiters
                     std::string block_msg = std::to_string(blocks_sent++) + lengths + "\n" + block;
-                    // if (blocks_sent % 10 == 0) {
-                    //     std::cout << "Blocks " << blocks_sent << std::endl;
-                    // }
-                    data_conn = send_msg(info.hostname, info.port, DATA, block_msg, data_conn);
+                    data_conn = send_msg(info.hostname, info.port, ComputeServerMessageType::DATA, block_msg, data_conn);
 
                     // Reset block
                     block.clear(); 
@@ -331,6 +346,13 @@ void Client::handle_message(int connFD, const unsigned int global_id, const Clie
                 auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
                 std::cout << "Data send time total: " << duration.count() << std::endl;
                 xval.close();
+            }
+            break;
+        }
+        case CLIENT_SYNC: 
+        {
+            if (static_cast<unsigned int>(++sync_count) == client_info.size()) {
+                sync_cv.notify_all();
             }
             break;
         }
@@ -397,11 +419,11 @@ void Client::queue_helper(const int global_id, const int num_helpers) {
     }
     std::mutex useless_lock;
     std::unique_lock<std::mutex> useless_lock_wrapper(useless_lock);
-    while(work_distributed_count != num_helpers) {
+    while (work_distributed_count != num_helpers) {
         queue_cv.wait(useless_lock_wrapper);
     }
     // We no longer need this thread if it is not in the encryption list range
-    if (global_id >= encryption_queue_list.size()) {
+    if (static_cast<unsigned int>(global_id) >= encryption_queue_list.size()) {
         return;
     }
 
@@ -422,15 +444,30 @@ void Client::queue_helper(const int global_id, const int num_helpers) {
                                   global_id);
         allele_queue_list[global_id]->push(line);
     }
-    if (++filled_count == allele_queue_list.size()) {
+    if (static_cast<unsigned int>(++filled_count) == allele_queue_list.size()) {
         // Make sure we read in at least one value
         int any = 0;
-        for (int id = 0; id < compute_server_info.size(); ++id){
+        for (unsigned int id = 0; id < compute_server_info.size(); ++id){
             any ^= allele_queue_list[id]->size();
         }
         if (!any) {
             throw std::runtime_error("Empty allele file provided");
         }
+        //  std::this_thread::sleep_for(std::chrono::milliseconds(rand() % 10000));
+        // Ok so this machine is finished, but we need to sync with the other clients to help with timing accuracy
+        for (ConnectionInfo info : client_info) {
+            std::string msg = "";
+            std::string message = "-2 " + std::to_string(ClientMessageType::CLIENT_SYNC) + " ";
+            message = std::to_string(message.length() + msg.length()) + "\n" + message + msg;
+            send_message(info.hostname.c_str(), info.port, message.data(), message.length());
+        }
+
+        std::mutex useless_lock;
+        std::unique_lock<std::mutex> useless_lock_wrapper(useless_lock);
+        while (static_cast<unsigned int>(sync_count) < client_info.size()) {
+            sync_cv.wait(useless_lock_wrapper);
+        }
+            
         start_sender_cv.notify_all();
     }
     auto stop = std::chrono::high_resolution_clock::now();
