@@ -6,7 +6,7 @@
     "analysis_type": "logistic-oblivious",
     "enclave_path": "../enclave/gwasenc.signed",
     "register_server_info": {
-        "hostname": "40.83.172.88",
+        "hostname": "40.83.172.86",
         "port": 16401
     }
 }
