@@ -5,6 +5,10 @@ cp ip.txt compute_server/host/ip.txt
 cp ip.txt client/ip.txt
 rm ip.txt
 
+cd client/
+python headless_set_client.py
+cd ../
+
 echo 'deb [arch=amd64] https://download.01.org/intel-sgx/sgx_repo/ubuntu focal main' | sudo tee /etc/apt/sources.list.d/intel-sgx.list
 wget -qO - https://download.01.org/intel-sgx/sgx_repo/ubuntu/intel-sgx-deb.key | sudo apt-key add -
 
@@ -46,15 +50,20 @@ pip3 install scipy
 
 cd ../data_processing
 
-python3 generate_alleles.py 1250 &
-python3 generate_alleles.py 2500 &
-python3 generate_alleles.py 5000 &
+# python3 generate_alleles.py 1250 &
+# python3 generate_alleles.py 2500 &
+# python3 generate_alleles.py 5000 &
 
-python3 generate_phenotypes.py 1250 12
-python3 generate_phenotypes.py 1250 0
+# python3 generate_phenotypes.py 1250 12
+# python3 generate_phenotypes.py 1250 0
 
-python3 generate_phenotypes.py 2500 12
-python3 generate_phenotypes.py 2500 0
+# python3 generate_phenotypes.py 2500 12
+# python3 generate_phenotypes.py 2500 0
 
-python3 generate_phenotypes.py 5000 12
-python3 generate_phenotypes.py 5000 0
+# python3 generate_phenotypes.py 5000 12
+# python3 generate_phenotypes.py 5000 0
+
+python3 generate_phenotypes.py 100000 12
+python3 generate_phenotypes.py 100000 0
+
+time python3 generate_alleles.py 100000 &

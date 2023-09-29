@@ -9,13 +9,16 @@
 #include <stdexcept>
 #include <stdint.h>
 #include <string>
+#include <thread>
 #include <atomic>
+#include <chrono>
 #include <queue>
 #include <condition_variable>
 #include <boost/thread.hpp>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netdb.h>
+#include <pthread.h>
 
 #include "buffer_size.h"
 #include "parser.h"
@@ -58,8 +61,9 @@ class Client {
 
     std::ifstream xval;
 
-    bool shutdown;
-    moodycamel::ConcurrentQueue<int> work_queue;
+    bool cov_work_start;
+
+    std::chrono::time_point<std::chrono::high_resolution_clock> start;
 
     std::vector<std::vector<AESCrypto> > aes_encryptor_list;
     std::vector<std::vector<Phenotype> > phenotypes_list;

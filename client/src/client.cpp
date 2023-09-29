@@ -1,10 +1,13 @@
 #include "client.h"
 #include <boost/thread.hpp>
-#include <chrono>
-#include <thread>
-#include <string>
 
 std::mutex cout_lock;
+
+void custom_set_highest_priority(std::thread& th, unsigned int subtract) {               
+  sched_param sch;
+  sch.sched_priority = sched_get_priority_max(SCHED_FIFO) - subtract;                      
+  pthread_setschedparam(th.native_handle(), SCHED_FIFO, &sch);
+}
 
 Client::Client(const std::string& config_file) {
     init(config_file);
@@ -40,6 +43,7 @@ void Client::init(const std::string& config_file) {
     filled_count = 0;
     sync_count = 0;
     current_line_num = 0;
+    cov_work_start = false;
 }
 
 void Client::run() {
@@ -274,28 +278,11 @@ void Client::handle_message(int connFD, const unsigned int global_id, const Clie
         }
         case DATA_REQUEST:
         {   
+            // Wait until all data is ready to go!
             std::mutex useless_lock;
             std::unique_lock<std::mutex> useless_lock_wrapper(useless_lock);
-            // Wait until all data is ready to go!
             while (static_cast<unsigned int>(filled_count) != allele_queue_list.size()) {
                 start_sender_cv.wait(useless_lock_wrapper);
-            }
-            std::chrono::time_point<std::chrono::high_resolution_clock> start;
-
-            if (global_id == 0) {
-                start = std::chrono::high_resolution_clock::now();
-                // Casting duration.count() to a string sucks, so RAII is difficult here
-                cout_lock.lock();
-                std::cout << "Sending first message: "  << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count() << std::endl;
-                cout_lock.unlock();
-            }
-
-            // First we should send all of the phenotype data
-            std::vector<Phenotype>& phenotypes = phenotypes_list[global_id];
-            for (const Phenotype& ptype : phenotypes) {
-                std::thread([global_id, ptype, this]() {
-                    send_msg(global_id, ptype.mtype, ptype.message);
-                }).detach();
             }
 
             ConnectionInfo info = compute_server_info[global_id];
@@ -386,8 +373,8 @@ int Client::send_msg(const std::string& hostname, unsigned int port, unsigned in
 void Client::queue_helper(const int global_id, const int num_helpers) {
     std::string line;
     unsigned int line_num;
-    auto start = std::chrono::high_resolution_clock::now();
-    while(true) {
+    start = std::chrono::high_resolution_clock::now();
+    while (true) {
         xval_file_lock.lock();
         if (getline(xval, line)) {
             line_num = current_line_num++;
@@ -453,6 +440,32 @@ void Client::queue_helper(const int global_id, const int num_helpers) {
         if (!any) {
             throw std::runtime_error("Empty allele file provided");
         }
+        auto stop = std::chrono::high_resolution_clock::now();
+        auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
+        // Using guarded_cout is hard here because converting duration.count() to a string sucks
+        cout_lock.lock();
+        std::cout << "Fill/encryption time total: " << duration.count() << std::endl;
+        cout_lock.unlock();
+
+        // Spin up cov sender threads
+        int id = 0;
+        for (const std::vector<Phenotype>& phenotypes : phenotypes_list) {
+            int priority_diff = 0;
+            for (const Phenotype& ptype : phenotypes) {
+                std::thread th([id, ptype, this]() {
+                    std::mutex useless_lock;
+                    std::unique_lock<std::mutex> useless_lock_wrapper(useless_lock);
+                    while (!cov_work_start) {
+                        start_sender_cv.wait(useless_lock_wrapper);
+                    }
+                    send_msg(id, ptype.mtype, ptype.message);
+                });
+                custom_set_highest_priority(th, priority_diff++);
+                th.detach();
+            }
+            id++;
+        }
+
         //  std::this_thread::sleep_for(std::chrono::milliseconds(rand() % 10000));
         // Ok so this machine is finished, but we need to sync with the other clients to help with timing accuracy
         for (ConnectionInfo info : client_info) {
@@ -461,22 +474,22 @@ void Client::queue_helper(const int global_id, const int num_helpers) {
             message = std::to_string(message.length() + msg.length()) + "\n" + message + msg;
             send_message(info.hostname.c_str(), info.port, message.data(), message.length());
         }
-
-        std::mutex useless_lock;
-        std::unique_lock<std::mutex> useless_lock_wrapper(useless_lock);
+        
         while (static_cast<unsigned int>(sync_count) < client_info.size()) {
+            std::mutex useless_lock;
+            std::unique_lock<std::mutex> useless_lock_wrapper(useless_lock);
             sync_cv.wait(useless_lock_wrapper);
         }
-            
-        start_sender_cv.notify_all();
-    }
-    auto stop = std::chrono::high_resolution_clock::now();
-    auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
-    if (global_id == 0) {
-        // Using guarded_cout is hard here because converting duration.count() to a string sucks
+
+        // Start timing of first message and wake up all threads!
+        start = std::chrono::high_resolution_clock::now();
+        // Casting duration.count() to a string sucks, so RAII is difficult here
         cout_lock.lock();
-        std::cout << "Fill/encryption time total: " << duration.count() << std::endl;
+        std::cout << "Sending first message: "  << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count() << std::endl;
         cout_lock.unlock();
+
+        cov_work_start = true;
+        start_sender_cv.notify_all();
     }
 }
 

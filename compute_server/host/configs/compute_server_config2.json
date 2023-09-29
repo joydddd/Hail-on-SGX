@@ -1,0 +1,15 @@
+{
+    "compute_server_bind_port": 16702,
+    "covariants": ["1", "1-5000", "2-5000"],
+    "institutions": ["client1", "client2"],
+    "y_val_name": "disease-5000",
+    "analysis_type": "linear",
+    "enclave_path": "../enclave/gwasenc.signed",
+    "register_server_info": {
+        "hostname": "sgx.eecs.umich.edu",
+        "port": 16401
+    },
+    "impute_policy": "Hail"
+}
+// Add "flag": "simulate" or "flag": "debug" to the config to run the enclave in simulation/debugging mode!
+// Add "impute_policy": "EPACTS" or "impute_policy": "Hail" to the config to modify the imputation policy to either EPACTS or Hail
