@@ -1,12 +1,12 @@
 #!/bin/bash
 
-for _ in {1..1}
-do
-    echo "Log 100000"
-    ./bin/register_server register_config.json >> scaling-big.txt
-done
+# for _ in {1..1}
+# do
+#     echo "Log 100000"
+#     ./bin/register_server register_config.json >> scaling-big.txt
+# done
 
-for _ in {1..1}
+for _ in {1..3}
 do
     echo "Lin 100000"
     ./bin/register_server register_config.json >> scaling-big.txt
