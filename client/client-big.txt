@@ -10,3 +10,17 @@ Fill/encryption time total: 196027583
 Sending first message: 1696283895125
 Sending last message: 1696283932193
 Data send time total: 37068307
+
+ Running on port 18601
+Fill/encryption time total: 195169277
+Sending first message: 1696287096615
+Sending last message: 1696287123846
+Data send time total: 27230607
+
+ Running on port 18601
+Fill/encryption time total: 196030706
+Sending first message: 1696287619675
+Exception Hostname: 104.42.151.226 error sending on stream socket
+
+Sending last message: 1696287643539
+Data send time total: 23863775
