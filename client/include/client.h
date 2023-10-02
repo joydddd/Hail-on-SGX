@@ -12,7 +12,6 @@
 #include <thread>
 #include <atomic>
 #include <chrono>
-#include <unordered_set>
 #include <queue>
 #include <condition_variable>
 #include <boost/thread.hpp>
@@ -65,8 +64,6 @@ class Client {
     bool cov_work_start;
 
     std::chrono::time_point<std::chrono::high_resolution_clock> start;
-    std::mutex lines_mux;
-    std::unordered_set<int> seen_lines;
     std::vector<std::vector<AESCrypto> > aes_encryptor_list;
     std::vector<std::vector<Phenotype> > phenotypes_list;
     std::vector<ConnectionInfo> compute_server_info;
