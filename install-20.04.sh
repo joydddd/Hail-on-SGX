@@ -5,10 +5,6 @@ cp ip.txt compute_server/host/ip.txt
 cp ip.txt client/ip.txt
 rm ip.txt
 
-cd client/
-python headless_set_client.py
-cd ../
-
 echo 'deb [arch=amd64] https://download.01.org/intel-sgx/sgx_repo/ubuntu focal main' | sudo tee /etc/apt/sources.list.d/intel-sgx.list
 wget -qO - https://download.01.org/intel-sgx/sgx_repo/ubuntu/intel-sgx-deb.key | sudo apt-key add -
 

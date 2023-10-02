@@ -1,12 +1,12 @@
 #!/bin/bash
 
-for _ in {1..3}
+for _ in {1..1}
 do
     echo "Log 100000"
     ./bin/client client_config100000.json >> client-big.txt
 done
 
-for _ in {1..3}
+for _ in {1..1}
 do
     echo "Lin 100000"
     ./bin/client client_config100000.json >> client-big.txt

@@ -1,12 +1,12 @@
 #!/bin/bash
 
-for _ in {1..3}
+for _ in {1..1}
 do
     echo "Log 100000"
     ./gwashost configs/compute_server_configlog-big2.json >> scaling-5k-64-2.txt
 done
 
-for _ in {1..3}
+for _ in {1..1}
 do
     echo "Lin 100000"
     ./gwashost configs/compute_server_configlin-big2.json >> scaling-5k-64-2.txt
