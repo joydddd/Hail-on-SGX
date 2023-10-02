@@ -26,12 +26,6 @@
 
 std::mutex cout_lock;
 
-// This lock does nothing - we really want a "signal" without the complexity of condition variables,
-// but I cannot seem to find this feature in C/C++.
-// boost::mutex useless_lock;
-// boost::unique_lock<boost::mutex> useless_lock_wrapper(useless_lock);
-
-
 bool terminating = false;
 
 const int MIN_BLOCK_COUNT = 50;
@@ -48,7 +42,7 @@ ComputeServer::~ComputeServer() {
 
 void ComputeServer::init(const std::string& config_file) {
     std::this_thread::sleep_for(std::chrono::milliseconds(10000));
-    num_threads = 2;//boost::thread::hardware_concurrency();
+    num_threads = 1;//boost::thread::hardware_concurrency();
 
     std::ifstream compute_config_file(config_file);
     compute_config_file >> compute_config;

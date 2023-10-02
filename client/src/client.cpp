@@ -29,10 +29,10 @@ void Client::init(const std::string& config_file) {
     listen_port = client_config["client_bind_port"];
 
 
-    xval.open(client_config["allele_file"]);
-    // remove first line from file
-    std::string garbage;
-    getline(xval, garbage);
+    allele_file_name = client_config["allele_file"];
+    allele_file_name2 = client_config["allele_file2"];
+    std::ifstream af2(allele_file_name2);
+    getline(af2, as);
 
     auto info = client_config["register_server_info"];
     send_msg(info["hostname"], info["port"], RegisterServerMessageType::CLIENT_REGISTER, client_hostname + "\t" + std::to_string(listen_port));
@@ -42,7 +42,6 @@ void Client::init(const std::string& config_file) {
     y_and_cov_count = 0;
     filled_count = 0;
     sync_count = 0;
-    current_line_num = 0;
     cov_work_start = false;
 }
 
@@ -95,7 +94,7 @@ void Client::run() {
         int connFD = accept(sockfd, (struct sockaddr*) &addr, &addrSize);
 
         // spin up a new thread to handle this message
-        boost::thread msg_thread(&Client::start_thread, this, connFD);
+        std::thread msg_thread(&Client::start_thread, this, connFD);
         msg_thread.detach();
     }
 }
@@ -332,7 +331,6 @@ void Client::handle_message(int connFD, const unsigned int global_id, const Clie
                 auto stop = std::chrono::high_resolution_clock::now();
                 auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
                 std::cout << "Data send time total: " << duration.count() << std::endl;
-                xval.close();
             }
             break;
         }
@@ -371,14 +369,22 @@ int Client::send_msg(const std::string& hostname, unsigned int port, unsigned in
 }
 
 void Client::queue_helper(const int global_id, const int num_helpers) {
+    std::ifstream allele_file(allele_file_name);
     std::string line;
-    unsigned int line_num;
+    // remove first line from file
+    getline(allele_file, line);
+
+    unsigned int line_num = 0;
     start = std::chrono::high_resolution_clock::now();
+
+    // Put the helper file handler on an offset based on the id
+    for (int i = 0; i < global_id; ++i) {
+        allele_file.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        line_num++;
+    }
+
     while (true) {
-        xval_file_lock.lock();
-        if (getline(xval, line)) {
-            line_num = current_line_num++;
-            xval_file_lock.unlock();
+        if (getline(allele_file, line)) {
             // It's ok to have a benign data race here - each thread will do redundant writes of the same value.
             // I used to eliminate this redundancy by only having thread with id 0 do this write, but it is
             // theoretically (and practially...) possible for thread 0 to not get any lines causing
@@ -386,24 +392,32 @@ void Client::queue_helper(const int global_id, const int num_helpers) {
             if (!num_patients) {
                 // Subtract 2 for locus->alleles tab and alleles->first value tab
                 std::vector<std::string> patients_split;
-                Parser::split(patients_split, line, '\t');
-                num_patients = patients_split.size() - 2;
+                Parser::split(patients_split, as, '\t');
+                num_patients = patients_split.size();
             }
 
             EncryptionBlock *block = new EncryptionBlock();
-            block->line_num = line_num;
-            block->line = line;
+            block->line_num = line_num++;
+            block->line = line + as;
             unsigned int compute_server_hash = Parser::parse_hash(block->line, aes_encryptor_list.size());
             encryption_queue_lock_list[compute_server_hash].lock(); 
             encryption_queue_list[compute_server_hash].push(block);
             encryption_queue_lock_list[compute_server_hash].unlock();
         } else {
+            allele_file.close();
             work_distributed_count++;
             queue_cv.notify_all();
-            xval_file_lock.unlock();
             break;
         }
+
+        // Skip forward a number of lines equal to the number of helper threads
+        for (int i = 0; i < num_helpers - 1; ++i) {
+            line_num++;
+            // allele_file.seekg(num_patients * 2, std::ios_base::cur);
+            allele_file.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        }
     }
+
     std::mutex useless_lock;
     std::unique_lock<std::mutex> useless_lock_wrapper(useless_lock);
     while (work_distributed_count != num_helpers) {
@@ -496,7 +510,7 @@ void Client::queue_helper(const int global_id, const int num_helpers) {
 void Client::fill_queue() {
     const int num_helpers = std::max((unsigned int)boost::thread::hardware_concurrency(), (unsigned int)encryption_queue_list.size());
     for (int id = 0; id < num_helpers; ++id) {
-        boost::thread helper_thread(&Client::queue_helper, this, id, num_helpers);
+        std::thread helper_thread(&Client::queue_helper, this, id, num_helpers);
         helper_thread.detach();
     }
 }

@@ -66,4 +66,5 @@ cd ../data_processing
 python3 generate_phenotypes.py 100000 12
 python3 generate_phenotypes.py 100000 0
 
-time python3 generate_alleles.py 100000 &
+python3 generate_alleles.py &
+python3 generate_alleles2.py &

@@ -1,8 +1,8 @@
 {
-    "compute_server_bind_port": 16701,
-    "covariants": ["1", "1-5000", "2-5000"],
-    "institutions": ["client1", "client2"],
-    "y_val_name": "disease-5000",
+    "compute_server_bind_port": 16702,
+    "covariants": ["1", "1-100000", "2-100000"],
+    "institutions": ["client1"],
+    "y_val_name": "disease-100000",
     "analysis_type": "linear",
     "enclave_path": "../enclave/gwasenc.signed",
     "register_server_info": {

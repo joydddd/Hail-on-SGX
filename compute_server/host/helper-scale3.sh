@@ -1,40 +1,52 @@
 #!/bin/bash
 
-for _ in {1..5}
+for _ in {1..3}
 do
-    echo "Log 5000"
-    ./gwashost configs/compute_server_config1250log-3.json >> scaling-5k-64-3.txt
+    echo "Log 100000"
+    ./gwashost configs/compute_server_configlog-big3.json >> scaling-5k-64-3.txt
 done
 
-for _ in {1..5}
+for _ in {1..3}
 do
-    echo "Lin 5000"
-    ./gwashost configs/compute_server_config1250lin-3.json >> scaling-5k-64-3.txt
+    echo "Lin 100000"
+    ./gwashost configs/compute_server_configlin-big3.json >> scaling-5k-64-3.txt
 done
 
-for _ in {1..5}
-do
-    echo "Log 10000"
-    ./gwashost configs/compute_server_config2500log-3.json >> scaling-10k-64-3.txt
-done
+# for _ in {1..5}
+# do
+#     echo "Log 5000"
+#     ./gwashost configs/compute_server_config1250log-3.json >> scaling-5k-64-3.txt
+# done
 
-for _ in {1..5}
-do
-     echo "Lin 10000"
-    ./gwashost configs/compute_server_config2500lin-3.json >> scaling-10k-64-3.txt
-done
+# for _ in {1..5}
+# do
+#     echo "Lin 5000"
+#     ./gwashost configs/compute_server_config1250lin-3.json >> scaling-5k-64-3.txt
+# done
 
-for _ in {1..5}
-do
-    echo "Log 20000"
-    ./gwashost configs/compute_server_config5000log-3.json >> scaling-20k-64-3.txt
-done
+# for _ in {1..5}
+# do
+#     echo "Log 10000"
+#     ./gwashost configs/compute_server_config2500log-3.json >> scaling-10k-64-3.txt
+# done
 
-for _ in {1..5}
-do
-    echo "Lin 20000"
-    ./gwashost configs/compute_server_config5000lin-3.json >> scaling-20k-64-3.txt
-done
+# for _ in {1..5}
+# do
+#      echo "Lin 10000"
+#     ./gwashost configs/compute_server_config2500lin-3.json >> scaling-10k-64-3.txt
+# done
+
+# for _ in {1..5}
+# do
+#     echo "Log 20000"
+#     ./gwashost configs/compute_server_config5000log-3.json >> scaling-20k-64-3.txt
+# done
+
+# for _ in {1..5}
+# do
+#     echo "Lin 20000"
+#     ./gwashost configs/compute_server_config5000lin-3.json >> scaling-20k-64-3.txt
+# done
 
 # for _ in {1..5}
 # do

@@ -14,7 +14,7 @@ rand_size = 100003
 rands = np.random.random(rand_size)
 
 ALLELE_COUNT =  4057178
-CLIENT_COUNT = 5000 if len(sys.argv) != 2 else int(sys.argv[1])
+CLIENT_COUNT = 100000 if len(sys.argv) != 2 else int(sys.argv[1])
 print(CLIENT_COUNT)
 NUM_PROCS = multiprocessing.cpu_count()
 OUTPUT_FILE = f"../client/client_data/generated_alleles_{CLIENT_COUNT}-{ALLELE_COUNT}.tsv"
@@ -105,9 +105,9 @@ def helper(pid, locuses):
             for s_num in sorted_nums:
                 random_allele = weighted_random_by_dct(alleles)
                 genotype_data = ""
-                for i in range(CLIENT_COUNT):
-                    genotype_data += get_random_allele(rands[index % rand_size]) + '\t'
-                    index += 1
+                # for i in range(CLIENT_COUNT):
+                #     genotype_data += get_random_allele(rands[index % rand_size]) + '\t'
+                #     index += 1
                 f.write(f'{locus_split[0]}:{str(s_num)}\t{random_allele}\t{genotype_data[:-1]}\n')
 
 ps = []
