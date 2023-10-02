@@ -4,7 +4,7 @@
     "allele_file": "client_data/generated_alleles_100000-50000.tsv",
     "allele_file2": "client_data/generated_alleles_100000-single.tsv",
     "register_server_info": {
-        "hostname": "sgx.eecs.umich.edu",
+        "hostname": "20.236.66.158",
         "port": 16401
     }
 }
