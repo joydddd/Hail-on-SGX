@@ -398,7 +398,7 @@ void Client::queue_helper(const int global_id, const int num_helpers) {
 
             EncryptionBlock *block = new EncryptionBlock();
             block->line_num = line_num++;
-            block->line = line + as;
+            block->line = line;
             unsigned int compute_server_hash = Parser::parse_hash(block->line, aes_encryptor_list.size());
             encryption_queue_lock_list[compute_server_hash].lock(); 
             encryption_queue_list[compute_server_hash].push(block);
@@ -435,7 +435,7 @@ void Client::queue_helper(const int global_id, const int num_helpers) {
     while (encryption_queue_list[global_id].size()) {
         EncryptionBlock *block = encryption_queue_list[global_id].top();
         encryption_queue_list[global_id].pop();
-        line = block->line;
+        line = block->line + as;
         delete block;
 
         Parser::parse_allele_line(line, 
