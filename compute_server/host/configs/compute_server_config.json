@@ -1,12 +1,12 @@
 {
     "compute_server_bind_port": 16702,
-    "covariants": ["1", "1-100000", "2-100000"],
+    "covariants": ["1", "1-5000", "2-5000"],
     "institutions": ["client1"],
-    "y_val_name": "disease-100000",
+    "y_val_name": "disease-5000",
     "analysis_type": "linear",
     "enclave_path": "../enclave/gwasenc.signed",
     "register_server_info": {
-        "hostname": "20.236.66.158",
+        "hostname": "sgx.eecs.umich.edu",
         "port": 16401
     },
     "impute_policy": "Hail"

@@ -305,23 +305,23 @@ bool RegisterServer::handle_message(int connFD, RegisterServerMessageType mtype,
                 std::cout << "Received last message: "  << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count() << std::endl;
                 std::this_thread::sleep_for(std::chrono::milliseconds(500));
 
-                // for (moodycamel::ConcurrentQueue<std::string>& tmp_file_string : tmp_file_string_list) {
-                //     std::string tmp;
-                //     while (tmp_file_string.try_dequeue(tmp)) {
-                //         std::vector<std::string> split;
-                //         Parser::split(split, tmp, '\n');
-                //         for (const std::string& tmp_split : split) {
-                //             sorted_file_queue.push(tmp_split);
-                //         }
-                //     }
-                // }
+                for (moodycamel::ConcurrentQueue<std::string>& tmp_file_string : tmp_file_string_list) {
+                    std::string tmp;
+                    while (tmp_file_string.try_dequeue(tmp)) {
+                        std::vector<std::string> split;
+                        Parser::split(split, tmp, '\n');
+                        for (const std::string& tmp_split : split) {
+                            sorted_file_queue.push(tmp_split);
+                        }
+                    }
+                }
 
-                // while(!sorted_file_queue.empty()) {
-                //     output_file << sorted_file_queue.top() << std::endl;
-                //     sorted_file_queue.pop();
-                // }
+                while(!sorted_file_queue.empty()) {
+                    output_file << sorted_file_queue.top() << std::endl;
+                    sorted_file_queue.pop();
+                }
 
-                // output_file.flush();
+                output_file.flush();
 
                 std::vector<std::thread> msg_threads;
                 // These aren't necesary for program correctness, but they help with iterative testing!

@@ -330,14 +330,12 @@ class SqrMatrix{
                         double l_val = det[l][swap_idx];
                         tmpL[swap_idx] = (do_swap * k_val) + (!do_swap * l_val);
                         tmpK[swap_idx] = (do_swap * l_val) + (!do_swap * k_val);
-                        // std::cout << tmpL[swap_idx] << " " << tmpK[swap_idx] << std::endl;
                     }
                     std::swap(det[l], tmpL);
                     std::swap(det[k], tmpK);
                 }
 
                 swap_always_found &= !kk_is_zero | !swap_not_found;
-                //std::cout << kk_is_zero << " " << swap_not_found << " " << swap_always_found << std::endl;
 
                 const double kk = det[k][k];
                 double kk_minus_one;

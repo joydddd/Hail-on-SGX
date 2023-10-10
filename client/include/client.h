@@ -59,8 +59,6 @@ class Client {
     int num_lines_per_block;
 
     std::string allele_file_name;
-    std::string allele_file_name2;
-    std::string as;
     bool cov_work_start;
 
     std::chrono::time_point<std::chrono::high_resolution_clock> start;

@@ -30,9 +30,6 @@ void Client::init(const std::string& config_file) {
 
 
     allele_file_name = client_config["allele_file"];
-    allele_file_name2 = client_config["allele_file2"];
-    std::ifstream af2(allele_file_name2);
-    getline(af2, as);
 
     auto info = client_config["register_server_info"];
     send_msg(info["hostname"], info["port"], RegisterServerMessageType::CLIENT_REGISTER, client_hostname + "\t" + std::to_string(listen_port));
@@ -392,8 +389,8 @@ void Client::queue_helper(const int global_id, const int num_helpers) {
             if (!num_patients) {
                 // Subtract 2 for locus->alleles tab and alleles->first value tab
                 std::vector<std::string> patients_split;
-                Parser::split(patients_split, as, '\t');
-                num_patients = patients_split.size();
+                Parser::split(patients_split, line, '\t');
+                num_patients = patients_split.size() - 2;
             }
 
             EncryptionBlock *block = new EncryptionBlock();
@@ -413,7 +410,9 @@ void Client::queue_helper(const int global_id, const int num_helpers) {
         // Skip forward a number of lines equal to the number of helper threads
         for (int i = 0; i < num_helpers - 1; ++i) {
             line_num++;
-            // allele_file.seekg(num_patients * 2, std::ios_base::cur);
+            // Skip ahead num patients (plus the tab delimeters), but this doesnt account for the
+            // length of the locus + allele, so skip to the newline char after
+            allele_file.seekg(num_patients * 2, std::ios_base::cur);
             allele_file.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
         }
     }
@@ -435,7 +434,7 @@ void Client::queue_helper(const int global_id, const int num_helpers) {
     while (encryption_queue_list[global_id].size()) {
         EncryptionBlock *block = encryption_queue_list[global_id].top();
         encryption_queue_list[global_id].pop();
-        line = block->line + as;
+        line = block->line;
         delete block;
 
         Parser::parse_allele_line(line, 

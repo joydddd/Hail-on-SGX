@@ -6,7 +6,7 @@
     "analysis_type": "linear",
     "enclave_path": "../enclave/gwasenc.signed",
     "register_server_info": {
-        "hostname": "20.236.66.158",
+        "hostname": "sgx.eecs.umich.edu",
         "port": 16401
     },
     "impute_policy": "Hail"
