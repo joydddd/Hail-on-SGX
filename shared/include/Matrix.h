@@ -264,8 +264,8 @@ class SqrMatrix{
                     int l = 0;
                     for (l = k + 1; l < n; l++) {
                         if (det[l][k] != 0) {
-                            std::swap(det[l], det[k]);
                             sign = -sign;
+                            std::swap(det[l], det[k]);
                             break;
                         }
                     }
