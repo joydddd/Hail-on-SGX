@@ -133,19 +133,18 @@ void Log_row::update_estimate() {
     for (int i = 0; i < n; i++) {
         double x = (data[(i + client_offset) / 4] >> (((i + client_offset) % 4) * 2) ) & 0b11;
         is_NA = is_NA_uint8(x);
-        //x = is_NA ? genotype_average : x;
         x = (!is_NA * x) + (is_NA * genotype_average);
-        // if (!is_NA && !impute_average) {
-            const std::vector<double>& patient_pnc = gwas->phenotype_and_covars.data[i];
 
-            y_est = (beta_g + offset)[0] * x;
-            for (int j = 1; j < num_dimensions; j++) {
-                y_est += patient_pnc[j] * (beta_g + offset)[j];
-            }
-            y_est = 1 / (1 + modified_pade_approx_oblivious(-y_est));
+        const std::vector<double>& patient_pnc = gwas->phenotype_and_covars.data[i];
 
-            update_upperH_and_Grad(y_est, x, patient_pnc);
-        //}
+        y_est = (beta_g + offset)[0] * x;
+        for (int j = 1; j < num_dimensions; j++) {
+            y_est += patient_pnc[j] * (beta_g + offset)[j];
+        }
+        y_est = 1 / (1 + modified_pade_approx_oblivious(-y_est));
+
+        update_upperH_and_Grad(y_est, x, patient_pnc);
+
         /* update data index */
         data_idx++;
         int data_idx_lt_lengths = data_idx < client_lengths[client_idx];
@@ -153,11 +152,6 @@ void Log_row::update_estimate() {
         data_idx *= data_idx_lt_lengths;
         // if data_idx >= lengths, increment client_offset, otherwise multiply by 0
         client_offset += (!data_idx_lt_lengths) * ((4 - ((1 + i + client_offset) % 4)) % 4);
-        // if (data_idx >= client_lengths[client_idx]) {
-        //     data_idx = 0;
-        //     client_idx++;
-        //     client_offset += (4 - ((1 + i + client_offset) % 4)) % 4; // how many pairs of bits do we need to skip?
-        // }
     }
     /* build lower half of H */
     for (int j = 0; j < num_dimensions; j++) {
@@ -185,63 +179,3 @@ void Log_row::update_upperH_and_Grad(double y_est, double x, const std::vector<d
         }
     }
 }
-
-// //Good!
-// void Log_row::update_upperH_and_Grad(double y_est, double x, const std::vector<double>& patient_pnc) {
-//     double y_est_1_y = y_est * (1 - y_est);
-//     double y_delta = patient_pnc[0] - y_est;
-//     Grad[0] += y_delta * x;
-//     H[0][0] += x * x * y_est_1_y;
-
-//     for (int j = 1; j < num_dimensions; j++) {
-//         double patient_pnc_j = patient_pnc[j];
-//         Grad[j] += y_delta * patient_pnc_j;
-//         H[j][0] += x * patient_pnc_j * y_est_1_y;
-//         H[j][j] += patient_pnc_j * patient_pnc_j * y_est_1_y;
-
-//         for (int k = 1; k < j; k += 1) {
-//             H[j][k] += patient_pnc_j * patient_pnc[k] * y_est_1_y;
-//         }
-//     }
-// }
-
-
-
-// void Log_row::update_upperH_and_Grad(double y_est, double x, const std::vector<double>& patient_pnc) {
-//     double y_est_1_y = y_est * (1 - y_est);
-//     double y_delta = patient_pnc[0] - y_est;
-//     Grad[0] += y_delta * x;
-//     for (int j = 0; j < num_dimensions; j += 3) {
-//         double pat_j_pnc0 = patient_pnc[j];
-//         double pat_j_pnc1 = (j < num_dimensions) ? patient_pnc[j + 1] : 0;
-//         double pat_j_pnc2 = (j < num_dimensions) ? patient_pnc[j + 2] : 0;
-
-//         int j_is_not_0 = j != 0;
-//         Grad[j] += y_delta * ((pat_j_pnc0 * j_is_not_0) + pat_j_pnc1 + pat_j_pnc2);
-//         for (int k = 0; k <= j + 2; k++) {
-//             double x1_0 = (j == 0) ? x : pat_j_pnc0;
-//             double x1_1 = (j == 0) ? x : pat_j_pnc1;
-//             double x1_2 = (j == 0) ? x : pat_j_pnc2;
-//             double x2 = (k == 0) ? x : patient_pnc[k];
-//             H[j][k] += x1 * x2 * y_est_1_y;
-//         }
-//     }
-// }
-
-// OG:
-
-// void Log_row::update_upperH_and_Grad(double y_est, double x, const std::vector<double>& patient_pnc) {
-//     double y_est_1_y = y_est * (1 - y_est);
-//     double y_delta = patient_pnc[0] - y_est;
-//     Grad[0] += y_delta * x;
-//     for (int j = 0; j < num_dimensions; j++) {
-//         if (j > 0) {
-//             Grad[j] += y_delta * patient_pnc[j];
-//         }
-//         for (int k = 0; k <= j; k++) {
-//             double x1 = (j == 0) ? x : patient_pnc[j];
-//             double x2 = (k == 0) ? x : patient_pnc[k];
-//             H[j][k] += x1 * x2 * y_est_1_y;
-//         }
-//     }
-// }

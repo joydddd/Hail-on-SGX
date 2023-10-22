@@ -48,23 +48,6 @@ bool Oblivious_log_row::fit(int thread_id, int max_it, double sig) {
     }
 }
 
-// /* output results*/
-// double Oblivious_log_row::get_beta() {
-//     if (!fitted)
-//         for (auto &bn : b) bn = nan("");
-//     return b.front();
-// }
-
-// double Oblivious_log_row::get_t_stat() {
-//     if (!fitted) return nan("");
-//     return b[0] / standard_error;
-// }
-
-// double Oblivious_log_row::get_standard_error() {
-//     if (!fitted) return nan("");
-//     return standard_error;
-// }
-
 /* fitting helper functions */
 
 void Oblivious_log_row::update_beta() {

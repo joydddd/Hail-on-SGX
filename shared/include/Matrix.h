@@ -283,10 +283,11 @@ class SqrMatrix{
                 } 
                 //Apply formula
                 for (int i = k + 1; i < n; i++) {
+                    double *det_i = det[i];
                     for (int j = k + 1; j < n; j++) {
-                        det[i][j] = kk * det[i][j] - det[i][k] * det[k][j];
+                        det_i[j] = kk * det_i[j] - det_i[k] * det[k][j];
                         if (k > 0) {
-                            det[i][j] /= kk_minus_one;
+                            det_i[j] /= kk_minus_one;
                         }
                     }
                 }
@@ -341,16 +342,14 @@ class SqrMatrix{
                 double kk_minus_one;
                 if (k > 0) {
                     kk_minus_one = det[k - 1][k - 1];
-                    // make sure we don't divide by 0
-                    kk_minus_one += !kk_minus_one;
-
-                }
+                } 
                 //Apply formula
                 for (int i = k + 1; i < n; i++) {
+                    double *det_i = det[i];
                     for (int j = k + 1; j < n; j++) {
-                        det[i][j] = kk * det[i][j] - det[i][k] * det[k][j];
-                        if (k != 0) {
-                            det[i][j] /= kk_minus_one;
+                        det_i[j] = kk * det_i[j] - det_i[k] * det[k][j];
+                        if (k > 0) {
+                            det_i[j] /= kk_minus_one;
                         }
                     }
                 }
